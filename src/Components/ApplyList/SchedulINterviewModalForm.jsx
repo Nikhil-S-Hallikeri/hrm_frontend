@@ -1,0 +1,167 @@
+import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react'
+import { Modal } from 'react-bootstrap';
+import { port } from '../../App';
+import { toast } from 'react-toastify';
+import { HrmStore } from '../../Context/HrmContext';
+
+const SchedulINterviewModalForm = (props) => {
+    let {show,fetchdata,setshow,persondata,setPersondata,candidateId,setcandidateId,
+        fetchdata2}=props
+    console.log(persondata);
+    let [loading,setloading]=useState(false)
+    let {convertTimeTo12HourFormat,timeValidate}=useContext(HrmStore)
+    const [formData, setFormData] = useState({
+        Candidate: "",
+        InterviewRoundName: '',
+        TaskAssigned: '',
+        interviewer: '',
+        InterviewDate: '',
+        InterviewTime: '',
+        InterviewType: '',
+        login_user: ''
+    });
+    let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
+    const [Candidateid, setCandidate] = useState("")
+
+    // Define the function 
+    const sentparticularData = (id) => {
+        setCandidate(id)
+        // Define the data to be sent in the request
+        const dataToSend = {
+            id: id // Assuming id is the parameter passed to the function
+        };
+
+        // Send a POST request using Axios
+        axios.get(`${port}/root/appliedcandidate/${id}/`, dataToSend)
+            .then(response => {
+                // Handle the response if needed
+                console.log('Data--:', response.data);
+                setPersondata(response.data)
+                setCandidate(response.data.CandidateId)
+            })
+            .catch(error => {
+                // Handle errors if any
+                console.error('Error sending data:', error);
+            });
+    };
+    const handleInputChange = (e) => {
+        let { name, value } = e.target;
+        if(name=='InterviewDate' && timeValidate() > value){
+            // alert(timeValidate())
+            value=timeValidate()
+          }
+        setFormData({ ...formData, [name]: value });
+    };
+    const handleTimeInputChange = (e) => {
+        setFormData({ ...formData, InterviewTime: e.target.value })
+    }
+    const handleSubmit = async (e) => {
+
+        e.preventDefault();
+
+        formData.Candidate = candidateId
+        formData.login_user = Empid
+
+        console.log("schedule_Interview",
+            "formData", formData,
+            "Login_user", Empid);
+        axios.post(`${port}/root/interviewschedule`, formData).then((res) => {
+            toast.success("Interview schedule Successfully..")
+            setshow(false)
+            fetchdata2()
+            fetchdata()
+            console.log("schedule_Interview_Data_res", res.data);
+        }).catch((err) => {
+            console.log("schedule_Interview_Data_res_err", err.data);
+        })
+    };
+    useEffect(() => {
+        sentparticularData()
+        console.log(persondata);
+    }, [persondata])
+    const [interviewers, setInterviewers] = useState([]);
+    useEffect(() => {
+        axios.get(`${port}/root/interviewschedule`).then((e) => {
+
+            console.log("Interviewer Data", e.data);
+            setInterviewers(e.data)
+        })
+        // sentparticularData()
+    }, [])
+    return (
+        <div>
+            <Modal show={show} onHide={()=>setshow(false)} >
+                <Modal.Header closeButton>
+                    <h1 class="modal-title fs-5" >Schedule Interview </h1>
+                </Modal.Header>
+                <Modal.Body>
+                    <form id="interviewForm" onSubmit={handleSubmit} class="styled-form">
+                        <div class="form-group">
+                            <label for="candidateId">Candidate ID:</label>
+                            <input type="text" id="CandidateId" value={candidateId} 
+                            class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="InterviewRoundName">Interview Round Name:</label>
+                            <select id="InterviewRoundName" name="InterviewRoundName" value={formData.InterviewRoundName} onChange={handleInputChange} required class="form-control">
+                                <option value="" selected>Select Round</option>
+                                <option value="hr_round" >HR Round</option>
+                        <option value="manager_round" >Manager Round</option>
+
+                                <option value="technical_round" >Technical Round </option>
+                            </select>
+                        </div>
+
+                        {/* <div class="form-group">
+                            <label for="taskAssign">Task Assign:</label>
+                            <input type="text" id="TaskAssigned" name="TaskAssigned" value={formData.TaskAssigned} onChange={handleInputChange} required class="form-control" />
+                        </div> */}
+                        <div class="form-group">
+                            <label for="interviewer">Interviewer:</label>
+                            <select id="interviewer" name="interviewer" value={formData.interviewer} onChange={handleInputChange} required class="form-control">
+                                <option value="" selected>Select Name</option>
+                                {interviewers.map(interviewer => (
+                                    <option key={interviewer.EmployeeId} value={interviewer.EmployeeId}>
+                                        {`${interviewer.EmployeeId},${interviewer.Name}`}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="interviewDate">Interview Date:</label>
+                            <input type="date" id="InterviewDate" name="InterviewDate" value={formData.InterviewDate} 
+                            onChange={handleInputChange} required class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="interviewTime">Interview Time:</label>
+                            <input type="time" id="InterviewTime" name="InterviewDTime" onChange={handleTimeInputChange} required class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="InterviewType">Interview Type:</label>
+                            <select id="InterviewType" name="InterviewType" value={formData.InterviewType} onChange={handleInputChange} required class="form-control">
+                                <option value="" selected>Select Round</option>
+                                <option value="online" >Online</option>
+                                <option value="offline" >Offline</option>
+
+                            </select>
+                        </div>
+                        <div class="form-group d-flex justify-content-between">
+                            {/* <button class="btn btn-primary">Send Email</button> */}
+                            <button type="submit" class="btn ms-auto btn-success">Schedule Interview</button>
+                        </div>
+                    </form>
+                </Modal.Body>
+            </Modal>
+
+
+
+
+
+            
+        </div>
+    )
+}
+
+export default SchedulINterviewModalForm
