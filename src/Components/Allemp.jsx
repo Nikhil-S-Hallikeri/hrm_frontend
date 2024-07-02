@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Sidebar from './Sidebar'
 import Topnav from './Topnav'
 import axios from 'axios'
 import { port } from '../App'
 import EmployeeCreation from './Modals/EmployeeCreation'
 import { toast } from 'react-toastify'
+import { HrmStore } from '../Context/HrmContext'
 
 
 const Allemp = () => {
@@ -37,7 +38,66 @@ const Allemp = () => {
     useEffect(() => {
         fetchdata()
     }, [])
-
+    let [obj, setobj] = useState({
+        'Employeement_Type': '',
+        'internship_Duration_From': '',
+        'internship_Duration_To': '',
+        'probation_status': '',
+        'probation_Duration_From': '',
+        'probation_Duration_To': '',
+    })
+    let handleChange = (e) => {
+        let { name, value } = e.target
+        if (name == 'Employeement_Type' && value == 'intern') {
+            setobj((prev) => ({
+                ...prev,
+                probation_status: '',
+                probation_Duration_From: '',
+                probation_Duration_To: ''
+            }))
+        }
+        if (name == 'Employeement_Type' && value == 'permanent') {
+            setobj((prev) => ({
+                ...prev,
+                internship_Duration_From: '',
+                internship_Duration_To: '',
+            }))
+        }
+        if (name == 'internship_Duration_From' && value > Edit_Data.internship_Duration_To
+            && Edit_Data.internship_Duration_To != '') {
+            setobj((prev) => ({
+                ...prev,
+                internship_Duration_From: Edit_Data.internship_Duration_To
+            }))
+            return
+        }
+        if (name == 'internship_Duration_To' && value < Edit_Data.internship_Duration_From) {
+            setobj((prev) => ({
+                ...prev,
+                internship_Duration_To: Edit_Data.internship_Duration_From
+            }))
+            return
+        }
+        if (name == 'probation_Duration_From' && value > Edit_Data.probation_Duration_To &&
+            Edit_Data.probation_Duration_To != '') {
+            setobj((prev) => ({
+                ...prev,
+                probation_Duration_From: Edit_Data.probation_Duration_To
+            }))
+            return
+        }
+        if (name == 'probation_Duration_To' && value < Edit_Data.probation_Duration_From) {
+            setobj((prev) => ({
+                ...prev,
+                probation_Duration_To: Edit_Data.probation_Duration_From
+            }))
+            return
+        }
+        setobj((prev) => ({
+            ...prev,
+            [name]: value
+        }))
+    }
     const fetchdata = () => {
         axios.get(`${port}/root/ems/AllEmployeesList/${Empid}/`).then((res) => {
             console.log("AllEmployee_res", res.data, Empid);
@@ -84,7 +144,6 @@ const Allemp = () => {
         setSearchValue(value)
 
         if (value.length > 0) {
-
             axios.get(`${port}/root/ems/Employee_search/${value}/`).then((res) => {
                 console.log("search_res", res.data);
                 setAllEmployeelist(res.data)
@@ -346,8 +405,12 @@ const Allemp = () => {
         Department_id: '',
         Position_id: '',
         Reporting_To: '',
-
-
+        'Employeement_Type': '',
+        'internship_Duration_From': '',
+        'internship_Duration_To': '',
+        'probation_status': '',
+        'probation_Duration_From': '',
+        'probation_Duration_To': '',
         interview_shedule_access: '',
         screening_shedule_access: '',
         final_status_access: '',
@@ -358,6 +421,51 @@ const Allemp = () => {
     // console.log("datas",Edit_Data);
     let handleChangeEdit_data = (e) => {
         let { name, value } = e.target
+        if (name == 'Employeement_Type' && value == 'intern') {
+            setobj((prev) => ({
+                ...prev,
+                probation_status: '',
+                probation_Duration_From: '',
+                probation_Duration_To: ''
+            }))
+        }
+        if (name == 'Employeement_Type' && value == 'permanent') {
+            setobj((prev) => ({
+                ...prev,
+                internship_Duration_From: '',
+                internship_Duration_To: '',
+            }))
+        }
+        if (name == 'internship_Duration_From' && value > Edit_Data.internship_Duration_To
+            && Edit_Data.internship_Duration_To != '') {
+            setobj((prev) => ({
+                ...prev,
+                internship_Duration_From: Edit_Data.internship_Duration_To
+            }))
+            return
+        }
+        if (name == 'internship_Duration_To' && value < Edit_Data.internship_Duration_From) {
+            setobj((prev) => ({
+                ...prev,
+                internship_Duration_To: Edit_Data.internship_Duration_From
+            }))
+            return
+        }
+        if (name == 'probation_Duration_From' && value > Edit_Data.probation_Duration_To &&
+            Edit_Data.probation_Duration_To != '') {
+            setobj((prev) => ({
+                ...prev,
+                probation_Duration_From: Edit_Data.probation_Duration_To
+            }))
+            return
+        }
+        if (name == 'probation_Duration_To' && value < Edit_Data.probation_Duration_From) {
+            setobj((prev) => ({
+                ...prev,
+                probation_Duration_To: Edit_Data.probation_Duration_From
+            }))
+            return
+        }
         set_Edit_Data((prev) => ({
             ...prev,
             [name]: value
@@ -379,6 +487,7 @@ const Allemp = () => {
                 console.log("Update_Data", r.data)
                 toast.success('User Updated successfully')
                 setloading('')
+                fetchdata()
             })
             .catch((err) => {
                 console.log("Update_Data", err)
@@ -420,18 +529,22 @@ const Allemp = () => {
             console.log("Employee_Data_err", err.data);
         })
     }
+    let { setActivePage } = useContext(HrmStore)
+    useEffect(() => {
+        setActivePage('Employee')
+    }, [])
 
 
 
 
     return (
-        <div className=' d-flex' style={{ width: '100%', minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
+        <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
 
-            <div className='side'>
+            <div className='d-none d-lg-flex'>
 
                 <Sidebar value={"dashboard"} ></Sidebar>
             </div>
-            <div className=' m-0 m-sm-4   side-blog' style={{ borderRadius: '10px' }}>
+            <div className=' m-0 m-sm-4 flex-1 container mx-auto  ' style={{ borderRadius: '10px' }}>
                 <Topnav></Topnav>
 
 
@@ -580,7 +693,7 @@ const Allemp = () => {
                                                                             </select>
                                                                         </div>
                                                                         <div className="col-md-6 col-lg-4 mb-3">
-                                                                            <label htmlFor="gender" className="form-label bg-light">Designation <span class='text-danger'>*</span> </label>
+                                                                            <label htmlFor="gender" className="form-label">Designation <span class='text-danger'>*</span> </label>
                                                                             <select
                                                                                 className="form-control shadow-none bg-light"
                                                                                 id="gender"
@@ -614,6 +727,10 @@ const Allemp = () => {
                                                                                 ))}
                                                                             </select>
                                                                         </div>
+
+
+
+
 
                                                                     </div>
 
@@ -650,17 +767,15 @@ const Allemp = () => {
                         </div>
 
                     </div>
-                </div>
-
-
+                </div >
 
 
 
                 {/* <button type="submit" onClick={Click} className="btn btn-primary text-white fw-medium px-2 px-lg-5">CLICK</button> */}
 
 
-                <div className='row m-0 p-1 mt-3' style={{ width: '100%' }}>
-                    <table class="table ">
+                < div className='row tablebg table-responsive rounded-xl my-3 m-0 p-1 mt-3' style={{ width: '100%' }}>
+                    <table class="w-full ">
                         <thead>
                             <tr>
 
@@ -697,7 +812,7 @@ const Allemp = () => {
 
                                     <tr key={e.id}>
 
-                                        <th scope="row"><input type="checkbox" value={e.employee_Id} onChange={handleCheckboxChange} /></th>
+                                        <td scope="row"><input type="checkbox" value={e.employee_Id} onChange={handleCheckboxChange} /></td>
                                         <td onClick={() => sentparticularData(e.id, e.employeeProfile)} data-bs-toggle="modal" data-bs-target="#exampleModal5" key={e.id} style={{ cursor: 'pointer' }}> {e.full_name}</td>
                                         <td> {e.employee_Id}</td>
                                         <td> {e.email}</td>
@@ -800,7 +915,7 @@ const Allemp = () => {
                                                     </div>
 
                                                     <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label bg-light">Position <span class='text-danger'>*</span> </label>
+                                                        <label htmlFor="gender" className="form-label ">Position <span class='text-danger'>*</span> </label>
                                                         <select
                                                             className="form-control shadow-none bg-light"
                                                             id="gender"
@@ -818,7 +933,7 @@ const Allemp = () => {
                                                     </div>
 
                                                     <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label bg-light">Department <span class='text-danger'>*</span> </label>
+                                                        <label htmlFor="gender" className="form-label">Department <span class='text-danger'>*</span> </label>
                                                         <select
                                                             className="form-control shadow-none bg-light"
                                                             id="gender"
@@ -845,7 +960,7 @@ const Allemp = () => {
                                                         </select>
                                                     </div>
                                                     <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label bg-light">Designation <span class='text-danger'>*</span> </label>
+                                                        <label htmlFor="gender" className="form-label">Designation <span class='text-danger'>*</span> </label>
                                                         <select
                                                             className="form-control shadow-none bg-light"
                                                             id="gender"
@@ -864,7 +979,7 @@ const Allemp = () => {
                                                     </div>
 
                                                     <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label bg-light">Reporting To <span class='text-danger'>*</span> </label>
+                                                        <label htmlFor="gender" className="form-label ">Reporting To <span class='text-danger'>*</span> </label>
                                                         <select
                                                             className="form-control shadow-none bg-light"
                                                             id="gender"
@@ -881,6 +996,49 @@ const Allemp = () => {
                                                             ))}
                                                         </select>
                                                     </div>
+                                                    <div className="col-md-6 col-lg-4 mb-3">
+                                                        <label htmlFor="gender" className="form-label">Employeement type <span class='text-danger'>*</span> </label>
+                                                        <select value={Edit_Data.Employeement_Type} onChange={handleChangeEdit_data}
+                                                            className="form-control shadow-none bg-light"
+                                                            id="gender"
+                                                            name="Employeement_Type" // Update gender state when the select input changes
+                                                            required>
+                                                            <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                            <option value="intern">Intern </option>
+                                                            <option value="permanent">Permanent </option>
+                                                        </select>
+                                                    </div>
+                                                    {Edit_Data.Employeement_Type == 'intern' && <section className="col-md-6 col-lg-4 mb-3">
+                                                        <label htmlFor="gender" className="form-label">Intern Duration <span class='text-danger'>*</span> </label>
+                                                        <div>
+                                                            <input type="date" value={Edit_Data.internship_Duration_From} name='internship_Duration_From'
+                                                                onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' /> -
+                                                            <input type="date" value={Edit_Data.internship_Duration_To} name='internship_Duration_To'
+                                                                onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' />
+                                                        </div>
+                                                    </section>}
+                                                    {Edit_Data.Employeement_Type == 'permanent' && <div className="col-md-6 col-lg-4 mb-3">
+                                                        <label htmlFor="gender" className="form-label">Probation type <span class='text-danger'>*</span> </label>
+                                                        <select value={Edit_Data.probation_status} onChange={handleChangeEdit_data}
+                                                            className="form-control shadow-none bg-light"
+                                                            id="gender"
+                                                            name="probation_status"
+                                                            // Update gender state when the select input changes
+                                                            required>
+                                                            <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                            <option value="probationer">Probationer </option>
+                                                            {/* <option value="confirmed"> Confirmed </option> */}
+                                                        </select>
+                                                    </div>}
+                                                    {Edit_Data.probation_status == 'probationer' && <section className="col-md-6 col-lg-4 mb-3">
+                                                        <label htmlFor="gender" className="form-label">Probation Duration <span class='text-danger'>*</span> </label>
+                                                        <div>
+                                                            <input type="date" value={Edit_Data.probation_Duration_From} name='probation_Duration_From'
+                                                                onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' /> -
+                                                            <input type="date" value={Edit_Data.probation_Duration_To} name='probation_Duration_To'
+                                                                onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' />
+                                                        </div>
+                                                    </section>}
 
                                                 </div>
 
@@ -968,7 +1126,7 @@ const Allemp = () => {
                     </div>
 
 
-                </div>
+                </div >
                 <div style={{ display: 'flex', justifyContent: 'end' }}>
                     <div className='me-3'>
                         <button style={{ outline: 'none ', backgroundColor: 'rgb(76,53,117)' }} className='btn  btn-sm text-white' data-bs-toggle="modal" data-bs-target="#exampleModal9" >Bulk Employee Upload </button>
@@ -1075,7 +1233,6 @@ const Allemp = () => {
                                             </div>
                                         )
                                     })}
-
 
                                 </div>
 
@@ -1292,11 +1449,11 @@ const Allemp = () => {
                 {/* open Particular Data End */}
 
 
-            </div>
+            </div >
 
 
 
-        </div>
+        </div >
     )
 }
 

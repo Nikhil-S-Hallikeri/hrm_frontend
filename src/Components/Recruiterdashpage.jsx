@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Sidebar from './Sidebar'
 import Topnav from './Topnav'
 import { Bar, Doughnut, Line } from 'react-chartjs-2'
@@ -8,6 +8,7 @@ import Slider from "react-slick";
 import '../assets/css/media.css'
 import Recsidebar from './Recsidebar';
 import ReactSpeedometer from "react-d3-speedometer";
+import HrmContext, { HrmStore } from '../Context/HrmContext';
 
 
 const Recruiterdashpage = () => {
@@ -116,15 +117,20 @@ const Recruiterdashpage = () => {
 
         ],
     }
+    let { setActivePage } = useContext(HrmStore)
+    useEffect(() => {
+        setActivePage('dashboard')
+    }, [])
 
     return (
-        <div className=' d-flex' style={{ width: '100%',minHeight : '100%', backgroundColor: "rgb(249,251,253)" }}>
+        <div className=' d-flex' 
+        style={{ width: '100%', minHeight: '100%', }}>
 
-            <div className='side' >
+            <div className='d-none d-lg-flex' >
 
                 <Recsidebar value={"dashboard"}></Recsidebar>
             </div>
-            <div className=' m-0 m-sm-4 ps-1 ps-sm-2 ps-md-4 side-blog' style={{ borderRadius: '10px' }}>
+            <div className=' m-0 p-sm-3 flex-1 container mx-auto ' style={{ borderRadius: '10px' }}>
                 <Topnav></Topnav>
 
                 <div className="  d-flex mt-4 inner_sections" >

@@ -1,9 +1,10 @@
 import Sidebar from './Sidebar';
 import Topnav from './Topnav';
 import { port } from '../App';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Recsidebar from './Recsidebar';
+import { HrmStore } from '../Context/HrmContext';
 
 const generateDates = (month, year) => {
     const dates = [];
@@ -31,6 +32,7 @@ const formatDate = (date) => {
 
 const Acti_ = () => {
     const Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId;
+    let {setActivePage}=useContext(HrmStore)
 
     const [activitiesget, setgetActivities] = useState([]);
     const [activitiesgetdaily_achives, setgetActivities_daily_achives] = useState([]);
@@ -59,6 +61,7 @@ const Acti_ = () => {
 
     useEffect(() => {
         Activity_get_res();
+        setActivePage('activity')
     }, []);
 
     const calculateTotal = (field) => {
@@ -291,15 +294,14 @@ const Acti_ = () => {
 
 
     return (
-        <div className='d-flex' style={{ width: '100%', minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
-            <div className='side'>
+        <div className='d-flex' style={{ width: '100%', minHeight: '100%', }}>
+            <div className='d-none d-lg-flex'>
                 <Recsidebar value={"dashboard"}></Recsidebar>
             </div>
-            <div className='m-0 m-sm-4 side-blog' style={{ borderRadius: '10px' }}>
-                <div style={{ position: "relative", left: '20px' }}>
+            <div className='m-0 m-sm-4 flex-1 container mx-auto' style={{ borderRadius: '10px' }}>
+                
                     <Topnav></Topnav>
-                </div>
-                <div className='mt-3' style={{ position: 'relative', left: '40px', width: '97%' }}>
+                <div className='mt-3'>
                     <div className='d-flex justify-content-between'>
                         <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
                             <li className="nav-item text-primary d-flex" role="presentation">
@@ -319,7 +321,7 @@ const Acti_ = () => {
 
                         </ul>
                     </div>
-                    <div className="tab-content" id="pills-tabContent" style={{ position: 'relative', bottom: '20px' }}>
+                    <div className="tab-content" id="pills-tabContent" >
                         <div className="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabIndex="0">
                             <div style={{ position: 'relative' }} className='d-flex justify-content-end'>
                                 <div className='mt-3 d-flex justify-content-end ' style={{ position: 'absolute', bottom: '10px' }}>
@@ -335,43 +337,40 @@ const Acti_ = () => {
                                     <table className="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th scope="col" colSpan={3} className='text-center' style={{ minWidth: '500px' }}>Date</th>
+                                                <th scope="col" colSpan={3} className='text-center ' style={{ minWidth: '500px' }}>Date</th>
                                                 {dates.map(date => (
                                                     <th key={date} rowSpan={2} className='text-center pb-4'>{date}</th>
                                                 ))}
                                             </tr>
-                                            <tr>
-                                                <th scope="col" className='ms-3' style={{ minWidth: '200px' }}>Activity Name</th>
-                                                <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Target</th>
-                                                <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Achieved</th>
+                                            <tr className=''>
+                                                <th scope="col" className='ms-3 ' style={{ minWidth: '200px' }}>Activity Name</th>
+                                                <th scope="col" className='text-center ' style={{ minWidth: '60px' }}>Target <span className='text-xs'>(Each day) </span> </th>
+                                                <th scope="col" className='text-center ' style={{ minWidth: '60px' }}>Achieved <span className='text-xs'>(Overall) </span></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {activitiesget.map((activity, mainindex) => (
                                                 <tr key={mainindex}>
                                                     <td>
-                                                        <input type="text"
+                                                        <input type="text" disabled
                                                             value={activity.Activity_Name}
-                                                            className="form-control border-0 shadow-none" />
+                                                            className="p-2 rounded border-0  shadow-none" />
                                                     </td>
                                                     <td>
-                                                        <input type="number"
+                                                        <input type="number" disabled
                                                             value={activity.targets}
-                                                            className="form-control border-0 shadow-none text-center" />
+                                                            className="p-2 rounded  border-0  shadow-none text-center" />
                                                     </td>
                                                     <td >
-                                                        <input type="number"
+                                                        <input type="number" disabled
                                                             value={activity.Total_Achived}
-                                                            className={`form-control border-0 shadow-none text-center text-white  
-                                                                ${activity.status === "Green" ? 'bg-success' :
-                                                                    activity.status === "Yellow" ? 'bg-warning' :
-                                                                        activity.status === "Red" ? 'bg-danger' :
-                                                                            activity.status === "Orange" ? 'bg-info' :
-                                                                                'bg-info'} `}
+                                                            className={`p-2 rounded border-0  shadow-none text-center  `}
                                                         />
                                                     </td>
                                                     {dates.map((date) => {
                                                         let obj = activitiesgetdaily_achives[mainindex].find((obj) => obj.Date === date);
+                                                        if(obj) {console.log("sksjbljkb", obj.status);}
+
                                                         return (
                                                             <td key={date}>
                                                                 <input type="number" disabled={formattedCurrentDate !== date}
@@ -380,29 +379,25 @@ const Acti_ = () => {
                                                                         if (e.target.value > 0) {
                                                                             if (obj) {
                                                                                 handleInputChange(date, obj.achieved, obj.id, Number(e.target.value));
-                                                                            } else {
-                                                                                // If obj is not found, handle this case if needed
                                                                             }
                                                                         }
                                                                         if (e.target.value <= 0) {
                                                                             if (obj) {
                                                                                 handleInputChange(date, obj.achieved, obj.id, 0);
-                                                                            } else {
-                                                                                // If obj is not found, handle this case if needed
-                                                                            }
-                                                                        }
+                                                                            } }
                                                                     }}
-                                                                    className="form-control border-0 shadow-none text-center " />
+                                                                    className={`p-2 ${obj ? obj.status==0 ? 'bg-red-300':obj.status==2 ?'bg-yellow-300': obj.status==3 ?'bg-green-300':obj.status==1 ?'bg-orange-300':'' :''}
+                                                                     ${formattedCurrentDate === date && ' border-2 border-black' } rounded w-24 ourline-none shadow-none text-center `} />
                                                             </td>
                                                         );
                                                     })}
                                                 </tr>
                                             ))}
-                                            <tr>
+                                            {/* <tr>
                                                 <td className='ps-3'>Total</td>
                                                 <td className='text-center'>{totalTarget}</td>
                                                 <td className='text-center'>{totalAchieved}</td>
-                                            </tr>
+                                            </tr> */}
                                         </tbody>
                                     </table>
                                 </div>
@@ -422,7 +417,7 @@ const Acti_ = () => {
                                     <table className="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th scope="col" colSpan={4} className='text-center' style={{ minWidth: '500px' }}>Interview Scheduled</th>
+                                                <th scope="col" colSpan={3} className='text-center' style={{ minWidth: '500px' }}>Interview Scheduled</th>
                                                 {dates.map(date => (
                                                     <th key={date} rowSpan={2} className='text-center pb-4'>{date}</th>
                                                 ))}
@@ -430,8 +425,8 @@ const Acti_ = () => {
                                             <tr>
                                                 <th scope="col" className='ms-3' style={{ minWidth: '100px' }}>Possitions</th>
                                                 {/* <th scope="col" className=' text-center' style={{ minWidth: '60px' }}>Open Possitions </th> */}
-                                                <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Target</th>
-                                                <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Achieved</th>
+                                                <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Target <span className='text-xs'>(Each Day) </span> </th>
+                                                <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Achieved <span className='text-xs'>(Overall) </span> </th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -458,11 +453,7 @@ const Acti_ = () => {
 
                                                         <input type="number"
                                                             value={activity.Total_Achived}
-                                                            className={`form-control border-0 shadow-none text-center text-white  
-                                                            ${activity.status === "Green" ? 'bg-success' :
-                                                                    activity.status === "Yellow" ? 'bg-warning' :
-                                                                        activity.status === "Red" ? 'bg-danger' :
-                                                                            activity.status === "Orange" ? 'bg-info' : 'bg-info'} `}
+                                                            className={`form-control border-0 shadow-none text-center`}
                                                         />
                                                     </td>
                                                     {dates.map((date) => {
@@ -482,7 +473,8 @@ const Acti_ = () => {
                                                                                 Number(e.target.value))
                                                                         }
                                                                     }
-                                                                    } className={`form-control border-0 
+                                                                    } className={`p-2 w-24 rounded ${obj ? obj.status==0 ? 'bg-red-300':obj.status==2 ?'bg-yellow-300': obj.status==3 ?'bg-green-300':obj.status==1 ?'bg-orange-300':'' :''}
+                                                                     ${formattedCurrentDate === date && ' border-2 border-black' }  border-0 
                                                                         shadow-none text-center `} />
                                                             </td>
                                                         )
@@ -548,19 +540,14 @@ const Acti_ = () => {
 
                                                     <td>
                                                         <input type="number"
-                                                            value={activity.targets}
+                                                            value={activity.Walkins_target}
                                                             className="form-control border-0 shadow-none text-center" />
                                                     </td>
                                                     <td>
                                                         <input type="number"
                                                             value={activity.Total_Achived}
 
-                                                            className={`form-control border-0 shadow-none text-center text-white  
-                                                            ${activity.status === "Green" ? 'bg-success' :
-                                                                    activity.status === "Yellow" ? 'bg-warning' :
-                                                                        activity.status === "Red" ? 'bg-danger' :
-                                                                            activity.status === "Orange" ? 'bg-info' :
-                                                                                'bg-info'} `}
+                                                            className={`form-control border-0 shadow-none text-center`}
 
                                                         />
                                                     </td>
@@ -580,7 +567,8 @@ const Acti_ = () => {
                                                                             handleInputChange2(obj.Date, obj.achieved, obj.id, Number(e.target.value))
                                                                         }
                                                                     }
-                                                                    } className="form-control border-0 shadow-none text-center " />
+                                                                    } className={`p-2 ${obj ? obj.status==0 ? 'bg-red-300':obj.status==2 ?'bg-yellow-300': obj.status==3 ?'bg-green-300':obj.status==1 ?'bg-orange-300':'' :''}
+                                                                     ${formattedCurrentDate === date && ' border-2 border-black' } rounded w-24 ourline-none shadow-none text-center `} />
                                                             </td>
                                                         )
                                                     }
@@ -590,7 +578,7 @@ const Acti_ = () => {
 
                                             <tr>
                                                 <td className='ps-3'>Total</td>
-                                                <td className='text-center'>{Walkinsget.reduce((sum,obj)=>sum+=obj.targets,0)}</td>
+                                                <td className='text-center'>{Walkinsget.reduce((sum,obj)=>sum+=obj.Walkins_target,0)}</td>
                                                 <td className='text-center'>{Walkinsget.reduce((sum,obj)=>sum+=obj.Total_Achived,0)}</td>
                                                 {/* {dates.map((date, idx) => (
                                                     <td key={date}>
@@ -624,8 +612,8 @@ const Acti_ = () => {
                                             <tr>
                                                 <th scope="col" className='ms-3' style={{ minWidth: '200px' }}>Possitions</th>
                                                 {/* <th scope="col" className='ms-3' style={{ minWidth: '20px' }}>Open Possitions</th> */}
-                                                <th scope="col" className='text-center' style={{ minWidth: '100px' }}>Target</th>
-                                                <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Achieved</th>
+                                                <th scope="col" className='text-center' style={{ minWidth: '100px' }}>Target <span className='text-xs'>(Each day) </span> </th>
+                                                <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Achieved <span className='text-xs'>(Overall) </span></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -647,19 +635,14 @@ const Acti_ = () => {
 
                                                     <td>
                                                         <input type="number"
-                                                            value={activity.targets}
+                                                            value={activity.Offers_target}
                                                             className="form-control border-0 shadow-none text-center" />
                                                     </td>
                                                     <td>
                                                         <input type="number"
                                                             value={activity.Total_Achived}
 
-                                                            className={`form-control border-0 shadow-none text-center text-white  
-                                                            ${activity.status === "Green" ? 'bg-success' :
-                                                                    activity.status === "Yellow" ? 'bg-warning' :
-                                                                        activity.status === "Red" ? 'bg-danger' :
-                                                                            activity.status === "Orange" ? 'bg-info' :
-                                                                                'bg-info'} `} />
+                                                            className={`form-control border-0 shadow-none text-center`} />
                                                     </td>
                                                     {dates.map((date) => {
                                                         let obj = Offered_achives[mainindex].find((obj) => obj.Date == date)
@@ -677,10 +660,8 @@ const Acti_ = () => {
                                                                             handleInputChange3(obj.Date, obj.achieved, obj.id, Number(e.target.value))
                                                                         }
                                                                     }
-                                                                    } className="form-control border-0 shadow-none text-center " />
-
-
-
+                                                                    } className={`p-2 ${obj ? obj.status==0 ? 'bg-red-300':obj.status==2 ?'bg-yellow-300': obj.status==3 ?'bg-green-300':obj.status==1 ?'bg-orange-300':'' :''}
+                                                                     ${formattedCurrentDate === date && ' border-2 border-black' } rounded w-24 ourline-none shadow-none text-center `}/>
                                                             </td>
                                                         )
                                                     }
@@ -690,7 +671,7 @@ const Acti_ = () => {
 
                                             <tr>
                                                 <td className='ps-3'>Total</td>
-                                                <td className='text-center'>{Offeredget.reduce((sum,obj)=>sum+=obj.targets,0)}</td>
+                                                <td className='text-center'>{Offeredget.reduce((sum,obj)=>sum+=obj.Offers_target,0)}</td>
                                                 <td className='text-center'>{Offeredget.reduce((sum,obj)=>sum+=obj.Total_Achived,0)}</td>
                                                 {/* {dates.map((date, idx) => (
                                                     <td key={date}>

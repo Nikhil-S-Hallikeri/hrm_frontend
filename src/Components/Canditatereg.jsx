@@ -5,14 +5,15 @@ import { port } from '../App'
 import '../assets/css/fonts.css'
 import SweetAlert from 'react-bootstrap-sweetalert';
 import '../assets/css/Sweet_.css'
+import { toast } from 'react-toastify';
 
 
 
 const Canditatereg = () => {
+    let [loading, setloading] = useState()
     const [states, setStates] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [selectedState, setSelectedState] = useState('');
-
     // ALL Form Input Details
 
     const [firstname, setFirstname] = useState("");
@@ -87,55 +88,60 @@ const Canditatereg = () => {
         for (let pair of formdata.entries()) {
             console.log(pair[0] + ': ' + pair[1]);
         }
+        setloading(true)
+        if (firstname != '' && gender != '' && Email != '' && PrimaryContact != '' &&
+            State != '' && District != '' && highestQualification != '' && selectedOption != ''
+            && JobPortal != '' && Applyed_Designation != ''
+        ) {
 
-        axios.post(`${port}/root/applicationform/${Applyed_Designation}/`, formdata)
-            .then((r) => {
-                console.log("applicationform_res", r.data)
+            axios.post(`${port}/root/applicationform/${Applyed_Designation}/`, formdata)
+                .then((r) => {
+                    console.log("applicationform_res", r.data)
+                    // alert('Candidate Registration Form Successfull..')
+                    setAlertType('success');
+                    setShowAlert(true);
+                    setloading(false)
 
-
-                // alert('Candidate Registration Form Successfull..')
-                setAlertType('success');
-                setShowAlert(true);
-
-        
-                // setFirstname("")
-                // setFirstname("")
-                setLastName('')
-                setEmail('')
-                setPrimaryContact('')
-                setSecondaryContact('')
-                setState('')
-                setDistrict('')
-                setHighestQualification('')
-                setUniversity('')
-                setSpecialization('')
-                setPercentage('')
-                setSelectedYear('')
-                setCurrentDesignation('')
-                setNoOfExperience('')
-                setNoticePeriod('')
-                setGeneralSkillsWithExp('')
-                setSoftSkillsWithExp('')
-                setTechnicalSkillsWithExp('')
-                setCurrentCTC('')
-                settTechnicalSkills("")
-                setGeneralSkills("")
-                setsoftSkills("")
-                setexpectedSalary("")
-                setContactedBy("")
-                setJobportal("")
-                setGender("")
-                setSelectedOption('')
-                setApplyed_Designation('')
-
-            })
-            .catch((err) => {
-
-                setAlertType('error');
-                setShowAlert(true);
-
-                console.log("applicationform_err", err)
-            })
+                    // setFirstname("")
+                    // setFirstname("")
+                    setLastName('')
+                    setEmail('')
+                    setPrimaryContact('')
+                    setSecondaryContact('')
+                    setState('')
+                    setDistrict('')
+                    setHighestQualification('')
+                    setUniversity('')
+                    setSpecialization('')
+                    setPercentage('')
+                    setSelectedYear('')
+                    setCurrentDesignation('')
+                    setNoOfExperience('')
+                    setNoticePeriod('')
+                    setGeneralSkillsWithExp('')
+                    setSoftSkillsWithExp('')
+                    setTechnicalSkillsWithExp('')
+                    setCurrentCTC('')
+                    settTechnicalSkills("")
+                    setGeneralSkills("")
+                    setsoftSkills("")
+                    setexpectedSalary("")
+                    setContactedBy("")
+                    setJobportal("")
+                    setGender("")
+                    setSelectedOption('')
+                    setApplyed_Designation('')
+                })
+                .catch((err) => {
+                    setAlertType('error');
+                    setShowAlert(true);
+                    setloading(true)
+                    console.log("applicationform_err", err)
+                })
+        }
+        else {
+            toast.warning('Fill all the required fields')
+        }
     }
 
     const handleConfirm = () => {
@@ -160,8 +166,6 @@ const Canditatereg = () => {
 
 
     const [is, setIs] = useState(false);
-
-
     const [isFresher, setIsFresher] = useState(false);
     const [isExperience, setIsExperience] = useState(false);
 
@@ -201,7 +205,7 @@ const Canditatereg = () => {
                                         <input type="text" className="form-control shadow-none bg-light" id="FirstName" name="FirstName" value={firstname} onChange={(e) => setFirstname(e.target.value)} required />
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
-                                        <label htmlFor="lastName" className="form-label">Last Name <span class='text-danger'>*</span> </label>
+                                        <label htmlFor="lastName" className="form-label">Last Name</label>
                                         <input type="text" className="form-control shadow-none bg-light" id=" LastName" name=" LastName" value={LastName} onChange={(e) => setLastName(e.target.value)} required />
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
@@ -220,16 +224,18 @@ const Canditatereg = () => {
                                         </select>
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
-                                        <label htmlFor="email" className="form-label">Email <span class='text-danger'>*</span> </label>
+                                        <label htmlFor="email" className="form-label">Email Id<span class='text-danger'>*</span> </label>
                                         <input type="email" className="form-control shadow-none bg-light" id=" Email" name=" Email" value={Email} onChange={(e) => setEmail(e.target.value)} required />
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
-                                        <label htmlFor="primaryContact" className="form-label">Primary Contact <span class='text-danger'>*</span> </label>
-                                        <input type="tel" className="form-control shadow-none bg-light" id="PrimaryContact" name="PrimaryContact" value={PrimaryContact} onChange={(e) => setPrimaryContact(e.target.value)} required />
+                                        <label htmlFor="primaryContact" className="form-label">Primary Mobile Number <span class='text-danger'>*</span> </label>
+                                        <input type="number" className="form-control shadow-none bg-light" id="PrimaryContact" name="PrimaryContact" value={PrimaryContact}
+                                            onChange={(e) => { if (e.target.value >= 0 && e.target.value.length<=10 ) { setPrimaryContact(e.target.value) } }} required />
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="secondaryContact" className="form-label">Secondary Contact  </label>
-                                        <input type="tel" className="form-control shadow-none bg-light" id="SecondaryContact" name="SecondaryContact" value={SecondaryContact} onChange={(e) => setSecondaryContact(e.target.value)} />
+                                        <input type="number" className="form-control shadow-none bg-light" id="SecondaryContact" name="SecondaryContact"
+                                            value={SecondaryContact} onChange={(e) => { if (e.target.value >= 0&& e.target.value.length<=10) { setSecondaryContact(e.target.value) } }} />
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="secondaryContact" className="form-label">State <span class='text-danger'>*</span> </label>
@@ -281,11 +287,11 @@ const Canditatereg = () => {
                                                 <input type="text" className="form-control shadow-none bg-light" id="HighestQualification" name="HighestQualification" value={highestQualification} onChange={(e) => setHighestQualification(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="university" className="form-label">University <span class='text-danger'>*</span> </label>
+                                                <label htmlFor="university" className="form-label">University  </label>
                                                 <input type="text" className="form-control shadow-none bg-light" id="University" name="University" value={university} onChange={(e) => setUniversity(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="specialization" className="form-label">Specialization <span class='text-danger'>*</span> </label>
+                                                <label htmlFor="specialization" className="form-label">Specialization </label>
                                                 <input type="text" className="form-control shadow-none bg-light" id="Specialization" name="Specialization" value={specialization} onChange={(e) => setSpecialization(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-4 mt-3 mb-3">
@@ -314,15 +320,15 @@ const Canditatereg = () => {
                                             <h5 className='text-primary  mt-4'>Key Skills  </h5>
 
                                             <div className="col-md-6 col-lg-3 mt-3">
-                                                <label htmlFor="generalSkills" className="form-label">General Skills <span class='text-danger'>*</span></label>
+                                                <label htmlFor="generalSkills" className="form-label">General Skills </label>
                                                 <input type="text" className="form-control shadow-none bg-light" id="generalSkills" name="generalSkills" value={generalSkills} onChange={(e) => setGeneralSkills(e.target.value)} required />
                                             </div>
                                             <div className="col-md-6 col-lg-3 mt-3">
-                                                <label htmlFor="softSkills" className="form-label">Soft Skills <span class='text-danger'>*</span></label>
+                                                <label htmlFor="softSkills" className="form-label">Soft Skills </label>
                                                 <input type="text" className="form-control shadow-none bg-light" id="softSkills" name="softSkills" value={softSkills} onChange={(e) => setsoftSkills(e.target.value)} required />
                                             </div>
                                             <div className="col-md-6 col-lg-3 mt-3">
-                                                <label htmlFor="technicalSkills" className="form-label">Technical Skills <span class='text-danger'>*</span></label>
+                                                <label htmlFor="technicalSkills" className="form-label">Technical Skills </label>
                                                 <input type="text" className="form-control shadow-none bg-light" id="technicalSkills" name="technicalSkills" value={technicalSkills} onChange={(e) => settTechnicalSkills(e.target.value)} required />
                                             </div>
                                         </div>
@@ -411,17 +417,17 @@ const Canditatereg = () => {
 
                                 <div className="row m-0  py-3">
                                     <div className="col-md-6 col-lg-3 mb-3">
-                                        <label htmlFor="expectedSalary" className="form-label">Applyed Designation <span class='text-danger'>*</span></label>
+                                        <label htmlFor="expectedSalary" className="form-label">Designation Applying for<span class='text-danger'>*</span></label>
                                         <input type="text" className="form-control shadow-none bg-light" id="expectedSalary" name="expectedSalary" value={Applyed_Designation} onChange={(e) => setApplyed_Designation(e.target.value)} required />
                                     </div>
 
                                     <div className="col-md-6 col-lg-3 mb-3">
-                                        <label htmlFor="expectedSalary" className="form-label">Expected Salary <span class='text-danger'>*</span></label>
+                                        <label htmlFor="expectedSalary" className="form-label">Expected Salary </label>
                                         <input type="number" className="form-control shadow-none bg-light" id="expectedSalary" name="expectedSalary" value={expectedSalary} onChange={(e) => setexpectedSalary(e.target.value)} required />
                                     </div>
 
                                     <div className="col-md-6 col-lg-3 mb-3">
-                                        <label htmlFor="expectedSalary" className="form-label">Contacted By <span class='text-danger'>*</span></label>
+                                        <label htmlFor="expectedSalary" className="form-label">Contacted By  </label>
                                         <input type="text" className="form-control shadow-none bg-light" id="expectedSalary" name="expectedSalary" value={Contacted_by} onChange={(e) => setContactedBy(e.target.value)} required />
                                     </div>
 
@@ -431,7 +437,7 @@ const Canditatereg = () => {
                                     </div> */}
 
                                     <div className="col-md-6 col-lg-3 mb-3 ">
-                                        <label htmlFor="yearOfPassOut" className="form-label">Job Portal Source <span class='text-danger'>*</span> </label>
+                                        <label htmlFor="yearOfPassOut" className="form-label">Job Portal Source  </label>
                                         <select
                                             className="form-control shadow-none bg-light"
                                             id="yearOfPassOut"
@@ -448,14 +454,12 @@ const Canditatereg = () => {
 
                                         </select>
                                     </div>
-
-
-
                                 </div>
                             </div>
 
                             <div className="col-12 text-end mt-3">
-                                <button type="submit" className="btn btn-primary text-white fw-medium px-2 px-lg-5">Submit</button>
+                                <button type="submit" disabled={loading} className="btn btn-primary text-white fw-medium px-2 px-lg-5">
+                                    {loading ? "Loading..." : "Submit "}</button>
                             </div>
                         </form>
 

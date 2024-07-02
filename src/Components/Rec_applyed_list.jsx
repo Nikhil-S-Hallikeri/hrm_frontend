@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Topnav from './Topnav'
 import '../assets/css/fonts.css';
 import '../assets/css/media.css'
@@ -12,11 +12,18 @@ import Finalstatuscomment from './Finalstatuscomment';
 import { port } from '../App'
 import Recsidebar from './Recsidebar';
 import { toast } from 'react-toastify';
+import { HrmStore } from '../Context/HrmContext';
 
 
 const Rec_applyed_list = () => {
 
   let username = JSON.parse(sessionStorage.getItem('user')).UserName
+  let permissions = JSON.parse(sessionStorage.getItem('user')).user_permissions
+  let { setActivePage } = useContext(HrmStore)
+  useEffect(() => {
+    setActivePage('applylist')
+  }, [])
+
   const [tab, setTab] = useState("newleads")
   let [interviewStatusAddCan, setinterviewStatusAddcan] = useState()
   let [experiennceAddCall, setExperienceAddCall] = useState(0)
@@ -577,7 +584,7 @@ const Rec_applyed_list = () => {
     axios.post(`${port}/root/appliedcandidateslist`, { 'search_value': searchValue }).then((res) => {
       console.log("Applicand_list", res.data);
       setApplylist(res.data)
-      setFilteredApplyList([...res.data].filter((obj) => obj.ScreeningStatus =="Pending")
+      setFilteredApplyList([...res.data].filter((obj) => obj.ScreeningStatus == "Pending")
 
       )
     })
@@ -1171,15 +1178,15 @@ const Rec_applyed_list = () => {
 
   return (
 
-    <div className=' d-flex' style={{ width: '100%', minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
+    <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
 
-      <div className='side'>
+      <div className='d-none d-lg-flex'>
 
         {/* <Sidebar value={"dashboard"} ></Sidebar> */}
         <Recsidebar value={"dashboard"} ></Recsidebar>
 
       </div>
-      <div className=' m-0 m-sm-4  side-blog' style={{ borderRadius: '10px' }}>
+      <div className=' m-0 m-sm-4  flex-1 container mx-auto' style={{ borderRadius: '10px' }}>
         <Topnav ></Topnav>
 
         <div className='d-flex justify-content-between mt-4' >
@@ -1209,29 +1216,30 @@ const Rec_applyed_list = () => {
 
               <div class="tab-content" id="pills-tabContent">
                 {/* Tab 1 start */}
-                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
+                <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                  aria-labelledby="pills-home-tab" tabindex="0">
 
-                  <div className='Assign_Applaylist d-flex justify-content-end ' style={{ position: 'absolute', right: '30px', top: '145px' }}>
+                  <div className='Assign_Applaylist d-flex justify-content-end '>
 
                     <div class="dropup-center dropstart ">
 
-                      <button class="btn-success btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Assign
-                      </button>
+                      {permissions.applied_list_access &&
+                        <button class="btn-success btn btn-sm dropdown-toggle"
+                          type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          Assign
+                        </button>}
 
                       <ul class="dropdown-menu  text-center" style={{ width: '150px' }}>
                         {recname.map((e) => {
                           return (
 
                             <li onClick={() => sendSelectedDataToApi(e.EmployeeId)} key={e.EmployeeId} className='dropdown-item p-1' >Rec Name :  {e.Name} </li>
-
-
                           )
-
                         })}
                       </ul>
                       {assignAlert && (
-                        <Alert style={{ position: 'absolute', top: '50px', right: '100px', width: '300px', zIndex: '1000' }} severity="success" onClose={() => { setSuccessAlert(false); window.location.reload(); }}>
+                        <Alert style={{ position: 'absolute', top: '50px', right: '100px', width: '300px', zIndex: '1000' }} 
+                        severity="success" onClose={() => { setSuccessAlert(false); window.location.reload(); }}>
                           {/* <AlertTitle>Success</AlertTitle> */}
                           Candidate assigned successfully..
                         </Alert>
@@ -1276,7 +1284,7 @@ const Rec_applyed_list = () => {
                         }}
                           className='p-1 text-sm flex ms-auto outline-none border-1 rounded' name="" id="">
                           <option value="Pending">Pending </option>
-                         
+
                           <option value=""> Select All</option>
                           <option value="Assigned">Assinged </option>
                           <option value="Completed">Completed </option>
@@ -1324,7 +1332,7 @@ const Rec_applyed_list = () => {
 
 
                       {filteredApplyList != undefined && filteredApplyList != undefined && filteredApplyList.map((e) => {
-                        console.log("Applied_list",e);
+                        console.log("Applied_list", e);
                         return (
 
                           <tbody>

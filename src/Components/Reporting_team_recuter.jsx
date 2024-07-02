@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Topnav from './Topnav'
 import axios from 'axios'
 import { port } from '../App'
 import { useNavigate } from 'react-router-dom'
 import Empsidebar from './Empsidebar'
 import Recsidebar from './Recsidebar'
+import { HrmStore } from '../Context/HrmContext'
 
 
 const Reporting_team_recuter = () => {
@@ -12,7 +13,7 @@ const Reporting_team_recuter = () => {
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let UserName = JSON.parse(sessionStorage.getItem('user')).UserName
     let Disgnation = JSON.parse(sessionStorage.getItem('user')).Disgnation
-
+    let { setActivePage } = useContext(HrmStore)
     const [AllEmployeelist, setAllEmployeelist] = useState([])
     const [EMPLOYEE_INFORMATION, setEMPLOYEE_INFORMATION] = useState([])
     const [EDUCATION_DETAILS, setEDUCATION_DETAILS] = useState([])
@@ -34,7 +35,7 @@ const Reporting_team_recuter = () => {
     useEffect(() => {
 
         fetchdata()
-
+        setActivePage('team')
     }, [])
 
     const fetchdata = () => {
@@ -181,13 +182,13 @@ const Reporting_team_recuter = () => {
     // Verfied Form end
 
     return (
-        <div className=' d-flex' style={{ width: '100%', minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
+        <div className=' d-flex' style={{ width: '100%', minHeight: '100%',  }}>
 
-            <div className='side'>
+            <div className='d-none d-lg-flex'>
                 <Recsidebar></Recsidebar>
 
             </div>
-            <div className=' m-0 m-sm-4  side-blog' style={{ borderRadius: '10px' }}>
+            <div className=' m-0 m-sm-4 flex-1 container mx-auto ' style={{ borderRadius: '10px' }}>
                 <div style={{ marginLeft: '10px' }}>
 
                     <Topnav></Topnav>
@@ -218,7 +219,7 @@ const Reporting_team_recuter = () => {
                                 <div>
                                     <button style={{ width: '100px', height: '32px', fontSize: '12px', outline: 'none ' }} className='btn  bg-info-subtle btn-sm' data-bs-toggle="modal" data-bs-target="#exampleModal9" >Add New</button>
                                 </div>
-                              
+
                             </div>
 
                         </div>

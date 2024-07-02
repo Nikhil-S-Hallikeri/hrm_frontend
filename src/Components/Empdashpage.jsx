@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import Topnav from './Topnav'
 import { Bar, Doughnut, Line } from 'react-chartjs-2'
 import { Chart as ChartJS } from "chart.js/auto";
@@ -6,12 +6,18 @@ import '../assets/css/fonts.css'
 import Slider from "react-slick";
 import '../assets/css/media.css'
 import Empsidebar from './Empsidebar';
+import { HrmStore } from '../Context/HrmContext';
 
 const Empdashpage = () => {
 
+    let { setActivePage } = useContext(HrmStore)
+    useEffect(() => {
+        setActivePage('dashboard')
+    }, [])
+
     var settings1 = {
         dots: false,
-        arrows: false, 
+        arrows: false,
         infinite: true,
         speed: 900,
         slidesToShow: 4,
@@ -91,143 +97,14 @@ const Empdashpage = () => {
         ],
     }
     return (
-        <div className=' d-flex' style={{ width: '100%',minHeight : '100%', backgroundColor: "rgb(249,251,253)" }}>
+        <div className='d-flex' style={{ width: '100%', minHeight: '100%', }}>
 
-            <div className='side '>
-
+            <div className='d-none d-lg-flex '>
                 <Empsidebar value={"dashboard"}></Empsidebar>
             </div>
-            <div className=' m-0 m-sm-4  ps-1 ps-sm-2 ps-md-4 side-blog' style={{ borderRadius: '10px',position:'relative',right:'25px' }}>
-               
+            <div className='flex-1  ' >
+
                 <Topnav></Topnav>
-
-                <div className="  d-flex inner_sections" >
-
-
-                   {/* Sliders start */}
-
-                   {/* <Slider {...settings1} className='container ' >
-                        <div className=''>
-                            <div className="box1 border rounded d-flex justify-content-around align-items-center ">
-                                <div>
-                                    <img src={require('../assets/Icon/male-workers-svgrepo-com.png')} width={50} alt="" />
-                                </div>
-
-                                <div>
-                                    <h4 style={{ position: 'relative', top: '5px' }}>100</h4>
-                                    <p>No Employees Hired</p>
-                                </div>
-
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-bar-chart-line" viewBox="0 0 16 16">
-                                        <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1zm1 12h2V2h-2zm-3 0V7H7v7zm-5 0v-3H2v3z" />
-                                    </svg>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className=''>
-                            <div className="box1 border rounded d-flex justify-content-around align-items-center ">
-                                <div>
-                                    <img src={require('../assets/Icon/male-workers-svgrepo-com.png')} width={50} alt="" />
-                                </div>
-
-                                <div>
-                                    <h4 style={{ position: 'relative', top: '5px' }}>100</h4>
-                                    <p>No Employees Hired</p>
-                                </div>
-
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-bar-chart-line" viewBox="0 0 16 16">
-                                        <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1zm1 12h2V2h-2zm-3 0V7H7v7zm-5 0v-3H2v3z" />
-                                    </svg>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className=''>
-                            <div className="box1 border rounded d-flex justify-content-around align-items-center ">
-                                <div>
-                                    <img src={require('../assets/Icon/male-workers-svgrepo-com.png')} width={50} alt="" />
-                                </div>
-
-                                <div>
-                                    <h4 style={{ position: 'relative', top: '5px' }}>100</h4>
-                                    <p>No Employees Hired</p>
-                                </div>
-
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-bar-chart-line" viewBox="0 0 16 16">
-                                        <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1zm1 12h2V2h-2zm-3 0V7H7v7zm-5 0v-3H2v3z" />
-                                    </svg>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className=''>
-                            <div className="box1 border rounded d-flex justify-content-around align-items-center ">
-                                <div>
-                                    <img src={require('../assets/Icon/male-workers-svgrepo-com.png')} width={50} alt="" />
-                                </div>
-
-                                <div>
-                                    <h4 style={{ position: 'relative', top: '5px' }}>100</h4>
-                                    <p>No Employees Hired</p>
-                                </div>
-
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-bar-chart-line" viewBox="0 0 16 16">
-                                        <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1zm1 12h2V2h-2zm-3 0V7H7v7zm-5 0v-3H2v3z" />
-                                    </svg>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className=''>
-                            <div className="box1 border rounded d-flex justify-content-around align-items-center ">
-                                <div>
-                                    <img src={require('../assets/Icon/male-workers-svgrepo-com.png')} width={50} alt="" />
-                                </div>
-
-                                <div>
-                                    <h4 style={{ position: 'relative', top: '5px' }}>100</h4>
-                                    <p>No Employees Hired</p>
-                                </div>
-
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-bar-chart-line" viewBox="0 0 16 16">
-                                        <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1zm1 12h2V2h-2zm-3 0V7H7v7zm-5 0v-3H2v3z" />
-                                    </svg>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className=''>
-                            <div className="box1 border rounded d-flex justify-content-around align-items-center ">
-                                <div>
-                                    <img src={require('../assets/Icon/male-workers-svgrepo-com.png')} width={50} alt="" />
-                                </div>
-
-                                <div>
-                                    <h4 style={{ position: 'relative', top: '5px' }}>100</h4>
-                                    <p>No Employees Hired</p>
-                                </div>
-
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-bar-chart-line" viewBox="0 0 16 16">
-                                        <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1zm1 12h2V2h-2zm-3 0V7H7v7zm-5 0v-3H2v3z" />
-                                    </svg>
-                                </div>
-
-                            </div>
-                        </div>
-                    </Slider> */}
-
-
-                    {/* Sliders end */}
-
-                </div>
-
                 <div className="chart-section p-3 bg-inf mt-4" >
 
                     <div class="row m-0">
@@ -393,7 +270,7 @@ const Empdashpage = () => {
                                         <td>abc@gmail.com</td>
 
                                     </tr>
-                                   
+
                                 </tbody>
                             </table>
 

@@ -8,7 +8,7 @@ import FinalStatus from './FinalStatus'
 const InterviewCompletedModal = (props) => {
     let { show, setshow, id } = props
     let empStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
-    let userPermission=JSON.parse(sessionStorage.getItem('user')).user_permissions
+    let userPermission = JSON.parse(sessionStorage.getItem('user')).user_permissions
     let [finalStatus, setFinalStatus] = useState(false)
     let { convertToReadableDateTime, convertToNormalTime } = useContext(HrmStore)
     let [data, setdata] = useState()
@@ -329,6 +329,10 @@ const InterviewCompletedModal = (props) => {
                                                 <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                                     Interviewed  Date : <span className='fw-normal break-words'>{(obj.InterviewDate)} </span>
                                                 </p></div>}
+                                            {obj.review&& obj.review.InterviewerName && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                                <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
+                                                    Interviewer  Name : <span className='fw-normal break-words'>{(obj.review.InterviewerName)} </span>
+                                                </p></div>}
                                             {obj.InterviewTime && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                                 <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                                     Time : <span className='fw-normal break-words'>{convertToNormalTime(obj.InterviewTime)} </span>
@@ -513,18 +517,18 @@ const InterviewCompletedModal = (props) => {
 
                 </Modal.Body>
                 <Modal.Footer>
-                    {(empStatus == 'Admin' || empStatus == 'HR' || userPermission.final_status_access ) &&
-                     <button onClick={() => { setFinalStatus(show); setshow(false) }} className='bg-blue-600 text-white rounded p-2'>
-                        Final Status
-                    </button>}
-                    {(empStatus == 'Admin' || empStatus == 'HR' || userPermission.interview_shedule_access ) &&
-                     <button onClick={() => { setFinalStatus(show); setshow(false) }} className='bg-slate-600 text-white rounded p-2'>
-                        Assign Interview
-                    </button>}
+                    {(empStatus == 'Admin' || empStatus == 'HR' || userPermission.final_status_access) &&
+                        <button onClick={() => { setFinalStatus(show); setshow(false) }} className='bg-blue-600 text-white rounded p-2'>
+                            Final Status
+                        </button>}
+                    {(empStatus == 'Admin' || empStatus == 'HR' || userPermission.interview_shedule_access) &&
+                        <button onClick={() => { setFinalStatus(show); setshow(false) }} className='bg-slate-600 text-white rounded p-2'>
+                            Assign Interview
+                        </button>}
 
                 </Modal.Footer>
             </Modal>}
-            <FinalStatus show={finalStatus} setshow={setFinalStatus} />
+            {data && <FinalStatus show={finalStatus} name={data.candidate_data.FirstName} setshow={setFinalStatus} />}
 
         </div>
     )

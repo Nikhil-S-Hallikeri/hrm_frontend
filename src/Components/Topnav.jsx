@@ -6,7 +6,7 @@ import { Bar, Doughnut, Line } from 'react-chartjs-2'
 import { port } from '../App'
 
 
-const Topnav = () => {
+const Topnav = ({ name }) => {
 
     const user = JSON.parse(sessionStorage.getItem('user'))
 
@@ -71,7 +71,6 @@ const Topnav = () => {
 
         datasets: [
             {
-
                 data: [25, 35, 40, 20],
                 fill: false,
                 backgroundColor: ['rgb(51,153,255)', 'rgb(139,207,255)', 'rgb(245,85,141)', 'rgb(241,152,40)'],
@@ -113,14 +112,9 @@ const Topnav = () => {
         axios.get(`${port}/root/loginuser/${Empid}/`).then((res) => {
             console.log("login_res", res.data);
             setprofile_info(res.data)
-
-
-
         }).catch((err) => {
             console.log("login_err", err.data);
-
         })
-
     }, [])
 
 
@@ -177,25 +171,40 @@ const Topnav = () => {
     return (
         <div>
             {/* Desktop nav start */}
-            <div className='d-lg-block d-none '>
+            <div className='d-lg-block  d-none my-3'>
+                <nav className='d-flex flex-wrap justify-between w-full items-center ' >
+                    {/* Content */}
+                    {!name && <section className='poppins  w-1/4 xl:w-2/6 '>
+                        <h5 className='text-2xl poppins fw-semibold ' >Hellow  {user.UserName}</h5>
+                        <p className='text-xs  '>Measure How Fast You’re Growing Monthly <br /> Recurring performance management. </p>
+                    </section>}
+                    {name && <section className='poppins w-1/4 xl:w-2/6 '>
+                        <h5 className='text-2xl poppins fw-semibold ' > {name}</h5>
+                    </section>}
+                    {/* search */}
+                    <section class="flex items-center h-fit p-1 rounded-xl bg-white shadow xl:w-72 border">
+                        <span class="input-group-text  bg-transparent border-0"
+                            id="inputGroup-sizing-lg"><i className="fa-solid text-slate-400  fa-magnifying-glass "
+                                style={{ color: '', fontSize: '18px' }}></i>
+                        </span>
+                        <input type="text" class="bg-transparent outline-none border-0 "
+                            aria-describedby="inputGroup-sizing-lg" placeholder='search..' />
+                    </section>
+                    {/* search end */}
+                    <div className="  d-flex justify-content-evenly align-items-center" style={{ width: '18%' }}>
 
-                <nav className='d-flex   ' style={{ width: '99%', height: '80px' }}>
-                    <div className="search  ms-2 p-2 mb-3 d-flex  align-items-center" style={{ width: '65%' }}>
-                        <div class="input-group input-group-lg w-75 p-1  border rounded" style={{ backgroundColor: 'rgb(238,238,238)' }}>
-                            <span class="input-group-text bg-transparent border-0" id="inputGroup-sizing-lg"><i class="fa-solid fa-magnifying-glass " style={{ color: 'rgb(76,53,117)', fontSize: '18px' }}></i></span>
-                            <input type="text" class="form-control shadow-none  bg-transparent border-0 " aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" placeholder='search..' />
-                        </div>
+                        <div className='p-1 relative rounded bg-slate-200 w-7 h-7 '>
+                                <img data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
+                                    aria-controls="offcanvasScrolling" className='w-5'
+                                    src={require('../assets/Images/Notification.png')} alt="Notification" />
+                                {noti != undefined && noti.length > 0 &&
+                                    <p className='bg-red-500 m-0 rounded-full w-2 h-2 absolute -top-1 right-0 '>
+                                    </p>}
+                            </div>
 
-                    </div>
-                    <div className="noti  d-flex justify-content-evenly align-items-center" style={{ width: '18%' }}>
-
-                        <div>
-
-                            <i class="fa-solid fa-bell fa-shake fs-4 mb-3 text-danger" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"> </i>
-                            <span style={{ fontSize: '10px', position: 'relative', bottom: '17px', right: '1px', fontWeight: 'bold' }}>{noti != undefined && noti.length} </span>
-                        </div>
-
-                        <div class="offcanvas offcanvas-right border" style={{ position: 'absolute', top: '70px', right: '20px', width: '365px', height: '500px' }} data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+                        <div class="offcanvas offcanvas-right border"
+                            style={{ position: 'absolute', top: '70px', right: '20px', width: '', height: '500px' }}
+                            data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
                             <div class="offcanvas-header">
                                 <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Notifications</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -207,7 +216,6 @@ const Topnav = () => {
                                         <div>
                                             <div className='d-flex border-bottom ' style={{ width: '100%' }}>
                                                 <div className='' style={{ width: '17%' }}>
-
                                                     <img width={45} className='mt-3' src={require('../assets/Icon/3135715.png')} alt="" />
                                                 </div>
                                                 <div className='ms-3 ' style={{ width: '60%' }}>
@@ -224,14 +232,9 @@ const Topnav = () => {
                                     )
 
                                 })}
-
-
-
-
-
                             </div>
-
                         </div>
+
                         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -250,27 +253,23 @@ const Topnav = () => {
                             </div>
                         </div>
 
-                      
+
 
                     </div>
-                    <div className="profile bg-succe" style={{ width: '25%' }}>
+                    {/* Profile */}
+                    <div className="w-[15rem] ms-auto xl:w-[20%] " style={{ width: '' }}>
+                        <div className='bg-slate-400 bg-opacity-80 items-center relative h-14 border-2
+                         border-slate-50 w-100 rounded-2xl '>
+                            <img className='absolute top-[50%] -translate-y-1/2 -left-3 rounded-circle border-2 border-slate-50 object-cover w-14 h-14 '
+                                src={profile_info.profile_img} alt="Profile Image" />
 
 
-
-                        <div className='profile w-100  ' style={{ display: 'flex', borderRadius: '10px', backgroundColor: 'rgb(76,53,117)' }}>
-
-                            <div className=' w-25' style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-
-                                <img className='rounded-circle object-cover w-12 h-12 ms-2' src={profile_info.profile_img} alt="Profile Image" />
-
-                            </div>
-                            <div className=' w-75 ps-4 ' style={{ display: 'flex', justifyContent: 'space-between' }}>
-
-                                <div>
-                                    <p style={{ position: 'relative', top: '11px', right: '8px', color: 'white' }}>{user.UserName}</p>
-                                    <small style={{ position: 'relative', bottom: '8px', right: '8px', color: 'white', fontSize: '11px' }}>{user.Disgnation}</small>
+                            <div className='ms-auto my-auto w-[85%] poppins ps-4 items-center '
+                                style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <div className=' my-1'>
+                                    <p className='mb-0 fw-medium '>{user.UserName}</p>
+                                    <small className='text-xs m-0 ' >{user.Disgnation}</small>
                                 </div>
-
 
                                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <div class="dropdown">
@@ -283,8 +282,6 @@ const Topnav = () => {
                                         <ul class="dropdown-menu" style={{ width: '200px', position: 'relative', top: '50px' }}>
 
                                             <div className='d-flex border-bottom'>
-
-
                                                 <div className='ms-2'>
                                                     <p className='fw-bold ps-1'>{user.UserName}</p>
                                                     <small class="ps-1" style={{ position: 'relative', bottom: "15px", fontSize: '10px' }}>{user.Email}</small>
@@ -302,14 +299,14 @@ const Topnav = () => {
                                     </div>
                                 </div>
 
-
-
                             </div>
 
 
                         </div>
 
+
                     </div>
+
                 </nav>
             </div >
 
@@ -599,7 +596,10 @@ const Topnav = () => {
             <div class="modal fade " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-fullscreen ">
                     <div class="modal-content " style={{ backgroundColor: 'rgb(249,251,253)' }}>
-                        <button type="button" class="btn-close p-2" data-bs-dismiss="modal" aria-label="Close" style={{ position: 'absolute', right: '0' }}></button>
+                        <button type="button" class="btn-close p-2" data-bs-dismiss="modal" aria-label="Close"
+                            style={{ position: 'absolute', right: '0' }}>
+
+                        </button>
 
                         {/* Start */}
 
@@ -616,7 +616,6 @@ const Topnav = () => {
                                                 <div className='d-flex mx-auto mt-2 w-100'>
                                                     <img class="mx-auto rounded-circle" src={profile_info.profile_img} width={100} height={100} alt="" />
                                                 </div>
-
 
 
                                                 <div className='text-center mt-4'>

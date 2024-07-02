@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Topnav from './Topnav'
 import '../assets/css/fonts.css';
 import '../assets/css/media.css'
@@ -7,6 +7,7 @@ import axios from 'axios'
 import Sidebar from './Sidebar';
 import '../assets/css/modal.css'
 import { port } from '../App'
+import { HrmStore } from '../Context/HrmContext';
 
 
 
@@ -14,7 +15,10 @@ const Employee_separation_request = () => {
 
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
 
-
+    let { setActivePage } = useContext(HrmStore)
+    useEffect(() => {
+        setActivePage('Employee')
+    }, [])
 
     const [AllResignationList, setAllResignationList] = useState([])
     const [Completed_Resignation_List, setCompleted_Resignation_List] = useState([])
@@ -269,14 +273,14 @@ const Employee_separation_request = () => {
 
     return (
 
-        <div className=' d-flex' style={{ width: '100%',minHeight : '100%', backgroundColor: "rgb(249,251,253)" }}>
+        <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
 
-            <div className='side'>
+            <div className=''>
 
                 <Sidebar value={"dashboard"} ></Sidebar>
 
             </div>
-            <div className=' m-0 m-sm-4  side-blog' style={{ borderRadius: '10px' }}>
+            <div className=' m-0 m-sm-4 flex-1 container mx-auto ' style={{ borderRadius: '10px' }}>
                 <Topnav ></Topnav>
 
                 {/* <div className='d-flex justify-content-between mt-4 ms-3' >

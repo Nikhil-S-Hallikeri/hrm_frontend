@@ -1,10 +1,11 @@
 import Sidebar from './Sidebar';
 import Topnav from './Topnav';
 import { port } from '../App';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Recsidebar from './Recsidebar';
 import Empsidebar from './Empsidebar';
+import { HrmStore } from '../Context/HrmContext';
 
 const generateDates = (month, year) => {
     const dates = [];
@@ -31,10 +32,12 @@ const formatDate = (date) => {
     return `${year}-${month}-${day}`;
 };
 
-const Emp_activity= () => {
+const Emp_activity = () => {
     const Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId;
-
-
+    let { setActivePage } = useContext(HrmStore)
+    useEffect(() => {
+        setActivePage('activity')
+    }, [])
 
     const [activitiesget, setgetActivities] = useState([]);
     const [activitiesgetdaily_achives, setgetActivities_daily_achives] = useState([]);
@@ -280,10 +283,10 @@ const Emp_activity= () => {
     }
 
     return (
-        <div className='d-flex' style={{ width: '100%',minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
+        <div className='d-flex' style={{ width: '100%', minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
             <div className='side'>
-               
-                
+
+
                 <Empsidebar value={"dashboard"} ></Empsidebar>
             </div>
             <div className='m-0 m-sm-4 side-blog' style={{ borderRadius: '10px' }}>

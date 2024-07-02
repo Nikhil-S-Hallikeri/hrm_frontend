@@ -1,0 +1,199 @@
+import React, { useContext, useEffect, useState } from 'react'
+import Sidebar from '../Components/Sidebar'
+import Topnav from '../Components/Topnav'
+import { HrmStore } from '../Context/HrmContext'
+import PlusIcon from '../SVG/PlusIcon'
+import EditPen from '../SVG/EditPen'
+import { useNavigate, useParams } from 'react-router-dom'
+import axios from 'axios'
+import { port } from '../App'
+import { toast } from 'react-toastify'
+
+const LeaveSetting = () => {
+    let { id } = useParams()
+    let { setActivePage } = useContext(HrmStore)
+    let navigate = useNavigate()
+    let [leaveData, setleaveData] = useState({
+        description: null,
+        leave_name: null,
+        id: null
+    })
+    let [loading, setloading] = useState('')
+    let handleLeaveData = (e) => {
+        let { value, name } = e.target
+        setleaveData((prev) => ({
+            ...prev,
+            [name]: value
+        }))
+    }
+    let [leaveObj, setLeaveObj] = useState({
+        leave_type: null,
+        No_Of_leaves: null,
+        carry_forward: null,
+        max_carry_forward: null,
+        earned_leave: null,
+        applicable_to: null,
+        id: null
+    })
+    let handleLeaveObj = (e) => {
+        let { name, value } = e.target
+        setLeaveObj((prev) => ({
+            ...prev,
+            [name]: value
+        }))
+    }
+    let updateLeaveObj = () => {
+        console.log("asd", leaveObj);
+        setloading('save')
+        try {
+            axios.patch(`${port}/root/lms/LeaveTypeDetails/${id}/${leaveObj.id}/`, leaveObj)
+            axios.patch(`${port}/root/lms/LeaveTypes/${id}/`, leaveData)
+            toast.success("Updated successfull")
+        }
+        catch (error) {
+            console.log(error);
+            toast.error("Error Acquired")
+        }
+    }
+    let getParticular = () => {
+        axios.get(`${port}/root/lms/LeaveTypes/${id}/`).then((response) => {
+            console.log("sdbls", response.data)
+            setleaveData(response.data)
+        }).catch((error) => {
+            console.log("sdbls", error);
+        })
+        axios.get(`${port}/root/lms/LeaveTypeDetails/${id}/`).then((response) => {
+            setLeaveObj(response.data[0])
+            console.log("sdbls", response.data[0])
+        }).catch((erro) => {
+            console.log(erro);
+        })
+    }
+    useEffect(() => {
+        setActivePage("Employee")
+        if (id) {
+            getParticular()
+        }
+
+    }, [id])
+    return (
+        <div>
+            <Topnav name='Leaves Setting' />
+            {/* Sections */}
+            <button className='flex hover:scale-[1.02] duration-300 items-center p-2 rounded-lg btngrd text-white px-3 gap-2 ms-auto '>
+                <PlusIcon />  Add leave
+            </button>
+            <main className='row my-4 container mx-auto gap-3 raleway'>
+                <section className='col-md-5 p-3 rounded bg-slate-50 border-2 border-white min-h-[10vh]  '>
+                    <div className=''>
+                        <h4>Leave Name :</h4>
+                        <div className='flex p-[10px] rounded-xl shadow-md bg-white w-full gap-2 '>
+                            <input type="text" value={leaveData.leave_name}
+                                name='leave_name' onChange={handleLeaveData}
+                                className='outline-none flex-1  ' />
+                            <EditPen />
+                        </div>
+                    </div>
+                    <div className='my-3'>
+                        <h4>Description :</h4>
+                        <div className='flex gap-2 w-full p-[10px] rounded-xl shadow-md bg-white  '>
+                            <textarea type="text" rows={5} value={leaveData.description}
+                                name='description' onChange={handleLeaveData} className='flex-1 outline-none ' />
+                            <EditPen />
+                        </div>
+                    </div>
+
+                </section>
+                <section className='col-md-5 p-3 rounded bg-slate-50 border-2 border-white min-h-[10vh] '>
+                    <h4 className='break-words'>{leaveData && leaveData.leave_name} </h4>
+                    <p className='fw-semibold text-sm '>No of Days </p>
+                    <div className='flex p-[10px] rounded-xl shadow-md bg-white w-fit '>
+                        <input type="number" value={leaveObj.No_Of_leaves}
+                            onChange={(e) => { if (e.target.value >= 0 && e.target.value <= 365) handleLeaveObj(e) }}
+                            name='No_Of_leaves' className='outline-none ' />
+                        <EditPen />
+                    </div>
+                    <article className='my-2'>
+                        <p className='fw-semibold  '>  Carry forward</p>
+                        <section className='flex flex-wrap flex-xl-nowrap items-center justify-between gap-3'>
+                            <div className='flex items-center gap-2'>
+                                <input value={leaveObj.carry_forward} onChange={(e) => {
+                                    setLeaveObj((prev) => ({
+                                        ...prev,
+                                        carry_forward: true
+                                    }))
+                                }} type="radio" checked={leaveObj.carry_forward} id='cfyes' name='a' />
+                                <label htmlFor="cfyes">Yes </label>
+                                <input value={leaveObj.carry_forward} onChange={(e) => {
+                                    setLeaveObj((prev) => ({
+                                        ...prev,
+                                        carry_forward: false,
+                                        max_carry_forward: null
+                                    }))
+                                }} type="radio" id='cfno' name='a' />
+                                <label htmlFor="cfno">No </label>
+                            </div>
+                            {leaveObj.carry_forward &&
+                                <div className='bg-white gap-2 items-center rounded-xl flex p-2 shadow-md '>
+                                    <button className='rounded bg-slate-400 bg-opacity-60 shadow-sm p-1 px-2'>
+                                        MAX </button>
+                                    <input type="text" value={leaveObj.max_carry_forward} name='max_carry_forward'
+                                        onChange={(e) => { if (e.target.value >= 0 && e.target.value < 366) handleLeaveObj(e) }} className='outline-none w-28' />
+                                    <EditPen />
+                                </div>}
+                        </section>
+
+                    </article>
+                    <article className='my-2'>
+                        <p className='fw-semibold m-0 '> Earned Leave</p>
+                        <div className='flex items-center my-2 gap-2'>
+                            <input value={leaveObj.earned_leave} checked={leaveObj.earned_leave}
+                                onChange={(e) => setLeaveObj((prev) => ({
+                                    ...prev,
+                                    earned_leave: true
+                                }))}
+                                type="radio" id='elyes' name='b' />
+                            <label htmlFor="elyes">Yes </label>
+                            <input value={leaveObj.earned_leave} checked={!leaveObj.earned_leave}
+                                onChange={(e) => setLeaveObj((prev) => ({
+                                    ...prev,
+                                    earned_leave: false
+                                }))} type="radio" id='elno' name='b' />
+                            <label htmlFor="elno">No </label>
+                        </div>
+                        <div className='flex flex-wrap gap-3 items-center'>
+
+                            <p className='fw-semibold m-0 '>Applicable to </p>
+
+                            <select name="applicable_to" id="" value={leaveObj.applicable_to} onChange={handleLeaveObj}
+                                className='outline-none shadow p-2 rounded mx-2 '>
+                                <option value="">Select</option>
+                                <option value="probationer">Probation Period </option>
+                                <option value="confirmed">Confirmed Employee </option>
+                                <option value="both">Both</option>
+                            </select>
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+            </main>
+            <div className='flex gap-3 justify-end'>
+                <button onClick={() => navigate('/dash/leaveCreation')} className='backbtn w-40 p-2 px-3 rounded-xl hover:scale-[1.02] duration-300 border-2 text-white  '>
+                    Cancel
+                </button>
+                <button
+                    onClick={updateLeaveObj}
+                    className='savebtn w-40 p-2 px-3 rounded-xl hover:scale-[1.02] duration-300 border-2
+                 text-white border-green-500 '>
+                    Save
+                </button>
+            </div>
+
+        </div>
+    )
+}
+
+export default LeaveSetting

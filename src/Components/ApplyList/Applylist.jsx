@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import Topnav from '../Topnav'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, json, useNavigate } from 'react-router-dom';
 import { Alert, AlertTitle } from '@mui/material';
 import Finalstatuscomment from '../Finalstatuscomment';
 import { port } from '../../App'
@@ -13,13 +13,16 @@ import ScreeningAssigned from './ScreeningAssigned';
 import InterviewCompletedModal from '../Modals/InterviewCompletedModal';
 import SchedulINterviewModalForm from './SchedulINterviewModalForm';
 import { toast } from 'react-toastify';
+import { Modal } from 'react-bootstrap';
 
 
 const Applylist = () => {
   let username = JSON.parse(sessionStorage.getItem('user')).UserName
+  let loginID = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).employee_Id
   let { testing, convertToReadableDateTime, timeValidate, getCurrentDate } = useContext(HrmStore)
   let [interviewCompletedDetailsModal, setInterviewCompleteDetailsModal] = useState()
   let [interviewModal, setInterviewModal] = useState(false)
+  let [selectedFinalResultName, setselectedFinalResultName] = useState()
   let [selectedCandidate, setSelectedCandidate] = useState()
   let { convertTimeTo12HourFormat } = useContext(HrmStore)
   let [intervewAsssignedcompleted, setInterviewAssignedcompleted] = useState('Assigned')
@@ -30,15 +33,17 @@ const Applylist = () => {
   let [screeninglistCompleted, setScreeninglistCompleted] = useState([])
   const [codeans, setCodeAns] = useState()
   let [carrylaptop, setcarrylaptop] = useState(false)
-
+  let [interviewformFillingModal, setinterviewFormFillingModal] = useState(false)
+  let [interviewReviewmodalShowing, setinterviewreviewModalShowing] = useState(false)
   let [interviewlist, setInterviewlist] = useState([])
+  let [filteredInterviewList, setFilteredInterviewList] = useState()
+  let [interviewfilterWord, setInterviewFilterWord] = useState()
   let [completedlist, setCompletedlist] = useState([])
   let [FinalData, setFinalData] = useState([])
+  let [filterFinalData, setFilterFinalData] = useState()
   const [assignAlert, setSuccessAlert] = useState(false);
   const [seleceted_candidateid, setseleceted_candidateid] = useState("");
   const [ScheduleinterviewAlert, setScheduleinterviewAlert] = useState(false);
-
-
   const [status, setsStatus] = useState('');
   let [Canditateinformation, setCanditateinformation] = useState({})
   let [Canditateinterviewdata, setCanditateinterviewdata] = useState([])
@@ -150,7 +155,10 @@ const Applylist = () => {
 
   };
 
-
+  useEffect(() => {
+    if (FinalData)
+      setFilterFinalData(FinalData)
+  }, [FinalData])
   // REC checkbox selection
   const handleCheckboxChange = (e) => {
     const candidateId = e.target.value;
@@ -187,6 +195,10 @@ const Applylist = () => {
       setSelectedCandidates3(selectedCandidates3.filter(id => id !== candidateId));
     }
   };
+  useEffect(() => {
+    if (interviewlist)
+      setFilteredInterviewList(interviewlist)
+  }, [interviewlist])
 
   console.log(selectedCandidates);
 
@@ -203,14 +215,9 @@ const Applylist = () => {
 
 
   const sendSelectedDataToApi = (id) => {
-
     console.log(selectedCandidates, id);
-
-
-
     axios.post(`${port}/root/ScreeningAssigning/`, { Candidates: selectedCandidates, Recruiterid: id, login_user: Empid })
       .then(response => {
-
         console.log('API response:', response.data);
         // alert(response.data)
         setcount(count + 1)
@@ -676,15 +683,32 @@ const Applylist = () => {
       let interviewAssinged = await axios.get(`${port}/root/New-Interview-assigned-list/${Empid}/${intervewAsssignedcompleted}/`)
       let interviewAssigned2 = await axios.get(`${port}/root/New-Candidate-Interview-list/${Empid}/${intervewAsssignedcompleted}/`)
       let uni2 = []
-      interviewAssigned2.data.forEach((obj) => {
-        if (!uni2.find((obj2) => obj2.Candidate == obj.Candidate)) {
-          uni2.push(obj)
+      let uni1 = []
+      let uni3 = []
+      if (interviewAssinged && interviewAssinged.data) {
+        [...interviewAssinged.data].reverse().forEach((obj) => {
+          if (!uni1.find((obj3) => obj3.Candidate == obj.Candidate)) {
+            uni1.push(obj)
+          }
+        })
+      }
+
+      if (interviewAssigned2 && interviewAssigned2.data) {
+        [...interviewAssigned2.data].reverse().forEach((obj) => {
+          if (!uni2.find((obj2) => obj2.Candidate == obj.Candidate)) {
+            uni2.push(obj)
+          }
+        })
+      }
+      [...uni1, ...uni2].forEach((obj) => {
+        if (!uni3.find((obj2) => obj2.Candidate == obj.Candidate)) {
+          uni3.push(obj)
         }
       })
-      setInterviewlist([...interviewAssinged.data, ...uni2])
+      setInterviewlist([...uni3])
 
       console.log("Interview_list", [...interviewAssinged.data, ...interviewAssigned2.data]);
-      console.log("Interview_list", [...uni2]);
+      console.log("Interview_list", [...uni1]);
     } catch (error) {
       console.log("Interview_list", error);
     }
@@ -1046,7 +1070,7 @@ const Applylist = () => {
 
   const [selectstatus, setselectstatus] = useState(false)
 
-
+  let [interviewerName, setInterviewerName] = useState(username)
 
   const [experience, setExperience] = useState('');
   const [jobStability, setJobStability] = useState('');
@@ -1087,12 +1111,36 @@ const Applylist = () => {
 
 
 
+  let reset = () => {
+    setComments('')
+    setJobStability('')
+    setReasonLeaving('')
+    setCodeAns('')
+    setAppearancePersonality('')
+    setClarityThought('')
+    setEnglishSkills('')
+    setTechnicalAwareness('')
+    setInterpersonalSkills('')
+    setConfidenceLevel('')
+    setAgeGroup('')
+    setLogicalReasoning('')
+    setCareerPlans('')
+    setsixDaysWorking('')
+    setTargetPressure('')
+    setCustomerService('')
+    setOverallRanking('')
+    setRelocationToCenters('')
+    setRelocationToCity('')
+    setInterviewStatus('')
+    setResearchCompany('')
+    setLeadershipAbilities('')
+    setAchievementOrientation('')
 
-
+  }
+  let [loading, setloading] = useState('')
 
   let handleproceedingform = (e) => {
     e.preventDefault();
-
     let formData1 = new FormData()
     formData1.append('login_user', Empid);
     formData1.append('id', id);
@@ -1142,8 +1190,8 @@ const Applylist = () => {
     formData1.append('RelocateToOtherCenters', relocationToCenters);
     formData1.append('interview_Status', Interviewstatus);
 
-    formData1.append('ReviewedBy', username);
-    formData1.append('InterviewerName', username);
+    formData1.append('ReviewedBy', loginID);
+    formData1.append('InterviewerName', interviewerName);
     formData1.append('Signature', signature);
     formData1.append('ReviewedDate', date1);
     formData1.append('Comments', comments);
@@ -1153,17 +1201,29 @@ const Applylist = () => {
     for (let pair of formData1.entries()) {
       console.log(pair[0] + ': ' + pair[1]);
     }
-
-    axios.post(`${port}/root/InterviewReviewData`, formData1)
-      .then((r) => {
-        toast.success("Proceding Form Data Successfull")
-        console.log("Proceding Form Data Successfull", r.data)
-
-      })
-      .catch((err) => {
-        toast.error('Proceding Form Data Failed')
-        console.log("Interview Assessment Form Error", err)
-      })
+    console.log(interviewerName);
+    if (Interviewstatus != '') {
+      setloading('interview')
+      axios.post(`${port}/root/InterviewReviewData`, formData1)
+        .then((r) => {
+          toast.success("Proceding Form Data Successfull")
+          console.log("Proceding Form Data Successfull", r.data)
+          fetchdata2()
+          fetchdata()
+          fetchdata1()
+          reset()
+          setinterviewFormFillingModal(false)
+        })
+        .catch((err) => {
+          toast.error('Proceding Form Data Failed')
+          console.log("Interview Assessment Form Error", err)
+        })
+      setloading('')
+    }
+    else {
+      toast.warning('Enter the required fields')
+      document.getElementById('interviewstatuserror').innerHTML = "*Fill the field"
+    }
   }
 
   let Bg_Verify_Form = () => {
@@ -1179,6 +1239,7 @@ const Applylist = () => {
     seid_id(e)
 
   }
+
   let sendername = JSON.parse(sessionStorage.getItem('user')).UserName
   let bgverification = { canInfo, UserName, Disgnation, PhoneNumber, sendername }
 
@@ -1228,25 +1289,77 @@ const Applylist = () => {
   }, [])
   let [filterAppliedTask, setFilterAppliedTask] = useState('Pending')
 
+  useEffect(() => {
+    let count = 0
+    if (Number(jobStability) > 0)
+      count++
+    if (Number(codeans) > 0)
+      count++
+    if (Number(appearancePersonality) > 0)
+      count++
+    if (Number(clarityThought) > 0)
+      count++
+    if (Number(englishSkills) > 0)
+      count++
+    if (Number(technicalAwareness) > 0)
+      count++
+    if (Number(interpersonalSkills) > 0)
+      count++
+    if (Number(confidenceLevel) > 0)
+      count++
+    if (Number(logicalReasoning) > 0)
+      count++
+    if (Number(driveProblemSolving) > 0)
+      count++
+    if (Number(takeUpChallenges) > 0)
+      count++
+    if (Number(leadershipAbilities) > 0)
+      count++
+    if (Number(targetPressure) > 0)
+      count++
+    if (Number(customerService) > 0)
+      count++
+    if (count > 1) {
+      console.log(count);
+      let avg = (((Number(jobStability) + Number(englishSkills) + Number(technicalAwareness) + Number(confidenceLevel)
+        + Number(interpersonalSkills) + Number(logicalReasoning) + Number(driveProblemSolving) + Number(takeUpChallenges)
+        + Number(leadershipAbilities) + Number(targetPressure) + Number(customerService) + Number(codeans ? codeans : 0)
+        + Number(appearancePersonality) + Number(clarityThought)) / count)).toFixed(2)
+      setOverallRanking(avg)
+      console.log(avg);
+    }
+    console.log(count);
+  }, [codeans, jobStability, customerService, targetPressure, leadershipAbilities,
+    takeUpChallenges, driveProblemSolving,
+    confidenceLevel, logicalReasoning, driveProblemSolving, appearancePersonality,
+    clarityThought, englishSkills,
+    technicalAwareness, interpersonalSkills])
+
+  let { setActivePage } = useContext(HrmStore)
+  useEffect(() => {
+    setActivePage('applylist')
+  }, [])
 
 
   return (
 
-    <div className=' d-flex' style={{ width: '100%', minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
-      <div className='side'>
+    <div className='flex ' style={{ width: '100%', minHeight: '100%', }}>
+      <div className='d-none d-lg-flex '>
 
         <Sidebar value={"dashboard"} ></Sidebar>
-
       </div>
-      <div className=' m-0 m-sm-4  side-blog' style={{ borderRadius: '10px' }}>
+      <div className='flex-1 container ' style={{ borderRadius: '10px' }}>
         <Topnav ></Topnav>
 
         <div className='d-flex justify-content-between mt-4' >
 
           <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item text-primary d-flex " role="presentation">
-              <h6 class='mt-2 heading nav-link active' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Applyed Canditates List</h6>
-              <small className='text-danger ms-2   rounded-circle' > {applylist != undefined && applylist.length} </small>
+              <h6 class='mt-2 heading nav-link active'
+                style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">
+                Applyed Candidates List</h6>
+              <small className='text-danger ms-2   rounded-circle' >
+                {filteredApplyList != undefined && filteredApplyList.length} </small>
             </li>
 
             <li class="nav-item text-primary d-flex" role="presentation">
@@ -1255,14 +1368,13 @@ const Applylist = () => {
             </li>
             <li class="nav-item text-primary d-flex" role="presentation">
               <h6 class='mt-2 heading nav-link' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Interviewed Canditates List</h6>
-              <small className='text-danger ms-2   rounded-circle'> {interviewlist != undefined && interviewlist.length} </small>
+              <small className='text-danger ms-2   rounded-circle'> {filteredInterviewList != undefined && filteredInterviewList.length} </small>
             </li>
             <li class="nav-item text-primary d-flex" role="presentation">
               <h6 class='mt-2 heading nav-link' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-completed-tab" data-bs-toggle="pill" data-bs-target="#pills-completed" role="tab" aria-controls="pills-completed" aria-selected="false">Final Status List</h6>
               <small className='text-danger ms-2   rounded-circle'> {FinalData != undefined && FinalData.length} </small>
             </li>
           </ul>
-
         </div>
 
 
@@ -1275,7 +1387,7 @@ const Applylist = () => {
                 {/* Tab 1 start */}
                 <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
 
-                  <div className='Assign_Applaylist d-flex justify-content-end ' style={{ position: 'absolute', right: '30px', top: '130px' }}>
+                  <div className='Assign_Applaylist d-flex justify-content-end '>
 
                     <div class="dropup-center dropstart ">
 
@@ -1347,10 +1459,10 @@ const Applylist = () => {
 
 
 
-                  <div className='rounded  mt-4 m-1'>
-                    <table class="table caption-top     table-hover">
-                      <thead >
-                        <tr >
+                  <div className='rounded  h-[50vh] overflow-y-scroll w-full tablebg table-responsive mt-4'>
+                    <table className="w-full ">
+                      <thead className='sticky top-0  ' >
+                        <tr className='bgclr1 ' >
                           {/* <th scope="col"></th> */}
                           <th scope="col"><span className='fw-medium'></span>All</th>
                           <th scope="col"><span className='fw-medium'>Name</span></th>
@@ -1385,14 +1497,14 @@ const Applylist = () => {
                         </td>
                       </tr> */}
 
+                      <tbody className=''>
+                        {filteredApplyList != undefined && filteredApplyList != undefined && filteredApplyList.map((e) => {
+                          return (
 
-                      {filteredApplyList != undefined && filteredApplyList != undefined && filteredApplyList.slice(0, load).map((e) => {
-                        return (
 
-                          <tbody>
                             <tr key={e.id}>
-                              <th scope="row"><input type="checkbox" value={e.CandidateId}
-                                onChange={handleCheckboxChange} /></th>
+                              <td scope="row"><input type="checkbox" value={e.CandidateId}
+                                onChange={handleCheckboxChange} /></td>
                               <td >{e.FirstName}</td>
                               <td > {e.CandidateId}</td>
                               <td >{e.Email}</td>
@@ -1406,11 +1518,11 @@ const Applylist = () => {
                               </button>
                               </td>
                             </tr>
-                          </tbody>
 
-                        )
-                      })}
+                          )
+                        })}
 
+                      </tbody>
 
                       {/* open Particular Data Start */}
 
@@ -1675,7 +1787,7 @@ const Applylist = () => {
 
 
                   <div className='d-flex justify-content-between p-3'>
-                    <button onClick={loadmorefunc1} className='btn btn-sm btn-success'>Load More</button>
+                    {/* <button onClick={loadmorefunc1} className='btn btn-sm btn-success'>Load More</button> */}
                     <div>
                       <button className='btn btn-sm me-3' style={{ backgroundColor: 'rgb(240,179,74)' }} onClick={handleDownload1}>
                         {downloading ? 'Downloading...' : 'Download'}
@@ -1731,19 +1843,23 @@ const Applylist = () => {
 
                       <div>
 
-                        <div class="input-group mb-3 ">
-                          <span class="input-group-text" id="basic-addon1"> <i class="fa-solid fa-magnifying-glass" ></i>  </span>
-                          <input type="text" value={searchInterviewValue} style={{ width: '200px', height: '30px', fontSize: '9px', outline: 'none' }}
+                        <div class="rounded mb-2 border-2 text-sm bgclr p-1">
+                          <input type="text" value={interviewfilterWord} placeholder='Search...'
                             onChange={(e) => {
-                              handleInterviewearchvalue(e.target.value)
-                            }} class="form-control shadow-none" aria-label="Username" aria-describedby="basic-addon1" />
+                              setInterviewFilterWord(e.target.value)
+                              let value = e.target.value
+                              let newarry = [...interviewlist].filter((obj) =>
+                                obj.Candidate_name.toLowerCase().indexOf(value.toLowerCase()) != -1 ||
+                                obj.interviewer_name.toLowerCase().indexOf(value.toLowerCase()) != -1 ||
+                                obj.ScheduledBy_name.toLowerCase().indexOf(value.toLowerCase()) != -1 ||
+                                obj.Applied_Designation.toLowerCase().indexOf(value.toLowerCase()) != -1)
+                              setFilteredInterviewList(newarry)
+                            }} class="outline-none bg-transparent shadow-none p-1 " />
                         </div>
                       </div>
 
                       <div>
                         <li class="nav-item text-primary d-flex me-4" style={{ fontSize: '18px' }} >
-
-
                           <select className="form-select shadow-none" id="ageGroup" style={{ width: '100px', height: '30px', fontSize: '9px', outline: 'none' }}
                             value={search_filter_Interview} onChange={(e) => {
                               handle_Interviewe_filter_value(e.target.value)
@@ -1768,15 +1884,21 @@ const Applylist = () => {
                      text-white p-2 duration-500 transition rounded `}>Completed </button>
                   </div>
                   {/*  */}
-                  <div className='rounded h-[50vh] overflow-y-scroll mt-4 m-1 ms-4'>
-                    <table class="table  caption-top table-hover"  >
+                  <div className='rounded tablebg h-[50vh] 
+                  overflow-y-scroll mt-4 m-1 ms-4'>
+                    <table class="w-full "  >
                       <thead >
                         <tr >
                           <th scope="col"><span className='fw-medium'>All</span></th>
                           <th scope="col"><span className='fw-medium'>Name</span></th>
                           <th scope="col"><span className='fw-medium'>Canditate Id</span></th>
+                          <th scope="col"><span className='fw-medium'>Applied Designation</span></th>
+
                           {/* <th scope="col"><span className='fw-medium'>Interview Date</span></th> */}
                           <th scope="col"><span className='fw-medium'>Assigned To</span></th>
+                          <th scope="col"><span className='fw-medium'>Assigned ON</span></th>
+
+
                           <th scope="col"><span className='fw-medium'>Assigned Status</span></th>
                           <th scope="col"><span className='fw-medium'>Interview Round Name</span></th>
                           {/* <th scope="col"><span className='fw-medium'>Interview Type</span></th> */}
@@ -1812,19 +1934,18 @@ const Applylist = () => {
                         setshow={setInterviewCompleteDetailsModal} />}
 
                       <tbody className=' '>
-                        {interviewlist != undefined && interviewlist != undefined &&
-                          interviewlist.map((e) => (
+                        {filteredInterviewList != undefined && filteredInterviewList != undefined &&
+                          filteredInterviewList.map((e) => (
                             <tr key={e.id}>
-                              <th scope="row"><input type="checkbox" value={e.Candidate} onChange={handleCheckboxChange2} /></th>
+                              <td scope="row"><input type="checkbox" value={e.Candidate} onChange={handleCheckboxChange2} /></td>
 
                               {intervewAsssignedcompleted == "Assigned"
                                 && <td
                                   onClick={() => {
                                     sentparticularData1(e.Candidate, e.id);
                                     setInterviewRoundType(e.InterviewRoundName)
+                                    setinterviewreviewModalShowing(true)
                                   }}
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#exampleModal6"
                                   style={{ cursor: 'pointer', color: 'blue' }}>
 
                                   {e.Candidate_name}</td>}
@@ -1837,8 +1958,12 @@ const Applylist = () => {
                                   // data-bs-toggle="modal" data-bs-target="#exampleModal6"
                                   style={{ color: 'green', cursor: 'pointer' }}>{e.Candidate_name}</td>}
                               <td>{e.Candidate}</td>
+                              <td>{e.Applied_Designation}</td>
+
                               {/* <td>{e.InterviewDate}</td> */}
-                              <td>{e.interviewer}</td>
+                              <td>{e.interviewer_name}</td>
+                              <td>{convertToReadableDateTime(e.ScheduledOn)}</td>
+
                               <td>{e.Assigned_Status}</td>
                               <td>{e.InterviewRoundName}</td>
 
@@ -1848,7 +1973,7 @@ const Applylist = () => {
 
                               {/* <td>{e.Review&&e.Review.interview_Status}</td>
                             <td>{e.Review&&e.Review.ReviewedOn}</td> */}
-                              <td className='break-words '>{e.ScheduledBy} {e.ScheduledBy_name} </td>
+                              <td className='break-words '> {e.ScheduledBy_name} </td>
                               {intervewAsssignedcompleted == 'Completed' && <td >
                                 <button onClick={() => {
                                   setInterviewModal(true)
@@ -1873,15 +1998,16 @@ const Applylist = () => {
                       <SchedulINterviewModalForm fetchdata={fetchdata} fetchdata2={fetchdata2}
                         candidateId={selectedCandidate} show={interviewModal}
                         setshow={setInterviewModal} />
-                      <div class="modal fade" id="exampleModal6" tabindex="-1" aria-labelledby="exampleModalLabel6" aria-hidden="false">
-                        <div class="modal-dialog modal-xl">
+                      <Modal show={interviewReviewmodalShowing} onHide={() => setinterviewreviewModalShowing(false)}
+                        size='xl' >
+                        <Modal.Body>
                           <div class="modal-content">
                             <div class="modal-header">
                               <h1 class="modal-title fs-5" id="exampleModalLabel6">Name : {persondata.FirstName}</h1>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              <button type="button" class="btn-close" onClick={() => setinterviewreviewModalShowing(false)} ></button>
                             </div>
                             <div class="modal-body">
-
+                              {persondata && console.log("hellow", persondata)}
                               <h1>Interview Candidate Information</h1>
                               <table class="table table-bordered">
                                 <tbody>
@@ -1940,9 +2066,7 @@ const Applylist = () => {
 
                                   <tr className={` ${persondata.Experience ? ' ' : 'd-none'} `}>
                                     <th> {persondata.Fresher === 'true' ? 'Fresher' : 'Experience'}</th>
-
-                                    {/* <th>Experience</th> */}
-                                    {/* <td>{persondata.Experience === 'true' ? 'False' : 'True'}</td> */}
+                                    <td>{persondata.TotalExperience}</td>
                                   </tr>
                                   <tr className={` ${persondata.Experience ? ' ' : 'd-none'} `}>
                                     <th>GeneralSkills with Exp</th>
@@ -1981,16 +2105,24 @@ const Applylist = () => {
                                     <th>Year of Passout</th>
                                     <td>{persondata.YearOfPassout}</td>
                                   </tr>
-
-
+                                  {persondata.CurrentDesignation &&
+                                    <tr>
+                                      <th>Current Designation</th>
+                                      <td>{persondata.CurrentDesignation}</td>
+                                    </tr>}
                                   <tr>
                                     <th>Applied Designation</th>
                                     <td>{persondata.AppliedDesignation}</td>
                                   </tr>
                                   <tr>
+                                    <th>Current Salary</th>
+                                    <td>{persondata.CurrentCTC}</td>
+                                  </tr>
+                                  <tr>
                                     <th>Expected Salary</th>
                                     <td>{persondata.ExpectedSalary}</td>
                                   </tr>
+
                                   <tr>
                                     <th>Contacted By</th>
                                     <td>{persondata.ContactedBy}</td>
@@ -2026,16 +2158,17 @@ const Applylist = () => {
 
 
                                 {/* <button type="button" class="btn btn-info">Offer Letter</button> */}
-                                <button className='btn btn-success btn-sm' data-bs-toggle="modal"
-                                  data-bs-target="#exampleModal15">
+                                <button onClick={() => { setinterviewFormFillingModal(true); setinterviewreviewModalShowing(false) }}
+                                  className='btn btn-success btn-sm'>
                                   Proceed
                                 </button>
 
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
+
+                        </Modal.Body>
+                      </Modal>
                       <div class="modal fade" id="exampleModal13" tabindex="-1" aria-labelledby="exampleModalLabel13" aria-hidden="false">
                         <div class="modal-dialog modal-fullscreen">
                           <div class="modal-content">
@@ -2408,21 +2541,24 @@ const Applylist = () => {
 
                 {/* Tab 4 start */}
                 <div class="tab-pane fade " id="pills-completed" role="tabpanel" aria-labelledby="pills-completed-tab" tabindex="0" >
-
-
-                  <div className='d-flex justify-content-between mb-4 ' style={{ position: 'absolute', top: '185px', width: '78%' }}>
-
+                  <div className='d-flex justify-content-between ' >
                     <ul class="nav nav-pills mb-1 w-100" style={{ display: 'flex', justifyContent: 'space-between' }} id="pills-tab" role="tablist">
 
-                      <div>
-
-                        <div class="input-group mb-3 ">
-                          <span class="input-group-text" id="basic-addon1"> <i class="fa-solid fa-magnifying-glass" ></i>  </span>
-                          <input type="text" value={searchFinalValue} style={{ width: '200px', height: '30px', fontSize: '9px', outline: 'none' }}
-                            onChange={(e) => {
-                              handlesearchFinalValuesearchvalue(e.target.value)
-                            }} class="form-control shadow-none" aria-label="Username" aria-describedby="basic-addon1" />
-                        </div>
+                      <div className='bgclr rounded p-1'>
+                        <input type="text"
+                          onChange={(e) => {
+                            let value = e.target.value
+                            let newarry = [...FinalData].filter((obj) =>
+                              (obj.FirstName && obj.FirstName.toLowerCase().indexOf(value) != -1) ||
+                              (obj.CandidateId && obj.CandidateId.toLowerCase().indexOf(value) != -1) ||
+                              (obj.FinalResult && obj.FinalResult.toLowerCase().indexOf(value) != -1) ||
+                              (obj.AppliedDesignation && obj.AppliedDesignation.toLowerCase().indexOf(value) != -1) ||
+                              (obj.Email && obj.Email.toLowerCase().indexOf(value) != -1) ||
+                              (obj.PrimaryContact && obj.PrimaryContact.toLowerCase().indexOf(value) != -1)
+                            )
+                            setFilterFinalData(newarry)
+                          }}
+                          className='outline-none text-sm bg-transparent' placeholder='Search...  ' />
                       </div>
 
                       <div>
@@ -2449,10 +2585,10 @@ const Applylist = () => {
                   </div>
 
 
-                  <div className='rounded mt-4'>
-                    <table class="table caption-top     table-hover">
+                  <div className='rounded pt-0 h-[50vh] overflow-y-scroll table-responsive tablebg mt-4'>
+                    <table class="w-full">
                       <thead >
-                        <tr >
+                        <tr className='sticky top-0 bgclr1 '>
 
                           <th scope="col"><span className='fw-medium'>All</span></th>
                           <th scope="col"><span className='fw-medium'>Name</span></th>
@@ -2460,18 +2596,17 @@ const Applylist = () => {
                           <th scope="col"><span className='fw-medium'>Email</span></th>
                           <th scope="col"><span className='fw-medium'>Phone</span></th>
                           <th scope="col"><span className='fw-medium'>Applied Designation</span></th>
-
                           <th scope="col"><span className='fw-medium'>Final Result</span></th>
                         </tr>
                       </thead>
-                      {FinalData != undefined && FinalData != undefined && FinalData.slice(0, load3).map((e) => {
+                      {filterFinalData != undefined && filterFinalData != undefined && filterFinalData.map((e) => {
                         return (
-
                           <tbody>
                             <tr key={e.id}>
-                              <th scope="row"><input type="checkbox" value={e.CandidateId} onChange={handleCheckboxChange3} /></th>
+                              <td scope="row"><input type="checkbox" value={e.CandidateId} onChange={handleCheckboxChange3} /></td>
 
-                              <td onClick={() => Callfinal_details_data(e.CandidateId, e.id)} data-bs-toggle="modal" data-bs-target="#exampleModal12" style={{ cursor: 'pointer', color: 'blue' }}>{e.FirstName}</td>
+                              <td onClick={() => Callfinal_details_data(e.CandidateId, e.id)} data-bs-toggle="modal" data-bs-target="#exampleModal12"
+                                style={{ cursor: 'pointer', color: 'blue' }}>{e.FirstName}</td>
                               <td > {e.CandidateId}</td>
                               <td >{e.Email}</td>
                               <td >{e.PrimaryContact}</td>
@@ -2487,14 +2622,14 @@ const Applylist = () => {
                                     setseleceted_candidateid(e.CandidateId)
                                     setfinal_status_value(d.target.value)
                                     setselectstatus(true)
+                                    setselectedFinalResultName(e.FirstName)
                                   }}>
                                     <option value="">Select</option>
-                                    <option value="Pending">Pending</option>
-                                    <option value="consider_to_client">Consider to Client</option>
-                                    <option value="Internal_Hiring">Internal Hireing</option>
+                                    {/* <option value="Pending">Pending</option> */}
+                                    <option value="consider_to_client">Consider to Client Requirments</option>
+                                    <option value="Internal_Hiring">Internal Hiring</option>
                                     <option value="Reject">Reject</option>
                                     <option value="on_hold">On Hold</option>
-
                                   </select>
                                 </div>
 
@@ -2770,7 +2905,7 @@ const Applylist = () => {
                     </table>
                   </div>
                   <div className='d-flex justify-content-between p-2'>
-                    <button onClick={loadmorefunc3} className='btn btn-sm btn-success'>Load More</button>
+                    {/* <button onClick={loadmorefunc3} className='btn btn-sm btn-success'>Load More</button> */}
                     <div>
                       <button className='btn btn-sm me-3' style={{ backgroundColor: 'rgb(240,179,74)' }} onClick={handleDownload3}>
                         {downloading ? 'Downloading...' : 'Download'}
@@ -3324,21 +3459,20 @@ const Applylist = () => {
         </div>
 
 
+
         {/* INTERVIEW FORM start */}
-        <div class="modal fade" id="exampleModal15" tabindex="-1" aria-labelledby="exampleModalLabel15" aria-hidden="false">
-          <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" style={{ backgroundColor: 'transparent !important' }} className='border-0 ' data-bs-dismiss="modal" aria-label="Close" > <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-                  <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
-                </svg></button>
+        <Modal show={interviewformFillingModal} size='xl' onHide={() => setinterviewFormFillingModal(false)} >
+          <Modal.Body className=''>
 
-                <div className=' d-flex justify-content-center w-100'>
-                  <h3 className='text-primary text-center'>INTERVIEW FORM</h3>
 
-                </div>
+            <button type="button" style={{ backgroundColor: 'transparent !important' }}
+              className='border-0 ' onClick={() => setinterviewFormFillingModal(false)} > <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
+              </svg></button>
 
-              </div>
+            <div className=' d-flex flex-col justify-content-center w-100'>
+              <h3 className='text-primary text-center'>INTERVIEW FORM</h3>
+
               <div class="modal-body container-fluid ">
                 <form>
                   {/* Top inputs  start */}
@@ -3364,18 +3498,18 @@ const Applylist = () => {
                         </div>
                         <div className="col-md-6 col-lg-4 mb-3">
                           <label htmlFor="primaryContact" className="form-label"> Date</label>
-                          <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="PrimaryContact" name="PrimaryContact" value={persondata.AppliedDate} />
+                          <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="PrimaryContact" name="PrimaryContact" value={convertToReadableDateTime(persondata.AppliedDate)} />
                         </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
+                        {/* <div className="col-md-6 col-lg-4 mb-3">
                           <label htmlFor="secondaryContact" className="form-label">Location Applied For</label>
                           <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="SecondaryContact" name="SecondaryContact" value={persondata.AppliedDesignation} />
-                        </div>
+                        </div> */}
                         <div className="col-md-6 col-lg-4 mb-3">
                           <label htmlFor="secondaryContact" className="form-label">Source Name</label>
                           <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="State" name="State" value={persondata.JobPortalSource} />
                         </div>
                         <div className="col-md-6 col-lg-4 mb-3">
-                          <label htmlFor="secondaryContact" className="form-label">Contact Number</label>
+                          <label htmlFor="secondaryContact" className="form-label">Mobile Number</label>
                           <input type="tel" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="State" name="State" value={persondata.PrimaryContact} />
                         </div>
                       </div>
@@ -3388,7 +3522,7 @@ const Applylist = () => {
                   <div className="row justify-content-center m-0 mt-4">
                     <div className="col-lg-12 flex flex-wrap  p-4 border rounded-lg">
                       <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="qualification" className="form-label">Qualification:</label>
+                        <label htmlFor="qualification" className="form-label">Education qualification:</label>
                         <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="qualification"
                           value={persondata.HighestQualification} />
                       </div>
@@ -3433,7 +3567,7 @@ const Applylist = () => {
                             }} />
                         </div>}
                       {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="reasonLeaving" className="form-label">Reason For Leaving The Immediate Employer:</label>
+                        <label htmlFor="reasonLeaving" className="form-label">Reason For Leaving previous employer:</label>
                         <input type="text" placeholder='Looking for the different oppertunity ' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="reasonLeaving"
                           value={reasonLeaving} onChange={(e) => setReasonLeaving(e.target.value)} />
                       </div>}
@@ -3674,7 +3808,7 @@ const Applylist = () => {
                           }} />
                       </div>}
                       <div className="col-md-6 col-lg-4 p-3 mb-3 ">
-                        <label htmlFor="overallRanking" className="form-label">Overall Candidate Ranking (1 to 5):</label>
+                        <label htmlFor="overallRanking" className="form-label">Overall Candidate Ranking (1 to 10):</label>
                         <input type="number" disabled={true} className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="overallRanking"
                           value={overallRanking}
                           onChange={(e) => setOverallRanking(e.target.value)} />
@@ -3850,26 +3984,27 @@ const Applylist = () => {
                       <div className="row m-0 pb-2">
                         <div className="col-md-6 col-lg-4 mb-3">
                           <label htmlFor="InterviewerName" className="form-label">Interviewer Name </label>
-                          <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="InterviewerName" name="InterviewerName" value={username} />
+                          <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="InterviewerName" name="InterviewerName"
+                            value={interviewerName} />
                         </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
+                        {/* <div className="col-md-6 col-lg-4 mb-3">
                           <label htmlFor="Signature" className="form-label">Signature</label>
                           <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="Signature" name="Signature" value={signature} onChange={(e) => setSignature(e.target.value)} />
-                        </div>
+                        </div> */}
                         <div className="col-md-6 col-lg-4 mb-3">
                           <label htmlFor="Date" className="form-label">Interview Date</label>
                           <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="Date"
                             name="Date" value={getCurrentDate()} onChange={(e) => setDate1(e.target.value)} />
                         </div>
                         <div className="mb-3 col-md-6 col-lg-4">
-                          <label htmlFor="ageGroup" className="form-label">Interview Status:</label>
+                          <label htmlFor="ageGroup" className="form-label">Interview Status: <span id='interviewstatuserror' className='text-red-500'>* </span> </label>
                           <select className="form-select" id="ageGroup" value={Interviewstatus} onChange={(e) => setInterviewStatus(e.target.value)}>
                             <option value="">Select</option>
-                            <option value="consider_to_client">Consider to Client</option>
-                            <option value="Internal_Hiring">Internal Hiring</option>
-                            <option value="Reject">Rejects</option>
+                            <option value="consider_to_client">Consider to Client requirments</option>
+                            <option value="Internal_Hiring">Shortlisted to Next Round </option>
+                            <option value="Reject">Reject</option>
                             <option value="On_Hold">On Hold</option>
-                            <option value="Offer_did_not_accept">Offerd Did't Accept</option>
+                            {/* <option value="Offer_did_not_accept">Offerd Did't Accept</option> */}
                           </select>
                         </div>
 
@@ -3889,21 +4024,24 @@ const Applylist = () => {
               <div class="modal-footer d-flex justify-content-end">
                 <div className='d-flex gap-2'>
                   <button type="submit" class="btn btn-success btn-sm"
-                    data-bs-dismiss="modal"
-                    onClick={handleproceedingform} >Submit</button>
+                    // data-bs-dismiss="modal"
+                    onClick={handleproceedingform}>
+                    {loading == 'interview' ? 'Loading...' : "Submit"} </button>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
+          </Modal.Body>
+        </Modal>
         {/* INTERVIEW FORM End */}
 
 
       </div >
 
       {/* <Finalstatuscomment setselectstatus={setselectstatus} final_status_value={final_status_value} selectstatus={selectstatus} candidateid={seleceted_candidateid}></Finalstatuscomment> */}
-      <Final_status_comment setselectstatus={setselectstatus} final_status_value={final_status_value} selectstatus={selectstatus} candidateid={seleceted_candidateid} setfinalvalue={setfinal_status_value}></Final_status_comment>
+      <Final_status_comment setselectstatus={setselectstatus} selectedName={selectedFinalResultName}
+        final_status_value={final_status_value} fetchdata3={fetchdata3}
+        selectstatus={selectstatus} candidateid={seleceted_candidateid} setfinalvalue={setfinal_status_value}></Final_status_comment>
 
     </div >
   )

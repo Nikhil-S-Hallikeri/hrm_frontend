@@ -85,31 +85,36 @@ import '../src/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ToastContainer } from 'react-toastify'
 import Applicants from './Components/Applicants'
-
+import InterviewReviewModal from './Components/Modals/InterviewReviewModal'
+import LeaveSetting from './Pages/LeaveCreation'
+import DasRouter from './Pages/DasRouter'
+import SettingRouter from './Pages/SettingPage/SettingRouter'
+import ApprovalPage from './Pages/Approval/ApprovalPage'
 // export const port ="http://192.168.0.117:9000/"
-// export const port = "http://192.168.0.103:9000/"
+// export const port = "http://192.168.0.116:9000/"
 export const port = "https://hrmbackendapi.meridahr.com/"
-
-
+export const domain='https://hrm.meridahr.com'
+// export const domain = 'http://localhost:3000'
 
 const App = () => {
   // const port = "http://192.168.0.106:9000"
 
   return (
-    <div>
-      
+    <div className='bgrd'>
+
       <BrowserRouter>
-      <ToastContainer autoClose={3000} position='top-center' />
-         
+        <ToastContainer autoClose={3000} position='top-center' />
+
         <Routes>
           <Route element={<Login__></Login__>} path='/'></Route>
 
           <Route element={<Signup></Signup>} path='/Signup'></Route>
-
+          <Route path='/dash/*' element={<DasRouter />} />
           <Route element={<Protect Child={Hrdashpage} />} path='dashboard/HR'></Route>
           <Route element={<Protect Child={Hrdashpage} />} path='dashboard/Admin'></Route>
           <Route element={<Protect Child={Recruiterdashpage} />} path='dashboard/Recruiter'></Route>
           <Route element={<Protect Child={Empdashpage} />} path='dashboard/Employee'></Route>
+
 
           <Route element={<Applylist></Applylist>} path='/Applaylist'></Route>
           <Route element={<Employees></Employees>} path='/Employees'></Route>
@@ -125,7 +130,7 @@ const App = () => {
           <Route element={<Activites></Activites>} path='/Activites'></Route>
           <Route element={<Employeeallform></Employeeallform>} path='/Employeeallform/:id'></Route>
           <Route element={<Downloadpdf></Downloadpdf>} path='/Pdfdown'></Route>
-
+          <Route path='/settings/*' element={<SettingRouter/>} />
           <Route element={<Offeraccept></Offeraccept>} path='/offeraccept/:id'></Route>
 
           <Route element={<Employeeseparation></Employeeseparation>} path='/Employeeseparation'></Route>
@@ -182,6 +187,7 @@ const App = () => {
           <Route element={<Employee_request_form></Employee_request_form>} path='/Employee_request_form'></Route>
 
           <Route element={<Applay></Applay>} path='/Applay_List'></Route>
+          <Route element={<InterviewReviewModal />} path='/interviewreview/:id'> </Route>
 
           <Route element={<Employeees></Employeees>} path='/Employee_Overview'></Route>
 
@@ -221,6 +227,7 @@ const App = () => {
           <Route element={<Acti_></Acti_>} path='/Recruiter_Activity'></Route>
 
           <Route element={<Interview_sche></Interview_sche>} path='/Interview_sche'></Route>
+
 
           <Route element={<Letter_of__appointment></Letter_of__appointment>} path='/Letter_of__appointment'></Route>
 

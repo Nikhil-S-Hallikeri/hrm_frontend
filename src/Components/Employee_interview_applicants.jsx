@@ -17,11 +17,13 @@ import { toast } from 'react-toastify';
 
 
 const Employee_interview_applicants = () => {
-  let { formatISODate, convertToReadableTime, getCurrentDate, convertToReadableDateTime } = useContext(HrmStore)
+  let { formatISODate, convertToReadableTime, getCurrentDate, setActivePage, convertToReadableDateTime } = useContext(HrmStore)
 
   let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
   let username = JSON.parse(sessionStorage.getItem('user')).UserName
-
+  useEffect(() => {
+    setActivePage('Applicants')
+  }, [])
 
   const [tab, setTab] = useState("newleads")
 
@@ -857,16 +859,16 @@ const Employee_interview_applicants = () => {
 
   return (
     <div className=' d-flex'
-      style={{ width: '100%', minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
+      style={{ width: '100%', minHeight: '100%', }}>
 
-      <div className='side'>
+      <div className='d-none d-lg-flex'>
 
         {/* <Sidebar value={"dashboard"} ></Sidebar> */}
         {/* <Recsidebar></Recsidebar> */}
         <Empsidebar value={"dashboard"}></Empsidebar>
 
       </div>
-      <div className='w-[80%] p-3 m-0 m-sm-4 side-blog' style={{ borderRadius: '10px' }}>
+      <div className='flex-1 container mx-auto ' style={{ borderRadius: '10px' }}>
         <Topnav ></Topnav>
 
         <div className='d-flex container justify-content-between mt-4'>
@@ -908,7 +910,7 @@ const Employee_interview_applicants = () => {
             </div>
           </ul>
           <div className='rounded mx-3 bg-slate-400 w-fit'>
-            <button onClick={() => { setInterViewAssignedCompleted('Assigned');  }}
+            <button onClick={() => { setInterViewAssignedCompleted('Assigned'); }}
               className={`${intervewAsssignedcompleted == 'Assigned' ? "bg-blue-600" : 'bg-slate-400'}
                      text-white p-2 duration-500 transition rounded `}>Assigned </button>
             <button onClick={() => { setInterViewAssignedCompleted('Completed'); }}
@@ -916,8 +918,8 @@ const Employee_interview_applicants = () => {
                      text-white p-2 duration-500 transition rounded `}>Completed </button>
           </div>
 
-          <div className='mt-1 table-responsive p-2 ' style={{ width: '100%' }}>
-            <table class="table caption-top  table-hover table-responsive">
+          <div className='mt-1 rounded-xl my-2 tablebg table-responsive p-2 ' style={{ width: '100%' }}>
+            <table class="w-full ">
               <thead >
                 <tr >
                   {/* <th scope="col"></th> */}

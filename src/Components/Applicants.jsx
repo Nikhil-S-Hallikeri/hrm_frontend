@@ -19,12 +19,13 @@ import InterviewCompletedModal from './Modals/InterviewCompletedModal';
 
 
 const Applicants = () => {
-  let { formatISODate, convertToReadableTime, getCurrentDate, convertToReadableDateTime } = useContext(HrmStore)
+  let { formatISODate, convertToReadableTime, getCurrentDate, convertToReadableDateTime, setActivePage } = useContext(HrmStore)
   let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
   let username = JSON.parse(sessionStorage.getItem('user')).UserName
   let [interviewSchedulForm, setInterviewScheduleForm] = useState(false)
+  let userPermission = JSON.parse(sessionStorage.getItem('user')).user_permissions
+
   let [carrylaptop, setcarrylaptop] = useState(false)
-  
   let [interviewCompletedDetailsModal, setInterviewCompleteDetailsModal] = useState()
   const [tab, setTab] = useState("newleads")
 
@@ -119,6 +120,7 @@ const Applicants = () => {
   }
   useEffect(() => {
     fetchdata2()
+    setActivePage('Applicants')
   }, [])
 
   const handleStatusChange = (e, value) => {
@@ -457,7 +459,7 @@ const Applicants = () => {
         })
         .catch(error => {
           // Handle errors if any
-          console.error('Error sending data:', error);
+          console.error('person data', error);
         });
     }
   };
@@ -585,7 +587,7 @@ const Applicants = () => {
   const [relocationToCenters, setRelocationToCenters] = useState('');
   const [screeningFeedback, setScreeningFeedback] = useState('');
 
-  const [interviewerName, setInterviewerName] = useState('');
+  const [interviewerName, setInterviewerName] = useState(username);
   const [signature, setSignature] = useState('');
   const [date1, setDate1] = useState('');
   const [comments, setComments] = useState('');
@@ -651,7 +653,7 @@ const Applicants = () => {
       let avg = (((Number(jobStability) + Number(englishSkills) + Number(technicalAwareness) + Number(confidenceLevel)
         + Number(interpersonalSkills) + Number(logicalReasoning) + Number(driveProblemSolving) + Number(takeUpChallenges)
         + Number(leadershipAbilities) + Number(targetPressure) + Number(customerService) + Number(codeans ? codeans : 0)
-        + Number(appearancePersonality) + Number(clarityThought)) / count) / 2).toFixed(2)
+        + Number(appearancePersonality) + Number(clarityThought)) / count)).toFixed(2)
       setOverallRanking(avg)
       console.log(avg);
     }
@@ -717,8 +719,8 @@ const Applicants = () => {
     formData1.append('RelocateToOtherCenters', relocationToCenters);
     formData1.append('interview_Status', Interviewstatus);
 
-    formData1.append('ReviewedBy', username);
-    formData1.append('InterviewerName', username);
+    formData1.append('ReviewedBy', Empid);
+    formData1.append('InterviewerName', interviewerName);
     formData1.append('Signature', signature);
     formData1.append('ReviewedDate', date1);
     formData1.append('Comments', comments);
@@ -791,8 +793,8 @@ const Applicants = () => {
     formData1.append('Residingat', StayWith);
     formData1.append('Native', Native);
     formData1.append('Mother_Tongue', motherTongue)
-    formData1.append('InterviewerName', username);
-    formData1.append('ReviewedBy', username);
+    formData1.append('InterviewerName', interviewerName);
+    formData1.append('ReviewedBy', Empid);
     formData1.append('Signature', signature);
     formData1.append('Date1', date1);
     formData1.append('interviewtime', interviewtime);
@@ -1090,7 +1092,7 @@ const Applicants = () => {
       setFilteredApplicants([...screeningCompleted])
   }, [screeningAC])
   return (
-    <div className=' d-flex' style={{ width: '100%', minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
+    <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
       {<SceeringCompletedCandiateModal show={screeningCompletedCandidateDetailModal}
         persondata={persondata}
         setshow={setscreeningCompletedCandidateDetailModal} setPersondata={setPersondata}
@@ -1102,13 +1104,14 @@ const Applicants = () => {
       {persondata && <SchedulINterviewModalForm candidateId={candidateIdInterview} setcandidateId={setCandidateIdInterview}
         fetchdata={fetchData} fetchdata2={fetchdata2} show={interviewSchedulForm} persondata={persondata}
         setshow={setInterviewScheduleForm} setPersondata={setPersondata} />}
-      <div className='side'>
 
+
+
+      <div className='d-none d-lg-flex'>
         {/* <Sidebar value={"dashboard"} ></Sidebar> */}
         <Recsidebar></Recsidebar>
-
       </div>
-      <div className=' m-0 m-sm-4  side-blog ' style={{ borderRadius: '10px', position: 'relative', left: '30px' }}>
+      <div className=' m-0 m-sm-4  flex-1 container mx-auto ' style={{ borderRadius: '10px', }}>
         <Topnav ></Topnav>
 
         <div className='d-flex justify-content-between mt-4'>
@@ -1201,7 +1204,7 @@ const Applicants = () => {
                         {screeningAC == 'completed' &&
                           <th scope="col"><span className='fw-medium'>Screening Status</span></th>}
                         {/* <th scope="col"><span className='fw-medium'>Reviewed On</span></th> */}
-                        {screeningAC == 'completed' && <th scope="col">
+                        {screeningAC == 'completed' && userPermission.interview_shedule_access && <th scope="col">
                           <span className='fw-medium'>Schedule Interview</span>
                         </th>}
                         {/* <th scope="col"><span className='fw-medium'>View</span></th> */}
@@ -1241,7 +1244,7 @@ const Applicants = () => {
                           {screeningAC == 'completed' && <td>{e.Review && e.Review.Screening_Status}</td>}
 
                           <td>{convertToReadableDateTime(e.Date_of_assigned)}  <small className='ms-2'>  </small>   {e.Time_of_assigned} </td>
-                          {screeningAC == 'completed' && <td>
+                          {screeningAC == 'completed' && userPermission.interview_shedule_access && <td>
                             <button disabled={e.Review && e.Review.Screening_Status != 'scheduled'} onClick={() => {
                               setCandidateIdInterview(e.Candidate)
                               setInterviewScheduleForm(true);
@@ -1402,7 +1405,8 @@ const Applicants = () => {
                               {/* <button type="button" class="btn btn-primary">Assign Task</button> */}
 
                               {/* <button type="button" class="btn btn-success" data-bs-target="#exampleModalToggle5" data-bs-toggle="modal">Schudle Interview</button> */}
-                              <button className='btn btn-success btn-sm' onClick={() => setscreeningModal(true)}
+                              <button className='btn btn-success btn-sm'
+                                onClick={() => setscreeningModal(true)}
                                 data-bs-dismiss="modal"
                                 data-bs-target="#exampleModal13"
                               >
@@ -1836,13 +1840,11 @@ const Applicants = () => {
 
                                 {/* Experience Start */}
 
-
+                                {persondata && console.log('hellow', persondata)}
 
                                 <tr className={` ${persondata.Experience ? ' ' : 'd-none'} `}>
                                   <th> {persondata.Fresher === 'true' ? 'Fresher' : 'Experience'}</th>
-
-                                  {/* <th>Experience</th> */}
-                                  {/* <td>{persondata.Experience === 'true' ? 'False' : 'True'}</td> */}
+                                  <td>{persondata.TotalExperience}</td>
                                 </tr>
                                 <tr className={` ${persondata.Experience ? ' ' : 'd-none'} `}>
                                   <th>GeneralSkills with Exp</th>
@@ -1854,8 +1856,7 @@ const Applicants = () => {
                                 </tr>
                                 <tr className={` ${persondata.Experience ? ' ' : 'd-none'} `}>
                                   <th>SoftSkills with Exp</th>
-                                  <td>{persondata.SoftSkills_with_Exp}</td>
-                                </tr>
+                                  <td>{persondata.SoftSkills_with_Exp}</td></tr>
                                 {/* Experience Start */}
 
 
@@ -1881,11 +1882,18 @@ const Applicants = () => {
                                   <th>Year of Passout</th>
                                   <td>{persondata.YearOfPassout}</td>
                                 </tr>
-
+                                <tr>
+                                  <th>Current Designation</th>
+                                  <td>{persondata.CurrentDesignation}</td>
+                                </tr>
 
                                 <tr>
                                   <th>Applied Designation</th>
                                   <td>{persondata.AppliedDesignation}</td>
+                                </tr>
+                                <tr>
+                                  <th>Current Salary</th>
+                                  <td>{persondata.CurrentCTC}</td>
                                 </tr>
                                 <tr>
                                   <th>Expected Salary</th>
@@ -2262,7 +2270,7 @@ const Applicants = () => {
                         <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="State" name="State" value={persondata.JobPortalSource} />
                       </div>
                       <div className="col-md-6 col-lg-4 mb-3">
-                        <label htmlFor="secondaryContact" className="form-label">Contact Number</label>
+                        <label htmlFor="secondaryContact" className="form-label">Mobile Number</label>
                         <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="State" name="State" value={persondata.PrimaryContact} />
                       </div>
                     </div>
@@ -2294,7 +2302,7 @@ const Applicants = () => {
                         </div> */}
 
                       <div className="mb-3 col-md-6 col-lg-6">
-                        <label htmlFor="ageGroup" className="form-label">Merital Status <span className=' text-red-600' id='marryerror' >*  </span> </label>
+                        <label htmlFor="ageGroup" className="form-label">Marrital Status <span className=' text-red-600' id='marryerror' >*  </span> </label>
                         <select className="form-select" id="ageGroup"
                           value={Meritalstatus} onChange={(e) => setMeritalStatus(e.target.value)}>
                           <option value="">Select</option>
@@ -2325,13 +2333,13 @@ const Applicants = () => {
                           <option value="">Select</option>
                           <option value="Legally seperated">Legally Seperated </option>
                           <option value="Still not settled">Still not settled </option>
-                          <option value="Not willing to answer">Not willing to answer </option>
+                          {/* <option value="Not willing to answer">Not willing to answer </option> */}
                         </select>
                       </div>
                       }
 
                       <div className="col-md-6 col-lg-6 mb-3">
-                        <label htmlFor="primaryContact" className="form-label">Legal Cases</label>
+                        <label htmlFor="primaryContact" className="form-label">Legal Suits</label>
                         <input type="text" placeholder='Legal case description.' className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="PrimaryContact" name="PrimaryContact"
                           value={Leagel_cases} onChange={(e) => setLeagelCase(e.target.value)} />
                       </div>
@@ -2367,7 +2375,7 @@ const Applicants = () => {
                         <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="State" placeholder='Bengaluru' name="State" value={CurrentLocation} onChange={(e) => setCurrentLocation(e.target.value)} />
                       </div>
                       <div className="col-md-6 col-lg-6 mb-3">
-                        <label htmlFor="secondaryContact" className="form-label">Mode of Commutations <span className=' text-red-600' id='commutationerror' >*  </span> </label>
+                        <label htmlFor="secondaryContact" className="form-label">Mode of Commutation to work <span className=' text-red-600' id='commutationerror' >*  </span> </label>
                         <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" placeholder='Bus / Bike' id="State" name="State" value={TravellBy} onChange={(e) => setTravellBy(e.target.value)} />
                       </div>
                       <div className="col-md-6 col-lg-6 mb-3">
@@ -2423,7 +2431,7 @@ const Applicants = () => {
                         </select>
                       </div>
                       <div className="mb-3  col-md-6 col-lg-6">
-                        <label htmlFor="ageGroup" className="form-label text-success">Flexibility on Working Timings:</label>
+                        <label htmlFor="ageGroup" className="form-label text-success">Flexibility on work Timings:</label>
                         <select className="form-select " id="ageGroup" value={FlexibilityonWorkingTimings} onChange={(e) => setFlexibilityonWorkingTimings(e.target.value)}>
                           <option value="">Select</option>
                           <option value="yes">Yes</option>
@@ -2457,7 +2465,7 @@ const Applicants = () => {
                         </select>
                       </div>
                       <div className="mb-3  col-md-6 col-lg-6">
-                        <label htmlFor="ageGroup" className="form-label">Able to carry the laptop:</label>
+                        <label htmlFor="ageGroup" className="form-label"> Have personal Laptop dor work purpose  : </label>
                         <select className="form-select " id="ageGroup" value={carrylaptop} onChange={(e) => setcarrylaptop(e.target.value)}>
                           <option value="">Select</option>
                           <option value="yes">Yes</option>
@@ -2499,7 +2507,8 @@ const Applicants = () => {
                     <div className="row m-0 pb-2">
                       <div className="col-md-6 col-lg-6 mb-3">
                         <label htmlFor="InterviewerName" className="form-label">Interviewer Name </label>
-                        <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="InterviewerName" name="InterviewerName" value={username} />
+                        <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="InterviewerName" name="InterviewerName"
+                          value={interviewerName} />
                       </div>
 
 
@@ -2507,10 +2516,10 @@ const Applicants = () => {
                         <label htmlFor="researchCompany" className="form-label">Screening Status: <span className=' text-red-600' id='statuserror' >*  </span> </label>
                         <select className="form-select" id="researchCompany" value={screeningstatus} onChange={(e) => setScreeningscreeningstatus(e.target.value)}>
                           <option value="">Select</option>
-                          <option value="scheduled">Scheduled</option>
+                          <option value="scheduled">Shortlisted to Next Round</option>
                           <option value="rejected"> Rejected </option>
-                          <option value="walkout">Walk out </option>
-                          <option value="to_client">Schedules Interview to Client</option>
+                          <option value="walkout">Walked-out </option>
+                          <option value="to_client">Consider to Client Requirments </option>
                         </select>
                       </div>
                       <div className="col-md-12 col-lg-12 mb-3">
@@ -2606,7 +2615,7 @@ const Applicants = () => {
                   <div className="row justify-content-center m-0 mt-4">
                     <div className="col-lg-12 flex flex-wrap  p-4 border rounded-lg">
                       <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="qualification" className="form-label">Qualification:</label>
+                        <label htmlFor="qualification" className="form-label">Education qualification:</label>
                         <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="qualification"
                           value={persondata.HighestQualification} />
                       </div>
@@ -2651,7 +2660,7 @@ const Applicants = () => {
                             }} />
                         </div>}
                       {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="reasonLeaving" className="form-label">Reason For Leaving The Immediate Employer:</label>
+                        <label htmlFor="reasonLeaving" className="form-label">Reason For Leaving previous employer:</label>
                         <input type="text" placeholder='Looking for the different oppertunity ' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="reasonLeaving"
                           value={reasonLeaving} onChange={(e) => setReasonLeaving(e.target.value)} />
                       </div>}
@@ -2892,7 +2901,7 @@ const Applicants = () => {
                           }} />
                       </div>}
                       <div className="col-md-6 col-lg-4 p-3 mb-3 ">
-                        <label htmlFor="overallRanking" className="form-label">Overall Candidate Ranking (1 to 5):</label>
+                        <label htmlFor="overallRanking" className="form-label">Overall Candidate Ranking (1 to 10):</label>
                         <input type="number" disabled={true} className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="overallRanking"
                           value={overallRanking}
                           onChange={(e) => setOverallRanking(e.target.value)} />
@@ -3068,12 +3077,13 @@ const Applicants = () => {
                       <div className="row m-0 pb-2">
                         <div className="col-md-6 col-lg-4 mb-3">
                           <label htmlFor="InterviewerName" className="form-label">Interviewer Name </label>
-                          <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="InterviewerName" name="InterviewerName" value={username} />
+                          <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="InterviewerName" name="InterviewerName"
+                            value={interviewerName} />
                         </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
+                        {/* <div className="col-md-6 col-lg-4 mb-3">
                           <label htmlFor="Signature" className="form-label">Signature</label>
                           <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="Signature" name="Signature" value={signature} onChange={(e) => setSignature(e.target.value)} />
-                        </div>
+                        </div> */}
                         <div className="col-md-6 col-lg-4 mb-3">
                           <label htmlFor="Date" className="form-label">Interview Date</label>
                           <input type="text" className="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" id="Date"
@@ -3083,11 +3093,11 @@ const Applicants = () => {
                           <label htmlFor="ageGroup" className="form-label">Interview Status:</label>
                           <select className="form-select" id="ageGroup" value={Interviewstatus} onChange={(e) => setInterviewStatus(e.target.value)}>
                             <option value="">Select</option>
-                            <option value="consider_to_client">Consider to Client</option>
-                            <option value="Internal_Hiring">Internal Hiring</option>
-                            <option value="Reject">Rejects</option>
+                            <option value="consider_to_client">Consider to client requirments </option>
+                            <option value="Internal_Hiring"> Selected </option>
+                            <option value="Reject">Reject</option>
                             <option value="On_Hold">On Hold</option>
-                            <option value="Offer_did_not_accept">Offerd Did't Accept</option>
+                            {/* <option value="Offer_did_not_accept">Offerd Did't Accept</option> */}
                           </select>
                         </div>
 

@@ -358,12 +358,7 @@ const Sample_acti_rec = () => {
                                                         <input type="number"
                                                             value={activity.Total_Achived}
 
-                                                            className={`form-control border-0 shadow-none text-center text-white  
-                                                         ${activity.status === "Green" ? 'bg-success' :
-                                                                    activity.status === "Yellow" ? 'bg-warning' :
-                                                                        activity.status === "Red" ? 'bg-danger' :
-                                                                            activity.status === "Orange" ? 'bg-info' :
-                                                                                'bg-info'} `}
+                                                            className={`form-control border-0 shadow-none text-center text-white `}
                                                         />
                                                     </td>
                                                     {dates.map((date) => {

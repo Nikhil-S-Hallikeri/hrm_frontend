@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Empsidebar from './Empsidebar';
 
 import Topnav from './Topnav'
 import axios from 'axios'
 import { port } from '../App'
+import { HrmStore } from '../Context/HrmContext';
+import { Transition } from 'react-d3-speedometer';
 
 
 
-const Employee_request_form= () => {
+const Employee_request_form = () => {
 
     let Profile_Info = JSON.parse(sessionStorage.getItem('Login_Profile_Information'))
 
     // EMPLOYEE RESIGNATION FORM  START
-
+    let { setActivePage } = useContext(HrmStore)
+    useEffect(() => {
+        setActivePage('request')
+    }, [])
     const [Reason, setReason] = useState('');
     const [HRmanager, setHRmanager] = useState('');
     const [resigned_letter_file, setresigned_letter_file] = useState({});
@@ -56,7 +61,7 @@ const Employee_request_form= () => {
 
     // HR Manager Start
 
-    const [interviewers,setinterviewers]=useState([])
+    const [interviewers, setinterviewers] = useState([])
 
     useEffect(() => {
 
@@ -69,14 +74,14 @@ const Employee_request_form= () => {
 
 
     return (
-        <div className=' d-flex' style={{ width: '100%',minHeight : '100%', backgroundColor: "rgb(249,251,253)" }}>
+        <div className=' d-flex' style={{ width: '100%', minHeight: '100%'}}>
 
-            <div className='side'>
+            <div className='d-none d-lg-flex'>
 
                 {/* <Sidebar value={"dashboard"} ></Sidebar> */}
                 <Empsidebar></Empsidebar>
             </div>
-            <div className=' m-0 m-sm-4  side-blog' style={{ borderRadius: '10px' }}>
+            <div className=' m-0 flex-1 p-sm-4 transi' style={{ borderRadius: '10px' }}>
                 <Topnav></Topnav>
 
                 <div>
@@ -105,11 +110,11 @@ const Employee_request_form= () => {
                                             <label htmlFor="email" className="form-label">Reporting manager*</label>
                                             <input type="text" className="form-control shadow-none" value={Profile_Info.RepotringTo_Name === null ? `${Profile_Info.full_name} , ${Profile_Info.RepotringTo_Id}` : `${Profile_Info.RepotringTo_Name} , ${Profile_Info.RepotringTo_Id}`} id="Email" name="Email" />
                                         </div>
-                                       
+
                                         {/*  */}
                                         <div class="col-md-6 col-lg-4 mb-3">
                                             <label for="interviewer">HR manager*</label>
-                                            <select id="interviewer" name="interviewer" onChange={(e) => setHRmanager(e.target.value)}  required class="form-control">
+                                            <select id="interviewer" name="interviewer" onChange={(e) => setHRmanager(e.target.value)} required class="form-control">
                                                 <option value="" selected>Select Name</option>
                                                 {interviewers.map(interviewer => (
                                                     <option key={interviewer.EmployeeId} value={interviewer.EmployeeId}>

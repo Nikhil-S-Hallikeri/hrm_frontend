@@ -1,19 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Sidebar from './Sidebar'
 import Topnav from './Topnav'
 import axios from 'axios'
 import { port } from '../App'
+import { HrmStore } from '../Context/HrmContext'
+import PlusIcon from '../SVG/PlusIcon'
+import CreateDepartment from './Modals/CreateDepartment'
+import CreateDesignation from './Modals/CreateDesignation'
 
 
 
 const Employeees = () => {
-
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
 
     const [AllDepartmentlist, setAllDepartmentlist] = useState([])
     const [AllDesignationlist, setAllDesignationlist] = useState([])
     const [AllEmployeelist, setAllEmployeelist] = useState([])
-
+    let [deptModal, setdeptmodal] = useState(false)
+    let [designationModal, setDesignationmodal] = useState(false)
 
 
     const [EMPLOYEE_INFORMATION, setEMPLOYEE_INFORMATION] = useState([])
@@ -32,8 +36,10 @@ const Employeees = () => {
     const [ATTACHMENTS, setATTACHMENTS] = useState([])
     const [DOCUMENTS_SUBMITED, setDOCUMENTS_SUBMITED] = useState([])
     const [DECLARATION, setDECLARATION] = useState([])
-
-
+    let { setActivePage } = useContext(HrmStore)
+    useEffect(() => {
+        setActivePage('Employee')
+    }, [])
     // useEffect(() => {
 
     //     fetchdata()
@@ -91,7 +97,6 @@ const Employeees = () => {
                 // setEMERGENCY_DETAILS(response.data.EmergencyDetails);
                 // setLAST_POSITION_HELD(response.data.LastPositionHeldDetails);
                 // setEXPERIENCE_LAST_POSITION(response.data.ExperienceDetails);
-
             })
             .catch(error => {
 
@@ -99,10 +104,7 @@ const Employeees = () => {
             });
     };
 
-
-
-    useEffect(() => {
-
+    let getDept = () => {
         axios.get(`${port}/root/ems/DepartmentList/${Empid}/`).then((res) => {
             console.log("DepartmentList_res", res.data);
             setAllDepartmentlist(res.data)
@@ -110,7 +112,10 @@ const Employeees = () => {
         }).catch((err) => {
             console.log("DepartmentList_err", err.data);
         })
+    }
 
+    useEffect(() => {
+        getDept()
     }, [])
 
 
@@ -123,13 +128,12 @@ const Employeees = () => {
 
 
     return (
-        <div className=' d-flex' style={{ width: '100%',minHeight : '100%', backgroundColor: "rgb(249,251,253)" }}>
-
-            <div className='side'>
+        <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
+            <div className=''>
 
                 <Sidebar value={"dashboard"} ></Sidebar>
             </div>
-            <div className=' m-0 m-sm-4  side-blog' style={{ borderRadius: '10px' }}>
+            <div className=' m-0 m-sm-4  flex-1  mx-auto ' style={{ borderRadius: '10px' }}>
                 <Topnav></Topnav>
 
                 {/* DEPARTMENT LIST START */}
@@ -139,9 +143,22 @@ const Employeees = () => {
                     <div className='m-1 p-1' style={{ display: 'flex', justifyContent: 'space-between' }}>
 
                         <h6 className='mt-2 heading' style={{ color: 'rgb(76,53,117)' }}>Department List</h6>
+                        <section className='flex gap-3'>
 
+                            <button onClick={() => setdeptmodal(true)} className='flex gap-2 items-center text-sm 
+                        rounded p-2 px-3 shadow-sm btngrd text-white'>
+                                <PlusIcon />  Add Department
+                            </button>
+                            <button onClick={() => setDesignationmodal(true)} className='flex gap-2 items-center text-sm 
+                        rounded p-2 px-3 shadow-sm btngrd text-white'>
+                                <PlusIcon />  Add Designation
+                            </button>
+
+                        </section>
 
                     </div>
+                    <CreateDepartment show={deptModal} setshow={setdeptmodal} getdept={getDept} />
+                    <CreateDesignation show={designationModal} setshow={setDesignationmodal} />
 
                     <div className='row  m-0 p-1 mt-3'>
 
@@ -150,48 +167,35 @@ const Employeees = () => {
 
                                 <div className="col-md-12 col-lg-4 mb-3  p-2">
 
-                                    <div style={{ backgroundColor: 'white' }} className='p-2  border border-secondary' >
-
+                                    <div onClick={() => {
+                                        setDEPARTMENT_LIST(false)
+                                        setDESIGNATION_LIST(true)
+                                        Call_Designation_list(e.id)
+                                    }} className='p-2 border-2 rounded border-white cursor-pointer
+                                     bg-slate-50 order-secondary' >
                                         <div className='d-flex'>
                                             <div className='w-75'>
-                                                <h2 style={{ cursor: 'pointer' }} className='ps-3 '
-
-                                                    onClick={() => {
-
-                                                        setDEPARTMENT_LIST(false)
-                                                        setDESIGNATION_LIST(true)
-                                                        Call_Designation_list(e.id)
-                                                    }
-                                                    }
-
-                                                >{e.Department}</h2>
+                                                <h2 style={{ cursor: 'pointer' }} className='ps-3 '> {e.Department}</h2>
                                                 <h6 style={{ color: 'rgb(76,53,117)' }} className='ps-3'>Department</h6>
                                             </div>
                                             <div className='w-25 text-center '>
-                                                <h1 style={{ color: 'rgb(76,53,117)' }} className='mt-3 '>{e.No_Of_Employees}</h1>
+                                                <h2 style={{ color: 'rgb(76,53,117)' }} className='mt-3 '>{e.No_Of_Employees}</h2>
                                             </div>
-
                                         </div>
-
                                     </div>
-
                                 </div>
-
-
-
                             )
                         })}
                     </div>
-
                 </div>
                 {/* DEPARTMENT LIST END */}
 
                 {/* DESIGNATION LIST START */}
                 <div className={` ${DESIGNATION_LIST ? '' : 'd-none '}`}>
 
-                    <div className='m-1 p-1' style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div className='m-1  p-1' style={{ display: 'flex', justifyContent: 'space-between' }}>
 
-                        <div className='d-flex'>
+                        <div className=' d-flex'>
                             <h6
                                 onClick={() => {
 
@@ -218,19 +222,17 @@ const Employeees = () => {
 
                                 <div className="col-md-12 col-lg-4 mb-3  p-2">
 
-                                    <div style={{ backgroundColor: 'white', width: '330px', height: '100px' }} className='p-2  border border-secondary' >
+                                    <div onClick={() => {
+                                        Call_Employee_list(e.id)
+                                        setDESIGNATION_LIST(false)
+                                        setEMPLOYEE_DATA_LIST(true)
+                                    }
+                                    } style={{ width: '330px', height: '100px' }} className='p-2 cursor-pointer rounded-xl bg-slate-50 border-white border-2 border-secondary' >
 
                                         <div className='d-flex'>
                                             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'start' }} className='w-75 pt-1'>
                                                 <h5 style={{ cursor: 'pointer' }} className='ps-3 '
-                                                    onClick={() => {
 
-                                                        Call_Employee_list(e.id)
-                                                        setDESIGNATION_LIST(false)
-                                                        setEMPLOYEE_DATA_LIST(true)
-
-                                                    }
-                                                    }
 
                                                 >{e.Designation}</h5>
                                                 <p style={{ color: 'rgb(76,53,117)' }} className='ps-3'>Department</p>
@@ -262,11 +264,8 @@ const Employeees = () => {
                         <div className='d-flex'>
                             <h6
                                 onClick={() => {
-
-
                                     setDESIGNATION_LIST(true)
                                     setEMPLOYEE_DATA_LIST(false)
-
                                 }}
 
                                 className='ms-1'><i style={{ color: 'black' }} class="fa-solid fa-arrow-left mt-2" ></i></h6>
@@ -284,26 +283,19 @@ const Employeees = () => {
 
                                 <div className="col-12 col-sm-3 mb-3  p-2">
 
-                                    <div style={{ backgroundColor: 'white', border: '.5px solid black',Width: '230px', height: '200px' }} className='p-2 ' >
-
+                                    <div style={{ border: '.5px solid black', Width: '230px', height: '200px' }}
+                                        className='p-2 bg-slate-50 rounded-xl border-2 border-white ' >
                                         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                             <div style={{ position: 'relative' }}>
                                                 <div style={{ position: "absolute" }} class="btn-group" >
-                                                    <i style={{ position: "absolute", left: '96px', top: '4px', cursor: 'pointer' }} class="fa-solid fa-ellipsis-vertical " data-bs-toggle="dropdown" aria-expanded="false" ></i>
-
+                                                    <i style={{ position: "absolute", left: '96px', top: '4px', cursor: 'pointer' }}
+                                                        class="fa-solid fa-ellipsis-vertical " data-bs-toggle="dropdown" aria-expanded="false" ></i>
                                                     <ul class="dropdown-menu dropdown-menu-end">
                                                         <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#exampleModaledit"><i class="fa-solid fa-pen me-2"></i>  Edit</button></li>
                                                         <li><button class="dropdown-item" type="button"><i class="fa-solid fa-trash me-2"></i> Delete</button></li>
-
-
-
-
                                                     </ul>
                                                 </div>
                                             </div>
-
-
-
 
                                             <div>
                                                 <img className='rounded-circle mt-3' src="https://smarthr.dreamstechnologies.com/html/template/assets/img/profiles/avatar-02.jpg" style={{ width: '90px' }} alt="" />

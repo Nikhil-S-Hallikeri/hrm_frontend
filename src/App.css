@@ -3,9 +3,75 @@
 @tailwind utilities;
 
 
-.bg{
+.bg {
     background-color: red;
 }
+
+.slick-slide>div {
+    transition: 1s linear;
+}
+
+.slick-slide>div {
+    margin: 0px 10px;
+}
+
+.bgrd {
+    background-image: url('./assets/Images/DasboardBanner.png');
+    height: 100vh;
+    width: 100vw;
+    background-position: center;
+    overflow-y: scroll;
+}
+
+.bgmodal {
+    background-image: url('./assets/Images/DasboardBanner.png');
+    background-position: center;
+
+}
+
+.btngrd {
+    background: rgb(87, 48, 156);
+    background: linear-gradient(90deg, rgba(87, 48, 156, 1) 0%, rgba(37, 15, 60, 1) 100%);
+}
+
+.bgclr {
+    background-color: rgb(244, 244, 244);
+    border: 2px solid white;
+
+}
+.bgclr1{
+    background-color: rgb(244, 244, 244);
+}
+
+.tablebg {
+    background-color: rgba(244, 244, 244, 0.9);
+    border: 2px solid white;
+    padding: 10px;
+    padding-top: 0px;
+}
+
+.tablebg th {
+    border-bottom: 2px solid rgb(216, 215, 215);
+}
+
+.tablebg th,
+td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: top;
+    
+}
+
+.savebtn {
+    background: rgb(18, 222, 38);
+    background: linear-gradient(90deg, rgba(18, 222, 38, 1) 0%, rgba(53, 187, 5, 1) 100%);
+}
+
+.backbtn {
+    background: rgb(238, 238, 238);
+    background: linear-gradient(104deg, rgba(238, 238, 238, 1) 0%, rgba(104, 112, 140, 1) 30%);
+}
+
 /* Chrome, Safari, Edge, Opera */
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button {
@@ -16,4 +82,8 @@ input[type=number]::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
     -moz-appearance: textfield;
+}
+
+.transi {
+    transition: all 0.5s ease;
 }

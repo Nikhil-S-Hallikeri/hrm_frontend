@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { HrmStore } from '../Context/HrmContext';
 
 const Employeeseparation = () => {
 
 
 
-
+  
 
     // EMPLOYEE RESIGNATION FORM  START
     const [Employee_id, setEmployee_id] = useState('');
@@ -115,7 +116,7 @@ const Employeeseparation = () => {
     const [UploadFile, setUploadFile] = useState(null)
     const [EmployeeFilter, setEmployeeFilter] = useState('')
 
-    
+
 
     const handle_Company_Policies = (e) => {
         e.preventDefault()
@@ -129,7 +130,7 @@ const Employeeseparation = () => {
         formData3.append('CompanyPolicyCategory', CompanyPolicyCategory);
         formData3.append('UploadFile', UploadFile);
         formData3.append('EmployeeFilter', EmployeeFilter);
-    
+
 
         for (let pair of formData3.entries()) {
             console.log(pair[0] + ': ' + pair[1]);
@@ -145,7 +146,7 @@ const Employeeseparation = () => {
 
     return (
 
-        <div  style={{ width: '100%',minHeight : '100%', backgroundColor: "rgb(249,251,253)" }}>
+        <div style={{ width: '100%', minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
 
             {/* EMPLOYEE RESIGNATION FORM START */}
             <div className='p-3' >
@@ -348,7 +349,7 @@ const Employeeseparation = () => {
                                 </div>
                                 <div className="col-md-6 col-lg-3 mb-3">
                                     <label htmlFor="email" className="form-label">UploadFile *</label>
-                                    <input type="file" className="form-control shadow-none"  onChange={(e) => setUploadFile(e.target.files)} id="Email" name="Email" />
+                                    <input type="file" className="form-control shadow-none" onChange={(e) => setUploadFile(e.target.files)} id="Email" name="Email" />
                                 </div>
                                 <div className="col-md-6 col-lg-3 mb-3">
                                     <label htmlFor="email" className="form-label">EmployeeFilter* </label>

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Sidebar from './Sidebar'
 import Topnav from './Topnav'
 import axios from 'axios'
 import { port } from '../App'
 import { useNavigate } from 'react-router-dom'
+import { HrmStore } from '../Context/HrmContext'
 
 
 const Reporting_team = () => {
@@ -58,17 +59,20 @@ const Reporting_team = () => {
 
     const [Interview_Scheduled_Data, setInterview_Scheduled_Data] = useState([
 
-        { position: '', targets: '', No_Of_Open_Possitions: '', No_Of_Closed_Possitions: '' }
+        { position: '', targets: '', Walkins_target:'' ,Offers_target:'' ,No_Of_Open_Possitions: '', No_Of_Closed_Possitions: '' }
     ]);
 
     const handleAddRow1 = (e) => {
         e.preventDefault();
-
-        setInterview_Scheduled_Data([...Interview_Scheduled_Data, { position: '', targets: '', No_Of_Open_Possitions: '', No_Of_Closed_Possitions: '' }]);
+        setInterview_Scheduled_Data([...Interview_Scheduled_Data, 
+            { position: '', targets: '',Walkins_target:'' ,Offers_target:'' ,No_Of_Open_Possitions: '', No_Of_Closed_Possitions: '' }]);
     };
 
     const handleInputChange1 = (index, event) => {
-        const { name, value } = event.target;
+        let { name, value } = event.target;
+        if(name!='position'&&value<0 ){
+            value=''
+        }
         const updatedQualifications = [...Interview_Scheduled_Data];
         updatedQualifications[index][name] = value;
         setInterview_Scheduled_Data(updatedQualifications);
@@ -83,7 +87,6 @@ const Reporting_team = () => {
     console.log("selectedCandidates", selectedCandidates);
 
     useEffect(() => {
-
         fetchdata()
 
     }, [])
@@ -463,20 +466,22 @@ const Reporting_team = () => {
 
     // ACTIVITY SHEET DATA END
 
+    let { setActivePage } = useContext(HrmStore)
+    useEffect(() => {
+        setActivePage('Reporting_team')
+    }, [])
 
     return (
-        <div className=' d-flex' style={{ width: '100%', minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
+        <div className=' d-flex' style={{ width: '100%', minHeight: '100%',}}>
 
-            <div className='side'>
+            <div className=''>
 
                 <Sidebar value={"dashboard"} ></Sidebar>
             </div>
-            <div className=' m-0 m-sm-4  side-blog' style={{ borderRadius: '10px' }}>
+            <div className=' m-0 p-sm-2 flex-1 mx-auto container ' style={{ borderRadius: '10px' }}>
                 <div style={{ marginLeft: '10px' }}>
-
                     <Topnav></Topnav>
                 </div>
-
                 {/* Reporting Team List Start */}
                 <div className={`p-3 ${Reporting_Team_List ? '' : 'd-none'}`}>
 
@@ -553,8 +558,8 @@ const Reporting_team = () => {
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <div className=' p-1 mt-3 table-responsive' style={{ marginLeft: '10px' }}>
-                                            <table class="table" >
+                                        <div className=' p-1 mt-3 tablebg table-responsive'>
+                                            <table class="w-full  " >
                                                 <thead >
                                                     <tr>
                                                         <th scope="col">#</th>
@@ -629,21 +634,22 @@ const Reporting_team = () => {
                                             <div key={index}>
                                                 <div className="row">
                                                     <div className="col-md-6 col-lg-6 mb-3">
-                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>{index + 1} . Postion Name*</label>
+                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>{index + 1} Postion Name *</label>
                                                         <input type="text" name="position" value={qualification.position} onChange={(e) => handleInputChange1(index, e)} className="form-control  shadow-none" />
                                                     </div>
                                                     <div className="col-md-6 col-lg-6 mb-3">
-                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Targets*</label>
+                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Interview Scheduling Targets *</label>
                                                         <input type="number" name="targets" value={qualification.targets} onChange={(e) => handleInputChange1(index, e)} className="form-control  shadow-none" />
                                                     </div>
-                                                    {/* <div className="col-md-6 col-lg-6 mb-3">
-                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>No of Open Possitions*</label>
-                                                        <input type="number" name="No_Of_Open_Possitions" value={qualification.No_Of_Open_Possitions} onChange={(e) => handleInputChange1(index, e)} className="form-control  shadow-none" />
+                                                    <div className="col-md-6 col-lg-6 mb-3">
+                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}> Walkins Targets *</label>
+                                                        <input type="number" name="Walkins_target" value={qualification.Walkins_target} onChange={(e) => handleInputChange1(index, e)} className="form-control  shadow-none" />
                                                     </div>
                                                     <div className="col-md-6 col-lg-6 mb-3">
-                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>No of Closed Possitions*</label>
-                                                        <input type="number" name="No_Of_Closed_Possitions" value={qualification.No_Of_Closed_Possitions} onChange={(e) => handleInputChange1(index, e)} className="form-control  shadow-none" />
-                                                    </div> */}
+                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Offer Targets *</label>
+                                                        <input type="number" name="Offers_target" value={qualification.Offers_target} onChange={(e) => handleInputChange1(index, e)} className="form-control  shadow-none" />
+                                                    </div>
+                                                   
                                                 </div>
 
 
@@ -676,8 +682,8 @@ const Reporting_team = () => {
 
                     </div>
 
-                    <div className=' p-1 mt-1 mt-sm-1 table-responsive' style={{ marginLeft: '10px' }}>
-                        <table class="table" >
+                    <div className=' p-1 mt-3 tablebg table-responsive'>
+                    <table class="w-full  " >
                             <thead >
                                 <tr>
                                     <th scope="col">#</th>
@@ -699,7 +705,7 @@ const Reporting_team = () => {
 
                                         <tr>
 
-                                            <th scope="row"><input type="checkbox" value={e.employee_Id} onChange={handleCheckboxChange} /></th>
+                                            <td scope="row"><input type="checkbox" value={e.employee_Id} onChange={handleCheckboxChange} /></td>
                                             {/* <td key={e.id}> {index + 1}</td> */}
 
                                             <td onClick={() => sentparticularData(e.id)} data-bs-toggle="modal" data-bs-target="#exampleModal5" key={e.id} style={{ cursor: 'pointer' }}> {e.full_name}</td>

@@ -1,8 +1,9 @@
 import Sidebar from './Sidebar';
 import Topnav from './Topnav';
 import { port } from '../App';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import { HrmStore } from '../Context/HrmContext';
 
 const generateDates = (month, year) => {
     const dates = [];
@@ -32,10 +33,13 @@ const formatDate = (date) => {
 const Sample_acti = () => {
     const Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId;
 
-
+    let { setActivePage } = useContext(HrmStore)
+    useEffect(() => {
+        setActivePage('activity')
+    }, [])
     const [activitiesget, setgetActivities] = useState([]);
     const [activitiesgetdaily_achives, setgetActivities_daily_achives] = useState([]);
-  
+
     const [Interview_Scheduledget, setInterview_Scheduledget] = useState([]);
     const [Interview_Scheduled_achives, setInterview_Scheduled_achives] = useState([]);
 
@@ -48,8 +52,8 @@ const Sample_acti = () => {
     // const [Interview_Scheduled, setInterview_Scheduled] = useState([]);
     // const [Walkins, setWalkins] = useState([]);
     // const [Offered, setOffered] = useState([]);
-  
-  
+
+
     const [id, setid] = useState("");
     console.log("Daily1", activitiesgetdaily_achives);
     console.log("Daily2", Interview_Scheduled_achives);
@@ -199,12 +203,13 @@ const Sample_acti = () => {
 
     }
 
+
     return (
-        <div className='d-flex' style={{ width: '100%',minHeight : '100%', backgroundColor: "rgb(249,251,253)" }}>
-            <div className='side'>
+        <div className='d-flex' style={{ width: '100%', minHeight: '100%', }}>
+            <div className=''>
                 <Sidebar value={"dashboard"}></Sidebar>
             </div>
-            <div className='m-0 m-sm-4 side-blog' style={{ borderRadius: '10px' }}>
+            <div className='m-0 p-sm-2 flex-1 container ' style={{ borderRadius: '10px' }}>
                 <div className='Sample_acti_Topnav' >
                     <Topnav></Topnav>
                 </div>
@@ -267,7 +272,7 @@ const Sample_acti = () => {
                                                     <td>
                                                         <input type="number"
                                                             value={activity.Total_Achived}
-                                                            className={`form-control border-0 shadow-none text-center ${activity.status ==='Green' ? 'bg-success' : 'bg-danger'}`} />
+                                                            className={`form-control border-0 shadow-none text-center ${activity.status === 'Green' ? 'bg-success' : 'bg-danger'}`} />
                                                     </td>
                                                     {dates.map((date) => {
                                                         let obj = activitiesgetdaily_achives[mainindex].find((obj) => obj.Date == date)

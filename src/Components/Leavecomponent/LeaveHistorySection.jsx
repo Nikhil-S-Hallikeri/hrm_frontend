@@ -1,0 +1,59 @@
+import axios from 'axios'
+import React, { useContext, useEffect, useState } from 'react'
+import { port } from '../../App'
+import { HrmStore } from '../../Context/HrmContext'
+
+const LeaveHistorySection = ({ setActiveSection }) => {
+    let {changeDateYear}=useContext(HrmStore)
+    let [historyRequest, setHistoryRequest] = useState()
+    let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
+    let getHistoryLeave = () => {
+        axios.get(`${port}/root/lms/Leaves/History/${empid}/`).then((response) => {
+            setHistoryRequest(response.data)
+            console.log(response.data);
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+    useEffect(() => {
+        getHistoryLeave()
+        setActiveSection('history')
+    }, [])
+    return (
+        <div>
+            {historyRequest && historyRequest.length > 0 ?
+                <section className='rounded-xl rounded-t-none sm:rounded-tr-xl rounded-tl-none table-responsive tablebg'>
+                    <table className='w-full '>
+                        <thead>
+                            <tr>
+                                <th className='w-20'>SI No</th>
+                                <th>Leave Type </th>
+                                <th>Leave Reason </th>
+                                <th>Applied Date </th>
+                                <th>Leave Date </th>
+                                <th>No of Days leave </th>
+                                <th> Status</th>
+                            </tr>
+                        </thead>
+                        {historyRequest.map((obj, index) => (
+                            <tr key={index} className={` `} >
+                                <td>{index + 1}</td>
+                                <td> {obj.LeaveType} </td>
+                                <td className='mb-0 w-[300px] text-start  text-wrap '>{obj.reason} </td>
+                                <td>{changeDateYear(obj.applied_date)} </td>
+                                <td>{changeDateYear(obj.from_date)}{obj.days > 1 ? " to " + changeDateYear(obj.to_date) : ''} </td>
+                                <td>{obj.days} </td>
+                                <td>{obj.approved_status} </td>
+                            </tr>
+                        ))}
+                    </table>
+                </section> : 
+                <section className='min-h-[40vh] bgclr rounded-xl rounded-t-none sm:rounded-tr-xl rounded-tl-none flex w-full'>
+                    <h4 className='poppins m-auto'> No Leave Request have been made so for!!! </h4>
+                </section>
+            }
+        </div>
+    )
+}
+
+export default LeaveHistorySection

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Sidebar from './Sidebar'
 import Topnav from './Topnav'
 import axios from 'axios'
 import { port } from '../App'
+import HrmContext, { HrmStore } from '../Context/HrmContext'
 
 
 const New_join_emp = () => {
@@ -26,9 +27,9 @@ const New_join_emp = () => {
     const [ATTACHMENTS, setATTACHMENTS] = useState([])
     const [DOCUMENTS_SUBMITED, setDOCUMENTS_SUBMITED] = useState([])
     const [DECLARATION, setDECLARATION] = useState([])
-
+    let { setActivePage } = useContext(HrmStore)
     useEffect(() => {
-
+        setActivePage("Employee")
         fetchdata()
 
     }, [])
@@ -331,13 +332,13 @@ const New_join_emp = () => {
 
 
     return (
-        <div className=' d-flex' style={{ width: '100%',minHeight : '100%', backgroundColor: "rgb(249,251,253)" }}>
+        <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
 
-            <div className='side'>
+            <div className=''>
 
                 <Sidebar value={"dashboard"} ></Sidebar>
             </div>
-            <div className=' m-0 m-sm-4  side-blog' style={{ borderRadius: '10px' }}>
+            <div className=' m-0 m-sm-4 flex-1 container mx-auto ' style={{ borderRadius: '10px' }}>
                 <Topnav></Topnav>
 
                 <div className='m-1 p-1' style={{ display: 'flex', justifyContent: 'space-between' }}>

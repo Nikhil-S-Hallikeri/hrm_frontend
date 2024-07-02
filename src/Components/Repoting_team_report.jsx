@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Topnav from './Topnav'
 import axios from 'axios'
 import { port } from '../App'
 import { useNavigate } from 'react-router-dom'
 import Empsidebar from './Empsidebar'
+import { HrmStore } from '../Context/HrmContext'
 
 
 const Repoting_team_report = () => {
@@ -11,7 +12,10 @@ const Repoting_team_report = () => {
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let UserName = JSON.parse(sessionStorage.getItem('user')).UserName
     let Disgnation = JSON.parse(sessionStorage.getItem('user')).Disgnation
-
+    let { setActivePage } = useContext(HrmStore)
+    useEffect(() => {
+      setActivePage('team')
+    }, [])
     const [AllEmployeelist, setAllEmployeelist] = useState([])
     const [EMPLOYEE_INFORMATION, setEMPLOYEE_INFORMATION] = useState([])
     const [EDUCATION_DETAILS, setEDUCATION_DETAILS] = useState([])
@@ -180,17 +184,14 @@ const Repoting_team_report = () => {
     // Verfied Form end
 
     return (
-        <div className=' d-flex' style={{ width: '100%',minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
+        <div className=' d-flex' style={{ width: '100%',minHeight: '100%',}}>
 
-            <div className='side'>
+            <div className='d-none d-lg-flex '>
 
                 <Empsidebar></Empsidebar>
             </div>
-            <div className=' m-0 m-sm-4  side-blog' style={{ borderRadius: '10px' }}>
-                <div style={{ marginLeft: '10px' }}>
-
+            <div className=' m-0 p-sm-4 container mx-auto flex-1 ' style={{ borderRadius: '10px' }}>
                     <Topnav></Topnav>
-                </div>
 
                 {/* Reporting Team List Start */}
                 <div className={`p-3 ${Reporting_Team_List ? '' : 'd-none'}`}>
