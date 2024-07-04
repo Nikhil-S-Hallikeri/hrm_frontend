@@ -4,7 +4,7 @@ import { port } from '../../App'
 import { HrmStore } from '../../Context/HrmContext'
 
 const LeaveHistorySection = ({ setActiveSection }) => {
-    let {changeDateYear}=useContext(HrmStore)
+    let { changeDateYear } = useContext(HrmStore)
     let [historyRequest, setHistoryRequest] = useState()
     let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let getHistoryLeave = () => {
@@ -22,7 +22,7 @@ const LeaveHistorySection = ({ setActiveSection }) => {
     return (
         <div>
             {historyRequest && historyRequest.length > 0 ?
-                <section className='rounded-xl rounded-t-none sm:rounded-tr-xl rounded-tl-none table-responsive tablebg'>
+                <section className='rounded-xl table-responsive tablebg'>
                     <table className='w-full '>
                         <thead>
                             <tr>
@@ -35,20 +35,23 @@ const LeaveHistorySection = ({ setActiveSection }) => {
                                 <th> Status</th>
                             </tr>
                         </thead>
-                        {historyRequest.map((obj, index) => (
+                        {console.log(historyRequest)}
+
+                        {[...historyRequest].reverse().map((obj, index) => (
                             <tr key={index} className={` `} >
                                 <td>{index + 1}</td>
                                 <td> {obj.LeaveType} </td>
                                 <td className='mb-0 w-[300px] text-start  text-wrap '>{obj.reason} </td>
-                                <td>{changeDateYear(obj.applied_date)} </td>
-                                <td>{changeDateYear(obj.from_date)}{obj.days > 1 ? " to " + changeDateYear(obj.to_date) : ''} </td>
+                                <td>{obj.applied_date && changeDateYear(obj.applied_date)} </td>
+                                <td>{obj.from_date && changeDateYear(obj.from_date)}
+                                    {obj.days > 1 && obj.to_date ? " to " + changeDateYear(obj.to_date) : ''} </td>
                                 <td>{obj.days} </td>
                                 <td>{obj.approved_status} </td>
                             </tr>
                         ))}
                     </table>
-                </section> : 
-                <section className='min-h-[40vh] bgclr rounded-xl rounded-t-none sm:rounded-tr-xl rounded-tl-none flex w-full'>
+                </section> :
+                <section className='min-h-[40vh] bgclr rounded-xl flex w-full'>
                     <h4 className='poppins m-auto'> No Leave Request have been made so for!!! </h4>
                 </section>
             }

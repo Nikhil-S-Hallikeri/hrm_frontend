@@ -4,6 +4,7 @@ import { HrmStore } from '../../Context/HrmContext'
 import axios from 'axios'
 import { port } from '../../App'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const ApprovalPage = () => {
     let { leaveRequestsReporting, openNavbar, setActivePage, getProperDate, changeDateYear,
@@ -43,13 +44,14 @@ const ApprovalPage = () => {
             newarry = [...leaveRequestsReporting].filter((obj) =>
                 obj.employee_name.toLowerCase().indexOf(filterOption.name.toLowerCase()) != -1)
         }
-        else{
-            newarry=[...leaveRequestsReporting]
+        else {
+            newarry = [...leaveRequestsReporting]
         }
         setFilteredRequest(newarry)
     }
-    let handleRequest = (obj, status) => {
-        setloading(status)
+    let navigate = useNavigate()
+    let handleRequest = (obj, status, index) => {
+        setloading(`${status}${index}`)
         axios.patch(`${port}/root/lms/Approve_Employee_Leave_Request/`, {
             id: obj.id,
             approved_status: status,
@@ -69,29 +71,34 @@ const ApprovalPage = () => {
     return (
         <div className=''>
             <Topnav name="Leave Approval" />
-            <section className='my-3 flex flex-wrap gap-3'>
-                <div className='rounded p-2 bgclr w-fit '>
-                    <input onKeyDown={(e) => {
-                        if (e.key == 'Enter')
-                            HandleFilterRequest()
-                    }}
-                        type="text" value={filterOption.name} name='name'
-                        onChange={handleChange}
-                        placeholder='Employee name' className='outline-none bg-transparent ' />
-                </div>
-                <select name="leaveType" onChange={handleChange}
-                    value={filterOption.leaveType}
-                    className='p-2 text-slate-500 bgclr rounded w-40 outline-none' id="">
-                    <option value="">Leave type </option>
-                    {leaveData && leaveData.map((obj, index) => (
-                        <option value={obj.leave_name}>{obj.leave_name}
-                        </option>
-                    ))}
-                </select>
-                <button onClick={HandleFilterRequest} className='p-2 h-fit px-4 w-40 text-white savebtn rounded border-2 border-green-50 '>
-                    Search
+            <main className='flex flex-wrap items-center justify-between'>
+                <section className='my-3 flex flex-wrap gap-3'>
+                    <div className='rounded p-2 bgclr w-fit '>
+                        <input onKeyDown={(e) => {
+                            if (e.key == 'Enter')
+                                HandleFilterRequest()
+                        }}
+                            type="text" value={filterOption.name} name='name'
+                            onChange={handleChange}
+                            placeholder='Employee name' className='outline-none bg-transparent ' />
+                    </div>
+                    <select name="leaveType" onChange={handleChange}
+                        value={filterOption.leaveType}
+                        className='p-2 text-slate-500 bgclr rounded w-40 outline-none' id="">
+                        <option value="">Leave type </option>
+                        {leaveData && leaveData.map((obj, index) => (
+                            <option value={obj.leave_name}>{obj.leave_name}
+                            </option>
+                        ))}
+                    </select>
+                    <button onClick={HandleFilterRequest} className='p-2 h-fit px-4 w-40 text-white savebtn rounded border-2 border-green-50 '>
+                        Search
+                    </button>
+                </section>
+                <button className='p-1 px-3 btngrd text-white text-sm h-fit rounded border-2 ' onClick={() => navigate('/dash/history')}>
+                    History
                 </button>
-            </section>
+            </main>
             {
                 (leaveRequestsReporting && leaveRequestsReporting.length > 0) ?
                     <section className={`rounded-xl tablebg table-responsive `}>
@@ -120,10 +127,10 @@ const ApprovalPage = () => {
                                     <td>{changeDateYear(obj.from_date)}{obj.days > 1 ? "-" + changeDateYear(obj.to_date) : ''} </td>
                                     <td>{obj.approved_status} </td>
                                     <td className='flex gap-2'>
-                                        <button onClick={() => handleRequest(obj, "rejected")} className='p-1 px-2 text-sm shadow-sm rounded bg-red-600 text-white  '>
-                                            {loading == 'rejected' ? 'Loading..' : "Decline"} </button>
-                                        <button onClick={() => handleRequest(obj, "approved")} className='p-1 px-2 text-sm shadow-sm rounded bg-green-600 text-white  '>
-                                            {loading == 'approved' ? 'Loading' : "Accept"} </button>
+                                        <button onClick={() => handleRequest(obj, "rejected", index)} className='p-1 px-2 text-sm shadow-sm rounded bg-red-600 text-white  '>
+                                            {loading == `rejected${index}` ? 'Loading..' : "Decline"} </button>
+                                        <button onClick={() => handleRequest(obj, "approved", index)} className='p-1 px-2 text-sm shadow-sm rounded bg-green-600 text-white  '>
+                                            {loading == `approved${index}` ? 'Loading' : "Accept"} </button>
                                     </td>
 
                                 </tr>

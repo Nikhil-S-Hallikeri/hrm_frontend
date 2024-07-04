@@ -8,6 +8,7 @@ import CreateDesignation from './CreateDesignation'
 
 const EmployeeCreation = (props) => {
     let { show, setshow, getEmp } = props
+    let [loading, setloading] = useState(false)
     let [createDesignation, setCreatedesignation] = useState(false)
     let [obj, setobj] = useState({
         'full_name': '',
@@ -25,11 +26,11 @@ const EmployeeCreation = (props) => {
         'reporting_to': '',
         'Department': '',
         'Employeement_Type': '',
-        'internship_Duration_From': '',
-        'internship_Duration_To': '',
+        'internship_Duration_From': null,
+        'internship_Duration_To': null,
         'probation_status': '',
-        'probation_Duration_From': '',
-        'probation_Duration_To': '',
+        'probation_Duration_From': null,
+        'probation_Duration_To': null,
         'applied_list_access': false,
         'screening_shedule_access': false,
         'interview_schedule_access': false,
@@ -41,16 +42,16 @@ const EmployeeCreation = (props) => {
         if (name == 'Employeement_Type' && value == 'intern') {
             setobj((prev) => ({
                 ...prev,
-                probation_status: '',
-                probation_Duration_From: '',
-                probation_Duration_To: ''
+                probation_status: null,
+                probation_Duration_From: null,
+                probation_Duration_To: null
             }))
         }
         if (name == 'Employeement_Type' && value == 'permanent') {
             setobj((prev) => ({
                 ...prev,
-                internship_Duration_From: '',
-                internship_Duration_To: '',
+                internship_Duration_From: null,
+                internship_Duration_To: null,
             }))
         }
         if (name == 'internship_Duration_From' && value > obj.internship_Duration_To
@@ -98,6 +99,7 @@ const EmployeeCreation = (props) => {
             interview_shedule_access: obj.interview_schedule_access ? "true" : 'false',
             final_status_access: obj.final_status_access ? "true" : 'false',
         });
+        setloading(true)
         axios.post(`${port}root/ems/NewEmployeesAdding/`, {
             ...obj,
             applied_list_access: obj.applied_list_access ? "true" : 'false',
@@ -109,10 +111,12 @@ const EmployeeCreation = (props) => {
             console.log("NewEmployeesAdding_res.", r.data)
             getEmp()
             setshow(false)
+            setloading(false)
         })
             .catch((err) => {
-                toast.error('Employee Added Feiled.')
+                toast.error('Employee Adding Failed.')
                 console.log("NewEmployeesAdding_err", err)
+                setloading(false)
             })
     }
 
@@ -147,7 +151,6 @@ const EmployeeCreation = (props) => {
     }, [])
     useEffect(() => {
         getDesignation()
-
     }, [])
 
     return (
@@ -430,14 +433,13 @@ const EmployeeCreation = (props) => {
                                     </section>}
 
                                     <div className="col-12 text-end mt-3">
-                                        <button type="button" onClick={Add_Employee}
-                                            //  data-bs-dismiss="modal" 
+                                        <button type="button" disabled={loading} onClick={Add_Employee}
+                                            //  data-bs-dismiss="modal"  
                                             className="btn btn-primary text-white fw-medium px-2 px-lg-5">
-                                            Submit
+                                            {loading ? "Loading.." : "Submit"}
                                         </button>
                                     </div>
                                 </form>
-
                             </div>
                         </div>
                         {/* form end */}

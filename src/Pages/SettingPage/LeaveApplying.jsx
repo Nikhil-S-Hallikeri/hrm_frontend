@@ -9,6 +9,7 @@ import LeaveApplyingSection from '../../Components/Leavecomponent/LeaveApplyingS
 import LeavePengindSection from '../../Components/Leavecomponent/LeavePengindSection'
 import LeaveHistorySection from '../../Components/Leavecomponent/LeaveHistorySection'
 import Sidebar from '../../Components/Sidebar'
+import RestrictedLeaveApply from './RestrictedLeaveApply'
 
 const LeaveApplying = () => {
     let { activeSetting, setActiveSetting, getProperDate, getCurrentDate, timeValidate } = useContext(HrmStore)
@@ -67,20 +68,26 @@ const LeaveApplying = () => {
                     className={` ${activeSection == 'apply' && 'bgclr border-0 shadow-sm '} rounded-xl duration-500 fw-medium  w-32 p-2 px-2 `} >
                     Apply
                 </button>
-                <button onClick={() => { navigate('/settings/leave/pending') }} 
-                className={` ${activeSection == 'pending' && 'bgclr border-0  shadow-sm '} rounded-xl duration-500 w-32 p-2 px-2 `} >
+                <button onClick={() => { navigate('/settings/leave/restrictedHoliday') }}
+                    className={` ${activeSection == 'rh' && 'bgclr border-0  shadow-sm '} rounded-xl duration-300 w-32 p-2 px-2 `} >
+                    RH Apply 
+                </button>
+                <button onClick={() => { navigate('/settings/leave/pending') }}
+                    className={` ${activeSection == 'pending' && 'bgclr border-0  shadow-sm '} rounded-xl duration-500 w-32 p-2 px-2 `} >
                     Pending
                 </button>
-                <button onClick={() => { navigate('/settings/leave/history') }} 
-                className={` ${activeSection == 'history' && 'bgclr border-0  shadow-sm '} rounded-xl duration-300 w-32 p-2 px-2 `} >
+                <button onClick={() => { navigate('/settings/leave/history') }}
+                    className={` ${activeSection == 'history' && 'bgclr border-0  shadow-sm '} rounded-xl duration-300 w-32 p-2 px-2 `} >
                     History
                 </button>
+
             </section>
 
             <Routes>
                 <Route path='/*' element={<LeaveApplyingSection setActiveSection={setActiveSection} allocatedLeave={allocatedLeave} />} />
                 <Route path='/pending' element={<LeavePengindSection setActiveSection={setActiveSection} />} />
                 <Route path='/history' element={<LeaveHistorySection setActiveSection={setActiveSection} />} />
+                <Route path='/restrictedHoliday' element={<RestrictedLeaveApply setActiveSection={setActiveSection} />} />
             </Routes>
 
         </div >

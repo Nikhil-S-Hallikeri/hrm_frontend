@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import { Modal } from 'react-bootstrap';
 import { HrmStore } from '../Context/HrmContext';
 import ShortcutCard from './HomeComponent/ShortcutCard';
+import LeaveApprovalBox from './HomeComponent/LeaveApprovalBox';
 
 
 
@@ -539,7 +540,14 @@ const Hrdashpage = () => {
 
                     </Slider>
                 </div>
+                <main className='my-3'>
+                    <LeaveApprovalBox />
+                </main>
             </section>
+
+
+
+
             <section className=''>
                 {/* OLD */}
                 <div className=' transition duration-700  

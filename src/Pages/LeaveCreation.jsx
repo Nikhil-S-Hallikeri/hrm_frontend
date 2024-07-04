@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { port } from '../App'
 import { toast } from 'react-toastify'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 const LeaveSetting = () => {
     let { id } = useParams()
@@ -18,6 +19,9 @@ const LeaveSetting = () => {
         leave_name: null,
         id: null
     })
+    let currentYear = new Date().getFullYear()
+    let [selectedYear, setSelectedYear] = useState(currentYear)
+    let [yearArry, setyearArry] = useState()
     let [loading, setloading] = useState('')
     let handleLeaveData = (e) => {
         let { value, name } = e.target
@@ -32,15 +36,48 @@ const LeaveSetting = () => {
         carry_forward: null,
         max_carry_forward: null,
         earned_leave: null,
+        applicable_year: new Date(),
         applicable_to: null,
         id: null
     })
+    let [leaveObjArry, setLeaveObjArry] = useState([])
+    let changeLeaveObj = (year) => {
+        let filterObj = leaveObjArry.find((obj) => obj.applicable_year.slice(0, 4) == year)
+        setLeaveObj(filterObj)
+        console.log(filterObj, "asd");
+    }
+    useEffect(() => {
+        if (selectedYear && leaveObjArry) {
+            changeLeaveObj(selectedYear)
+        }
+    }, [leaveObjArry, selectedYear])
     let handleLeaveObj = (e) => {
         let { name, value } = e.target
         setLeaveObj((prev) => ({
             ...prev,
             [name]: value
         }))
+    }
+    let addNextYear = () => {
+        let year = new Date(leaveObj.applicable_year)
+        let newYear = `${year.getFullYear() + 1}-${year.getMonth() + 1}-${year.getDate()}`
+        console.log('asd', newYear);
+        axios.post(`${port}/root/lms/LeaveTypeDetailsCreating/`, {
+            ...leaveObj,
+            applicable_year: newYear
+        }).then((response) => {
+            console.log("asd", response.data);
+            getParticular()
+            setSelectedYear(year.getFullYear()+1)
+            toast.success('Data has been added for the Next year')
+        }).catch((error) => {
+            console.log("asd", error);
+            if(error.response.data){
+                toast.error(error.response.data)
+                return;
+            }
+            toast.error('error acquired')
+        })
     }
     let updateLeaveObj = () => {
         console.log("asd", leaveObj);
@@ -63,8 +100,9 @@ const LeaveSetting = () => {
             console.log("sdbls", error);
         })
         axios.get(`${port}/root/lms/LeaveTypeDetails/${id}/`).then((response) => {
-            setLeaveObj(response.data[0])
-            console.log("sdbls", response.data[0])
+            setLeaveObjArry(response.data)
+            setyearArry(response.data.map((obj) => obj.applicable_year.slice(0, 4)))
+            console.log("sdbls", response.data)
         }).catch((erro) => {
             console.log(erro);
         })
@@ -76,14 +114,26 @@ const LeaveSetting = () => {
         }
 
     }, [id])
+    const renderTooltip = (text) => (
+        <Tooltip id="button-tooltip">{text}</Tooltip>
+    );
     return (
         <div>
             <Topnav name='Leaves Setting' />
             {/* Sections */}
-            <button className='flex hover:scale-[1.02] duration-300 items-center p-2 rounded-lg btngrd text-white px-3 gap-2 ms-auto '>
+            {/* <button className='flex hover:scale-[1.02] duration-300 items-center p-2 rounded-lg btngrd text-white px-3 gap-2 ms-auto '>
                 <PlusIcon />  Add leave
-            </button>
-            <main className='row my-4 container mx-auto gap-3 raleway'>
+            </button> */}
+            <select name="" value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className='bgclr text-xs outline-none ms-auto flex rounded p-1' id="">
+                <option value="">Select</option>
+                {
+                    yearArry && yearArry.map((val, index) => (
+                        <option value={val}> {val} </option>
+                    ))
+                }
+
+            </select>
+            <main className='row my-4 justify-between mx-auto gap-3 raleway'>
                 <section className='col-md-5 p-3 rounded bg-slate-50 border-2 border-white min-h-[10vh]  '>
                     <div className=''>
                         <h4>Leave Name :</h4>
@@ -102,10 +152,12 @@ const LeaveSetting = () => {
                             <EditPen />
                         </div>
                     </div>
-
                 </section>
-                <section className='col-md-5 p-3 rounded bg-slate-50 border-2 border-white min-h-[10vh] '>
-                    <h4 className='break-words'>{leaveData && leaveData.leave_name} </h4>
+
+                {leaveObj && <section className='col-md-5 p-3 rounded bg-slate-50 border-2 border-white min-h-[10vh] '>
+                    <h4 className='break-words'>{leaveData && leaveData.leave_name + " "}
+                        {leaveData && leaveObj.applicable_year ? (leaveObj.applicable_year + '').slice(0, 4) : ''}
+                    </h4>
                     <p className='fw-semibold text-sm '>No of Days </p>
                     <div className='flex p-[10px] rounded-xl shadow-md bg-white w-fit '>
                         <input type="number" value={leaveObj.No_Of_leaves}
@@ -175,8 +227,15 @@ const LeaveSetting = () => {
                         </div>
 
                     </article>
+                    <OverlayTrigger placement="top" delay={{ show: 150, hide: 200 }}
+                        overlay={renderTooltip('Add for the next year')}>
+                        <button onClick={addNextYear} className='border-2 p-1 ms-auto flex rounded-full '>
+                            <PlusIcon />
+                        </button>
+                    </OverlayTrigger>
 
-                </section>
+
+                </section>}
 
 
             </main>

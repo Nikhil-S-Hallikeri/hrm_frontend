@@ -505,7 +505,7 @@ const Allemp = () => {
         axios.get(`${port}/root/ems/Get-Employee/${id}/`).then((e) => {
             set_Edit_Data(e.data)
 
-            console.log('Update_Data', e.data.Department_id);
+            // console.log('Update_Data', e.data.Department_id);
             console.log('Update_Data', e.data);
 
             Call_Department(e.data.Department_id)
@@ -806,12 +806,8 @@ const Allemp = () => {
                                 </td>
                             </tr> */}
                             {AllEmployeelist && AllEmployeelist.map((e, index) => {
-                                console.log("Employee_details", e)
                                 return (
-
-
                                     <tr key={e.id}>
-
                                         <td scope="row"><input type="checkbox" value={e.employee_Id} onChange={handleCheckboxChange} /></td>
                                         <td onClick={() => sentparticularData(e.id, e.employeeProfile)} data-bs-toggle="modal" data-bs-target="#exampleModal5" key={e.id} style={{ cursor: 'pointer' }}> {e.full_name}</td>
                                         <td> {e.employee_Id}</td>
@@ -1030,7 +1026,8 @@ const Allemp = () => {
                                                             {/* <option value="confirmed"> Confirmed </option> */}
                                                         </select>
                                                     </div>}
-                                                    {Edit_Data.probation_status == 'probationer' && <section className="col-md-6 col-lg-4 mb-3">
+                                                    {Edit_Data.probation_status == 'probationer' && 
+                                                     <section className="col-md-6 col-lg-4 mb-3">
                                                         <label htmlFor="gender" className="form-label">Probation Duration <span class='text-danger'>*</span> </label>
                                                         <div>
                                                             <input type="date" value={Edit_Data.probation_Duration_From} name='probation_Duration_From'

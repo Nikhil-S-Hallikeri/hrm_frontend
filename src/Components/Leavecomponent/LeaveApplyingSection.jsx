@@ -95,7 +95,7 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
 
     return (
         <div>
-            <main className='bgclr min-h-[10vh] rounded-t-none sm:rounded-tr-xl rounded-xl rounded-tl-none p-4 shadow-sm'>
+            <main className='bgclr min-h-[10vh] rounded-xl p-4 shadow-sm'>
                 <h4>Leave applying </h4>
                 <section className='flex flex-wrap justify-between items-start'>
 
@@ -123,7 +123,8 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
                             className='p-2 block w-full shadow-sm bg-white rounded outline-none'
                             onChange={handleChange} name='LeaveType' id="">
                             <option value="">Select</option>
-                            {allocatedLeave && allocatedLeave.map((x) => (
+                            {console.log(allocatedLeave)}
+                            {allocatedLeave && allocatedLeave.length>0 && allocatedLeave.map((x) => (
                                 < option value={x.id} >{x.LeaveType} </option>
                             ))}
                         </select>

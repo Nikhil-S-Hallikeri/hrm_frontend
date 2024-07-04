@@ -39,7 +39,7 @@ const NavbarButton = (props) => {
                         className={`hover:scale-[1.05] h-fit duration-300 hover:shadow w-fit mx-auto rounded p-2 
                         ${activePage == active && 'shadow'} 
                         ${dropDown && 'absolute left-4  '} `}  >
-                        <img className={`w-6 h-6 `} src={img} alt="DashBoard" />
+                        <img className={`w-6 h-6 `} src={`${process.env.PUBLIC_URL}${img}`} alt="DashBoard" />
                     </button>
                 </OverlayTrigger>
                 <button onClick={handleclick}

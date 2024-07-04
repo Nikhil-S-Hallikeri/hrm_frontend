@@ -27,21 +27,21 @@ const Recsidebar = () => {
                             </button>
                             <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/dashboard/${logindata.Disgnation}`}
                                 label='Dashboard' active='dashboard'
-                                img='../assets/Images/dashboard.png' />
+                                img='/assets/Images/dashboard.png' />
                             <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Rec_applyed_list`}
                                 label='Applyed List' active='applylist'
-                                img='../assets/Images/report.png' />
+                                img='/assets/Images/report.png' />
 
                             <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Applicants`}
                                 label='Applicants' active='Applicants'
-                                img='../assets/Images/Paper.png' />
+                                img='/assets/Images/Paper.png' />
                             <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Reporting_team_recuter`}
                                 label='Reporting team' active='team'
-                                img='../assets/Images/profile.png' />
+                                img='/assets/Images/profile.png' />
 
                             <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Recruiter_Activity`}
                                 label='Activity' active='activity'
-                                img='../assets/Images/Work.png' />
+                                img='/assets/Images/Work.png' />
 
                             {/* <NavbarButton openNavbar={openNavbar} setopen={setNavbar} drop={[
                             { name: 'Over View', path: '/Employee_Overview' },
@@ -52,20 +52,20 @@ const Recsidebar = () => {
                             { name: 'Employee New Joining', path: '/New_Join_Employee' },
                         ]}
                             label='Employee' active='Employee'
-                            img='../assets/Images/Application.png' /> */}
+                            img='/assets/Images/Application.png' /> */}
 
                             <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/settings`}
                                 label='Setting' active='setting'
-                                img='../assets/Images/setting.png' />
+                                img='/assets/Images/setting.png' />
 
 
                             {/* Not used */}
                             {/* <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Employee_Profile`}
                             label='Graph' active='Graph'
-                            img='../assets/Images/Graph.png' />
+                            img='/assets/Images/Graph.png' />
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Employee_Profile`}
                             label='Paper' active='Paper'
-                            img='../assets/Images/Paper.png' /> */}
+                            img='/assets/Images/Paper.png' /> */}
 
 
 

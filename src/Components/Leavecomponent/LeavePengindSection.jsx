@@ -9,8 +9,8 @@ const LeavePengindSection = ({ setActiveSection }) => {
     let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
 
     let cancelLeave = (id) => {
-        axios.patch(`${port}/root/lms/LeaveWithdraw/${id}/`,{
-            login_user:empid
+        axios.patch(`${port}/root/lms/LeaveWithdraw/${id}/cancel/`, {
+            login_user: empid
         }).then((response) => {
             console.log(response.data);
             toast.success('Leave request has been withdrawn!!')
@@ -31,7 +31,7 @@ const LeavePengindSection = ({ setActiveSection }) => {
         <div>
             {pendingLeave && pendingLeave.length > 0 ?
                 <section className='rounded-xl h-[43vh] pt-0 scrollbar1 overflow-y-scroll 
-                rounded-tl-none table-responsive tablebg rounded-t-none sm:rounded-tr-xl'>
+             table-responsive tablebg'>
                     <table className='w-full pt-0'>
                         <thead >
                             <tr className='sticky top-0 bgclr1'>
@@ -63,8 +63,8 @@ const LeavePengindSection = ({ setActiveSection }) => {
                         ))}
                     </table>
                 </section> :
-                <section className='min-h-[40vh] bgclr rounded-t-none sm:rounded-tr-xl
-                 container mx-auto rounded-xl rounded-tl-none flex w-full'>
+                <section className='min-h-[40vh] bgclr 
+                 container mx-auto rounded-xl flex w-full'>
                     <h4 className='poppins m-auto'>  No leave request is pending</h4>
                 </section>
             }

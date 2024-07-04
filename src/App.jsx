@@ -91,10 +91,10 @@ import DasRouter from './Pages/DasRouter'
 import SettingRouter from './Pages/SettingPage/SettingRouter'
 import ApprovalPage from './Pages/Approval/ApprovalPage'
 // export const port ="http://192.168.0.117:9000/"
-// export const port = "http://192.168.0.116:9000/"
-export const port = "https://hrmbackendapi.meridahr.com/"
-export const domain='https://hrm.meridahr.com'
-// export const domain = 'http://localhost:3000'
+export const port = "http://192.168.0.116:9000/"
+// export const port = "https://hrmbackendapi.meridahr.com/"
+// export const domain='https://hrm.meridahr.com'
+export const domain = 'http://localhost:3000'
 
 const App = () => {
   // const port = "http://192.168.0.106:9000"

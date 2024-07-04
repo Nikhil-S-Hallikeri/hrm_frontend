@@ -13,8 +13,6 @@ const Profile_page = () => {
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     const user = JSON.parse(sessionStorage.getItem('user'))
     let logindata = JSON.parse(sessionStorage.getItem('user'))
-
-
     // Leave applay form start
 
     const [Employee_Id, setEmployee_Id] = useState("");

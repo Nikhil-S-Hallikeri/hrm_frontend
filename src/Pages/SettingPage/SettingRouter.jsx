@@ -39,6 +39,7 @@ const SettingRouter = () => {
                     <Route path='/leave/*' element={<LeaveApplying />} />
                     <Route path='/password' element={<ChangePassword />} />
                     <Route path='/holidays' element={<ShowHolidays/>} />
+                    
                 </Routes>
 
             </div>

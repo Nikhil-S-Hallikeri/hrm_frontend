@@ -8,6 +8,7 @@ import { HrmStore } from '../Context/HrmContext'
 
 const Empsidebar = () => {
     let logindata = JSON.parse(sessionStorage.getItem('user'))
+
     console.log("user", logindata.Disgnation);
     let { activePage, setActivePage, openNavbar, setNavbar } = useContext(HrmStore)
     return (
@@ -25,25 +26,31 @@ const Empsidebar = () => {
                         </button>
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/dashboard/${logindata.Disgnation}`}
                             label='Dashboard' active='dashboard'
-                            img='../assets/Images/dashboard.png' />
+                            img='/assets/Images/dashboard.png' />
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Employee_request_form`}
                             label='Request' active='request'
-                            img='../assets/Images/report.png' />
+                            img='/assets/Images/report.png' />
 
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Employee_interview_applicants`}
                             label='Applicants' active='Applicants'
-                            img='../assets/Images/Paper.png' />
-                        <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Report_Manager_Reporting_team`}
+                            img='/assets/Images/Paper.png' />
+                        {/* <NavbarButton openNavbar={openNavbar} setopen={setNavbar}
+                            path={`/Report_Manager_Reporting_team`}
                             label=' Reporting Team' active='team'
-                            img='../assets/Images/profile.png' />
-
+                            img='/assets/Images/profile.png' /> */}
+                        <NavbarButton openNavbar={openNavbar} setopen={setNavbar} drop={[
+                            { name: 'Reporting Team', path: '/Report_Manager_Reporting_team' },
+                            logindata.is_reporting_manager && { name: 'Approval', path: '/dash/approvals' },
+                        ]}
+                            label='Employee' active='Employee'
+                            img='/assets/Images/profile.png' />
                         {/* <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Emp_activity_sheet`}
                             label='Activity' active='activity'
-                            img='../assets/Images/Work.png' /> */}
+                            img='/assets/Images/Work.png' /> */}
 
-                        <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/settings/`}
+                        < NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/settings/`}
                             label='Setting' active='setting'
-                            img='../assets/Images/setting.png' />
+                            img='/assets/Images/setting.png' />
                     </section>
                 </section>
                 <section className={`${openNavbar ? 'translate-x-0 ' : 'translate-x-[-280px] '} transition duration-700 sideinleft bg-violet-50

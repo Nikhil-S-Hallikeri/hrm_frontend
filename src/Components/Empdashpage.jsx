@@ -7,6 +7,7 @@ import Slider from "react-slick";
 import '../assets/css/media.css'
 import Empsidebar from './Empsidebar';
 import { HrmStore } from '../Context/HrmContext';
+import LeaveApprovalBox from './HomeComponent/LeaveApprovalBox';
 
 const Empdashpage = () => {
 
@@ -102,20 +103,15 @@ const Empdashpage = () => {
             <div className='d-none d-lg-flex '>
                 <Empsidebar value={"dashboard"}></Empsidebar>
             </div>
-            <div className='flex-1  ' >
-
+            <div className='flex-1 container-fluid mx-auto ' >
                 <Topnav></Topnav>
                 <div className="chart-section p-3 bg-inf mt-4" >
 
-                    <div class="row m-0">
+                    <div class="row justify-between m-0">
                         <div className="col col-sm-7">
                             <h6 className='mt-2 heading' style={{ color: 'rgb(76,53,117)' }}>My Attendance</h6>
-
-
                             <div class="row border rounded p-4 bg-white mt-3">
-
                                 <div className="col " style={{ lineHeight: '50px', position: 'relative', top: '30px', left: '20px' }}>
-
                                     <div className='d-flex'>
                                         <h5 className='text-success'>1,300 </h5>
                                         <p className='text-total1' style={{ position: 'relative', left: '16px', bottom: '13px' }}>On Time</p>
@@ -141,6 +137,7 @@ const Empdashpage = () => {
                                 </div>
                             </div>
                         </div>
+                        <LeaveApprovalBox/>
                         <div className="col col-sm-5 ">
                             <h6 className='mt-2  heading' style={{ color: 'rgb(76,53,117)' }}>Statistis</h6>
 
