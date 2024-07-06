@@ -90,6 +90,8 @@ import LeaveSetting from './Pages/LeaveCreation'
 import DasRouter from './Pages/DasRouter'
 import SettingRouter from './Pages/SettingPage/SettingRouter'
 import ApprovalPage from './Pages/Approval/ApprovalPage'
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 // export const port ="http://192.168.0.117:9000/"
 export const port = "http://192.168.0.116:9000/"
 // export const port = "https://hrmbackendapi.meridahr.com/"

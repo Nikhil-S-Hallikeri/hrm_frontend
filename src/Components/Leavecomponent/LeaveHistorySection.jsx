@@ -22,10 +22,10 @@ const LeaveHistorySection = ({ setActiveSection }) => {
     return (
         <div>
             {historyRequest && historyRequest.length > 0 ?
-                <section className='rounded-xl table-responsive tablebg'>
-                    <table className='w-full '>
+                <section className='rounded-xl  h-[45vh] overflow-y-scroll table-responsive tablebg'>
+                    <table className='w-full  '>
                         <thead>
-                            <tr>
+                            <tr className='sticky top-0 bgclr1 '>
                                 <th className='w-20'>SI No</th>
                                 <th>Leave Type </th>
                                 <th>Leave Reason </th>
@@ -35,20 +35,22 @@ const LeaveHistorySection = ({ setActiveSection }) => {
                                 <th> Status</th>
                             </tr>
                         </thead>
-                        {console.log(historyRequest)}
+                        <tbody className=''>
 
-                        {[...historyRequest].reverse().map((obj, index) => (
-                            <tr key={index} className={` `} >
-                                <td>{index + 1}</td>
-                                <td> {obj.LeaveType} </td>
-                                <td className='mb-0 w-[300px] text-start  text-wrap '>{obj.reason} </td>
-                                <td>{obj.applied_date && changeDateYear(obj.applied_date)} </td>
-                                <td>{obj.from_date && changeDateYear(obj.from_date)}
-                                    {obj.days > 1 && obj.to_date ? " to " + changeDateYear(obj.to_date) : ''} </td>
-                                <td>{obj.days} </td>
-                                <td>{obj.approved_status} </td>
-                            </tr>
-                        ))}
+                            {console.log(historyRequest)}
+                            {[...historyRequest].reverse().map((obj, index) => (
+                                <tr key={index} className={` `} >
+                                    <td>{index + 1}</td>
+                                    <td> {obj.LeaveType} </td>
+                                    <td className='mb-0 w-[300px] text-start  text-wrap '>{obj.reason} </td>
+                                    <td>{obj.applied_date && changeDateYear(obj.applied_date)} </td>
+                                    <td>{obj.from_date && changeDateYear(obj.from_date)}
+                                        {obj.days > 1 && obj.to_date ? " to " + changeDateYear(obj.to_date) : ''} </td>
+                                    <td>{obj.days} </td>
+                                    <td>{obj.approved_status} </td>
+                                </tr>
+                            ))}
+                        </tbody>
                     </table>
                 </section> :
                 <section className='min-h-[40vh] bgclr rounded-xl flex w-full'>

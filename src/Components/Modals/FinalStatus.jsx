@@ -32,6 +32,11 @@ const FinalStatus = (props) => {
                 console.log(response.data);
                 setLoading(false)
                 toast.success('Mail sended to candidate.')
+                setObj({
+                    Final_Result: '',
+                    Comments: '',
+                    Email_Message: ``
+                })
                 setshow(false)
             }).catch((error) => {
                 console.log(error);
@@ -52,23 +57,29 @@ const FinalStatus = (props) => {
     useEffect(() => {
         if (obj.Final_Result) {
             let content;
-            if(obj.Final_Result=='Internal_Hiring')
-                content=mailContent.selected
-            if(obj.Final_Result=='Reject')
-                content=mailContent.reject
-            if(obj.Final_Result=='on_hold')
-                content=mailContent.on_hold
-            if(obj.Final_Result=='consider_to_client')
-                content=mailContent.consider_to_client
-            setObj((prev)=>({
+            if (obj.Final_Result == 'Internal_Hiring')
+                content = mailContent.selected
+            if (obj.Final_Result == 'Reject')
+                content = mailContent.reject
+            if (obj.Final_Result == 'on_hold')
+                content = mailContent.on_hold
+            if (obj.Final_Result == 'consider_to_client')
+                content = mailContent.consider_to_client
+            setObj((prev) => ({
                 ...prev,
-                Email_Message:`Dear ${name}, \n ${content} `
+                Email_Message: `Dear ${name}, \n ${content} `
             }))
         }
     }, [obj.Final_Result])
     return (
         <div>
-            {show && <Modal centered show={show} onHide={() => setshow(false)} >
+            {show && <Modal centered show={show} onHide={() => {
+                setshow(false); setObj({
+                    Final_Result: '',
+                    Comments: '',
+                    Email_Message: ``
+                })
+            }}>
                 <Modal.Header closeButton>
                     Final Status for {name && name}
                 </Modal.Header>
@@ -93,8 +104,8 @@ const FinalStatus = (props) => {
                         </div>
                         <div className=' items-start justify-between '>
                             <label htmlFor="" className='' > Email Content : <span className='text-blue-600 text-xs '>( Use \n to insert the Line in the mail )</span> </label>
-                            <textarea name="Email_Message" rows={5} className='w-full p-1 outline-none border-2 rounded ' 
-                            value={obj.Email_Message} onChange={handleChange} id=""></textarea>
+                            <textarea name="Email_Message" rows={5} className='w-full p-1 outline-none border-2 rounded '
+                                value={obj.Email_Message} onChange={handleChange} id=""></textarea>
                         </div>
                     </main>
                 </Modal.Body>

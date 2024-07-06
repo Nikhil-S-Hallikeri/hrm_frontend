@@ -91,19 +91,20 @@ const ShowHolidays = () => {
                     {
                         data && data.map((obj, index) => {
                             return (
-                                <section key={index} className='border-1 p-2 hover:scale-[1.03] bg-white hover:shadow rounded w-[16rem] h-[16rem] '>
+                                <section key={index}
+                                    className='border-1 p-2 hover:scale-[1.03] hover:bg-violet-50 bg-slate-50 hover:shadow rounded w-[16rem] h-[16rem] '>
                                     <p className='h-[2rem] px-2'>{obj.month_name} {selectedYear} </p>
                                     <div className='h-[11rem] px-2 overflow-y-scroll scrollmade '>
                                         {
                                             obj.holidays && obj.holidays.length > 0 ? obj.holidays.map((obj2, index) => (
                                                 <article className='flex items-center gap-2'>
                                                     <div className='w-1/6 '>
-                                                        <small className='fw-semibold text-slate-600'>{obj2.Date.slice(-2)} </small> <br />
-                                                        <small className='text-xs text-slate-500'> {obj2.Day.slice(0, 3)}</small>
+                                                        <small className='fw-semibold text-slate-600'>{obj2.Date && obj2.Date.slice(-2)} </small> <br />
+                                                        <small className='text-xs text-slate-500'> {obj2.Day && obj2.Day.slice(0, 3)}</small>
                                                     </div>
                                                     <small className='break-words text-slate-500'>{obj2.OccasionName} </small>
-                                                    <small style={{ fontSize: '9px' }} 
-                                                    className={` ms-auto rounded-full p-[1px] px-[4px] border-1 `}>
+                                                    <small style={{ fontSize: '9px' }}
+                                                        className={` ms-auto rounded-full p-[1px] px-[4px] border-1 `}>
                                                         {obj2.leave_type && obj2.leave_type.slice(0, 1)} </small>
                                                 </article>
                                             )) :

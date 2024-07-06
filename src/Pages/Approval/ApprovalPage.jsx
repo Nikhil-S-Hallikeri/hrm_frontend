@@ -33,40 +33,54 @@ const ApprovalPage = () => {
     useEffect(() => {
         setFilteredRequest(leaveRequestsReporting)
     }, [leaveRequestsReporting])
+
     let HandleFilterRequest = () => {
-        let newarry
-        if (filterOption.leaveType && filterOption.name) {
-            newarry = [...leaveRequestsReporting].filter((obj) =>
-                obj.employee_name.toLowerCase().indexOf(filterOption.name.toLowerCase()) != -1 &&
-                obj.LeaveType == filterOption.leaveType)
-        }
-        else if (filterOption.name) {
-            newarry = [...leaveRequestsReporting].filter((obj) =>
-                obj.employee_name.toLowerCase().indexOf(filterOption.name.toLowerCase()) != -1)
-        }
-        else {
-            newarry = [...leaveRequestsReporting]
-        }
-        setFilteredRequest(newarry)
+        let { name, leaveType } = filterOption
+        let lowercaseName = name.toLowerCase()
+        let filteredArry = leaveRequestsReporting.filter((obj) => {
+            let nameMatching = name ? obj.employee_name.toLowerCase().includes(lowercaseName) : true
+            let leavetypeMatchting = leaveType ? obj.LeaveType == leaveType : true
+            return nameMatching && leavetypeMatchting
+        })
+        let uniquearry = Array.from(new Set(filteredArry.map((obj) => obj.id)))
+            .map((id) => leaveRequestsReporting.find((obj) => obj.id == id))
+        setFilteredRequest(uniquearry)
     }
     let navigate = useNavigate()
     let handleRequest = (obj, status, index) => {
         setloading(`${status}${index}`)
-        axios.patch(`${port}/root/lms/Approve_Employee_Leave_Request/`, {
-            id: obj.id,
-            approved_status: status,
-            approved_by: loginId.id
-        }).then((response) => {
-            console.log(response.log);
-            setloading('')
-            getLeaveRequestsReporting()
-            toast.success(`Request got ${status}!!`)
-        }).catch((error) => {
-            console.log(error);
-            toast.error('Error Acquired')
-            setloading('')
-
-        })
+        let boolean = status == 'rejected' ? false : true
+        if (obj.is_hr_permission_required) {
+            alert('new api')
+            axios.patch(`${port}/root/lms/EmployeeLeaves/accepting/By_hr/`, {
+                id: obj.id,
+                is_approved_by_hr: boolean,
+            }).then((response) => {
+                console.log(response.data);
+                setloading('')
+                getLeaveRequestsReporting()
+                toast.success(`Request got ${status}!!`)
+            }).catch((error) => {
+                console.log(error);
+                toast.error('Error Acquired')
+                setloading('')
+            })
+        }
+        else
+            axios.patch(`${port}/root/lms/Approve_Employee_Leave_Request/`, {
+                id: obj.id,
+                approved_status: status,
+                approved_by: loginId.id
+            }).then((response) => {
+                console.log(response.log);
+                setloading('')
+                getLeaveRequestsReporting()
+                toast.success(`Request got ${status}!!`)
+            }).catch((error) => {
+                console.log(error);
+                toast.error('Error Acquired')
+                setloading('')
+            })
     }
     return (
         <div className=''>
@@ -87,7 +101,7 @@ const ApprovalPage = () => {
                         className='p-2 text-slate-500 bgclr rounded w-40 outline-none' id="">
                         <option value="">Leave type </option>
                         {leaveData && leaveData.map((obj, index) => (
-                            <option value={obj.leave_name}>{obj.leave_name}
+                            <option key={index} value={obj.leave_name}>{obj.leave_name}
                             </option>
                         ))}
                     </select>

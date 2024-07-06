@@ -89,7 +89,34 @@ const EmployeeCreation = (props) => {
             [name]: value
         }))
     }
-
+    let reset = () => {
+        setobj({
+            'full_name': '',
+            'email': '',
+            'gender': '',
+            'date_of_birth': '',
+            'mobile': '',
+            'weight': '',
+            'height': '',
+            'permanent_address': '',
+            'present_address': '',
+            'hired_date': '',
+            'Dasboard_Dig': '',
+            'Designation': '',
+            'reporting_to': '',
+            'Department': '',
+            'Employeement_Type': '',
+            'internship_Duration_From': null,
+            'internship_Duration_To': null,
+            'probation_status': '',
+            'probation_Duration_From': null,
+            'probation_Duration_To': null,
+            'applied_list_access': false,
+            'screening_shedule_access': false,
+            'interview_schedule_access': false,
+            'final_status_access': false
+        })
+    }
     const [Department_List, set_Department_List] = useState([]);
     const [Desgination_List, set_Desgination_List] = useState([]);
     let Add_Employee = (e) => {
@@ -111,6 +138,7 @@ const EmployeeCreation = (props) => {
             console.log("NewEmployeesAdding_res.", r.data)
             getEmp()
             setshow(false)
+            reset()
             setloading(false)
         })
             .catch((err) => {
@@ -155,9 +183,8 @@ const EmployeeCreation = (props) => {
 
     return (
         <div>
-            <Modal className=' ' centered size='xl' show={show} onHide={() => setshow(false)} >
+            <Modal className=' ' centered size='xl' show={show} onHide={() => { setshow(false); reset() }} >
                 <Modal.Header closeButton>
-
                 </Modal.Header>
                 <Modal.Body>
                     <form>

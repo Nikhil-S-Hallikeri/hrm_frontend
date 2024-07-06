@@ -9,7 +9,7 @@ export const HrmStore = createContext()
 const HrmContext = (props) => {
     let [openNavbar, setNavbar] = useState(false)
     let empid = JSON.parse(sessionStorage.getItem('user'))
-    let [leaveRequestsReporting, setLeaveRequestReporting]=useState()
+    let [leaveRequestsReporting, setLeaveRequestReporting] = useState()
     let [pendingLeave, setPendingLeave] = useState()
     let [leaveData, setLeaveData] = useState()
     let getLeaveData = () => {
@@ -105,8 +105,8 @@ const HrmContext = (props) => {
         const day = String(now.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-    function changeDateYear(date){
-        const [year,mnth,day]=date.split('-')
+    function changeDateYear(date) {
+        const [year, mnth, day] = date.split('-')
         return `${day}-${mnth}-${year}`
     }
     let testing = "hellow"
@@ -177,17 +177,20 @@ Merida Tech Minds (OPC) Pvt. Ltd.`
             console.log(error);
         })
     }
-    let getLeaveRequestsReporting=()=>{
-        axios.get(`${port}/root/lms/Reporting/Employee/PendingLeaves/${empid.EmployeeId}/`).then((response)=>{
-            setLeaveRequestReporting(response.data)
-            console.log("leave", response.data);
-        }).catch((error)=>{
-            console.log(error);
-        })
+    let getLeaveRequestsReporting = () => {
+        if (empid) {
+            axios.get(`${port}/root/lms/Reporting/Employee/PendingLeaves/${empid.EmployeeId}/`).then((response) => {
+                setLeaveRequestReporting(response.data)
+                console.log("leave", response.data);
+            }).catch((error) => {
+                console.log(error);
+            })
+        }
     }
-    let valueShare = {getPendingLeave,pendingLeave, setPendingLeave,leaveRequestsReporting, setLeaveRequestReporting,getLeaveRequestsReporting,
+    let valueShare = {
+        getPendingLeave, pendingLeave, setPendingLeave, leaveRequestsReporting, setLeaveRequestReporting, getLeaveRequestsReporting,
         changeDateYear, activeSetting, setActiveSetting, mailContent, openNavbar, setNavbar, convertToNormalTime, activePage, setActivePage,
-        leaveData,setLeaveData,getLeaveData,
+        leaveData, setLeaveData, getLeaveData,
         timeValidate, getProperDate, getCurrentDate, convertToReadableDateTime, testing, convertTimeTo12HourFormat, formatISODate
     }
     return (

@@ -26,14 +26,16 @@ const RestrictedLeaveApply = ({ setActiveSection }) => {
             days: 1,
             employee: JSON.parse(sessionStorage.getItem('user')).EmployeeId,
             from_date: obj.holiday.Date,
+            to_date: obj.holiday.Date,
             reason: `Leave applying for the Restricted holiday on ${obj.holiday.OccasionName}`
         }).then((response) => {
-            setloading('')
+            setloading(null)
             console.log(response.data);
             toast.success('Leave request has been sended')
             getRestrictedHoliday()
         }).catch((error) => {
-            setloading('')
+            setloading(null)
+            if (error.response.data) { toast.error(error.response.data) }
 
             console.log(error);
         })

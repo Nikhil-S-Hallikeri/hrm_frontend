@@ -90,7 +90,8 @@ const Final_status_comment = ({ selectedName, selectstatus, fetchdata3,
                         <div className="modal-body border-bottom p-2">
                             <div className='d-flex justify-content-center'>
 
-                                <textarea className='no-border border-0 ' placeholder='write here ...' name="" id="" style={{ width: '100%' }} value={statusreview} onChange={(e) => setStatusreview(e.target.value)} ></textarea>
+                                <textarea className='no-border border-0 ' placeholder='write here ...' name="" id="" style={{ width: '100%' }} 
+                                value={statusreview} onChange={(e) => setStatusreview(e.target.value)} ></textarea>
                             </div>
                         </div>
                         {/* Mail cotent */}

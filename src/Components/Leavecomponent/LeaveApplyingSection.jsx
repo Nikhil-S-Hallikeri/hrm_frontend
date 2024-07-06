@@ -20,8 +20,22 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
         reason: '',
         Document: null
     })
+    let [eligibleLeave, setEligibleLeave] = useState()
     let handleChange = (e) => {
         let { name, value, files } = e.target
+        if (name == 'days' && obj.LeaveType != '' && obj.LeaveType != null) {
+            let eligibledays = eligibleLeave.find((obj2) => obj2.id == obj.LeaveType).no_of_days
+            if (value > eligibledays)
+                toast.warning(`The applicable days for this leave criterion is ${eligibledays}`)
+            value = value > eligibledays ? eligibledays : value
+
+        }
+        if (name == 'LeaveType' && obj.days && value != '') {
+            let eligibledays = eligibleLeave.find((obj2) => obj2.id == value).no_of_days
+            if (obj.days > eligibledays)
+                toast.warning(`The applicable days for this leave criterion is ${eligibledays}`)
+            value = obj.days > eligibledays ? '' : value
+        }
         if (name == 'from_date' && value < timeValidate()) {
             value = timeValidate()
         }
@@ -58,7 +72,7 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
         formData.append("employee", obj.employee)
         formData.append("from_date", obj.from_date)
         formData.append("reason", obj.reason)
-        // formData.append("report_to", obj.report_to)
+        // formData.append("restricted_leave_type", null )
         formData.append("to_date", obj.to_date)
         setloading(true)
         axios.post(`${port}/root/lms/Approve_Employee_Leave_Request/`, formData).then((response) => {
@@ -82,14 +96,23 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
                 toast.error(error.response.data)
             }
             else {
-                toast.error('Eror acquired')
+                toast.error('Error acquired')
             }
             setloading(false)
+        })
+    }
+    let getEligibleLeaves = () => {
+        axios.get(`${port}/root/lms/Available_Leaves/${empid}/`).then((response) => {
+            setEligibleLeave(response.data)
+            console.log("leaves", response.data);
+        }).catch((error) => {
+            console.log(error);
         })
     }
     useEffect(() => {
         console.log(allocatedLeave);
         setActiveSection('apply')
+        getEligibleLeaves()
         getLeaveData()
     }, [])
 
@@ -98,7 +121,6 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
             <main className='bgclr min-h-[10vh] rounded-xl p-4 shadow-sm'>
                 <h4>Leave applying </h4>
                 <section className='flex flex-wrap justify-between items-start'>
-
                     <div className='my-2 p-2  col-sm-4'>
                         No of days Leave :
                         <input type="number" value={obj.days}
@@ -118,14 +140,14 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
                             className='p-2 block w-full shadow-sm bg-white rounded outline-none' />
                     </div>
                     <div className='my-2 p-2 col-sm-4'>
-                        <label htmlFor="">Leave Type : </label>
+                        <label htmlFor="">Applicable Leave Type : </label>
                         <select value={obj.LeaveType}
                             className='p-2 block w-full shadow-sm bg-white rounded outline-none'
                             onChange={handleChange} name='LeaveType' id="">
                             <option value="">Select</option>
                             {console.log(allocatedLeave)}
-                            {allocatedLeave && allocatedLeave.length>0 && allocatedLeave.map((x) => (
-                                < option value={x.id} >{x.LeaveType} </option>
+                            {eligibleLeave && eligibleLeave.length > 0 && eligibleLeave.map((x) => (
+                                < option value={x.id} >{x.leave_name} </option>
                             ))}
                         </select>
                     </div>
@@ -148,7 +170,6 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
                 <button onClick={postLeave} className='savebtn text-white ms-auto flex p-2 px-3 border-2 border-green-50 rounded'>
                     {loading ? "Loading..." : "Submit"}
                 </button>
-
             </main>
 
         </div>

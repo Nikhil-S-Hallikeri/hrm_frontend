@@ -84,12 +84,9 @@ const LeaveApprovalBox = () => {
                                                 <button onClick={() => handleRequest(obj, "approved", index)} className='p-1 px-2 text-sm shadow-sm rounded bg-green-600 text-white  '>
                                                     {loading == `approved${index}` ? 'Loading' : "Accept"} </button>
                                             </td>
-
                                         </tr>
                                     )
-                                })
-                                }
-
+                                })}
                             </table>
                         </article> : <div className=' h-[90%] min-h-[5vh] flex'>
                             <p className='m-auto'>No leave request are there!!! </p>
