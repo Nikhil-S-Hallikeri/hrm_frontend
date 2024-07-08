@@ -1,9 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { HrmStore } from '../../Context/HrmContext'
 import SwipingDetails from '../../Components/Modals/SwipingDetails'
+import axios from 'axios'
+import { port } from '../../App'
+import AttendenceShowingadminTable from '../../Components/Tables/AttendenceShowingadminTable'
 
 const AttendenceInfo = () => {
     let { setActiveSetting, getProperDate } = useContext(HrmStore)
+    let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
+    let [attendanceList, setAttendanceList] = useState([])
     let [show, setshow] = useState('')
     let [filterObj, setFilterObj] = useState({
         fromtime: '',
@@ -26,62 +31,25 @@ const AttendenceInfo = () => {
             fromtime: startDate,
             totime: endDate
         })
+        getAttendanceList(startDate, endDate)
         console.log(startDate, endDate);
     }
-    useEffect(() => {
-        currentMonthDates()
-    }, [])
-    let data = [{
-        date: '01 Apr 2024',
-        shift: '9:0(GS)',
-        attendenceScheme: 'General',
-        firstIn: '9:30',
-        lastout: '10-30',
-        workhrs: '09:48',
-        status: 'P',
-    },
-    {
-        date: '02 Apr 2024',
-        shift: '9:0(GS)',
-        attendenceScheme: 'General',
-        firstIn: '9:30',
-        lastout: '10-30',
-        workhrs: '09:48',
-        status: 'P',
-    },
-    {
-        date: '03 Apr 2024',
-        shift: '9:0(GS)',
-        attendenceScheme: 'General',
-        firstIn: '9:30',
-        lastout: '10-30',
-        workhrs: '09:48',
-        status: 'A',
-    },
-    {
-        date: '04 Apr 2024',
-        shift: '9:0(GS)',
-        attendenceScheme: 'General',
-        firstIn: '9:30',
-        lastout: '10-30',
-        workhrs: '09:48',
-        status: 'P',
-    },
-    {
-        date: '05 Apr 2024',
-        shift: '9:0(GS)',
-        attendenceScheme: 'General',
-        firstIn: '9:30',
-        lastout: '10-30',
-        workhrs: '09:48',
-        status: 'A',
-    },
-    ]
 
+    let getAttendanceList = (stdate, endate) => {
+        if (empid) {
+            axios.get(`${port}/root/lms/employee-attendance/${empid}/${stdate}/${endate}/`).then((response) => {
+                setAttendanceList(response.data.attendance_data)
+                console.log("arry", response.data.attendance_data);
+            }).catch((error) => {
+                console.log("arry", error);
+            })
+        }
+    }
     useEffect(() => {
         setActiveSetting('attendence')
-    }, [])
-
+        currentMonthDates()
+        getAttendanceList()
+    }, [empid])
     return (
         <div>
             <section className='flex flex-wrap items-center gap-3'>
@@ -95,7 +63,7 @@ const AttendenceInfo = () => {
                     <input onChange={handleChange} name='totime' value={filterObj.totime}
                         type="date" className='p-2 bg-transparent rounded outline-none' />
                 </div>
-                <button className='savebtn p-2 rounded border-2 border-green-50 text-white w-40'>
+                <button onClick={() => getAttendanceList(filterObj.fromtime, filterObj.totime)} className='savebtn p-2 rounded border-2 border-green-50 text-white w-40'>
                     Search
                 </button>
             </section>
@@ -103,34 +71,10 @@ const AttendenceInfo = () => {
 
             <main className='bgclr my-3 rounded p-2'>
                 <h6>Attendence report </h6>
-                <section className='tablebg px-0 border-0 h-[50vh] table-responsive'>
-                    <table className='w-full bgclr1'>
-                        <tr className='sticky bgclr1 top-0'>
-                            <th className='sticky top-0 left-0 bgclr1 z-10'>Date</th>
-                            <th>shift</th>
-                            <th>Attendence Scheme</th>
-                            <th>First IN</th>
-                            <th>Last out</th>
-                            <th>Work hrs </th>
-                            <th>Status</th>
-                            <th>Swipe Details </th>
-                        </tr>
-                        {data.map((obj, index) => (
-                            <tr key={index} className={`${obj.status == 'P' ? 'bg-green-50' : 'bg-red-50'} sticky top-11`} >
-                                <td className={`sticky ${obj.status == 'P' ? 'bg-green-50' : 'bg-red-50'} left-0`}>{obj.date}</td>
-                                <td className=''>{obj.shift}</td>
-                                <td>{obj.attendenceScheme}</td>
-                                <td>{obj.firstIn}</td>
-                                <td>{obj.lastout}</td>
-                                <td>{obj.workhrs}</td>
-                                <td>{obj.status}</td>
-                                <td className='' onClick={() => setshow(index)}><button className='text-blue-500'> Info </button> </td>
+                {attendanceList &&
+                    <AttendenceShowingadminTable type='personal' data={attendanceList} />}
 
-                            </tr>
-                        ))
-                        }
-                    </table>
-                </section>
+
             </main>
             <SwipingDetails show={show} setshow={setshow} />
         </div>

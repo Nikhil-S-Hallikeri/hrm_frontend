@@ -108,7 +108,7 @@ const LeaveSetting = () => {
         })
     }
     useEffect(() => {
-        setActivePage("Employee")
+        setActivePage("leave")
         if (id) {
             getParticular()
         }

@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { CloseButton, Modal } from 'react-bootstrap'
+import HrmContext, { HrmStore } from '../../Context/HrmContext';
 
 const SwipingDetails = ({ show, setshow }) => {
+    console.log(show);
+    let { changeDateYear } = useContext(HrmStore)
     let data = [
         {
             swipetime: '3:20'
@@ -21,16 +24,16 @@ const SwipingDetails = ({ show, setshow }) => {
     ]
     return (
         <div>
-            <Modal show={show} centered onHide={() => { setshow('') }}>
+            {show && <Modal show={show} centered onHide={() => { setshow('') }}>
                 <Modal.Header> <div className='flex items-center justify-between w-full'>
-                    <h6>Swipe Details for 04 july </h6>
-                    <button onClick={()=>{setshow('')}} className='text-xs border-2 flex items-center rounded-full p-1 justify-start'> <CloseButton className='m-0 p-0' /> </button></div></Modal.Header>
+                    <h6>Swipe Details for {changeDateYear(show.date)} </h6>
+                    <button onClick={() => { setshow('') }} className='text-xs border-2 flex items-center rounded-full p-1 justify-start'> <CloseButton className='m-0 p-0' /> </button></div></Modal.Header>
                 <Modal.Body>
                     <section className='text-sm flex flex-wrap gap-3'>
                         <p className='text-slate-400'>Employee name :
-                            <span className='text-slate-700'> Ravi Hd </span> </p>
+                            <span className='text-slate-700'> {show.Emp_Id && show.Emp_Id.Name} </span> </p>
                         <p className='text-slate-400'>Employee ID :
-                            <span className='text-slate-700'> MTM24EMPC8 </span>
+                            <span className='text-slate-700'> {show.Emp_Id && show.Emp_Id.EmployeeId} </span>
                         </p>
                     </section>
                     <section className='tablebg h-[50vh] overflow-y-scroll table-responsive'>
@@ -39,13 +42,13 @@ const SwipingDetails = ({ show, setshow }) => {
                                 <th>Swipe Time </th>
                                 <th>Location </th>
                             </tr>
-                            {data.map((obj, index) => (
-                                <tr className='' key={index} >
-                                    <td>{obj.swipetime} </td>
-                                    <td className=''>Enterance-1 </td>
-
-                                </tr>
-                            ))}
+                            {show && show.attendance_records &&
+                                show.attendance_records.map((obj, index) => (
+                                    <tr className='' key={index} >
+                                        <td>{obj.ScanTimings} </td>
+                                        <td className=''>Enterance-1 </td>
+                                    </tr>
+                                ))}
 
 
                         </table>
@@ -55,7 +58,7 @@ const SwipingDetails = ({ show, setshow }) => {
                         Close
                     </button>
                 </Modal.Body>
-            </Modal>
+            </Modal>}
         </div>
     )
 }

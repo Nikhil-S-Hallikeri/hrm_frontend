@@ -47,15 +47,22 @@ const LeaveApprovalBox = () => {
     }, [])
     return (
         <div className='col-sm-4 bgclr rounded-xl p-3' >
-            <h6 className='poppins text-center'>Reporting Team</h6>
-            <section className='p-2 flex justify-center gap-3 my-1'>
-                <button onClick={() => { setActiveSection('request') }} className={`duration-500 ${activeSection == 'request' && 'btngrd text-white'} rounded text-xs p-1 `}>Request </button>
-                <button onClick={() => { setActiveSection('report') }} className={`duration-500 rounded text-xs p-1 ${activeSection == 'report' && 'btngrd text-white'}`}    >Report </button>
+            <section className='flex my-2 gap-3 justify-between flex-wrap items-center'>
+                <h6 className='poppins fw-semibold text-blue-900 text-center'>Reporting Team</h6>
+                <select name="" value={activeSection} onChange={(e)=>setActiveSection(e.target.value)}  
+                className='p-1 rounded shadow outline-none text-sm' id="">
+                    <option value="request">
+                        <button  className={`duration-500 ${activeSection == 'request' && 'btngrd text-white'} rounded text-xs p-1 `}>Request </button>
+                    </option>
+                    <option value="report">
+                        <button  className={`duration-500 rounded text-xs p-1 ${activeSection == 'report' && 'btngrd text-white'}`}>Report </button>
+                    </option>
+                </select>
             </section>
             {activeSection == 'request' &&
-                <main className='h-[75%]'>
+                <main className='h-[25vh]'>
                     {leaveRequestsReporting && leaveRequestsReporting.length > 0 ?
-                        <article className='h-[90%] max-h-[30vh] min-h-[10vh] overflow-y-scroll table-responsive tablebg rounded '>
+                        <article className='h-[85%] overflow-y-scroll table-responsive tablebg rounded '>
                             <table className='w-full text-xs'>
                                 <tr className='sticky top-0 bgclr1' >
                                     <th> SI NO </th>
@@ -88,24 +95,26 @@ const LeaveApprovalBox = () => {
                                     )
                                 })}
                             </table>
-                        </article> : <div className=' h-[90%] min-h-[5vh] flex'>
+                        </article> : <div className='h-[85%] flex'>
                             <p className='m-auto'>No leave request are there!!! </p>
                         </div>}
-                    <button onClick={() => navigate('/dash/approvals')} className='mx-auto w-fit px-2 p-1 my-1 flex text-xs  savebtn 
+                    <button onClick={() => navigate('/dash/approvals')}
+                        className='mx-auto w-fit px-2 p-1 my-1 flex text-xs  btngrd 
                 rounded border-2 border-green-50 text-white'>
                         Check page </button>
                 </main>}
             {activeSection == 'report' &&
-                <main className='h-[75%] min-h-[10vh] '>
+                <main className='h-[25vh] '>
                     {weekofHistory && weekofHistory.length > 0 ?
-                        < section >
+                        < section>
                             <WeekLeaveAprovedEmp approvedHistory={weekofHistory} />
                         </section> :
-                        <div className='h-[90%] flex'>
+                        <div className='h-[85%] flex'>
                             <p className='m-auto'>No Leave approved for this Week </p>
                         </div>
                     }
-                    <button onClick={()=>navigate('/dash/history')} className='savebtn text-xs rounded border-2 border-green-50 p-1 px-2 
+                    <button onClick={() => navigate('/dash/history')} 
+                    className='btngrd text-xs rounded border-2 border-green-50 p-1 px-2 
                     mx-auto flex text-white my-2'>
                         Check Page
                     </button>

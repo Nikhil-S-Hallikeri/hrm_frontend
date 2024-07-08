@@ -12,6 +12,7 @@ const HrmContext = (props) => {
     let [leaveRequestsReporting, setLeaveRequestReporting] = useState()
     let [pendingLeave, setPendingLeave] = useState()
     let [leaveData, setLeaveData] = useState()
+    let [designation, setDesignation] = useState()
     let getLeaveData = () => {
         axios.get(`${port}/root/lms/LeaveTypes/`).then((response) => {
             setLeaveData(response.data)
@@ -124,6 +125,14 @@ const HrmContext = (props) => {
         const formattedTime = `${normalHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
 
         return formattedTime;
+    }
+    let getDesignations = () => {
+        axios.get(`${port}/root/ems/Designations/`).then((response) => {
+            console.log(response.data);
+            setDesignation(response.data)
+        }).catch((error) => {
+            console.log(error);
+        })
     }
     let [activePage, setActivePage] = useState('dashboard')
     let mailContent = {

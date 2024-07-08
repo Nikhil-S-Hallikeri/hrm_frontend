@@ -30,7 +30,8 @@ const NavbarButton = (props) => {
     }, [openNavbar])
     return (
         <div>
-            <div className={`relative w-[80px] flex my-1 transition  duration-500  
+            <div className={`relative  w-[80px] 
+            flex my-1 transition duration-500  
                  ${activePage == active && 'border-violet-900 border-s-4'} `}>
                 <OverlayTrigger className={` ${openNavbar && 'd-none'} `}
                     placement="right" delay={{ show: 150, hide: 200 }}

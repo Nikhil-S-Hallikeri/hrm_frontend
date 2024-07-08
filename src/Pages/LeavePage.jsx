@@ -17,7 +17,7 @@ const LeavePage = () => {
  
     useEffect(() => {
         getLeaveData()
-        setActivePage('Employee')
+        setActivePage('leave')
     }, [])
     return (
         <div>

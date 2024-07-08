@@ -26,7 +26,7 @@ const ApprovalPage = () => {
         }))
     }
     useEffect(() => {
-        setActivePage('Employee')
+        setActivePage('leave')
         getLeaveRequestsReporting()
         getLeaveData()
     }, [])

@@ -90,13 +90,12 @@ import LeaveSetting from './Pages/LeaveCreation'
 import DasRouter from './Pages/DasRouter'
 import SettingRouter from './Pages/SettingPage/SettingRouter'
 import ApprovalPage from './Pages/Approval/ApprovalPage'
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
+import AttendenceAdmin from './Pages/AttendenceAdmin'
 // export const port ="http://192.168.0.117:9000/"
-export const port = "http://192.168.0.116:9000/"
+export const port = "http://192.168.0.107:9000/"
 // export const port = "https://hrmbackendapi.meridahr.com/"
 // export const domain='https://hrm.meridahr.com'
-export const domain = 'http://localhost:3000'
+export const domain = 'http://192.168.0.111:3001'
 
 const App = () => {
   // const port = "http://192.168.0.106:9000"
@@ -117,6 +116,7 @@ const App = () => {
           <Route element={<Protect Child={Recruiterdashpage} />} path='dashboard/Recruiter'></Route>
           <Route element={<Protect Child={Empdashpage} />} path='dashboard/Employee'></Route>
 
+          <Route path='/attendence-list' element={<AttendenceAdmin />} />
 
           <Route element={<Applylist></Applylist>} path='/Applaylist'></Route>
           <Route element={<Employees></Employees>} path='/Employees'></Route>
@@ -132,7 +132,7 @@ const App = () => {
           <Route element={<Activites></Activites>} path='/Activites'></Route>
           <Route element={<Employeeallform></Employeeallform>} path='/Employeeallform/:id'></Route>
           <Route element={<Downloadpdf></Downloadpdf>} path='/Pdfdown'></Route>
-          <Route path='/settings/*' element={<SettingRouter/>} />
+          <Route path='/settings/*' element={<SettingRouter />} />
           <Route element={<Offeraccept></Offeraccept>} path='/offeraccept/:id'></Route>
 
           <Route element={<Employeeseparation></Employeeseparation>} path='/Employeeseparation'></Route>
