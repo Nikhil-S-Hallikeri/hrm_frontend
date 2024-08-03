@@ -38,27 +38,36 @@ const LeaveApplying = () => {
     const renderTooltip = (text) => (
         <Tooltip id="button-tooltip">{text}</Tooltip>
     );
-return (
-    <div className=' '>
-        <main className='overflow-x-scroll scrollmade my-3 flex gap-3 '>
-            {
-                allocatedLeave && [...allocatedLeave].map((obj, index) => (
-                    <OverlayTrigger key={index}
-                        placement="top" delay={{ show: 150, hide: 200 }}
-                        overlay={renderTooltip('hello')} >
-                        <div className='bgclr p-2 w-[16rem] flex rounded gap-3 items-center '>
-                            <div className='w-2/3'>
+    return (
+        <div className=' '>
+            <main className='overflow-x-scroll scrollmade my-3 flex gap-3 '>
+                {
+                    allocatedLeave && [...allocatedLeave].map((obj, index) => (
+                        <OverlayTrigger key={index}
+                            placement="top" delay={{ show: 150, hide: 200 }}
+                            overlay={renderTooltip(obj.leave_discription)} >
+                            <section className='bgclr rounded gap-3 p-2 w-[16rem]'>
                                 <p className='break-words text-sm mb-0 fw-semibold'>{obj.LeaveType}</p>
-                                <h4 className='fw-semibold text-4xl'>{obj.Available_leaves} </h4>
-                            </div>
-                            <img className='w-14 h-fit  ' src={require('../../assets/Images/leavepage.png')} alt="Leave Image" />
-                        </div>
-                    </OverlayTrigger>
-                ))
-            }
-        </main>
+                                <div className=' flex  items-center '>
+                                    <div className='w-2/3'>
+                                        <h4 className='fw-semibold text-4xl'>{obj.Available_leaves} </h4>
+                                        <p className='break-words text-xs mb-0 fw-semibold'>Available </p>
 
-        {/* <section className='flex flex-wrap bgclr rounded-full my-3 mx-auto w-fit'>
+                                    </div>
+                                    <div>
+                                        <h4 className='fw-semibold text-4xl'>{obj.utilised_leaves} </h4>
+                                        <p className='break-words text-xs mb-0 fw-semibold'>Utilized </p>
+
+                                    </div>
+                                    {/* <img className='w-14 h-fit' src={require('../../assets/Images/leavepage.png')} alt="Leave Image" /> */}
+                                </div>
+                            </section>
+                        </OverlayTrigger>
+                    ))
+                }
+            </main>
+
+            {/* <section className='flex flex-wrap bgclr rounded-full my-3 mx-auto w-fit'>
                 <button>
 
                 </button>
@@ -70,35 +79,35 @@ return (
                     name='History' path='/leave/history' active='history' />
 
             </section> */}
-        <section className='my-3 fw-medium '>
-            <button onClick={() => { navigate('/settings/leave') }}
-                className={` ${activeSection == 'apply' && 'bgclr border-0 shadow-sm '} rounded-xl duration-500 fw-medium  w-32 p-2 px-2 `} >
-                Apply
-            </button>
-            <button onClick={() => { navigate('/settings/leave/restrictedHoliday') }}
-                className={` ${activeSection == 'rh' && 'bgclr border-0  shadow-sm '} rounded-xl duration-300 w-32 p-2 px-2 `} >
-                RH Apply
-            </button>
-            <button onClick={() => { navigate('/settings/leave/pending') }}
-                className={` ${activeSection == 'pending' && 'bgclr border-0  shadow-sm '} rounded-xl duration-500 w-32 p-2 px-2 `} >
-                Pending
-            </button>
-            <button onClick={() => { navigate('/settings/leave/history') }}
-                className={` ${activeSection == 'history' && 'bgclr border-0  shadow-sm '} rounded-xl duration-300 w-32 p-2 px-2 `} >
-                History
-            </button>
+            <section className='my-3 fw-medium '>
+                <button onClick={() => { navigate('/settings/leave') }}
+                    className={` ${activeSection == 'apply' && 'bgclr border-0 shadow-sm '} rounded-xl duration-500 fw-medium  w-32 p-2 px-2 `} >
+                    Apply
+                </button>
+                <button onClick={() => { navigate('/settings/leave/restrictedHoliday') }}
+                    className={` ${activeSection == 'rh' && 'bgclr border-0  shadow-sm '} rounded-xl duration-300 w-32 p-2 px-2 `} >
+                    RH Apply
+                </button>
+                <button onClick={() => { navigate('/settings/leave/pending') }}
+                    className={` ${activeSection == 'pending' && 'bgclr border-0  shadow-sm '} rounded-xl duration-500 w-32 p-2 px-2 `} >
+                    Pending
+                </button>
+                <button onClick={() => { navigate('/settings/leave/history') }}
+                    className={` ${activeSection == 'history' && 'bgclr border-0  shadow-sm '} rounded-xl duration-300 w-32 p-2 px-2 `} >
+                    History
+                </button>
 
-        </section>
+            </section>
 
-        <Routes>
-            <Route path='/*' element={<LeaveApplyingSection setActiveSection={setActiveSection} allocatedLeave={allocatedLeave} />} />
-            <Route path='/pending' element={<LeavePengindSection setActiveSection={setActiveSection} />} />
-            <Route path='/history' element={<LeaveHistorySection setActiveSection={setActiveSection} />} />
-            <Route path='/restrictedHoliday' element={<RestrictedLeaveApply setActiveSection={setActiveSection} />} />
-        </Routes>
+            <Routes>
+                <Route path='/*' element={<LeaveApplyingSection setActiveSection={setActiveSection} allocatedLeave={allocatedLeave} />} />
+                <Route path='/pending' element={<LeavePengindSection setActiveSection={setActiveSection} />} />
+                <Route path='/history' element={<LeaveHistorySection setActiveSection={setActiveSection} />} />
+                <Route path='/restrictedHoliday' element={<RestrictedLeaveApply setActiveSection={setActiveSection} />} />
+            </Routes>
 
-    </div >
-)
+        </div >
+    )
 }
 
 export default LeaveApplying

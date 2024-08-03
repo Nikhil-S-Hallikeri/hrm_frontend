@@ -70,9 +70,7 @@ const Docupload = () => {
             console.log(pair[0] + ': ' + pair[1]);
         }
 
-        alert("Document Verification");
-
-       
+        alert("Document Verification"); 
     }
 
 

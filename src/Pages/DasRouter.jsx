@@ -10,6 +10,15 @@ import Empsidebar from '../Components/Empsidebar'
 import Recsidebar from '../Components/Recsidebar'
 import ReportingCheck from '../Components/AuthPermissions/ReportingCheck'
 import AttendenceAdmin from './AttendenceAdmin'
+import BGVerificationDetails from './BGVerificationDetails'
+import BackgroundDocumentshow from '../Components/HomeComponent/BackgroundDocumentshow'
+import OfferApprovalPage from './Approval/OfferApprovalPage'
+import HRrequestPage from './Employee_Performance/HRrequestPage'
+import EmployeeProfile from './EmployeeProfile'
+import SalaryComponent from './Payroll/SalaryComponent'
+import SalaryTemplate from './Payroll/SalaryTemplate'
+import STEmployeeAssigning from './Payroll/STEmployeeAssigning'
+import PaySlip from './Payroll/PaySlip'
 
 const DasRouter = () => {
     let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
@@ -29,9 +38,18 @@ const DasRouter = () => {
                     <Routes>
                         <Route path='/leaveSetting/:id' element={<LeaveSetting />} />
                         <Route path='/leaveCreation' element={<LeavePage />} />
-                        <Route path='/approvals' element={<ReportingCheck Child={ApprovalPage}/>} />
+                        <Route path='/approvals' element={<ReportingCheck Child={ApprovalPage} />} />
                         <Route path='/history' element={<LeaveAllHistory />} />
-                        <Route path='/attendence-list' element={<AttendenceAdmin/>} />
+                        <Route path='/attendence-list' element={<AttendenceAdmin />} />
+                        <Route path='/bgverificationDetails/:id' element={<BGVerificationDetails />} />
+                        <Route path='/BackgroundVerification/:id' element={<BackgroundDocumentshow />} />
+                        <Route path='/offerApproval' element={<OfferApprovalPage />} />
+                        <Route path='/appraisalform' element={<HRrequestPage />} />
+                        <Route path='/employee/:id?' element={<EmployeeProfile />} />
+                        <Route path='/salaryComponent/*' element={<SalaryComponent />} />
+                        <Route path='/salary-templates/*' element={<SalaryTemplate />} />
+                        <Route path='/salary-assigning' element={<STEmployeeAssigning />} />
+                        <Route path='/payslip' element={<PaySlip/>}/>
 
 
                     </Routes>

@@ -8,12 +8,14 @@ import Slider from "react-slick";
 import '../assets/css/media.css'
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { port } from '../App'
+import { domain, port } from '../App'
 import { toast } from 'react-toastify';
 import { Modal } from 'react-bootstrap';
 import { HrmStore } from '../Context/HrmContext';
 import ShortcutCard from './HomeComponent/ShortcutCard';
 import LeaveApprovalBox from './HomeComponent/LeaveApprovalBox';
+import BackgroundDocumentshow from './HomeComponent/BackgroundDocumentshow';
+import FinalResultCompleted from './Modals/FinalResultCompleted';
 
 
 
@@ -22,18 +24,19 @@ import LeaveApprovalBox from './HomeComponent/LeaveApprovalBox';
 
 
 const Hrdashpage = () => {
-
+    let [showBGV, setshowBGV] = useState()
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let empStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
+    let [finalResultObj, setFinalResultObj] = useState()
     let [mailModal, setmailModal] = useState(false)
     let { openNavbar, setNavbar } = useContext(HrmStore)
     const navigate = useNavigate()
     var settings1 = {
-        dots: false,
+        dots: true,
         arrows: false,
         infinite: true,
         speed: 900,
-        slidesToShow: 5,
+        slidesToShow: 4,
         autoplay: true,
         speed: 1000,
         responsive: [
@@ -317,7 +320,7 @@ const Hrdashpage = () => {
             console.log("counts_res", res.data);
             // console.log("Int_counts_res", res.data.internal_hiring);
             setHiredcounts(res.data)
-            console.log(res.data);
+            console.log("count", res.data);
 
         }).catch((err) => {
             console.log("counts_err", err.data);
@@ -338,7 +341,6 @@ const Hrdashpage = () => {
             .then((res) => {
                 console.log("setHiredCanditates_res", res.data);
                 setCandidateDetails(res.data)
-
             }).catch((err) => {
                 console.log("setHiredCanditates_err", err.data);
             })
@@ -394,7 +396,7 @@ const Hrdashpage = () => {
 
         console.log("setOfferdCandidates", e);
         setstatus(e)
-        axios.get(`${port}/root/FinalCanditatesList`, e).then((res) => {
+        axios.get(`${port}/root/FinalCandidatesList/${e}/`).then((res) => {
             setCandidateDetails(res.data)
             console.log("CanditatesList", res.data);
 
@@ -439,7 +441,7 @@ const Hrdashpage = () => {
     const [offer_letter_Phone, setoffer_letter_Phone] = useState('')
     const [offer_letter_designation, setoffer_letter_designation] = useState('')
 
-    const offer_letter = (i, p, m, n, d) => {
+    const offer_letter = (i, p, m, n, d, dob) => {
 
         console.log("offer_letter", i, p, m, n);
         console.log("offer_letter_name", i);
@@ -453,6 +455,7 @@ const Hrdashpage = () => {
         setoffer_letter_email(m)
         setoffer_letter_Phone(n)
         setoffer_letter_designation(d)
+        setDob(dob)
 
     }
     let [loadingMailing, setLoadingMailing] = useState('')
@@ -462,7 +465,7 @@ const Hrdashpage = () => {
         const formdata = new FormData();
         formdata.append('CandidateID', canid);
         formdata.append('mail_sended_by', Empid);
-        formdata.append('FormURL', `http://localhost:3000/Doc/`);
+        formdata.append('FormURL', `${domain}/Doc/`);
 
         setLoadingMailing('mail')
         axios.post(`${port}/root/DocumentsUploadForm`, formdata)
@@ -507,17 +510,17 @@ const Hrdashpage = () => {
                 <div className={` mx-auto ${openNavbar ? 'max-w-[650px] xl:max-w-[900px] ' : "lg:max-w-[900px]  xl:max-w-full "}  `}>
                     <h5 className='text-3xl my-3 '>Overview </h5>
 
-                    <Slider {...settings1} slidesToShow={openNavbar ? 4 : 5} >
+                    <Slider {...settings1} slidesToShow={openNavbar ? 3 : 4} >
                         <div onClick={() => setHiredCanditates("Internal_Hiring")}
                             data-bs-toggle="modal" data-bs-target="#exampleModal10">
                             <ShortcutCard img={'../assets/Images/circle1.png'}
                                 count={Hiredcounts.internal_hiring} label='Internal Hiring' />
                         </div>
 
-                        <div onClick={() => setOfferdCandidates("OfferdCandidates")}
+                        <div onClick={() => setOfferdCandidates("offered")}
                             data-bs-toggle="modal" data-bs-target="#exampleModal10">
                             <ShortcutCard img={'../assets/Images/circle2.png'}
-                                count={Hiredcounts.internal_hiring} label='Offered candidate' />
+                                count={Hiredcounts.offered_candidates} label='Offered candidate' />
                         </div>
                         <div
                             onClick={() => setRejectedCandidates("Reject")}
@@ -526,7 +529,7 @@ const Hrdashpage = () => {
                                 count={Hiredcounts.Reject} label='Rejected candidate' />
                         </div>
                         <div
-                            onClick={() => setShartlistCanditates("ShartlistCanditates")}
+                            onClick={() => setShartlistCanditates("All Applicants")}
                             data-bs-toggle="modal" data-bs-target="#exampleModal10">
                             <ShortcutCard img={'../assets/Images/circle4.png'}
                                 count={Hiredcounts.AppliedCandidates} label='All Applicants' />
@@ -535,7 +538,12 @@ const Hrdashpage = () => {
                         <div onClick={() => setConsiderToClient("consider_to_client")}
                             data-bs-toggle="modal" data-bs-target="#exampleModal10">
                             <ShortcutCard img={'../assets/Images/circle5.png'}
-                                count={Hiredcounts.consider_to_client} label='Consider to client' />
+                                count={Hiredcounts.consider_to_client} label='Consider to client for Merida' />
+                        </div>
+                        <div onClick={() => setConsiderToClient("On_Hold")}
+                            data-bs-toggle="modal" data-bs-target="#exampleModal10">
+                            <ShortcutCard img={'../assets/Images/circle3.png'}
+                                count={Hiredcounts.On_Hold} label='On Hold Candidates' />
                         </div>
 
                     </Slider>
@@ -559,59 +567,118 @@ const Hrdashpage = () => {
 
                         {/* sliders Modal start */}
 
-                        <div class="modal fade" id="exampleModal10" tabindex="-1" aria-labelledby="exampleModalLabel10" aria-hidden="true">
+                        <div class="modal fade" id="exampleModal10" tabindex="-1" aria-labelledby="exampleModalLabel10"
+                            aria-hidden="true">
                             <div class="modal-dialog modal-fullscreen modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel10"> {status}  </h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <div class="modal-content bgclr1">
+                                    <div class="bgclr1 flex items-center justify-between  p-3 ">
+                                        <h1 class=" fs-5" id="exampleModalLabel10"> {status}  </h1>
+                                        <button type="button" onClick={() => {
+                                            setstatus('')
+                                        }} class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body ">
+                                    <FinalResultCompleted show={finalResultObj} setshow={setFinalResultObj} />
+                                    <div class="modal-body bgclr1">
 
 
-                                        <div className='table-responsive'>
-                                            <table class="table caption-top     table-hover">
+                                        <div className='tablebg max-h-[80vh] overflow-y-scroll rounded table-responsive'>
+                                            <table class="w-full ">
                                                 <thead >
-                                                    <tr >
+                                                    <tr className='sticky top-0 bgclr1' >
                                                         <th scope="col"><span className='fw-medium'>Canditate Id</span></th>
                                                         <th scope="col"><span className='fw-medium'>Name</span></th>
                                                         <th scope="col"><span className='fw-medium'>Email</span></th>
-                                                        <th scope="col"><span className='fw-medium'>Phone</span></th>
-                                                        <th scope="col"><span className='fw-medium'>Applied Designation</span></th>
-                                                        <th scope="col"><span className='fw-medium'>Status</span></th>
+                                                        {status != 'offered' && <th scope="col"><span className='fw-medium'>Phone</span></th>}
+                                                        {status != 'offered' && <th scope="col"><span className='fw-medium'>Applied Designation</span></th>}
+                                                        {status != 'offered' && <th scope="col"><span className='fw-medium'>Status</span></th>}
+                                                        {status == 'offered' &&
+                                                            <th scope="col"><span className='fw-medium'>Offer acceptance Status</span>
+                                                            </th>}
+                                                        {status == 'offered' &&
+                                                            <th scope="col"><span className='fw-medium'>Offer acceptance remarks </span>
+                                                            </th>}
+                                                        {status == 'offered' &&
+                                                            <th scope="col"><span className='fw-medium'>Designation </span>
+                                                            </th>}
+                                                        {status == 'offered' &&
+                                                            <th scope="col"><span className='fw-medium'>Employeement Type</span>
+                                                            </th>}
+                                                        {status == 'offered' &&
+                                                            <th scope="col"><span className='fw-medium'>Offered Date </span>
+                                                            </th>}
+                                                        {status == 'offered' &&
+                                                            <th scope="col"><span className='fw-medium'>Date of joining</span>
+                                                            </th>}
 
-                                                        <th scope="col"><span className='fw-medium'>Document Upload</span></th>
-                                                        <th scope="col"><span className='fw-medium'>Offer Letter</span></th>
+
+
+                                                        {status != 'Reject' && <th scope="col"><span className='fw-medium'>Fresher/Experience </span></th>}
+
+                                                        {(status == 'Internal_Hiring' ||status == 'consider_to_client') && <th scope="col"><span className='fw-medium'>BGV Document Upload</span></th>}
+                                                        {status != 'ShartlistCanditates' && status != 'Reject' && status != 'All Applicants' &&
+                                                            <th scope="col"><span className='fw-medium'>Offer Letter</span></th>}
+                                                        <th scope="col"><span className='fw-medium'>Action</span></th>
+
                                                     </tr>
                                                 </thead>
 
-                                                {canditatedetails.map((e) => {
+                                                {canditatedetails && [...canditatedetails].reverse().map((e) => {
+                                                    console.log("hellow", e);
                                                     return (
 
                                                         <tbody>
-                                                            <tr key={e.id}>
+                                                            <tr className={` ${e.Accept_status == 'Accept' ? 'bg-green-50' :
+                                                                e.Accept_status == 'Reject' ? 'bg-red-50' : ''} `} key={e.id}>
 
                                                                 <td > {e.CandidateId}</td>
-                                                                <td >{e.FirstName}</td>
+                                                                {status != 'offered' && <td >{e.FirstName}</td>}
+                                                                {status == 'offered' && <td> {e.Name} </td>}
+
                                                                 <td >{e.Email}</td>
-                                                                <td >{e.PrimaryContact}</td>
-                                                                <td >{e.AppliedDesignation}</td>
-                                                                <td >{e.Final_Results}</td>
-                                                                <td className={`text-center ${e.Final_Results === 'Internal Hiring' ? 'd-none' : 'd-flex'}`}>
-                                                                    {e.Documents_Upload_Status === "Uploaded" ?
-                                                                        (<button className='btn btn-success btn-sm' data-bs-dismiss="modal"
-                                                                            onClick={() => { sentid(e.CandidateId, e.Email); setmailModal(true) }} >
-                                                                            BG Document Updated . . .
-                                                                        </button>)
-                                                                        :
-                                                                        (<button className='btn btn-danger btn-sm' data-bs-dismiss="modal"
-                                                                            onClick={() => { sentid(e.CandidateId, e.Email); setmailModal(true) }} >
-                                                                            Upload Your BG Document
-                                                                        </button>
-                                                                        )}
-                                                                </td>
-                                                                <td className={`text-center `}>
-                                                                    <button className={`btn btn-info btn-sm   ${e.Final_Results === 'Reject' ? 'd-none' : 'd-block '} `} onClick={() => offer_letter(e.FirstName, e.CandidateId, e.Email, e.PrimaryContact, e.AppliedDesignation)} data-bs-target="#exampleModalToggle11" data-bs-toggle="modal">Offer Letter</button>
+                                                                {status != 'offered' && <td >{e.PrimaryContact}</td>}
+                                                                {status != 'offered' && <td >{e.AppliedDesignation}</td>}
+                                                                {status != 'offered' && <td >{e.Final_Results}</td>}
+                                                                {status == 'offered' && <td className={`  `} > {e.Accept_status == 'Accept' ? 'Accepted' :
+                                                                    e.Accept_status == 'Reject' ? 'Rejected' : ''} </td>}
+                                                                {status == 'offered' && <td> {e.remarks} </td>}
+
+
+                                                                {status == 'offered' && <td> {e.position_name} </td>}
+
+                                                                {status == 'offered' && <td> {e.Employeement_Type} </td>}
+                                                                {status == 'offered' && <td> {e.OfferedDate && e.OfferedDate.slice(0, 10)} </td>}
+
+                                                                {status == 'offered' && <td> {e.Date_of_Joining} </td>}
+                                                                {status != 'Reject' && <td> {e.current_position} </td>}
+                                                                {(status == 'Internal_Hiring' ||status == 'consider_to_client') &&
+                                                                    <td className={` ${e.Final_Results === 'Internal Hiring' ? 'd-none' : 'd-flex'}`}>
+                                                                        {e.Experience ? e.Documents_Upload_Status === "Uploaded" ?
+                                                                            (<button className='btn btn-success btn-sm' data-bs-dismiss="modal"
+                                                                                onClick={() => { navigate(`/dash/BackgroundVerification/${e.CandidateId}`) }} >
+                                                                                BG Document Updated . . .
+                                                                            </button>)
+                                                                            :
+                                                                            (<button className='btn btn-danger btn-sm' data-bs-dismiss="modal"
+                                                                                onClick={() => { sentid(e.CandidateId, e.Email); setmailModal(true) }} >
+                                                                                Upload Your BG Document
+                                                                            </button>)
+                                                                            : <p className='mb-0 text-center w-full '> Not Required </p>}
+                                                                    </td>}
+                                                                {status != 'ShartlistCanditates' && status != 'Reject' && status != 'All Applicants' &&
+                                                                    <td className={`text-center `}>
+                                                                        {((e.Experience && e.BG_Status == 'Verified') || e.Fresher) ?
+                                                                            <button data-bs-dismiss="modal" className={`btn btn-info btn-sm   ${e.Final_Results === 'Reject' ? 'd-none' : 'd-block '} `}
+                                                                                onClick={() => {
+                                                                                    offer_letter(e.FirstName, e.CandidateId, e.Email, e.PrimaryContact, e.AppliedDesignation, e.DOB);
+                                                                                    navigate(`/offerletter/${e.CandidateId}`)
+                                                                                }}
+                                                                            >Offer Letter
+                                                                            </button> : <p> BGV has to complete </p>}
+                                                                    </td>}
+                                                                <td>
+                                                                    <button onClick={() => setFinalResultObj(e)} className='p-2 rounded bg-blue-600 text-sm text-white '>
+                                                                        view
+                                                                    </button>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -820,72 +887,72 @@ const Hrdashpage = () => {
 
                                         <div class="form-group">
                                             <label for="candidateId">Candidate ID :</label>
-                                            <input type="text" id="CandidateId" value={persondata.CandidateId} name="InterviewRoundName" class="form-control" />
+                                            <input type="text" id="CandidateId" value={persondata.CandidateId} name="InterviewRoundName" className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="CandidateName">Name :</label>
-                                            <input type="text" id="CandidateName" value={updocData.CandidateName} onChange={handleInputChange2} name="CandidateName" required class="form-control" />
+                                            <input type="text" id="CandidateName" value={updocData.CandidateName} onChange={handleInputChange2} name="CandidateName" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
                                         <div class="form-group">
                                             <label for="CandidateName">Provious  Company :</label>
-                                            <input type="text" id="CandidateName" value={updocData.CandidateName} onChange={handleInputChange2} name="CandidateName" required class="form-control" />
+                                            <input type="text" id="CandidateName" value={updocData.CandidateName} onChange={handleInputChange2} name="CandidateName" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
                                         <div class="form-group">
                                             <label for="CandidateName">Provious Designation:</label>
-                                            <input type="text" id="CandidateName" value={updocData.CandidateName} onChange={handleInputChange2} name="CandidateName" required class="form-control" />
+                                            <input type="text" id="CandidateName" value={updocData.CandidateName} onChange={handleInputChange2} name="CandidateName" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
                                         <div class="form-group">
                                             <label for="CandidateNameEmail">Experience :</label>
-                                            <input type="email" id="CandidateNameEmail" name="CandidateNameEmail" value={updocData.CandidateNameEmail} onChange={handleInputChange2} required class="form-control" />
+                                            <input type="email" id="CandidateNameEmail" name="CandidateNameEmail" value={updocData.CandidateNameEmail} onChange={handleInputChange2} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
                                         <div class="form-group">
                                             <label for="CandidatePhone">From date :</label>
-                                            <input type="tel" id="CandidatePhone" name="CandidatePhone" value={updocData.CandidatePhone} onChange={handleInputChange2} required class="form-control" />
+                                            <input type="tel" id="CandidatePhone" name="CandidatePhone" value={updocData.CandidatePhone} onChange={handleInputChange2} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
                                         <div class="form-group">
                                             <label for="CandidateDesignation">To date :</label>
-                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required class="form-control" />
+                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="CandidateDesignation">Current CTC :</label>
-                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required class="form-control" />
+                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="CandidateDesignation">Reporting Manager name :</label>
-                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required class="form-control" />
+                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="CandidateDesignation">Reporting Manager email :</label>
-                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required class="form-control" />
+                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="CandidateDesignation">ReportingManager phone :</label>
-                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required class="form-control" />
+                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="CandidateDesignation">HR email :</label>
-                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required class="form-control" />
+                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="CandidateDesignation">HR phone :</label>
-                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required class="form-control" />
+                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="CandidateDesignation">Upload Document</label>
-                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required class="form-control" />
+                                            <input type="text" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                             <input type="file" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required class="form-control mt-3" />
                                         </div>
                                         <div class="form-group">
                                             <label for="CandidateDesignation">Salary Drawn Payslips :</label>
-                                            <input type="file" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required class="form-control" />
+                                            <input type="file" id="CandidateDesignation" name="CandidateDesignation" value={updocData.CandidateDesignation} onChange={handleInputChange2} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' />
                                         </div>
                                     </div>
 
@@ -909,51 +976,63 @@ const Hrdashpage = () => {
                             </div>
                             <div class="modal-body">
 
-                                <div className="col-12 bg-white py-3 shadow">
-                                    <form >
-                                        <div className="row m-0 border-bottom pb-2 mt-5" style={{ lineHeight: '50px' }}>
+                                <div className="col-12 formbg rounded py-3 shadow">
+                                    <form className=' '>
+                                        <div className="row poppins m-0 border-bottom pb-2 mt-2" style={{ lineHeight: '50px' }}>
                                             <div class=" col-md-6 col-lg-4 mb-3">
                                                 <label for="OfferName">Name :</label>
-                                                <input type="text" id="OfferName" name="OfferName" class="form-control" required value={offer_letter_name} />
+                                                <input type="text" id="OfferName" name="OfferName" className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                                    required value={offer_letter_name} />
                                             </div>
                                             <div class=" col-md-6 col-lg-4 mb-3">
                                                 <label for="Email">Email :</label>
-                                                <input type="email" id="Email" name="Email" required class="form-control" value={offer_letter_email} />
+                                                <input type="email" id="Email" name="Email" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                                    value={offer_letter_email} />
                                             </div>
-                                            <div class=" col-md-6 col-lg-4 mb-3">
+                                            {/* <div class=" col-md-6 col-lg-4 mb-3">
                                                 <label for="Phone">Phone :</label>
-                                                <input type="tel" id="Phone" name="Phone" required class="form-control" value={offer_letter_Phone} />
-                                            </div>
+                                                <input type="tel" id="Phone" name="Phone" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                                    value={offer_letter_Phone} />
+                                            </div> */}
                                             <div class="col-md-6 col-lg-4 mb-3">
                                                 <label for="Offerddate">Position Applaying For</label>
-                                                <input type="text" id="Offerddate" name="Offerddate" required class="form-control" value={offer_letter_designation} />
+                                                <input type="text" id="Offerddate" name="Offerddate" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                                    value={offer_letter_designation} />
                                             </div>
                                             <div class=" col-md-6 col-lg-4 mb-3">
                                                 <label for="DOB">DOB :</label>
-                                                <input type="date" id="DOB" name="DOB" required class="form-control" value={dob} onChange={(e) => setDob(e.target.value)} />
+                                                <input type="date" id="DOB" name="DOB" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                                    value={dob} onChange={(e) => setDob(e.target.value)} />
                                             </div>
 
                                             {/* <div class=" col-md-6 col-lg-3 mb-3">
                                             <label for="Designation">Designation :</label>
-                                            <input type="text" id="Designation" name="Designation" required class="form-control" value={designation} onChange={(e) => setDesignation(e.target.value)} />
+                                            <input type="text" id="Designation" name="Designation" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' value={designation} onChange={(e) => setDesignation(e.target.value)} />
                                         </div> */}
                                             <div class=" col-md-6 col-lg-4 mb-3">
                                                 <label for="Ctc">CTC :</label>
-                                                <input type="number" id="Ctc" name="Ctc" required class="form-control" value={ctc} onChange={(e) => setCtc(e.target.value)} />
+                                                <input type="number" id="Ctc" placeholder='CTC in LPA , stippend in month basis' name="Ctc" required
+                                                    className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                                    value={ctc} onChange={(e) => setCtc(e.target.value)} />
                                             </div>
 
                                             <div class=" col-md-6 col-lg-4 mb-3">
                                                 <label for="Workloc">Work Location :</label>
-                                                <input type="text" id="Workloc" name="Workloc" required class="form-control" value={workLocation} onChange={(e) => setWorkLocation(e.target.value)} />
+                                                <input type="text" id="Workloc" name="Workloc" placeholder='4th Block , Jayanagar, Bengaluru' required
+                                                    className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                                    value={workLocation} onChange={(e) => setWorkLocation(e.target.value)} />
                                             </div>
 
                                             <div class="col-md-6 col-lg-4 mb-3">
                                                 <label for="Offerddate">Date Of Joning :</label>
-                                                <input type="date" id="Offerddate" name="Offerddate" required class="form-control" value={Date_Of_Joning} onChange={(e) => setDate_Of_Joning(e.target.value)} />
+                                                <input type="date" id="Offerddate" name="Offerddate" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                                    value={Date_Of_Joning} onChange={(e) => setDate_Of_Joning(e.target.value)} />
                                             </div>
                                             <div class="col-md-6 col-lg-4 mb-3">
                                                 <label for="Offerddate">Notice Period :</label>
-                                                <input type="number" id="Offerddate" name="Offerddate" required class="form-control" value={notice_period} onChange={(e) => setnotice_period(e.target.value)} />
+                                                <input type="number" id="Offerddate" name="Offerddate" required
+                                                    className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                                    value={notice_period} onChange={(e) => setnotice_period(e.target.value)} />
                                             </div>
 
                                             {/* <div className="col-md-6 col-lg-4 mb-3">
@@ -971,11 +1050,11 @@ const Hrdashpage = () => {
 
 
                                                 <p>
-                                                    From Date <input type="date" id="Offerddate" name="Offerddate" required class="form-control" value={Intern_From_Date} onChange={(e) => setIntern_From_Date(e.target.value)} />
+                                                    From Date <input type="date" id="Offerddate" name="Offerddate" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' value={Intern_From_Date} onChange={(e) => setIntern_From_Date(e.target.value)} />
 
                                                 </p>
                                                 <p>
-                                                    To Date <input type="date" id="Offerddate" name="Offerddate" required class="form-control" value={Intern_To_Date} onChange={(e) => setIntern_To_Date(e.target.value)} />
+                                                    To Date <input type="date" id="Offerddate" name="Offerddate" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' value={Intern_To_Date} onChange={(e) => setIntern_To_Date(e.target.value)} />
 
                                                 </p>
                                             </div>
@@ -996,21 +1075,21 @@ const Hrdashpage = () => {
 
 
                                                 <p>
-                                                    From Date <input type="date" id="Offerddate" name="Offerddate" required class="form-control" value={Probation_From_Date} onChange={(e) => setProbation_From_Date(e.target.value)} />
+                                                    From Date <input type="date" id="Offerddate" name="Offerddate" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' value={Probation_From_Date} onChange={(e) => setProbation_From_Date(e.target.value)} />
 
                                                 </p>
                                                 <p>
-                                                    To Date <input type="date" id="Offerddate" name="Offerddate" required class="form-control" value={Probation_To_Date} onChange={(e) => setProbation_To_Date(e.target.value)} />
+                                                    To Date <input type="date" id="Offerddate" name="Offerddate" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' value={Probation_To_Date} onChange={(e) => setProbation_To_Date(e.target.value)} />
 
                                                 </p>
                                             </div>
                                         </div> */}
 
 
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="Name" className="form-label">Employeement Type*</label>
+                                            <div className="col-md-6 col-lg-4 ">
+                                                <label htmlFor="Name" className="">Employeement Type*</label>
                                                 <select
-                                                    className="form-select"
+                                                    className="bgclr px-2 py-3 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none  "
                                                     id="ageGroup"
                                                     value={Employee_Current_Role}
                                                     onChange={(e) => setEmployee_Current_Role(e.target.value)}
@@ -1032,7 +1111,7 @@ const Hrdashpage = () => {
                                                                 id="Offerddate"
                                                                 name="Offerddate"
                                                                 required
-                                                                className="form-control"
+                                                                className="bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none "
                                                                 value={Intern_From_Date}
                                                                 onChange={(e) => setIntern_From_Date(e.target.value)}
                                                             />
@@ -1044,7 +1123,7 @@ const Hrdashpage = () => {
                                                                 id="Offerddate"
                                                                 name="Offerddate"
                                                                 required
-                                                                className="form-control"
+                                                                className="bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none "
                                                                 value={Intern_To_Date}
                                                                 onChange={(e) => setIntern_To_Date(e.target.value)}
                                                             />
@@ -1057,7 +1136,7 @@ const Hrdashpage = () => {
                                                 <div className="col-md-6 col-lg-4 mb-3">
                                                     <label htmlFor="Name" className="form-label">Under Probation*</label>
                                                     <select
-                                                        className="form-select"
+                                                        className="bgclr p-2 py-3 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none "
                                                         id="ageGroup"
                                                         value={Under_Probation}
                                                         onChange={(e) => setUnder_Probation(e.target.value)}
@@ -1080,7 +1159,7 @@ const Hrdashpage = () => {
                                                                 id="Offerddate"
                                                                 name="Offerddate"
                                                                 required
-                                                                className="form-control"
+                                                                className="bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none "
                                                                 value={Probation_From_Date}
                                                                 onChange={(e) => setProbation_From_Date(e.target.value)}
                                                             />
@@ -1092,7 +1171,7 @@ const Hrdashpage = () => {
                                                                 id="Offerddate"
                                                                 name="Offerddate"
                                                                 required
-                                                                className="form-control"
+                                                                className="bgclr px-2  focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none "
                                                                 value={Probation_To_Date}
                                                                 onChange={(e) => setProbation_To_Date(e.target.value)}
                                                             />
@@ -1100,16 +1179,12 @@ const Hrdashpage = () => {
                                                     </div>
                                                 </div>
                                             )}
-
-
-
-
-
                                         </div>
 
-                                        <div class="col-md-6 col-lg-12 me-3 mb-5 d-flex  justify-content-end ">
+                                        <div class="col-md-6 col-lg-12 px-3 d-flex  justify-content-end ">
 
-                                            <button className='btn bg-success-subtle ' style={{ position: 'relative', top: '40px', right: '30px' }} data-bs-toggle="modal" data-bs-target="#exampleModal9" onClick={handleOfferletter}>Choose Templete</button>
+                                            <button className='btn bg-success-subtle '
+                                                data-bs-toggle="modal" data-bs-target="#exampleModal9" onClick={handleOfferletter}> Choose Templete</button>
                                         </div>
 
                                     </form>
@@ -1129,16 +1204,21 @@ const Hrdashpage = () => {
                             </div>
                             <div class="modal-body">
 
-                                <div className="col-12 bg-white py-3 shadow" id='template'>
+                                <div data-bs-dismiss="modal"
+                                    onClick={() => { navigate(`/Temp`) }}
+                                    className="col-12 bg-white py-3 shadow" id='template'>
 
 
-                                    <button className='btn btn-sm' data-bs-dismiss="modal" onClick={() => {
-                                        navigate(`/Temp`)
-                                    }}>Template 1</button>
+                                    <button className='btn btn-sm' data-bs-dismiss="modal"
+                                        onClick={() => { navigate(`/Temp`) }}> Employee Template </button>
+                                </div>
+                                <div data-bs-dismiss="modal"
+                                    onClick={() => { navigate(`/Temp`) }}
+                                    className="col-12 bg-white py-3 shadow" id='template'>
 
 
-
-
+                                    <button className='btn btn-sm' data-bs-dismiss="modal"
+                                        onClick={() => { navigate(`/Temp`) }}> Intern Template </button>
                                 </div>
 
                             </div>

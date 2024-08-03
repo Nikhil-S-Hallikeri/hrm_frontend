@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Recsidebar from './Recsidebar';
 import { HrmStore } from '../Context/HrmContext';
+import InfoButton from './SettingComponent/InfoButton';
 
 const generateDates = (month, year) => {
     const dates = [];
@@ -32,20 +33,15 @@ const formatDate = (date) => {
 
 const Acti_ = () => {
     const Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId;
-    let {setActivePage}=useContext(HrmStore)
-
+    let { setActivePage } = useContext(HrmStore)
     const [activitiesget, setgetActivities] = useState([]);
     const [activitiesgetdaily_achives, setgetActivities_daily_achives] = useState([]);
-
     const [Interview_Scheduledget, setInterview_Scheduledget] = useState([]);
     const [Interview_Scheduled_achives, setInterview_Scheduled_achives] = useState([]);
-
     const [Walkinsget, setWalkinsget] = useState([]);
     const [Walkins_achives, setWalkins_achives] = useState([]);
-
     const [Offeredget, setOfferedget] = useState([]);
     const [Offered_achives, setOffered_achives] = useState([]);
-
     const currentDate = new Date();
     const formattedCurrentDate = formatDate(currentDate);
 
@@ -248,19 +244,12 @@ const Acti_ = () => {
             console.log("Offered_activity_err", err.data);
         });
     };
-
     useEffect(() => {
         Offers_res();
     }, []);
-
     // Offered End
-
     const handleInputChange2 = (Date, achieved, id, value) => {
-
         console.log("enter", Date, achieved, id, value);
-
-
-
         axios.patch(`${port}root/Daily_Walkins_Achives/${id}/`, {
             achieved: value
         }).then((res) => {
@@ -299,8 +288,8 @@ const Acti_ = () => {
                 <Recsidebar value={"dashboard"}></Recsidebar>
             </div>
             <div className='m-0 m-sm-4 flex-1 container mx-auto' style={{ borderRadius: '10px' }}>
-                
-                    <Topnav></Topnav>
+
+                <Topnav></Topnav>
                 <div className='mt-3'>
                     <div className='d-flex justify-content-between'>
                         <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
@@ -326,50 +315,59 @@ const Acti_ = () => {
                             <div style={{ position: 'relative' }} className='d-flex justify-content-end'>
                                 <div className='mt-3 d-flex justify-content-end ' style={{ position: 'absolute', bottom: '10px' }}>
                                     <input
-                                        type="month"
+                                        type="month" className='p-2 bgclr rounded outline-none'
                                         value={`${year}-${String(month + 1).padStart(2, '0')}`}
                                         onChange={(e) => handle_Month_Change(e.target.value)}
                                     />
                                 </div>
                             </div>
                             <div>
-                                <div className='mt-4 table-responsive'>
+                                <div className='mt-4 tablebg p-0 table-responsive'>
                                     <table className="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col" colSpan={3} className='text-center ' style={{ minWidth: '500px' }}>Date</th>
+                                        <thead className='sticky top-0 '>
+                                            <tr className=' '>
+                                                <th scope="col" colSpan={3} className='text-center break-words text-break sticky-left ' style={{ minWidth: '450px' }}>Date</th>
                                                 {dates.map(date => (
                                                     <th key={date} rowSpan={2} className='text-center pb-4'>{date}</th>
                                                 ))}
-                                            </tr>
-                                            <tr className=''>
-                                                <th scope="col" className='ms-3 ' style={{ minWidth: '200px' }}>Activity Name</th>
-                                                <th scope="col" className='text-center ' style={{ minWidth: '60px' }}>Target <span className='text-xs'>(Each day) </span> </th>
-                                                <th scope="col" className='text-center ' style={{ minWidth: '60px' }}>Achieved <span className='text-xs'>(Overall) </span></th>
+                                            </tr>   
+                                            <tr className='sticky left-0 '>
+                                                <th scope="col" className='ms-3 break-words text-break sticky-left ' style={{ width: '150px' }}>Activity Name</th>
+                                                <th scope="col" className='text-center break-words text-break sticky-left1 ' style={{ width: '150px' }}>Target <span className='text-xs'>(Each day) </span> </th>
+                                                <th scope="col" className='text-center break-words text-break sticky-left2' style={{ width: '150px' }}>Achieved <span className='text-xs'>(Overall) </span></th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody className=' '>
                                             {activitiesget.map((activity, mainindex) => (
                                                 <tr key={mainindex}>
-                                                    <td>
+                                                    <td className='break-words text-break sticky-left bgclr1 ' style={{ width: '150px' }} >
                                                         <input type="text" disabled
                                                             value={activity.Activity_Name}
-                                                            className="p-2 rounded border-0  shadow-none" />
+                                                            className="p-2 rounded border-0  shadow-none"  style={{ width: '150px' }} />
                                                     </td>
-                                                    <td>
-                                                        <input type="number" disabled
-                                                            value={activity.targets}
+                                                    <td className='break-words text-break sticky-left1 bgclr1 ' style={{ width: '150px' }} >
+                                                        <input type="text" disabled  style={{ width: '150px' }}
+                                                            value={`${activity.targets} `}
                                                             className="p-2 rounded  border-0  shadow-none text-center" />
                                                     </td>
-                                                    <td >
-                                                        <input type="number" disabled
-                                                            value={activity.Total_Achived}
-                                                            className={`p-2 rounded border-0  shadow-none text-center  `}
-                                                        />
+                                                    <td className='break-words text-break sticky-left2 bgclr1 ' style={{ width: '150px' }} >
+                                                        <p  style={{ width: '150px' }}
+                                                            className={`p-2 text-black mb-0 rounded 
+                                                                        ${Number(activity.Total_Achived) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 50 ? 'bg-red-300' :
+                                                                    activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 70 ? 'bg-yellow-300' :
+                                                                        activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 90 ? 'bg-blue-300 ' :
+                                                                            'bg-green-300'}  
+                                                                        text-xs w-32 relative border-0 shadow-none text-center`} >
+                                                            {activity.Total_Achived} out of  {Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets)}
+
+                                                            <span className='absolute top-1 right-1 '> <InfoButton size={10}
+                                                                content={`Days filled = ${activity.daily_achives.filter((obj) => obj.achieved > 0).length} ,
+                                                                    Target = ${activity.targets} `} />  </span>
+                                                        </p>
                                                     </td>
                                                     {dates.map((date) => {
                                                         let obj = activitiesgetdaily_achives[mainindex].find((obj) => obj.Date === date);
-                                                        if(obj) {console.log("sksjbljkb", obj.status);}
+                                                        if (obj) { console.log("sksjbljkb", obj.status); }
 
                                                         return (
                                                             <td key={date}>
@@ -384,10 +382,12 @@ const Acti_ = () => {
                                                                         if (e.target.value <= 0) {
                                                                             if (obj) {
                                                                                 handleInputChange(date, obj.achieved, obj.id, 0);
-                                                                            } }
+                                                                            }
+                                                                        }
                                                                     }}
-                                                                    className={`p-2 ${obj ? obj.status==0 ? 'bg-red-300':obj.status==2 ?'bg-yellow-300': obj.status==3 ?'bg-green-300':obj.status==1 ?'bg-orange-300':'' :''}
-                                                                     ${formattedCurrentDate === date && ' border-2 border-black' } rounded w-24 ourline-none shadow-none text-center `} />
+                                                                    className={`p-2 ${obj ? obj.status == 0 ? 'bg-red-300' : obj.status == 2 ? 'bg-yellow-300' : obj.status == 3 ?
+                                                                        'bg-green-300' : obj.status == 1 ? 'bg-orange-300' : '' : ''}
+                                                                     ${formattedCurrentDate === date && ' border-2 border-black'} rounded w-24 ourline-none shadow-none text-center `} />
                                                             </td>
                                                         );
                                                     })}
@@ -409,31 +409,33 @@ const Acti_ = () => {
                         <div className="tab-pane fade show " id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabIndex="0">
                             <div style={{ position: 'relative' }} className='d-flex justify-content-end '>
                                 <div className='mt-3 d-flex justify-content-end ' style={{ position: 'absolute', bottom: '10px' }}>
-                                    <input type="month" onChange={(e) => handle_Month_Change1(e.target.value)} />
+                                    <input type="month" value={`${year}-${String(month + 1).padStart(2, '0')}`}
+                                        className='p-2 rounded bgclr outline-none  '
+                                        onChange={(e) => handle_Month_Change1(e.target.value)} />
                                 </div>
                             </div>
                             <div>
-                                <div className='mt-4 table-responsive'>
+                                <div className='mt-4 p-0 tablebg table-responsive'>
                                     <table className="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th scope="col" colSpan={3} className='text-center' style={{ minWidth: '500px' }}>Interview Scheduled</th>
+                                                <th scope="col" colSpan={3} className='text-center break-words text-break sticky-left ' style={{ minWidth: '450px' }}>Interview Scheduled</th>
                                                 {dates.map(date => (
                                                     <th key={date} rowSpan={2} className='text-center pb-4'>{date}</th>
                                                 ))}
                                             </tr>
                                             <tr>
-                                                <th scope="col" className='ms-3' style={{ minWidth: '100px' }}>Possitions</th>
+                                                <th scope="col" className='ms-3 break-words text-break sticky-left ' style={{ width: '150px' }}>Possitions</th>
                                                 {/* <th scope="col" className=' text-center' style={{ minWidth: '60px' }}>Open Possitions </th> */}
-                                                <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Target <span className='text-xs'>(Each Day) </span> </th>
-                                                <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Achieved <span className='text-xs'>(Overall) </span> </th>
+                                                <th scope="col" className='text-center break-words text-break sticky-left1 ' style={{ width: '150px' }}>Target <span className='text-xs'>(Each Day) </span> </th>
+                                                <th scope="col" className='text-center break-words text-break sticky-left2 ' style={{ width: '150px' }}>Achieved <span className='text-xs'>(Overall) </span> </th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {Interview_Scheduledget.map((activity, mainindex) => (
                                                 <tr key={mainindex}>
-                                                    <td>
-                                                        <input type="text"
+                                                    <td className='break-words text-break sticky-left bgclr1 ' style={{ width: '150px' }} >
+                                                        <input type="text"  style={{ width: '150px' }}
                                                             value={activity.position}
 
                                                             className="form-control border-0 shadow-none" />
@@ -444,25 +446,34 @@ const Acti_ = () => {
 
                                                             className="form-control border-0 shadow-none text-center" />
                                                     </td> */}
-                                                    <td>
-                                                        <input type="number"
+                                                    <td className='break-words text-break sticky-left1 bgclr1 ' style={{ width: '150px' }} >
+                                                        <input type="number" disabled  style={{ width: '150px' }}
                                                             value={activity.targets}
-                                                            className="form-control border-0 shadow-none text-center" />
+                                                            className="p-2 rounded w-32 border-0 shadow-none text-center" />
                                                     </td>
-                                                    <td>
+                                                    <td className='break-words text-break sticky-left2 bgclr1 ' style={{ width: '150px' }} >
 
-                                                        <input type="number"
-                                                            value={activity.Total_Achived}
-                                                            className={`form-control border-0 shadow-none text-center`}
-                                                        />
+                                                        <p  style={{ width: '150px' }}
+                                                            className={`p-2 text-black mb-0 rounded 
+                                                                        ${Number(activity.Total_Achived) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 50 ? 'bg-red-300' :
+                                                                    activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 70 ? 'bg-yellow-300' :
+                                                                        activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 90 ? 'bg-blue-300 ' :
+                                                                            'bg-green-300'}  
+                                                                        text-xs w-32 relative border-0 shadow-none text-center`} >
+                                                            {activity.Total_Achived} out of  {Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets)}
+
+                                                            <span className='absolute top-0 right-0 '> <InfoButton size={10}
+                                                                content={`Days filled = ${activity.daily_achives.filter((obj) => obj.achieved > 0).length} ,
+                                                                    Target = ${activity.targets} `} />  </span>
+                                                        </p>
                                                     </td>
                                                     {dates.map((date) => {
                                                         let obj = Interview_Scheduled_achives[mainindex].find((obj) => obj.Date == date)
 
-                                                        console.log("sxdasdad---",obj);
+                                                        console.log("sxdasdad---", obj);
 
                                                         return (
-                                                          <td key={date}>
+                                                            <td key={date}>
 
                                                                 <input type="number" disabled={formattedCurrentDate != date}
                                                                     value={obj && obj.achieved}
@@ -473,8 +484,8 @@ const Acti_ = () => {
                                                                                 Number(e.target.value))
                                                                         }
                                                                     }
-                                                                    } className={`p-2 w-24 rounded ${obj ? obj.status==0 ? 'bg-red-300':obj.status==2 ?'bg-yellow-300': obj.status==3 ?'bg-green-300':obj.status==1 ?'bg-orange-300':'' :''}
-                                                                     ${formattedCurrentDate === date && ' border-2 border-black' }  border-0 
+                                                                    } className={`p-2 w-24 rounded ${obj ? obj.status == 0 ? 'bg-red-300' : obj.status == 2 ? 'bg-yellow-300' : obj.status == 3 ? 'bg-green-300' : obj.status == 1 ? 'bg-orange-300' : '' : ''}
+                                                                     ${formattedCurrentDate === date && ' border-2 border-black'}  border-0 
                                                                         shadow-none text-center `} />
                                                             </td>
                                                         )
@@ -484,9 +495,9 @@ const Acti_ = () => {
                                             ))}
 
                                             <tr>
-                                                <td className='ps-3'>Total</td>
-                                                <td className='text-center'>{Interview_Scheduledget.reduce((sum, obj) => sum = sum + obj.targets, 0)}</td>
-                                                <td className='text-center'>{Interview_Scheduledget.reduce((sum, obj) => sum = sum + obj.Total_Achived, 0)}</td>
+                                                {/* <td className='ps-3 break-words text-break sticky-left '>Total</td> */}
+                                                {/* <td className='text-center break-words text-break sticky-left1 '>{Interview_Scheduledget.reduce((sum, obj) => sum = sum + obj.targets, 0)}</td> */}
+                                                {/* <td className='text-center break-words text-break sticky-left2 '>{Interview_Scheduledget.reduce((sum, obj) => sum = sum + obj.Total_Achived, 0)}</td> */}
                                                 {/* {dates.map((date, idx) => (
                                                     <td key={date}>
                                                         <input type="text" className="form-control border-0 shadow-none" disabled />
@@ -505,32 +516,32 @@ const Acti_ = () => {
                         {/*  Walkins */}
                         <div className="tab-pane fade show " id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabIndex="0">
                             <div>
-                                <div className='mt-4 table-responsive'>
+                                <div className='mt-4 tablebg p-0 rounded table-responsive'>
                                     <table className="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th scope="col" colSpan={3} className='text-center' style={{ minWidth: '500px' }}>Walkins</th>
+                                                <th scope="col" colSpan={3} className='text-center break-words text-break sticky-left' style={{ minWidth: '450px' }}>Walkins</th>
                                                 {dates.map(date => (
                                                     <th key={date} rowSpan={2} className='text-center pb-4'>{date}</th>
                                                 ))}
                                             </tr>
                                             <tr>
-                                                <th scope="col" className='ms-3' style={{ minWidth: '200px' }}>Possitions</th>
+                                                <th scope="col" className='ms-3 break-words text-break sticky-left' style={{ width: '150px' }}>Possitions</th>
                                                 {/* <th scope="col" className='ms-3' style={{ minWidth: '20px' }}>Open Possitions</th> */}
-                                                <th scope="col" className='text-center' style={{ minWidth: '100px' }}>Target</th>
-                                                <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Achieved</th>
+                                                <th scope="col" className='text-center break-words text-break sticky-left1' style={{ width: '150px' }}>Target</th>
+                                                <th scope="col" className='text-center break-words text-break sticky-left2' style={{ width: '150px' }}>Achieved</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {Walkinsget.map((activity, mainindex) => (
                                                 <tr key={mainindex}>
-                                                    <td>
-                                                        <input type="text"
+                                                    <td className='break-words text-break sticky-left bgclr1 ' style={{ width: '150px' }} >
+                                                        <input type="text"  style={{ width: '150px' }}
                                                             value={activity.position}
 
                                                             className="form-control border-0 shadow-none" />
                                                     </td>
-{/* 
+                                                    {/* 
                                                     <td>
                                                         <input type="text"
                                                             value={activity.No_Of_Open_Possitions}
@@ -538,18 +549,25 @@ const Acti_ = () => {
                                                             className="form-control border-0 shadow-none text-center" />
                                                     </td> */}
 
-                                                    <td>
-                                                        <input type="number"
+                                                    <td className='break-words text-break sticky-left1 bgclr1 ' style={{ width: '150px' }} >
+                                                        <input type="number" disabled style={{ width: '150px' }}
                                                             value={activity.Walkins_target}
                                                             className="form-control border-0 shadow-none text-center" />
                                                     </td>
-                                                    <td>
-                                                        <input type="number"
-                                                            value={activity.Total_Achived}
+                                                    <td className='break-words text-break sticky-left2 bgclr1 ' style={{ width: '150px' }} >
+                                                        <p style={{ width: '150px' }}
+                                                            className={`p-2 text-black mb-0 rounded 
+                                                                        ${Number(activity.Total_Achived) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Walkins_target) * 100 <= 50 ? 'bg-red-300' :
+                                                                    activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Walkins_target) * 100 <= 70 ? 'bg-yellow-300' :
+                                                                        activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Walkins_target) * 100 <= 90 ? 'bg-blue-300 ' :
+                                                                            'bg-green-300'}  
+                                                                        text-xs w-32 relative border-0 shadow-none text-center`} >
+                                                            {activity.Total_Achived} out of  {Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Walkins_target)}
 
-                                                            className={`form-control border-0 shadow-none text-center`}
-
-                                                        />
+                                                            <span className='absolute top-1 right-1 '> <InfoButton size={10}
+                                                                content={`Days filled = ${activity.daily_achives.filter((obj) => obj.achieved > 0).length} ,
+                                                                    Target = ${activity.Walkins_target} `} />  </span>
+                                                        </p>
                                                     </td>
                                                     {dates.map((date) => {
                                                         let obj = Walkins_achives[mainindex].find((obj) => obj.Date == date)
@@ -567,8 +585,8 @@ const Acti_ = () => {
                                                                             handleInputChange2(obj.Date, obj.achieved, obj.id, Number(e.target.value))
                                                                         }
                                                                     }
-                                                                    } className={`p-2 ${obj ? obj.status==0 ? 'bg-red-300':obj.status==2 ?'bg-yellow-300': obj.status==3 ?'bg-green-300':obj.status==1 ?'bg-orange-300':'' :''}
-                                                                     ${formattedCurrentDate === date && ' border-2 border-black' } rounded w-24 ourline-none shadow-none text-center `} />
+                                                                    } className={`p-2 ${obj ? obj.status == 0 ? 'bg-red-300' : obj.status == 2 ? 'bg-yellow-300' : obj.status == 3 ? 'bg-green-300' : obj.status == 1 ? 'bg-orange-300' : '' : ''}
+                                                                     ${formattedCurrentDate === date && ' border-2 border-black'} rounded w-24 ourline-none shadow-none text-center `} />
                                                             </td>
                                                         )
                                                     }
@@ -576,16 +594,12 @@ const Acti_ = () => {
                                                 </tr>
                                             ))}
 
-                                            <tr>
-                                                <td className='ps-3'>Total</td>
-                                                <td className='text-center'>{Walkinsget.reduce((sum,obj)=>sum+=obj.Walkins_target,0)}</td>
-                                                <td className='text-center'>{Walkinsget.reduce((sum,obj)=>sum+=obj.Total_Achived,0)}</td>
-                                                {/* {dates.map((date, idx) => (
-                                                    <td key={date}>
-                                                        <input type="text" className="form-control border-0 shadow-none" disabled />
-                                                    </td>
-                                                ))} */}
-                                            </tr>
+                                            {/* <tr>
+                                                <td className='ps-3 break-words text-break sticky-left'>Total</td>
+                                                <td className='text-center break-words text-break sticky-left1'>{Walkinsget.reduce((sum, obj) => sum += obj.Walkins_target, 0)}</td>
+                                                <td className='text-center break-words text-break sticky-left2'>{Walkinsget.reduce((sum, obj) => sum += obj.Total_Achived, 0)}</td>
+                                                
+                                            </tr> */}
                                         </tbody>
                                     </table>
                                 </div>
@@ -599,33 +613,33 @@ const Acti_ = () => {
                         <div className="tab-pane fade show " id="pills-contact1" role="tabpanel" aria-labelledby="pills-contact-tab1" tabIndex="0">
                             <div>
 
-                                <div className='mt-4 table-responsive'>
+                                <div className='mt-4 tablebg p-0 table-responsive'>
                                     <table className="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th scope="col" colSpan={3} className='text-center' style={{ minWidth: '500px' }}>Offered
+                                                <th scope="col" colSpan={3} className='text-center break-words text-break sticky-left ' style={{ minWidth: '450px' }}>Offered
                                                 </th>
                                                 {dates.map(date => (
                                                     <th key={date} rowSpan={2} className='text-center pb-4'>{date}</th>
                                                 ))}
                                             </tr>
                                             <tr>
-                                                <th scope="col" className='ms-3' style={{ minWidth: '200px' }}>Possitions</th>
+                                                <th scope="col" className='ms-3 break-words text-break sticky-left ' style={{ width: '150px' }}>Possitions</th>
                                                 {/* <th scope="col" className='ms-3' style={{ minWidth: '20px' }}>Open Possitions</th> */}
-                                                <th scope="col" className='text-center' style={{ minWidth: '100px' }}>Target <span className='text-xs'>(Each day) </span> </th>
-                                                <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Achieved <span className='text-xs'>(Overall) </span></th>
+                                                <th scope="col" className='text-center break-words text-break sticky-left1' style={{ width: '150px' }}>Target <span className='text-xs'>(Each day) </span> </th>
+                                                <th scope="col" className='text-center break-words text-break sticky-left2' style={{ width: '150px' }}>Achieved <span className='text-xs'>(Overall) </span></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {Offeredget.map((activity, mainindex) => (
                                                 <tr key={mainindex}>
-                                                    <td>
-                                                        <input type="text"
+                                                    <td className='break-words text-break sticky-left bgclr1 ' style={{ width: '150px' }} >
+                                                        <input type="text" style={{ width: '150px' }}
                                                             value={activity.position}
 
                                                             className="form-control border-0 shadow-none" />
                                                     </td>
-{/* 
+                                                    {/* 
                                                     <td>
                                                         <input type="text"
                                                             value={activity.No_Of_Open_Possitions}
@@ -633,16 +647,25 @@ const Acti_ = () => {
                                                             className="form-control border-0 shadow-none text-center" />
                                                     </td> */}
 
-                                                    <td>
-                                                        <input type="number"
+                                                    <td className='break-words text-break sticky-left1 bgclr1 ' style={{ width: '150px' }} >
+                                                        <input type="number" style={{ width: '150px' }}
                                                             value={activity.Offers_target}
                                                             className="form-control border-0 shadow-none text-center" />
                                                     </td>
-                                                    <td>
-                                                        <input type="number"
-                                                            value={activity.Total_Achived}
+                                                    <td className='break-words text-break sticky-left2 bgclr1 ' style={{ width: '150px' }} >
+                                                        <p style={{ width: '150px' }}
+                                                            className={`p-2 text-black mb-0 rounded 
+                                                                        ${Number(activity.Total_Achived) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Offers_target) * 100 <= 50 ? 'bg-red-300' :
+                                                                    activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Offers_target) * 100 <= 70 ? 'bg-yellow-300' :
+                                                                        activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Offers_target) * 100 <= 90 ? 'bg-blue-300 ' :
+                                                                            'bg-green-300'}  
+                                                                        text-xs w-32 relative border-0 shadow-none text-center`} >
+                                                            {activity.Total_Achived} out of  {Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Offers_target)}
 
-                                                            className={`form-control border-0 shadow-none text-center`} />
+                                                            <span className='absolute top-1 right-1 '> <InfoButton size={10}
+                                                                content={`Days filled = ${activity.daily_achives.filter((obj) => obj.achieved > 0).length} ,
+                                                                    Target = ${activity.Offers_target} `} />  </span>
+                                                        </p>
                                                     </td>
                                                     {dates.map((date) => {
                                                         let obj = Offered_achives[mainindex].find((obj) => obj.Date == date)
@@ -655,13 +678,12 @@ const Acti_ = () => {
                                                                 <input type="number" disabled={formattedCurrentDate != date}
                                                                     value={obj && obj.achieved}
                                                                     onChange={(e) => {
-
                                                                         if (obj) {
                                                                             handleInputChange3(obj.Date, obj.achieved, obj.id, Number(e.target.value))
                                                                         }
                                                                     }
-                                                                    } className={`p-2 ${obj ? obj.status==0 ? 'bg-red-300':obj.status==2 ?'bg-yellow-300': obj.status==3 ?'bg-green-300':obj.status==1 ?'bg-orange-300':'' :''}
-                                                                     ${formattedCurrentDate === date && ' border-2 border-black' } rounded w-24 ourline-none shadow-none text-center `}/>
+                                                                    } className={`p-2 ${obj ? obj.status == 0 ? 'bg-red-300' : obj.status == 2 ? 'bg-yellow-300' : obj.status == 3 ? 'bg-green-300' : obj.status == 1 ? 'bg-orange-300' : '' : ''}
+                                                                     ${formattedCurrentDate === date && ' border-2 border-black'} rounded w-24 ourline-none shadow-none text-center `} />
                                                             </td>
                                                         )
                                                     }
@@ -670,9 +692,9 @@ const Acti_ = () => {
                                             ))}
 
                                             <tr>
-                                                <td className='ps-3'>Total</td>
-                                                <td className='text-center'>{Offeredget.reduce((sum,obj)=>sum+=obj.Offers_target,0)}</td>
-                                                <td className='text-center'>{Offeredget.reduce((sum,obj)=>sum+=obj.Total_Achived,0)}</td>
+                                                {/* <td className='ps-3 break-words text-break sticky-left '>Total</td>
+                                                <td className='text-center break-words text-break sticky-left1'>{Offeredget.reduce((sum, obj) => sum += obj.Offers_target, 0)}</td>
+                                                <td className='text-center break-words text-break sticky-left2'>{Offeredget.reduce((sum, obj) => sum += obj.Total_Achived, 0)}</td> */}
                                                 {/* {dates.map((date, idx) => (
                                                     <td key={date}>
                                                         <input type="text" className="form-control border-0 shadow-none" disabled />

@@ -16,6 +16,7 @@ import SceeringCompletedCandiateModal from './Modals/SceeringCompletedCandiateMo
 import SchedulINterviewModalForm from './ApplyList/SchedulINterviewModalForm';
 import { HrmStore } from '../Context/HrmContext';
 import InterviewCompletedModal from './Modals/InterviewCompletedModal';
+import InfoButton from './SettingComponent/InfoButton';
 
 
 const Applicants = () => {
@@ -28,7 +29,7 @@ const Applicants = () => {
   let [carrylaptop, setcarrylaptop] = useState(false)
   let [interviewCompletedDetailsModal, setInterviewCompleteDetailsModal] = useState()
   const [tab, setTab] = useState("newleads")
-
+  let [interviewListSorting, setInterviewListSorting] = useState()
   let [applylist, setApplylist] = useState([])
   let [candidateIdInterview, setCandidateIdInterview] = useState()
   let [screeningCompletedApplicant, setScreeningCompletedApplicant] = useState()
@@ -1092,7 +1093,7 @@ const Applicants = () => {
       setFilteredApplicants([...screeningCompleted])
   }, [screeningAC])
   return (
-    <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
+    <div className=' d-flex' style={{ width: '100%', }}>
       {<SceeringCompletedCandiateModal show={screeningCompletedCandidateDetailModal}
         persondata={persondata}
         setshow={setscreeningCompletedCandidateDetailModal} setPersondata={setPersondata}
@@ -1121,20 +1122,36 @@ const Applicants = () => {
 
 
             <li class="nav-item text-primary d-flex" role="presentation">
-              <h6 class='mt-2 heading nav-link active'
+              <section class='mt-2 d-flex align-items-center gap-2 heading nav-link active'
                 style={{
                   color: 'rgb(76,53,117)', backgroundColor: 'transparent',
                   border: 'none'
                 }}
                 id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="true">
-                Screening Applicants
-              </h6>
-              <small className='text-danger ms-2   rounded-circle'> {screeninglist != undefined && screeningCompleted && screeninglist.length + screeningCompleted.length} </small>
+
+                <img className='w-14 ' src={require('../assets/Images/circle4.png')} alt="circle" />
+                <div className='text-sm'> Screening process
+                  <div className='flex my-2 text-xs justify-between gap-2 flex-wrap'>
+
+                    <small className='bg-red-400 text-white px-3  block rounded'>{screeninglist != undefined && screeninglist.length} Assigned </small>
+                    <small className='bg-green-400 text-white px-3 block rounded'>{screeningCompleted != undefined && screeningCompleted.length} Completed </small>
+                  </div>
+                </div>
+              </section>
             </li>
             <li class="nav-item text-primary d-flex" role="presentation">
-              <h6 class='mt-2 heading nav-link' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">
-                Interview  Applicants</h6>
-              <small className='text-danger ms-2   rounded-circle'> {interviewlist != undefined && interviewlist.length} </small>
+              <section class='mt-2 d-flex align-items-center gap-2 heading nav-link' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }}
+                id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">
+
+                <img className='w-14 ' src={require('../assets/Images/circle2.png')} alt="circle" />
+                <div className='text-sm'> Interview process
+                  <div className='flex my-2 text-xs justify-between gap-2 flex-wrap'>
+
+                    <small className='bg-red-400 text-white px-3  block rounded'>{interviewAssignedData != undefined && interviewAssignedData.length} Assigned </small>
+                    <small className='bg-green-400 text-white px-3 block rounded'>{interviewCompletedData != undefined && interviewCompletedData.length} Completed </small>
+                  </div>
+                </div>
+              </section>
             </li>
 
           </ul>
@@ -1162,7 +1179,7 @@ const Applicants = () => {
                   </div>
 
                   <div>
-                    <li class="nav-item text-primary d-flex me-4" style={{ fontSize: '18px' }} >
+                    {/* <li class="nav-item text-primary d-flex me-4" style={{ fontSize: '18px' }} >
                       <select className="form-select shadow-none" id="ageGroup" style={{ width: '100px', height: '30px', fontSize: '9px', outline: 'none' }}
                       >
                         <option value="">Filter</option>
@@ -1171,27 +1188,21 @@ const Applicants = () => {
                         <option value="Month">Month</option>
                         <option value="Year">Year</option>
                       </select>
-                    </li>
+                    </li> */}
                   </div>
                 </ul>
-                <div className='bg-slate-400 rounded w-fit'>
-                  <button onClick={() => {
-                    setScreeningAc('assigned');
-                    console.log([...screeninglist]);
+                <select name="" value={screeningAC}
+                  onChange={(e) => {
+                    setScreeningAc(e.target.value)
                   }}
-                    className={`${screeningAC == 'assigned' ? 'bg-blue-600 ' : 'bg-slate-400'} duration-500 transition text-white rounded p-2`} >
-                    Assigned </button>
-                  <button onClick={() => {
-                    setScreeningAc('completed');
-                    console.log([...screeningCompleted]);
-                  }}
-                    className={`${screeningAC == 'completed' ? 'bg-blue-600 ' : 'bg-slate-400'} duration-500 transition text-white p-2 rounded`} >
-                    Completed</button>
-                </div>
-                <div className='rounded table-responsive  mt-1'>
-                  <table class="table caption-top     table-hover" style={{ width: '100%' }}>
+                  className='btngrd border-2 flex ms-auto bg-opacity-70 outline-none rounded border-violet-100 text-white text-xs p-2 ' id="">
+                  <option value="assigned" className='text-black'>Assigned</option>
+                  <option value="completed" className='text-black'>Completed</option>
+                </select>
+                <div className='rounded h-[50vh] tablebg table-responsive  mt-1'>
+                  <table class="w-full  " style={{ width: '100%' }}>
                     <thead >
-                      <tr >
+                      <tr className='sticky top-0 bgclr1 ' >
                         {/* <th scope="col"></th> */}
                         {/* <th scope="col"><span className='fw-medium'></span>All</th> */}
                         <th scope="col">#</th>
@@ -1635,45 +1646,65 @@ const Applicants = () => {
 
               {/* Tab 3 start */}
               <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">
-                <ul class="nav nav-pills  w-100" style={{ display: 'flex', justifyContent: 'space-between' }} id="pills-tab" role="tablist">
+                <ul class="nav nav-pills  w-100" style={{ display: 'flex', justifyContent: 'space-between' }}
+                  id="pills-tab" role="tablist">
 
-                  <div>
+                  <div className='mt-3'>
 
-                    <div class="input-group mb-3 ">
-                      <span class="input-group-text" id="basic-addon1"> <i class="fa-solid fa-magnifying-glass" ></i>  </span>
-                      <input type="text" style={{ width: '200px', height: '30px', fontSize: '9px', outline: 'none' }}
-                        class="p-2 border-1 rounded border-slate-400 w-full block outline-none shadow-none" aria-label="Username" aria-describedby="basic-addon1" />
+                    <div class="input-group mb-3 relative ">
+                      <button className='absolute right-0 -top-3'>
+                        <InfoButton size={10} content={"Search by Candidate name,ID, Interviewer Name,Scheduled By Name"} />
+                      </button>
+                      <input type="text" className='p-2 bgclr rounded outline-none text-xs'
+                        onChange={(e) => {
+                          let value = e.target.value.toLowerCase()
+                          let list = intervewAsssignedcompleted12 == 'Assigned' ? [...interviewAssignedData] : [...interviewCompletedData]
+                          let newArry = [...list].filter((obj) => (
+                            obj.Candidate_name.toLowerCase().indexOf(value) != -1 ||
+                            obj.Candidate.toLowerCase().indexOf(value) != -1 ||
+                            obj.interviewer_name.toLowerCase().indexOf(value) != -1 ||
+                            obj.ScheduledBy_name.toLowerCase().indexOf(value) != -1
+                          ))
+                          setInterviewlist(newArry)
+                        }} placeholder='search' />
                     </div>
                   </div>
 
 
-                  <div>
-                    <li class="nav-item text-primary d-flex me-4" style={{ fontSize: '18px' }} >
+                  <div className='bgclr p-1 h-fit rounded'>
+                    Sort By :
+                    <select name="" className='p-1 text-sm rounded bg-transparent outline-none mx-1' onChange={(e) => {
+                      setInterviewListSorting(e.target.value)
+                      let value = e.target.value
+                      if (value == 'AZ')
+                        setInterviewlist((prev) => [...prev].sort((a, b) => a.Candidate_name.localeCompare(b.Candidate_name)))
+                      if (value == 'ZA')
+                        setInterviewlist((prev) => [...prev].sort((a, b) => b.Candidate_name.localeCompare(a.Candidate_name)))
+                    }} id="">
+                      <option value="">Select</option>
+                      <option value="AZ">A-Z</option>
+                      <option value="ZA">Z-A</option>
 
+                    </select>
 
-                      <select className="form-select shadow-none" id="ageGroup" style={{ width: '100px', height: '30px', fontSize: '9px', outline: 'none' }}
-                      >
-                        <option value="">Filter</option>
-                        <option value="Today">Day</option>
-                        <option value="Week">Week</option>
-                        <option value="Month">Month</option>
-                        <option value="Year">Year</option>
-                      </select>
-                    </li>
                   </div>
                 </ul>
-                <div className='rounded bg-slate-400 w-fit'>
-                  <button onClick={() => { setInterviewAssignedcompleted('Assigned'); setInterviewlist(interviewAssignedData) }}
-                    className={`${intervewAsssignedcompleted12 == 'Assigned' ? "bg-blue-600" : 'bg-slate-400'}
-                     text-white p-2 duration-500 transition rounded `}>Assigned </button>
-                  <button onClick={() => { setInterviewAssignedcompleted('Completed'); setInterviewlist(interviewCompletedData) }}
-                    className={`${intervewAsssignedcompleted12 == 'Completed' ? "bg-blue-600" : 'bg-slate-400'}
-                     text-white p-2 duration-500 transition rounded `}>Completed </button>
-                </div>
-                <div className='mt-1 table-responsive ' style={{ width: '100%' }}>
-                  <table class="table caption-top   table-hover ">
+                <select name="" value={intervewAsssignedcompleted12}
+                  onChange={(e) => {
+                    setInterviewAssignedcompleted(e.target.value)
+                    if (e.target.value == 'Assigned')
+                      setInterviewlist(interviewAssignedData)
+                    if (e.target.value == 'Completed')
+                      setInterviewlist(interviewCompletedData)
+                  }}
+                  className='btngrd border-2 flex ms-auto bg-opacity-70 outline-none rounded border-violet-100 text-white text-xs p-2 ' id="">
+                  <option value="Assigned" className='text-black'>Assigned</option>
+                  <option value="Completed" className='text-black'>Completed</option>
+                </select>
+                <div className='mt-1 tablebg table-responsive h-[50vh] rounded ' style={{ width: '100%' }}>
+                  <table class="w-full ">
                     <thead >
-                      <tr >
+                      <tr className='sticky top-0 bgclr1 ' >
                         {/* <th scope="col"></th> */}
                         {/* <th scope="col"><span className='fw-medium'></span>All</th> */}
                         <th scope="col">#</th>
@@ -1754,12 +1785,12 @@ const Applicants = () => {
                             {intervewAsssignedcompleted12 == 'Completed' &&
                               <td scope="col"><span className='fw-medium'>{e.Review && e.Review.interview_Status}  </span></td>}
 
-                            <td>{e.ScheduledBy}</td>
+                            <td>{e.ScheduledBy_name}</td>
                             <td>{convertToReadableDateTime(e.ScheduledOn)}
                               {/* {e.ScheduledTime}  */}
                             </td>
                             {/* <td>{e.TaskAssigned}</td> */}
-                            <td>{e.interviewer}</td>
+                            <td>{e.interviewer_name}</td>
                             {/* <td>{e.Review.interview_Status.length > 0 ? 'Schedule Interview' : '___'} </td> */}
 
                             {intervewAsssignedcompleted12 == 'Completed' && <td >
@@ -2519,7 +2550,7 @@ const Applicants = () => {
                           <option value="scheduled">Shortlisted to Next Round</option>
                           <option value="rejected"> Rejected </option>
                           <option value="walkout">Walked-out </option>
-                          <option value="to_client">Consider to Client Requirments </option>
+                          <option value="to_client">Consider to Client for Merida </option>
                         </select>
                       </div>
                       <div className="col-md-12 col-lg-12 mb-3">
@@ -3093,7 +3124,7 @@ const Applicants = () => {
                           <label htmlFor="ageGroup" className="form-label">Interview Status:</label>
                           <select className="form-select" id="ageGroup" value={Interviewstatus} onChange={(e) => setInterviewStatus(e.target.value)}>
                             <option value="">Select</option>
-                            <option value="consider_to_client">Consider to client requirments </option>
+                            <option value="consider_to_client">Consider to client for Merida </option>
                             <option value="Internal_Hiring"> Selected </option>
                             <option value="Reject">Reject</option>
                             <option value="On_Hold">On Hold</option>

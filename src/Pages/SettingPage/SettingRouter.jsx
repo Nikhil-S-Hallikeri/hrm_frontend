@@ -29,10 +29,10 @@ const SettingRouter = () => {
                 <Topnav />
                 <main className='flex gap-3 my-3 scrollmade overflow-x-scroll'>
 
-                    <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Apply Leave' path='/leave' active='leave' />
-                    <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Change Password' path='/password' active='password' />
-                    <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Holidays' path='/holidays' active='holidays' />
-                    <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Attendence' path='/attendence' active='attendence' />
+                    <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Apply Leave' path='/settings/leave' active='leave' />
+                    <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Change Password' path='/settings/password' active='password' />
+                    <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Holidays' path='/settings/holidays' active='holidays' />
+                    <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Attendence' path='/settings/attendence' active='attendence' />
 
 
 

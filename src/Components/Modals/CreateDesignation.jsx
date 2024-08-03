@@ -5,14 +5,14 @@ import { port } from '../../App'
 import { toast } from 'react-toastify'
 
 const CreateDesignation = (props) => {
-    let { show, setshow } = props
+    let { show, setshow, setdid, did, getdesignation, deptid } = props
     let [departments, set_Department_List] = useState()
     let [obj, setobj] = useState({
-        Department : '',
+        Department: '',
         Name: ''
     })
     let handleChange = (e) => {
-        let {name, value} = e.target
+        let { name, value } = e.target
         setobj((prev) => ({
             ...prev,
             [name]: value
@@ -30,28 +30,52 @@ const CreateDesignation = (props) => {
     }
     let handleSubmit = () => {
         console.log(obj);
-        axios.post(`${port}/root/ems/Designation/${obj.Department}/`,obj ).then((response) => {
+        axios.post(`${port}/root/ems/Designation/${obj.Department}/`, obj).then((response) => {
             toast.success('Designation added successfully')
             console.log(response.data);
+
             setshow(false)
         }).catch((error) => {
             console.log(error);
         })
     }
+    let getParticularDesignation = () => {
+        axios.get(`${port}/root/ems/Designations/${did}/`).then((response) => {
+            console.log("hellow", response.data);
+            setobj(response.data)
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+    let updateParticularDesignation = () => {
+        console.log("hellow", obj);
+        delete obj.Department
+        axios.patch(`${port}/root/ems/Designations/${obj.id}/`, obj).then((response) => {
+            console.log("hellow", response.data);
+            setshow(false)
+            toast.success('Designation updated successfully')
+            getdesignation(deptid)
+        }).catch((error) => {
+            console.log("hellow", error);
+        })
+    }
 
     useEffect(() => {
         getdepartments()
-    }, [])
+        if (did && did != -1) {
+            getParticularDesignation()
+        }
+    }, [did])
     return (
         show && <Modal show={show} centered onHide={() => setshow(false)}  >
             <Modal.Header closeButton>
-                Create a Designation
+                Designation
             </Modal.Header>
             <Modal.Body>
-                <div className='flex items-center gap-2 my-3 '>
+                {!did && <div className='flex items-center gap-2 my-3 '>
                     Choose a Department :
-                    <select  value={obj.Department} name="Department" 
-                    onChange={handleChange} className='p-2 rounded outline-none border-2 ' id="">
+                    <select value={obj.Department} name="Department"
+                        onChange={handleChange} className='p-2 rounded outline-none border-2 ' id="">
                         <option value="">Select</option>
                         {
                             departments && departments.map((obj) => (
@@ -59,16 +83,19 @@ const CreateDesignation = (props) => {
                             ))
                         }
                     </select>
-
-                </div>
+                </div>}
                 <div className='flex gap-3 my-3 items-center'>
                     Designation Name :
-                    <input type="text" value={obj.Name} name='Name' 
-                    onChange={handleChange} className='p-2 outline-none border-2 rounded ' />
+                    <input type="text" value={obj.Name} name='Name'
+                        onChange={handleChange} className='p-2 outline-none border-2 rounded ' />
                 </div>
-                <button onClick={handleSubmit} className='p-2 rounded bg-blue-600 text-white '>Add Designation </button>
+                {(!did) &&
+                    < button onClick={handleSubmit} className='p-2 rounded bg-blue-600 text-white '>Add Designation {did} </button>}
+                {did && <button onClick={updateParticularDesignation} className='p-2 rounded bg-blue-600 text-white '>
+                    Update Designation </button>}
+
             </Modal.Body>
-        </Modal>
+        </Modal >
     )
 }
 

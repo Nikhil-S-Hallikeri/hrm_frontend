@@ -7,7 +7,7 @@ import { HrmStore } from '../../Context/HrmContext'
 
 const FinalStatus = (props) => {
     let { mailContent } = useContext(HrmStore)
-    let { show, setshow, name } = props
+    let { show, setshow, name ,getfunction} = props
     let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let [loading, setLoading] = useState(false)
     let [obj, setObj] = useState({
@@ -31,6 +31,7 @@ const FinalStatus = (props) => {
             }).then((response) => {
                 console.log(response.data);
                 setLoading(false)
+                getfunction()
                 toast.success('Mail sended to candidate.')
                 setObj({
                     Final_Result: '',
@@ -61,7 +62,7 @@ const FinalStatus = (props) => {
                 content = mailContent.selected
             if (obj.Final_Result == 'Reject')
                 content = mailContent.reject
-            if (obj.Final_Result == 'on_hold')
+            if (obj.Final_Result == 'On_Hold')
                 content = mailContent.on_hold
             if (obj.Final_Result == 'consider_to_client')
                 content = mailContent.consider_to_client
@@ -90,10 +91,12 @@ const FinalStatus = (props) => {
                             <select value={obj.Final_Result} name='Final_Result'
                                 onChange={handleChange} className="p-2 w-full outline-none border-2 rounded " id="ageGroup" >
                                 <option value="">Select</option>
-                                <option value="consider_to_client">Consider to Client Requirements </option>
+                                <option value="consider_to_client">Consider to Client for Merida </option>
                                 <option value="Internal_Hiring"> Selected </option>
                                 <option value="Reject">Reject</option>
-                                <option value="on_hold">On Hold</option>
+                                <option value="On_Hold">On Hold</option>
+                                <option value="Rejected_by_Candidate">Rejected by Candidate</option>
+
                                 {/* <option value="Offer_did_not_accept">Offerd Did't Accept</option> */}
                             </select>
                         </div>

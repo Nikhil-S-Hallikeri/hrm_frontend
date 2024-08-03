@@ -5,6 +5,7 @@ import axios from 'axios'
 import { port } from '../App'
 import { useNavigate } from 'react-router-dom'
 import { HrmStore } from '../Context/HrmContext'
+import InfoButton from './SettingComponent/InfoButton'
 
 
 const Reporting_team = () => {
@@ -12,7 +13,16 @@ const Reporting_team = () => {
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let UserName = JSON.parse(sessionStorage.getItem('user')).UserName
     let Disgnation = JSON.parse(sessionStorage.getItem('user')).Disgnation
+    let [interviewList, setInterviewList] = useState()
+    let [interviewListDA, setInterviewListDA] = useState()
+    let [offerList, setOfferList] = useState()
+    let [offerListDA, setOfferListDA] = useState()
+    let [walkinList, setWalkInList] = useState()
+    let [walkinListDA, setWalkInListDA] = useState()
 
+
+
+    let [selectedName, setSelectedName] = useState()
     const [AllEmployeelist, setAllEmployeelist] = useState([])
     const [EMPLOYEE_INFORMATION, setEMPLOYEE_INFORMATION] = useState([])
     const [EDUCATION_DETAILS, setEDUCATION_DETAILS] = useState([])
@@ -59,19 +69,19 @@ const Reporting_team = () => {
 
     const [Interview_Scheduled_Data, setInterview_Scheduled_Data] = useState([
 
-        { position: '', targets: '', Walkins_target:'' ,Offers_target:'' ,No_Of_Open_Possitions: '', No_Of_Closed_Possitions: '' }
+        { position: '', targets: '', Walkins_target: '', Offers_target: '', No_Of_Open_Possitions: '', No_Of_Closed_Possitions: '' }
     ]);
 
     const handleAddRow1 = (e) => {
         e.preventDefault();
-        setInterview_Scheduled_Data([...Interview_Scheduled_Data, 
-            { position: '', targets: '',Walkins_target:'' ,Offers_target:'' ,No_Of_Open_Possitions: '', No_Of_Closed_Possitions: '' }]);
+        setInterview_Scheduled_Data([...Interview_Scheduled_Data,
+        { position: '', targets: '', Walkins_target: '', Offers_target: '', No_Of_Open_Possitions: '', No_Of_Closed_Possitions: '' }]);
     };
 
     const handleInputChange1 = (index, event) => {
         let { name, value } = event.target;
-        if(name!='position'&&value<0 ){
-            value=''
+        if (name != 'position' && value < 0) {
+            value = ''
         }
         const updatedQualifications = [...Interview_Scheduled_Data];
         updatedQualifications[index][name] = value;
@@ -126,28 +136,26 @@ const Reporting_team = () => {
     };
 
     const [activitiesget, setgetActivities] = useState([]);
+    const handleActivitiesGet = (e, id) => {
+        let { name, value } = e.target
+        let newobj = activitiesget.find((obj) => obj.id == id)
+        newobj[name] = value
+        let newarry = activitiesget.map((prev) => {
+            if (prev.id == id)
+                return newobj
+            else
+                return prev
+        })
+        console.log(newarry);
+        setgetActivities(newarry)
+    }
     const [activitiesgetdaily_achives, setgetActivities_daily_achives] = useState([]);
     const [Employee_ID, setEmployee_ID] = useState("");
 
 
     const sentparticularData1 = (id) => {
-
         console.log(id);
         setEmployee_ID(id)
-
-        axios.get(`${port}/root/EmployeeActivity/${id}/`)
-            .then(res => {
-                console.log('EmployeeActivity_res', res.data);
-                setgetActivities(res.data);
-                setgetActivities_daily_achives(res.data.map((x) => x.daily_achives));
-                console.log(res.data.map((x) => x.daily_achives));
-                console.log("activity_get_res", res.data);
-
-            })
-            .catch(error => {
-
-                console.error('EmployeeActivity_err', error.data);
-            });
     };
     // SELECTED EMPLOYEE
 
@@ -186,7 +194,8 @@ const Reporting_team = () => {
         console.log("Interview_Scheduled_Data", Interview_Scheduled_Data);
         console.log("login_user", Empid);
 
-        axios.post(`${port}/root/Interview_Schedule_activity`, { Interview_Scheduled_Data, EmployeeId: selectedCandidates, login_user: Empid })
+        axios.post(`${port}/root/Interview_Schedule_activity`,
+            { Interview_Scheduled_Data, EmployeeId: selectedCandidates, login_user: Empid })
             .then(response => {
                 console.log('Interview_Schedule_activity_res', response.data);
                 window.location.reload()
@@ -243,9 +252,6 @@ const Reporting_team = () => {
     const [Reporting_Team_List, setReporting_Team_List] = useState(true)
     const [All_request_data, setAll_request_data] = useState(false)
 
-    useEffect(() => {
-
-    })
 
     // Verfied Form start
     // const [Report_Manager_name, setReport_Manager_name] = useState("")
@@ -364,15 +370,15 @@ const Reporting_team = () => {
     console.log("Daily3", Walkins_achives);
     console.log("Daily4", Offered_achives);
 
-    const [month, setMonth] = useState(5); // 
-    const [year, setYear] = useState(2024);
-    const dates = generateDates(month, year);
+
+    const currentDate = new Date();
+    const [month, setMonth] = useState(currentDate.getMonth());
+    const [year, setYear] = useState(currentDate.getFullYear());
+    const [dates, setDates] = useState(generateDates(currentDate.getMonth(), currentDate.getFullYear()));
 
     console.log("Ui_Date", dates);
 
 
-
-    const currentDate = new Date();
     const formattedCurrentDate = formatDate(currentDate);
 
 
@@ -404,46 +410,102 @@ const Reporting_team = () => {
     // const totalTarget = calculateTotal('targets');
     // const totalAchieved = calculateTotal('achieved');
 
-    let handle_Month_Change = (e) => {
-
-        console.log("Year_select", e);
-        console.log("Employee_Id", Employee_ID);
-        // console.log("Year_select", e.slice(0, 4));
-        // console.log("Year_select", e.slice(5, 7));
-
+    let getActivities = (e) => {
         axios.get(`${port}root/ActivityList/Display/${e}/${Employee_ID}/`).then((res) => {
             console.log("activity_date_res", res.data);
             setgetActivities(res.data);
             setgetActivities_daily_achives(res.data.map((x) => x.daily_achives));
-
         }).catch((err) => {
-
             console.log("activity_date_err", err);
-
         })
-
     }
+    let getInterviewList = (e) => {
+        axios.get(`${port}root/InterviewList/Display/${e}/${Employee_ID}/`).then((res) => {
+            console.log("interview", res.data);
+            setInterviewList(res.data.interview);
+            setOfferList(res.data.offers)
+            setWalkInList(res.data.walkins)
 
-    let Function_setgetActivities = () => {
+            setInterviewListDA(res.data.interview.map((x) => x.daily_achives))
+            setOfferListDA(res.data.offers.map((x) => x.daily_achives))
+            setWalkInListDA(res.data.walkins.map((x) => x.daily_achives))
 
+            // setgetActivities_daily_achives(res.data.map((x) => x.daily_achives));
+        }).catch((err) => {
+            console.log("activity_date_err", err);
+        })
     }
+    let handle_Month_Change = (e) => {
 
-    const handle_Activity_Name_Change = (value, id) => {
-
+        console.log("Year_select", e, `${year}-${month}`);
+        console.log("Employee_Id", Employee_ID);
+        // console.log("Year_select", e.slice(0, 4));
+        // console.log("Year_select", e.slice(5, 7));
+        const selectedYear = parseInt(e.slice(0, 4));
+        const selectedMonth = parseInt(e.slice(5, 7)) - 1;
+        setYear(selectedYear);
+        setMonth(selectedMonth);
+        const newDates = generateDates(selectedMonth, selectedYear);
+        setDates(newDates);
+    }
+    const handle_Activity_Name_Change = (e, id) => {
+        let { name, value } = e.target
         console.log("enter", value, id);
-        axios.patch(`${port}root/activity/updel/${id}/`, { Activity_Name: value }, {
-            achieved: value
-        }).then((res) => {
-            setgetActivities(res.data)
-            Function_setgetActivities()
-
+        axios.patch(`${port}root/activity/updel/${id}/`, { [name]: value }).then((res) => {
+            // setgetActivities(res.data)
             console.log("Activity_Name_Change_Res", res.data);
         }).catch((err) => {
-
             console.log("Activity_Name_Change_Err", err);
-
         })
     };
+
+    const handle_InterviewList = (e, id, type) => {
+        let { value, name } = e.target
+        if (type == 'interview') {
+            let newobj = interviewList.find((obj) => obj.id == id)
+            newobj[name] = value
+            let newarry = interviewList.map((prev) => {
+                if (prev.id == id)
+                    return newobj
+                else
+                    return prev
+            })
+            console.log(newarry);
+            setInterviewList(newarry)
+        }
+        else if (type == 'walkin') {
+            let newobj = walkinList.find((obj) => obj.id == id)
+            newobj[name] = value
+            let newarry = walkinList.map((prev) => {
+                if (prev.id == id)
+                    return newobj
+                else
+                    return prev
+            })
+            console.log(newarry);
+            setWalkInList(newarry)
+        }
+        else if (type == 'offer') {
+            let newobj = offerList.find((obj) => obj.id == id)
+            newobj[name] = value
+            let newarry = offerList.map((prev) => {
+                if (prev.id == id)
+                    return newobj
+                else
+                    return prev
+            })
+            console.log(newarry);
+            setOfferList(newarry)
+        }
+        axios.patch(`${port}/root/Interview_Schedule_activity/updel/${id}/`,
+            {
+                [name]: value
+            }).then((response) => {
+                console.log(response.data);
+            }).catch((error) => {
+                console.log(error);
+            })
+    }
 
     const handle_Targets_Name_Change = (value, id) => {
 
@@ -460,7 +522,6 @@ const Reporting_team = () => {
 
     let Update_Changes = () => {
 
-        window.location.reload()
 
     }
 
@@ -471,8 +532,14 @@ const Reporting_team = () => {
         setActivePage('Reporting_team')
     }, [])
 
+    useEffect(() => {
+        if (Employee_ID) {
+            getActivities(`${year}-${month + 1}`)
+            getInterviewList(`${year}-${month + 1}`)
+        }
+    }, [dates, Employee_ID])
     return (
-        <div className=' d-flex' style={{ width: '100%', minHeight: '100%',}}>
+        <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
 
             <div className=''>
 
@@ -499,8 +566,8 @@ const Reporting_team = () => {
                         <div className='ms-0 ms-sm-3 Reporting_Team_Btns'>
 
                             <button className='btn btn-sm btn-success ms-2' data-bs-toggle="modal" data-bs-target="#exampleModal26">View</button>
-                            <button className='btn btn-sm btn-warning ms-3' data-bs-toggle="modal" data-bs-target="#exampleModal23">Add Activity</button>
-                            <button className='btn btn-sm btn-warning ms-4' data-bs-toggle="modal" data-bs-target="#exampleModal25">Add Interview</button>
+                            <button disabled={selectedCandidates.length == 0} className='btn btn-sm btn-warning ms-3' data-bs-toggle="modal" data-bs-target="#exampleModal23">Add Activity</button>
+                            <button disabled={selectedCandidates.length == 0} className='btn btn-sm btn-warning ms-4' data-bs-toggle="modal" data-bs-target="#exampleModal25">Add Interview</button>
                         </div>
                         {/* Add Activity */}
                         <div class="modal fade" id="exampleModal23" tabindex="-1" aria-labelledby="exampleModalLabel23" aria-hidden="true">
@@ -582,7 +649,9 @@ const Reporting_team = () => {
 
                                                                 <td key={e.id}> {index + 1}</td>
 
-                                                                <td onClick={() => sentparticularData1(e.employee_Id)} data-bs-toggle="modal" data-bs-target="#exampleModal6" key={e.id} style={{ cursor: 'pointer' }}> {e.full_name}</td>
+                                                                <td onClick={() => { sentparticularData1(e.employee_Id); setSelectedName(e.full_name) }}
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#exampleModal6" key={e.id} style={{ cursor: 'pointer' }}> {e.full_name}</td>
                                                                 <td key={e.id}> {e.email}</td>
                                                                 <td key={e.id}> {e.employee_Id}</td>
                                                                 <td key={e.id}> {e.mobile}</td>
@@ -649,7 +718,7 @@ const Reporting_team = () => {
                                                         <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Offer Targets *</label>
                                                         <input type="number" name="Offers_target" value={qualification.Offers_target} onChange={(e) => handleInputChange1(index, e)} className="form-control  shadow-none" />
                                                     </div>
-                                                   
+
                                                 </div>
 
 
@@ -677,13 +746,13 @@ const Reporting_team = () => {
                         <div className='Reporting_Team_search ms-2 ms-sm-0' >
 
                             <input type="text" value={searchValue} onChange={(e) => handlesearchvalue(e.target.value)} className='form-control ' />
-                            <i class="fa-solid fa-magnifying-glass" style={{position:'relative',bottom:'30px',left:'10px',color:'rgb(195,198,209)'}}></i>
+                            <i class="fa-solid fa-magnifying-glass" style={{ position: 'relative', bottom: '30px', left: '10px', color: 'rgb(195,198,209)' }}></i>
                         </div>
 
                     </div>
 
                     <div className=' p-1 mt-3 tablebg table-responsive'>
-                    <table class="w-full  " >
+                        <table class="w-full  " >
                             <thead >
                                 <tr>
                                     <th scope="col">#</th>
@@ -708,7 +777,7 @@ const Reporting_team = () => {
                                             <td scope="row"><input type="checkbox" value={e.employee_Id} onChange={handleCheckboxChange} /></td>
                                             {/* <td key={e.id}> {index + 1}</td> */}
 
-                                            <td onClick={() => sentparticularData(e.id)} data-bs-toggle="modal" data-bs-target="#exampleModal5" key={e.id} style={{ cursor: 'pointer' }}> {e.full_name}</td>
+                                            <td onClick={() => { sentparticularData(e.id); sentparticularData1(e.employee_Id); setSelectedName(e.full_name) }} data-bs-toggle="modal" data-bs-target="#exampleModal6" key={e.id} style={{ cursor: 'pointer' }}> {e.full_name}</td>
                                             <td key={e.id}> {e.email}</td>
                                             <td key={e.id}> {e.employee_Id}</td>
                                             <td key={e.id}> {e.mobile}</td>
@@ -1376,60 +1445,80 @@ const Reporting_team = () => {
                     <div class="modal-dialog modal-fullscreen">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title " id="exampleModalLabel6">(Name) Activity Sheet</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h5 class="modal-title " id="exampleModalLabel6"> Activity Sheet : {selectedName} </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
                             </div>
                             <div class="modal-body">
 
-                                <div className="border p-4">
+                                <main className="border p-4">
 
 
 
 
                                     <div className='mt-3 d-flex justify-content-end'>
-                                        <input type="month" onChange={(e) => handle_Month_Change(e.target.value)} />
+                                        <input type="month" className='bgclr outline-none p-2 rounded '
+                                            value={`${year}-${String(month + 1).padStart(2, '0')}`}
+                                            onChange={(e) => handle_Month_Change(e.target.value)} />
                                     </div>
 
                                     <div>
-                                        <div className='mt-4 table-responsive'>
-                                            <table className="table table-bordered">
+                                        <div className='mt-4 tablebg  p-0 table-responsive'>
+                                            <table className="w-full">
                                                 <thead className=''>
                                                     <tr>
-                                                        <th scope="col" colSpan={3} className='sticky right-0 text-center ' 
-                                                        style={{ minWidth: '500px' }}> Date </th>
+                                                        <th scope="col" colSpan={3} className='sticky-left  bgclr1  text-center '
+                                                            style={{ minWidth: '450px' }}> Date </th>
                                                         {dates.map(date => (
                                                             <th key={date} rowSpan={2} className='text-center pb-4'>{date}</th>
                                                         ))}
                                                     </tr>
                                                     <tr className=' '>
-                                                        <th scope="col" className='ms-3 '  style={{ minWidth: '200px' }}>Activity Name</th>
-                                                        <th scope="col" className='text-center ' style={{ minWidth: '60px' }}>Target</th>
-                                                        <th scope="col" className='text-center' style={{ minWidth: '60px' }}>Achieved</th>
+                                                        <th scope="col" className='ms-3 sticky-left bgclr1 ' style={{ width: '150px' }}>Activity Name</th>
+                                                        <th scope="col" className='text-center sticky-left1  bgclr1 ' style={{ minWidth: '150px' }}>Target
+                                                            <span className='text-xs '>(Each Day) </span> </th>
+                                                        <th scope="col" className='text-center sticky-left2 bgclr1 ' style={{ minWidth: '150px' }}>Achieved</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {activitiesget.map((activity, mainindex) => (
+
                                                         <tr key={mainindex}>
-                                                            <td>
+                                                            {console.log(activity)}
+                                                            <td className='sticky-left bgclr1 ' style={{ width: '150px' }} >
                                                                 <input type="text"
                                                                     value={activity.Activity_Name}
-
-                                                                    onChange={(e) => { handle_Activity_Name_Change(e.target.value, activity.id) }}
-
-                                                                    className="form-control border-0 shadow-none" />
+                                                                    name='Activity_Name'
+                                                                    onChange={(e) => {
+                                                                        handle_Activity_Name_Change(e, activity.id);
+                                                                        handleActivitiesGet(e, activity.id)
+                                                                    }}
+                                                                    className={` form-control border-0 shadow-none  `} />
                                                             </td>
-                                                            <td>
+                                                            <td className='sticky-left1 bgclr1 ' style={{ width: '150px' }}>
                                                                 <input type="number"
-                                                                    value={activity.targets}
-
-                                                                    onChange={(e) => { handle_Targets_Name_Change(Number(e.target.value), activity.id) }}
+                                                                    value={`${activity.targets}`}
+                                                                    name='targets'
+                                                                    onChange={(e) => {
+                                                                        handle_Activity_Name_Change(e, activity.id);
+                                                                        handleActivitiesGet(e, activity.id)
+                                                                    }}
 
                                                                     className="form-control border-0 shadow-none text-center" />
                                                             </td>
-                                                            <td>
-                                                                <input type="number"
-                                                                    value={activity.Total_Achived}
-                                                                    className="form-control border-0 shadow-none text-center" />
+                                                            <td className='sticky-left2 bgclr1 ' style={{ width: '150px' }} >
+                                                                <p
+                                                                    className={`p-2 text-black mb-0 rounded 
+                                                                        ${Number(activity.Total_Achived) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 50 ? 'bg-red-300' :
+                                                                            activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 70 ? 'bg-yellow-300' :
+                                                                                activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 90 ? 'bg-blue-300 ' :
+                                                                                    'bg-green-300'}  
+                                                                        text-xs w-32 relative border-0 shadow-none text-center`} >
+                                                                    {activity.Total_Achived} out of  {Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets)}
+
+                                                                    <span className='absolute top-1 right-1 '> <InfoButton size={10}
+                                                                        content={`Days filled = ${activity.daily_achives.filter((obj) => obj.achieved > 0).length} ,
+                                                                    Target = ${activity.targets} `} />  </span>
+                                                                </p>
                                                             </td>
                                                             {dates.map((date) => {
                                                                 let obj = activitiesgetdaily_achives[mainindex].find((obj) => obj.Date == date)
@@ -1440,8 +1529,10 @@ const Reporting_team = () => {
                                                                     <td key={date}>
 
                                                                         <input type="number"
-                                                                            value={obj && obj.achieved}
-                                                                            className="form-control border-0 shadow-none text-center " />
+                                                                            value={obj && obj.achieved} disabled
+                                                                            className={`p-2 w-24 rounded  border-0 shadow-none text-center 
+                                                                                ${obj ? obj.status == '0' ? 'bg-red-300' : obj.status == '2' ? 'bg-yellow-300' : obj.status == '3' ?
+                                                                                    'bg-green-300' : obj.status == '1' ? 'bg-orange-300' : '' : ''} `} />
 
                                                                     </td>
                                                                 )
@@ -1450,26 +1541,293 @@ const Reporting_team = () => {
                                                         </tr>
                                                     ))}
 
-                                                    <tr>
-                                                        <td className='ps-3'>Total</td>
-                                                        <td className='text-center'>000</td>
-                                                        <td className='text-center'>000</td>
-                                                        {/* {dates.map((date, idx) => (
-                                                    <td key={date}>
-                                                        <input type="text" className="form-control border-0 shadow-none" disabled />
-                                                    </td>
-                                                ))} */}
-                                                    </tr>
+
                                                 </tbody>
                                             </table>
                                         </div>
                                         <div className="d-flex justify-content-end">
                                             {/* <button type="button" onClick={handleAddActivity} className="btn btn-primary">Add Activity</button> */}
-                                            <button type="submit" onClick={Update_Changes} className="btn btn-primary btn-sm">Update</button>
+                                            {/* <button type="submit" onClick={Update_Changes} className="btn btn-primary btn-sm"> Update </button> */}
                                         </div>
                                     </div>
 
-                                </div>
+                                </main>
+                                <main className="border p-4">
+                                    <h4>Interviews  </h4>
+                                    <div>
+                                        <div className='mt-4 tablebg p-0 table-responsive'>
+                                            <table className="">
+                                                <thead className=''>
+                                                    <tr>
+                                                        <th scope="col" colSpan={3} className='sticky-left bgclr1 border-b-2 border-slate-700 text-center '
+                                                            style={{ minWidth: '450px' }}> Date </th>
+                                                        {dates.map(date => (
+                                                            <th key={date} rowSpan={2} className='text-center pb-4'>{date}</th>
+                                                        ))}
+                                                    </tr>
+                                                    <tr className=' '>
+                                                        <th scope="col" className='ms-3 sticky-left bgclr1' style={{ width: '150px' }}>Position Name</th>
+                                                        <th scope="col" className='text-center sticky-left1 bgclr1' style={{ width: '150px' }}>Target</th>
+                                                        <th scope="col" className='text-center sticky-left2 bgclr1' style={{ width: '150px' }}>Achieved</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {interviewList && interviewList.map((activity, mainindex) => (
+
+                                                        <tr key={mainindex}>
+                                                            {console.log("interview", activity)}
+                                                            <td className='sticky-left bgclr1 ' style={{ width: '150px' }} >
+                                                                <input type="text"
+                                                                    value={activity.position}
+                                                                    name='position'
+                                                                    onChange={(e) => {
+                                                                        handle_InterviewList(e, activity.id, 'interview')
+                                                                        // handle_Activity_Name_Change(e, activity.id);
+                                                                        // handleActivitiesGet(e, activity.id)
+                                                                    }}
+                                                                    className={` form-control border-0 shadow-none  `} />
+                                                            </td>
+                                                            <td className='sticky-left1 bgclr1 ' style={{ width: '150px' }}>
+                                                                <input type="number"
+                                                                    value={activity.targets}
+                                                                    name='targets'
+                                                                    onChange={(e) => {
+                                                                        handle_InterviewList(e, activity.id, 'interview')
+
+                                                                        // handle_Activity_Name_Change(e, activity.id);
+                                                                        // handleActivitiesGet(e, activity.id)
+                                                                    }}
+
+                                                                    className="form-control border-0 shadow-none text-center" />
+                                                            </td>
+                                                            <td className='sticky-left2 bgclr1 ' style={{ width: '150px' }} >
+                                                                <p
+                                                                    className={`p-2 text-black mb-0 rounded 
+                                                                        ${Number(activity.Total_Achieved) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 50 ? 'bg-red-300' :
+                                                                            activity.Total_Achieved / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 70 ? 'bg-yellow-300' :
+                                                                                activity.Total_Achieved / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 90 ? 'bg-blue-300 ' :
+                                                                                    'bg-green-300'}  
+                                                                        text-xs w-32 relative border-0 shadow-none text-center`} >
+                                                                    {activity.Total_Achieved} out of  {Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets)}
+
+                                                                    <span className='absolute top-1 right-1 '> <InfoButton size={10}
+                                                                        content={`Days filled = ${activity.daily_achives.filter((obj) => obj.achieved > 0).length} ,
+                                                                    Target = ${activity.targets} `} />  </span>
+                                                                </p>
+                                                            </td>
+                                                            {dates.map((date) => {
+                                                                let obj = interviewListDA[mainindex] && interviewListDA[mainindex].find((obj) => obj.Date == date)
+                                                                // console.log("sxdasdad", obj);
+                                                                // console.log(formattedCurrentDate);
+                                                                // console.log("----", activitiesgetdaily_achives[mainindex].find((obj) => obj.Date == date));
+                                                                return (
+                                                                    <td key={date}>
+
+                                                                        <input type="number"
+                                                                            value={obj && obj.achieved} disabled
+                                                                            className={`p-2 w-24 rounded  border-0 shadow-none text-center 
+                                            ${obj ? obj.status == '0' ? 'bg-red-300' : obj.status == '2' ? 'bg-yellow-300' : obj.status == '3' ?
+                                                                                    'bg-green-300' : obj.status == '1' ? 'bg-orange-300' : '' : ''} `} />
+
+                                                                    </td>
+                                                                )
+                                                            }
+                                                            )}
+                                                        </tr>
+                                                    ))}
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div className="d-flex justify-content-end">
+                                            {/* <button type="button" onClick={handleAddActivity} className="btn btn-primary">Add Activity</button> */}
+                                            {/* <button type="submit" onClick={Update_Changes} className="btn btn-primary btn-sm"> Update </button> */}
+                                        </div>
+                                    </div>
+
+                                </main>
+                                <main className="border p-4">
+                                    <h4>Walkins </h4>
+                                    <div>
+                                        <div className='mt-4 tablebg p-0 table-responsive'>
+                                            <table className="w-full">
+                                                <thead className=''>
+                                                    <tr className=''>
+                                                        <th scope="col" colSpan={3} className='sticky-left bgclr1 bottom-2 border-slate-700 text-center '
+                                                            style={{ minWidth: '450px' }}> Date </th>
+                                                        {dates.map(date => (
+                                                            <th key={date} rowSpan={2} className='border-b-2 border-slate-500 text-center pb-4'>{date}</th>
+                                                        ))}
+                                                    </tr>
+                                                    <tr className=' '>
+                                                        <th scope="col" className='ms-3 sticky-left bgclr1 ' style={{ width: '150px' }}>Position Name</th>
+                                                        <th scope="col" className='text-center sticky-left1 bgclr1 ' style={{ width: '150px' }}>Target</th>
+                                                        <th scope="col" className='text-center sticky-left2 bgclr1' style={{ width: '150px' }}>Achieved</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {walkinList && walkinList.map((activity, mainindex) => (
+
+                                                        <tr key={mainindex}>
+                                                            {console.log(activity)}
+                                                            <td className='sticky-left bgclr1 ' style={{ width: '150px' }} >
+                                                                <input type="text"
+                                                                    value={activity.position}
+                                                                    name='position'
+                                                                    onChange={(e) => {
+                                                                        handle_InterviewList(e, activity.id, 'walkin')
+                                                                    }}
+                                                                    className={` form-control border-0 shadow-none  `} />
+                                                            </td>
+                                                            <td className='sticky-left1 bgclr1 ' style={{ width: '150px' }} >
+                                                                <input type="number"
+                                                                    value={activity.Walkins_target}
+                                                                    name='Walkins_target'
+                                                                    onChange={(e) => {
+                                                                        handle_InterviewList(e, activity.id, 'walkin')
+                                                                    }}
+
+                                                                    className="form-control border-0 shadow-none text-center" />
+                                                            </td>
+                                                            <td className='sticky-left2 bgclr1 ' style={{ width: '150px' }} >
+                                                                <p
+                                                                    className={`p-2 text-black mb-0 rounded 
+                                                                        ${Number(activity.Total_Achieved) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Walkins_target) * 100 <= 50 ? 'bg-red-300' :
+                                                                            activity.Total_Achieved / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Walkins_target) * 100 <= 70 ? 'bg-yellow-300' :
+                                                                                activity.Total_Achieved / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Walkins_target) * 100 <= 90 ? 'bg-blue-300 ' :
+                                                                                    'bg-green-300'}  
+                                                                        text-xs w-32 relative border-0 shadow-none text-center`} >
+                                                                    {activity.Total_Achieved} out of  {Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Walkins_target)}
+
+                                                                    <span className='absolute top-1 right-1 '> <InfoButton size={10}
+                                                                        content={`Days filled = ${activity.daily_achives.filter((obj) => obj.achieved > 0).length} ,
+                                                                    Target = ${activity.Walkins_target} `} />  </span>
+                                                                </p>
+                                                            </td>
+                                                            {dates.map((date) => {
+                                                                let obj = walkinListDA[mainindex] && walkinListDA[mainindex].find((obj) => obj.Date == date)
+                                                                // console.log("sxdasdad", obj);
+                                                                // console.log(formattedCurrentDate);
+                                                                // console.log("----", activitiesgetdaily_achives[mainindex].find((obj) => obj.Date == date));
+                                                                return (
+                                                                    <td key={date}>
+
+                                                                        <input type="number"
+                                                                            value={obj && obj.achieved} disabled
+                                                                            className={`p-2 w-24 rounded  border-0 shadow-none text-center 
+                                                                                 ${obj ? obj.status == '0' ? 'bg-red-300' :
+                                                                                    obj.status == '2' ? 'bg-yellow-300' :
+                                                                                        obj.status == '3' ?
+                                                                                            'bg-green-300' : obj.status == '1' ? 'bg-orange-300' : '' : ''} `} />
+
+                                                                    </td>
+                                                                )
+                                                            }
+                                                            )}
+                                                        </tr>
+                                                    ))}
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div className="d-flex justify-content-end">
+                                            {/* <button type="button" onClick={handleAddActivity} className="btn btn-primary">Add Activity</button> */}
+                                            {/* <button type="submit" onClick={Update_Changes} className="btn btn-primary btn-sm"> Update </button> */}
+                                        </div>
+                                    </div>
+
+                                </main>
+                                <main className="border p-4">
+                                    <h4>Offered </h4>
+                                    <div>
+                                        <div className='mt-4 tablebg p-0 table-responsive'>
+                                            <table className="w-full">
+                                                <thead className=''>
+                                                    <tr>
+                                                        <th scope="col" colSpan={3} className='bgclr1 sticky-left text-center '
+                                                            style={{ minWidth: '450px' }}> Date </th>
+                                                        {dates.map(date => (
+                                                            <th key={date} rowSpan={2} className='text-center pb-4'>{date}</th>
+                                                        ))}
+                                                    </tr>
+                                                    <tr className=' '>
+                                                        <th scope="col" className='ms-3 bgclr1 sticky-left ' style={{ width: '150px' }}>Position Name</th>
+                                                        <th scope="col" className='text-center bgclr1 sticky-left1' style={{ width: '150px' }}>Target</th>
+                                                        <th scope="col" className='text-center bgclr1 sticky-left2' style={{ width: '150px' }}>Achieved</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {offerList && offerList.map((activity, mainindex) => (
+
+                                                        <tr key={mainindex}>
+                                                            {console.log(activity)}
+                                                            <td className='sticky-left bgclr1 ' style={{ width: '150px' }} >
+                                                                <input type="text"
+                                                                    value={activity.position}
+                                                                    name='position'
+                                                                    onChange={(e) => {
+                                                                        handle_InterviewList(e, activity.id, 'offer')
+                                                                    }}
+                                                                    className={` form-control border-0 shadow-none  `} />
+                                                            </td>
+                                                            <td className='sticky-left1 bgclr1 ' style={{ width: '150px' }} >
+                                                                <input type="number"
+                                                                    value={activity.Offers_target}
+                                                                    name='Offers_target'
+                                                                    onChange={(e) => {
+                                                                        handle_InterviewList(e, activity.id, 'offer')
+                                                                    }}
+
+                                                                    className="form-control border-0 shadow-none text-center" />
+                                                            </td>
+                                                            <td className='sticky-left2 bgclr1 ' style={{ width: '150px' }} >
+                                                                <p
+                                                                    className={`p-2 text-black mb-0 rounded 
+                                                                        ${Number(activity.Total_Achieved) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Offers_target) * 100 <= 50 ? 'bg-red-300' :
+                                                                            activity.Total_Achieved / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Offers_target) * 100 <= 70 ? 'bg-yellow-300' :
+                                                                                activity.Total_Achieved / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Offers_target) * 100 <= 90 ? 'bg-blue-300 ' :
+                                                                                    'bg-green-300'}  
+                                                                        text-xs w-32 relative border-0 shadow-none text-center`} >
+                                                                    {activity.Total_Achieved} out of  {Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.Offers_target)}
+
+                                                                    <span className='absolute top-1 right-1 '> <InfoButton size={10}
+                                                                        content={`Days filled = ${activity.daily_achives.filter((obj) => obj.achieved > 0).length} ,
+                                                                    Target = ${activity.Offers_target} `} />  </span>
+                                                                </p>
+                                                            </td>
+                                                            {dates.map((date) => {
+                                                                let obj = offerListDA[mainindex] && offerListDA[mainindex].find((obj) => obj.Date == date)
+                                                                // console.log("sxdasdad", obj);
+                                                                // console.log(formattedCurrentDate);
+                                                                // console.log("----", activitiesgetdaily_achives[mainindex].find((obj) => obj.Date == date));
+                                                                return (
+                                                                    <td key={date}>
+                                                                        <input type="number"
+                                                                            value={obj && obj.achieved} disabled
+                                                                            className={`p-2 w-24 rounded  border-0 shadow-none text-center 
+                                            ${obj ? obj.status == '0' ? 'bg-red-300' : obj.status == '2' ? 'bg-yellow-300' : obj.status == '3' ?
+                                                                                    'bg-green-300' : obj.status == '1' ? 'bg-orange-300' : '' : ''} `} />
+
+                                                                    </td>
+                                                                )
+                                                            }
+                                                            )}
+                                                        </tr>
+                                                    ))}
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div className="d-flex justify-content-end">
+                                            {/* <button type="button" onClick={handleAddActivity} className="btn btn-primary">Add Activity</button> */}
+                                            {/* <button type="submit" onClick={Update_Changes} className="btn btn-primary btn-sm"> Update </button> */}
+                                        </div>
+                                    </div>
+
+                                </main>
                             </div>
                         </div>
                     </div>

@@ -225,8 +225,8 @@ const Reporting_team_recuter = () => {
                         </div>
                     </div>
 
-                    <div className=' p-1 mt-3 table-responsive' style={{ marginLeft: '0px' }}>
-                        <table class="table" >
+                    <div className=' p-1 mt-3 tablebg rounded table-responsive' style={{ marginLeft: '0px' }}>
+                        <table class="w-full" >
                             <thead >
                                 <tr>
                                     <th scope="col">#</th>

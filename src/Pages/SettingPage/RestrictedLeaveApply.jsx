@@ -46,9 +46,9 @@ const RestrictedLeaveApply = ({ setActiveSection }) => {
                 <h5>Restricted Holiday </h5>
                 {
                     restrictedholidays && restrictedholidays.length > 0 ?
-                        <article className='flex flex-wrap justify-between gap-3'>
+                        <article className='flex flex-wrap justify-between gap-3 '>
                             {restrictedholidays.map((obj, index) => (
-                                <div className='w-[12rem] flex flex-col rounded pt-3 h-[8rem] border-2 ' key={index} >
+                                <div className='w-[12rem] formbg flex flex-col rounded pt-3 h-[8rem] border-2 ' key={index} >
                                     <h5 className='text-center '>{obj.holiday.OccasionName} </h5>
                                     <p className='text-center mb-0'>{obj.holiday.Date} </p>
                                     <p className='text-center mb-0'>{(!obj.is_expired && !obj.is_utilised) ? 'Applicable' :
@@ -58,8 +58,8 @@ const RestrictedLeaveApply = ({ setActiveSection }) => {
                                     {!obj.is_expired && !obj.is_utilised && !obj.is_applied &&
                                         <button disabled={obj.is_expired || loading == index}
                                             onClick={() => handleSave(obj, index)}
-                                            className={` mt-auto savebtn text-white `}>
-                                            {loading == index ? "Loading" : "Apply"}
+                                            className={`relative w-fit px-3 p-[2px] shadow text-sm rounded-full border-2 border-green-100 mx-auto top-3 mt-auto savebtn text-white `}>
+                                            {loading == index ? "Loading" : "Apply Now"}
                                         </button>}
                                 </div>
                             ))}

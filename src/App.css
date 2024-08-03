@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .bg {
     background-color: red;
 }
@@ -10,11 +9,48 @@
 .slick-slide>div {
     transition: 1s linear;
 }
+#reader {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    border: 2px solid #000; /* Optional: for visual reference */
+}
+
+.scanner-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: red;
+    animation: scan 1.5s infinite alternate;
+}
+
+@keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+.overflowbar {
+    height: 80dvh;
+    overflow-y: scroll;
+   
+}
+
+.overflowbar::-webkit-scrollbar {
+    display: none;
+}
 
 .slick-slide>div {
     margin: 0px 10px;
 }
 
+/* .custom-tooltip .tooltip-inner  {
+    background-color: #3498db !important; 
+    color: white; 
+  }
+  .custom-tooltip .tooltip-arrow{
+    background-color: #3498db !important;
+} */
 .bgrd {
     background-image: url('./assets/Images/DasboardBanner.png');
     height: 100vh;
@@ -39,7 +75,8 @@
     border: 2px solid white;
 
 }
-.bgclr1{
+
+.bgclr1 {
     background-color: rgb(244, 244, 244);
 }
 
@@ -54,12 +91,18 @@
     border-bottom: 2px solid rgb(216, 215, 215);
 }
 
+/* .tablebg input{
+    background-color: transparent;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+
+} */
 .tablebg th,
 td {
     padding: 10px;
     text-align: center;
     vertical-align: top;
-    
+
 }
 
 .savebtn {
@@ -87,8 +130,15 @@ input[type=number] {
 .transi {
     transition: all 0.5s ease;
 }
-.sticky-left-top{
+
+.sticky-left-top {
     position: sticky;
     left: 0;
     top: 0;
+}
+
+.border-bottom {
+    border-bottom: 2px solid rgb(55, 54, 54);
+
+
 }

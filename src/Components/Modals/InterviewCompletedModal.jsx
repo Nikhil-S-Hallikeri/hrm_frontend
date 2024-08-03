@@ -4,14 +4,16 @@ import { Modal } from 'react-bootstrap'
 import { port } from '../../App'
 import { HrmStore } from '../../Context/HrmContext'
 import FinalStatus from './FinalStatus'
+import SchedulINterviewModalForm from '../ApplyList/SchedulINterviewModalForm'
 
 const InterviewCompletedModal = (props) => {
-    let { show, setshow, id } = props
+    let { show, setshow, id, getfunction } = props
     let empStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
     let userPermission = JSON.parse(sessionStorage.getItem('user')).user_permissions
     let [finalStatus, setFinalStatus] = useState(false)
     let { convertToReadableDateTime, convertToNormalTime } = useContext(HrmStore)
     let [data, setdata] = useState()
+
     useEffect(() => {
         if (show) {
             axios.get(`${port}/root/New-Candidate-Interview-Completed-Details/${show}/`).then((response) => {
@@ -329,7 +331,7 @@ const InterviewCompletedModal = (props) => {
                                                 <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                                     Interviewed  Date : <span className='fw-normal break-words'>{(obj.InterviewDate)} </span>
                                                 </p></div>}
-                                            {obj.review&& obj.review.InterviewerName && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                            {obj.review && obj.review.InterviewerName && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                                 <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                                     Interviewer  Name : <span className='fw-normal break-words'>{(obj.review.InterviewerName)} </span>
                                                 </p></div>}
@@ -521,14 +523,17 @@ const InterviewCompletedModal = (props) => {
                         <button onClick={() => { setFinalStatus(show); setshow(false) }} className='bg-blue-600 text-white rounded p-2'>
                             Final Status
                         </button>}
-                    {(empStatus == 'Admin' || empStatus == 'HR' || userPermission.interview_shedule_access) &&
+                    {/* {(empStatus == 'Admin' || empStatus == 'HR' || userPermission.interview_shedule_access) &&
                         <button onClick={() => { setFinalStatus(show); setshow(false) }} className='bg-slate-600 text-white rounded p-2'>
                             Assign Interview
-                        </button>}
+                        </button>} */}
 
                 </Modal.Footer>
             </Modal>}
-            {data && <FinalStatus show={finalStatus} name={data.candidate_data.FirstName} setshow={setFinalStatus} />}
+            {/* <SchedulINterviewModalForm /> */}
+            {data && <FinalStatus show={finalStatus} getfunction={getfunction}
+                name={data.candidate_data.FirstName + " " + (data.candidate_data.LastName && data.candidate_data.LastName)}
+                setshow={setFinalStatus} />}
 
         </div>
     )

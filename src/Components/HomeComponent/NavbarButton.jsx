@@ -5,7 +5,7 @@ import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import DownArrow from '../../SVG/DownArrow'
 
 const NavbarButton = (props) => {
-    const { openNavbar, setopen, path, drop, label, active, img } = props
+    const { openNavbar, setopen, path, drop, label, light, active, img } = props
     let { activePage, setActivePage } = useContext(HrmStore)
     let navigate = useNavigate()
     let [dropDown, setDropDown] = useState(false)
@@ -30,9 +30,10 @@ const NavbarButton = (props) => {
     }, [openNavbar])
     return (
         <div>
-            <div className={`relative  w-[80px] 
+            <div className={`relative  w-[80px]
             flex my-1 transition duration-500  
                  ${activePage == active && 'border-violet-900 border-s-4'} `}>
+                {light && <p className='w-[7px] h-[7px] rounded-full bg-red-500 absolute -top-1 right-5 '> </p>}
                 <OverlayTrigger className={` ${openNavbar && 'd-none'} `}
                     placement="right" delay={{ show: 150, hide: 200 }}
                     overlay={renderTooltip(label)}>
@@ -59,7 +60,9 @@ const NavbarButton = (props) => {
                     dropDown &&
                     <section className='downtoupani transition duration-500  min-h-[50px] min-w-[100px] relative left-28 -bottom-10  '>
                         {drop.map((obj) => (
-                            <button className='text-start w-40 me-auto hover:scale-[1.05] hover:drop-shadow-sm duration-300 text-sm text-slate-500 fw-medium my-1 '
+                            <button className={`text-start w-40 me-auto relative
+                             hover:scale-[1.05]  hover:drop-shadow-sm duration-300 text-sm fw-medium my-1
+                              ${obj.light ? "text-red-600 " : 'text-slate-500 '} `}
                                 onClick={() => { navigate(obj.path); setDropDown(false); setopen(false) }} >
                                 {obj.name}
                             </button>

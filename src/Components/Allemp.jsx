@@ -6,16 +6,25 @@ import { port } from '../App'
 import EmployeeCreation from './Modals/EmployeeCreation'
 import { toast } from 'react-toastify'
 import { HrmStore } from '../Context/HrmContext'
+import { useNavigate } from 'react-router-dom'
+import DustbinIcon from '../SVG/DustbinIcon'
+import ViewBtn from '../SVG/ViewBtn'
+import EditPen from '../SVG/EditPen'
+import CreateReligion from './Employee/CreateReligion'
+import CreateDepartment from './Modals/CreateDepartment'
+import { Modal } from 'react-bootstrap'
 
 
 const Allemp = () => {
-
+    let { religion } = useContext(HrmStore)
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let empStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
     let [addEmpModal, setAddEmpModal] = useState(false)
+    let [editModal, setEditModal] = useState(false)
 
     const [selectedFile, setSelectedFile] = useState(null);
-
+    let [showreligion, setShowReligion] = useState(false)
+    let [showDepartment, setShowDepartment] = useState(false)
 
     const [AllEmployeelist, setAllEmployeelist] = useState([])
     const [EMPLOYEE_INFORMATION, setEMPLOYEE_INFORMATION] = useState([])
@@ -403,6 +412,7 @@ const Allemp = () => {
         hired_date: '',
         Dashboard: '',
         Department_id: '',
+        religion: '',
         Position_id: '',
         Reporting_To: '',
         'Employeement_Type': '',
@@ -474,26 +484,27 @@ const Allemp = () => {
 
     const [Edit_id, set_Edit_id] = useState('')
     let [loading, setloading] = useState('')
+
+
     let Update_Employee = () => {
-        console.log("Update_Data", Edit_Data);
+        console.log("Update_Data1", Edit_Data, Edit_Data.religion);
         setloading('edit')
         axios.patch(`${port}root/ems/Employee-Update/${Edit_id}/`, {
             Update_Data: {
                 ...Edit_Data,
-                "Department": Edit_Data.Department_id, "Position": Edit_Data.Position_id
+                "Department": Edit_Data.Department_id,
+                "Position": Edit_Data.Position_id
             }
-        })
-            .then((r) => {
-                console.log("Update_Data", r.data)
-                toast.success('User Updated successfully')
-                setloading('')
-                fetchdata()
-            })
-            .catch((err) => {
-                console.log("Update_Data", err)
-                setloading('')
+        }).then((r) => {
+            console.log("Update_Data", r.data)
+            toast.success('User Updated successfully')
+            setloading('')
+            fetchdata()
+        }).catch((err) => {
+            console.log("Update_Data", err)
+            setloading('')
 
-            })
+        })
     }
 
 
@@ -504,7 +515,6 @@ const Allemp = () => {
         console.log("adasdasd", id);
         axios.get(`${port}/root/ems/Get-Employee/${id}/`).then((e) => {
             set_Edit_Data(e.data)
-
             // console.log('Update_Data', e.data.Department_id);
             console.log('Update_Data', e.data);
 
@@ -533,7 +543,7 @@ const Allemp = () => {
     useEffect(() => {
         setActivePage('Employee')
     }, [])
-
+    let navigate = useNavigate()
 
 
 
@@ -774,10 +784,10 @@ const Allemp = () => {
                 {/* <button type="submit" onClick={Click} className="btn btn-primary text-white fw-medium px-2 px-lg-5">CLICK</button> */}
 
 
-                < div className='row tablebg table-responsive rounded-xl my-3 m-0 p-1 mt-3' style={{ width: '100%' }}>
+                < div className='row tablebg table-responsive h-[60dvh] overflow-y-scroll rounded-xl my-3 mt-3' style={{ width: '100%' }}>
                     <table class="w-full ">
                         <thead>
-                            <tr>
+                            <tr className='sticky top-0 bgclr1 '>
 
                                 <th scope="col"><span className='fw-medium'>All</span></th>
                                 <th scope="col">Name</th>
@@ -809,7 +819,15 @@ const Allemp = () => {
                                 return (
                                     <tr key={e.id}>
                                         <td scope="row"><input type="checkbox" value={e.employee_Id} onChange={handleCheckboxChange} /></td>
-                                        <td onClick={() => sentparticularData(e.id, e.employeeProfile)} data-bs-toggle="modal" data-bs-target="#exampleModal5" key={e.id} style={{ cursor: 'pointer' }}> {e.full_name}</td>
+                                        <td
+                                            className=''>
+                                            <button className=' '
+                                                onClick={() => {
+                                                    sentparticularData(e.id, e.employeeProfile);
+                                                }}>
+                                                {e.full_name}
+                                            </button>
+                                        </td>
                                         <td> {e.employee_Id}</td>
                                         <td> {e.email}</td>
                                         <td> {e.Dashboard}</td>
@@ -817,9 +835,24 @@ const Allemp = () => {
                                         <td> {e.mobile}</td>
                                         <td> {e.hired_date}</td>
                                         <td> {e.Designation}</td>
-                                        <td className=''>
-                                            <i onClick={() => Edit_Employee(e.id)} data-bs-toggle="modal" data-bs-target="#exampleModal_Edit" class="fa-solid fa-pen-to-square me-3  text-primary-emphasis" ></i>
-                                            {empStatus == 'Admin' && <i onClick={() => Delete_Employee(e.id, e.full_name)} class="fa-solid fa-trash text-danger "></i>
+                                        <td className='flex items-center gap-3 '>
+
+
+                                            <button onClick={() => { Edit_Employee(e.id); setEditModal(true) }}
+                                            //  data-bs-toggle="modal" data-bs-target="#exampleModal_Edit" 
+                                            >
+                                                <EditPen />
+                                            </button>
+                                            {empStatus == 'Admin' && <button onClick={() => Delete_Employee(e.id, e.full_name)}>
+
+                                                <DustbinIcon />
+                                            </button>
+                                            }
+                                            {empStatus == 'Admin' &&
+                                                <button onClick={() => navigate(`/dash/employee/${e.employee_Id}`)}>
+                                                    <ViewBtn />
+
+                                                </button>
                                             }
                                         </td>
 
@@ -834,293 +867,298 @@ const Allemp = () => {
 
                         </tbody>
                     </table>
-
-                    <div class="modal fade" id="exampleModal_Edit" tabindex="-1" aria-labelledby="exampleModalLabel_Edit" aria-hidden="true">
-                        <div class="modal-dialog modal-xl">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-
-
-                                    {/* Form start */}
-                                    <div className="row justify-content-center m-0">
-                                        <h3 className='mt-2 text-center p-3' style={{ color: 'rgb(76,53,117)' }}>Update Employee Information</h3>
-                                        <div className="col-lg-12 p-4 mt-2 border rounded-lg">
+                    {showreligion && <CreateReligion show={showreligion} setshow={setShowReligion} />}
+                    {showDepartment && <CreateDepartment show={showDepartment} setshow={setShowDepartment} getdept={getDepart} />}
+                    <Modal show={editModal} centered size='xl' onHide={() => setEditModal(false)} >
+                        <Modal.Header closeButton>
+                            <h3 className='poppins' style={{ color: 'rgb(76,53,117)' }} >
+                                Update Employee Information</h3>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <div className="row justify-content-center m-0">
+                                <div className="col-lg-12 p-4 mt-2 border rounded-lg">
 
 
-                                            {/* ---------------------------------PERSONAL DETAILS--------------------------------------------------------- */}
-                                            <div className="row m-0  pb-2">
-                                                <div className='row m-0 mt-2'>
+                                    {/* ---------------------------------PERSONAL DETAILS--------------------------------------------------------- */}
+                                    <div className="row m-0  pb-2">
+                                        <div className='row m-0 mt-2'>
 
-                                                    <div className="col-md-6 col-lg-4  mb-3">
-                                                        <label htmlFor="firstName" className="form-label">Name <span class='text-danger'>*</span> </label>
-                                                        <input type="text" className="form-control shadow-none bg-light" id="FirstName" name="full_name" value={Edit_Data.full_name} onChange={handleChangeEdit_data} />
-                                                    </div>
-                                                    <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="lastName" className="form-label">DOB <span class='text-danger'>*</span> </label>
-                                                        <input type="date" className="form-control shadow-none bg-light" id=" LastName" name="date_of_birth" value={Edit_Data.date_of_birth} onChange={handleChangeEdit_data} />
-                                                    </div>
-                                                    <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label bg-light">Gender <span class='text-danger'>*</span> </label>
-                                                        <select
-                                                            className="form-control shadow-none bg-light"
-                                                            id="gender"
-                                                            name="gender"
-                                                            onChange={handleChangeEdit_data}
-                                                            value={Edit_Data.gender} // Set the value of the select input to gender
-                                                        // Update gender state when the select input changes
-                                                        >
-                                                            <option value="">Select Gender <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
-                                                            <option value="male">Male</option>
-                                                            <option value="female">Female</option>
-                                                            <option value="others">Others</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="email" className="form-label">Email <span class='text-danger'>*</span> </label>
-                                                        <input type="email" className="form-control shadow-none bg-light" id=" Email" name="email"
-                                                            value={Edit_Data.email} onChange={handleChangeEdit_data} />
-                                                    </div>
-                                                    <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="primaryContact" className="form-label">Phone <span class='text-danger'>*</span> </label>
-                                                        <input type="tel" className="form-control shadow-none bg-light" id="PrimaryContact" name="mobile"
-                                                            value={Edit_Data.mobile} onChange={handleChangeEdit_data} />
-                                                    </div>
-                                                    <div className="col-md-6 col-lg-2 mb-3">
-                                                        <label htmlFor="secondaryContact" className="form-label">Weight  </label>
-                                                        <input type="number" className="form-control shadow-none bg-light" id="SecondaryContact" name="weight"
-                                                            value={Edit_Data.weight} onChange={handleChangeEdit_data} />
-                                                    </div>
-                                                    <div className="col-md-6 col-lg-2 mb-3">
-                                                        <label htmlFor="secondaryContact" className="form-label">Height <span class='text-danger'>*</span> </label>
-                                                        <input type="number" className="form-control shadow-none bg-light" id="State" name="height" value={Edit_Data.height} onChange={handleChangeEdit_data} />
-                                                    </div>
-                                                    <div className="col-md-6 col-lg-12 mb-3">
-                                                        <label htmlFor="secondaryContact" className="form-label">Permanent Address <span class='text-danger'>*</span> </label>
-                                                        <textarea type="text" className="form-control shadow-none bg-light" id=" District" name="permanent_address" value={Edit_Data.permanent_address} onChange={handleChangeEdit_data} />
-                                                    </div>
-                                                    <div className="col-md-6 col-lg-12 mb-3">
-                                                        <label htmlFor="secondaryContact" className="form-label">Present Address  <span class='text-danger'>*</span> </label>
-                                                        <textarea type="text" className="form-control shadow-none bg-light" id=" District" name="present_address" value={Edit_Data.present_address} onChange={handleChangeEdit_data} />
-                                                    </div>
-                                                    <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="secondaryContact" className="form-label">Hired Date <span class='text-danger'>*</span> </label>
-                                                        <input type="date" className="form-control shadow-none bg-light" id="State" name="hired_date" value={Edit_Data.hired_date} onChange={handleChangeEdit_data} />
-                                                    </div>
+                                            <div className="col-md-6 col-lg-4  mb-3">
+                                                <label htmlFor="firstName" className="form-label">Name <span class='text-danger'>*</span> </label>
+                                                <input type="text" className="form-control shadow-none bg-light" id="FirstName" name="full_name" value={Edit_Data.full_name} onChange={handleChangeEdit_data} />
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="lastName" className="form-label">DOB <span class='text-danger'>*</span> </label>
+                                                <input type="date" className="form-control shadow-none bg-light" id=" LastName" name="date_of_birth" value={Edit_Data.date_of_birth} onChange={handleChangeEdit_data} />
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="gender" className="form-label bg-light">Gender <span class='text-danger'>*</span> </label>
+                                                <select
+                                                    className="form-control shadow-none bg-light"
+                                                    id="gender"
+                                                    name="gender"
+                                                    onChange={handleChangeEdit_data}
+                                                    value={Edit_Data.gender} // Set the value of the select input to gender
+                                                // Update gender state when the select input changes
+                                                >
+                                                    <option value="">Select Gender <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                    <option value="male">Male</option>
+                                                    <option value="female">Female</option>
+                                                    <option value="others">Others</option>
+                                                </select>
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="email" className="form-label">Email <span class='text-danger'>*</span> </label>
+                                                <input type="email" className="form-control shadow-none bg-light" id=" Email" name="email"
+                                                    value={Edit_Data.email} onChange={handleChangeEdit_data} />
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="primaryContact" className="form-label">Phone <span class='text-danger'>*</span> </label>
+                                                <input type="tel" className="form-control shadow-none bg-light" id="PrimaryContact" name="mobile"
+                                                    value={Edit_Data.mobile} onChange={handleChangeEdit_data} />
+                                            </div>
+                                            <div className="col-md-6 col-lg-2 mb-3">
+                                                <label htmlFor="secondaryContact" className="form-label">Weight  </label>
+                                                <input type="number" className="form-control shadow-none bg-light" id="SecondaryContact" name="weight"
+                                                    value={Edit_Data.weight} onChange={handleChangeEdit_data} />
+                                            </div>
+                                            <div className="col-md-6 col-lg-2 mb-3">
+                                                <label htmlFor="secondaryContact" className="form-label">Height <span class='text-danger'>*</span> </label>
+                                                <input type="number" className="form-control shadow-none bg-light" id="State" name="height" value={Edit_Data.height} onChange={handleChangeEdit_data} />
+                                            </div>
+                                            <div className="col-md-6 col-lg-12 mb-3">
+                                                <label htmlFor="secondaryContact" className="form-label">Permanent Address <span class='text-danger'>*</span> </label>
+                                                <textarea type="text" className="form-control shadow-none bg-light" id=" District" name="permanent_address" value={Edit_Data.permanent_address} onChange={handleChangeEdit_data} />
+                                            </div>
+                                            <div className="col-md-6 col-lg-12 mb-3">
+                                                <label htmlFor="secondaryContact" className="form-label">Present Address  <span class='text-danger'>*</span> </label>
+                                                <textarea type="text" className="form-control shadow-none bg-light" id=" District" name="present_address" value={Edit_Data.present_address} onChange={handleChangeEdit_data} />
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="secondaryContact" className="form-label">Hired Date <span class='text-danger'>*</span> </label>
+                                                <input type="date" className="form-control shadow-none bg-light" id="State" name="hired_date" value={Edit_Data.hired_date} onChange={handleChangeEdit_data} />
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="gender" className="flex justify-between form-label"> Religion
+                                                    <button className='text-xs ' onClick={() => setShowReligion(true)} >create Religion </button>
+                                                </label>
+                                                <select
+                                                    className="form-control shadow-none bg-light"
+                                                    id="gender"
+                                                    name="religion"
+                                                    value={Edit_Data.religion}
+                                                    onChange={(e) => {
+                                                        handleChangeEdit_data(e)
+                                                    }}>
+                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                    {religion && religion.map(interviewer => (
+                                                        <option key={interviewer.id} value={interviewer.id}>
+                                                            {`${interviewer.religion_name}`}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="gender" className="form-label ">Position <span class='text-danger'>*</span> </label>
+                                                <select
+                                                    className="form-control shadow-none bg-light"
+                                                    id="gender"
+                                                    name="Dashboard"
+                                                    value={Edit_Data.Dashboard}
+                                                    onChange={handleChangeEdit_data} // Set the value of the select input to gender
+                                                // Update gender state when the select input changes
+                                                >
+                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                    <option value="HR">HR head</option>
+                                                    <option value="Admin">Admin</option>
+                                                    <option value="Employee">Employee</option>
+                                                    <option value="Recruiter">Recruiter</option>
+                                                </select>
+                                            </div>
 
-                                                    <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label ">Position <span class='text-danger'>*</span> </label>
-                                                        <select
-                                                            className="form-control shadow-none bg-light"
-                                                            id="gender"
-                                                            name="Dashboard"
-                                                            value={Edit_Data.Dashboard}
-                                                            onChange={handleChangeEdit_data} // Set the value of the select input to gender
-                                                        // Update gender state when the select input changes
-                                                        >
-                                                            <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
-                                                            <option value="HR">HR head</option>
-                                                            <option value="Admin">Admin</option>
-                                                            <option value="Employee">Employee</option>
-                                                            <option value="Recruiter">Recruiter</option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label">Department <span class='text-danger'>*</span> </label>
-                                                        <select
-                                                            className="form-control shadow-none bg-light"
-                                                            id="gender"
-                                                            name="Department_id"
-                                                            value={Edit_Data.Department_id}
-                                                            onChange={(e) => {
-                                                                Call_Department(e.target.value)
-                                                                handleChangeEdit_data(e)
-                                                            }}
-                                                        // Set the value of the select input to gender
-                                                        // Update gender state when the select input changes
-                                                        >
-                                                            <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
-                                                            {Department_List.map((interviewer, index) => {
-                                                                console.log("Update_Data", interviewer);
-                                                                return (
-                                                                    <option key={interviewer.id} value={interviewer.id}>
-                                                                        {`${interviewer.Dep_Name}`}
-                                                                    </option>
-                                                                )
-                                                            })}
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="gender" className="form-label flex justify-between ">Department
+                                                    <button className='text-xs ' onClick={() => setShowDepartment(true)} >
+                                                        Create Department </button> </label>
+                                                <select
+                                                    className="form-control shadow-none bg-light"
+                                                    id="gender"
+                                                    name="Department_id"
+                                                    value={Edit_Data.Department_id}
+                                                    onChange={(e) => {
+                                                        Call_Department(e.target.value)
+                                                        handleChangeEdit_data(e)
+                                                    }}
+                                                // Set the value of the select input to gender
+                                                // Update gender state when the select input changes
+                                                >
+                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                    {Department_List.map((interviewer, index) => {
+                                                        console.log("Update_Data", interviewer);
+                                                        return (
+                                                            <option key={interviewer.id} value={interviewer.id}>
+                                                                {`${interviewer.Dep_Name}`}
+                                                            </option>
+                                                        )
+                                                    })}
 
 
-                                                        </select>
-                                                    </div>
-                                                    <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label">Designation <span class='text-danger'>*</span> </label>
-                                                        <select
-                                                            className="form-control shadow-none bg-light"
-                                                            id="gender"
-                                                            name="Position_id"
-                                                            value={Edit_Data.Position_id}
-                                                            onChange={(e) => {
-                                                                handleChangeEdit_data(e)
-                                                            }}>
-                                                            <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
-                                                            {Desgination_List.map(interviewer => (
-                                                                <option key={interviewer.id} value={interviewer.id}>
-                                                                    {`${interviewer.Name}`}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
+                                                </select>
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="gender" className="form-label">Designation <span class='text-danger'>*</span> </label>
+                                                <select
+                                                    className="form-control shadow-none bg-light"
+                                                    id="gender"
+                                                    name="Position_id"
+                                                    value={Edit_Data.Position_id}
+                                                    onChange={(e) => {
+                                                        handleChangeEdit_data(e)
+                                                    }}>
+                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                    {Desgination_List.map(interviewer => (
+                                                        <option key={interviewer.id} value={interviewer.id}>
+                                                            {`${interviewer.Name}`}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
 
-                                                    <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label ">Reporting To <span class='text-danger'>*</span> </label>
-                                                        <select
-                                                            className="form-control shadow-none bg-light"
-                                                            id="gender"
-                                                            name="Reporting_To"
-                                                            value={Edit_Data.Reporting_To}
-                                                            onChange={handleChangeEdit_data} // Set the value of the select input to gender
-                                                        // Update gender state when the select input changes
-                                                        >
-                                                            <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
-                                                            {interviewers.map(interviewer => (
-                                                                <option key={interviewer.EmployeeId} value={interviewer.EmployeeId}>
-                                                                    {`${interviewer.EmployeeId},${interviewer.Name}`}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
-                                                    <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label">Employeement type <span class='text-danger'>*</span> </label>
-                                                        <select value={Edit_Data.Employeement_Type} onChange={handleChangeEdit_data}
-                                                            className="form-control shadow-none bg-light"
-                                                            id="gender"
-                                                            name="Employeement_Type" // Update gender state when the select input changes
-                                                            required>
-                                                            <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
-                                                            <option value="intern">Intern </option>
-                                                            <option value="permanent">Permanent </option>
-                                                        </select>
-                                                    </div>
-                                                    {Edit_Data.Employeement_Type == 'intern' && <section className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label">Intern Duration <span class='text-danger'>*</span> </label>
-                                                        <div>
-                                                            <input type="date" value={Edit_Data.internship_Duration_From} name='internship_Duration_From'
-                                                                onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' /> -
-                                                            <input type="date" value={Edit_Data.internship_Duration_To} name='internship_Duration_To'
-                                                                onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' />
-                                                        </div>
-                                                    </section>}
-                                                    {Edit_Data.Employeement_Type == 'permanent' && <div className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label">Probation type <span class='text-danger'>*</span> </label>
-                                                        <select value={Edit_Data.probation_status} onChange={handleChangeEdit_data}
-                                                            className="form-control shadow-none bg-light"
-                                                            id="gender"
-                                                            name="probation_status"
-                                                            // Update gender state when the select input changes
-                                                            required>
-                                                            <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
-                                                            <option value="probationer">Probationer </option>
-                                                            {/* <option value="confirmed"> Confirmed </option> */}
-                                                        </select>
-                                                    </div>}
-                                                    {Edit_Data.probation_status == 'probationer' && 
-                                                     <section className="col-md-6 col-lg-4 mb-3">
-                                                        <label htmlFor="gender" className="form-label">Probation Duration <span class='text-danger'>*</span> </label>
-                                                        <div>
-                                                            <input type="date" value={Edit_Data.probation_Duration_From} name='probation_Duration_From'
-                                                                onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' /> -
-                                                            <input type="date" value={Edit_Data.probation_Duration_To} name='probation_Duration_To'
-                                                                onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' />
-                                                        </div>
-                                                    </section>}
-
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="gender" className="form-label ">Reporting To <span class='text-danger'>*</span> </label>
+                                                <select
+                                                    className="form-control shadow-none bg-light"
+                                                    id="gender"
+                                                    name="Reporting_To"
+                                                    value={Edit_Data.Reporting_To}
+                                                    onChange={handleChangeEdit_data} // Set the value of the select input to gender
+                                                // Update gender state when the select input changes
+                                                >
+                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                    {interviewers.map(interviewer => (
+                                                        <option key={interviewer.EmployeeId} value={interviewer.EmployeeId}>
+                                                            {`${interviewer.EmployeeId},${interviewer.Name}`}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="gender" className="form-label">Employeement type <span class='text-danger'>*</span> </label>
+                                                <select value={Edit_Data.Employeement_Type} onChange={handleChangeEdit_data}
+                                                    className="form-control shadow-none bg-light"
+                                                    id="gender"
+                                                    name="Employeement_Type" // Update gender state when the select input changes
+                                                    required>
+                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                    <option value="intern">Intern </option>
+                                                    <option value="permanent">Permanent </option>
+                                                </select>
+                                            </div>
+                                            {Edit_Data.Employeement_Type == 'intern' && <section className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="gender" className="form-label">Intern Duration <span class='text-danger'>*</span> </label>
+                                                <div>
+                                                    <input type="date" value={Edit_Data.internship_Duration_From} name='internship_Duration_From'
+                                                        onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' /> -
+                                                    <input type="date" value={Edit_Data.internship_Duration_To} name='internship_Duration_To'
+                                                        onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' />
                                                 </div>
-
-                                                <section>
-                                                    <h4>Permissions </h4>
-                                                    <article className='flex flex-wrap  '>
-                                                        <div className="col-md-6 col-lg-4 mb-3">
-                                                            <input type="checkbox" className='' checked={Edit_Data.interview_shedule_access} id='interview_shedule_access'
-                                                                value={Edit_Data.interview_shedule_access}
-                                                                onChange={() => set_Edit_Data((prev) => ({
-                                                                    ...prev,
-                                                                    interview_shedule_access: !prev.interview_shedule_access
-                                                                }))} />
-                                                            <label htmlFor="interview_shedule_access">
-                                                                Interview shedule access
-                                                            </label>
-                                                        </div>
-                                                        <div className="col-md-6 col-lg-4 mb-3">
-                                                            <input type="checkbox" className='' checked={Edit_Data.applied_list_access} id='applied_list_access'
-                                                                value={Edit_Data.applied_list_access}
-                                                                onChange={() => set_Edit_Data((prev) => ({
-                                                                    ...prev,
-                                                                    applied_list_access: !prev.applied_list_access
-                                                                }))} />
-                                                            <label htmlFor="applied_list_access">
-                                                                Applied list access
-                                                            </label>
-                                                        </div>
-                                                        <div className="col-md-6 col-lg-4 mb-3">
-                                                            <input type="checkbox" className='' checked={Edit_Data.final_status_access} id='final_status_access'
-                                                                value={Edit_Data.final_status_access}
-                                                                onChange={() => set_Edit_Data((prev) => ({
-                                                                    ...prev,
-                                                                    final_status_access: !prev.final_status_access
-                                                                }))} />
-                                                            <label htmlFor="final_status_access">
-                                                                Final status access
-                                                            </label>
-                                                        </div>
-                                                        <div className="col-md-6 col-lg-4 mb-3">
-                                                            <input type="checkbox" className='' checked={Edit_Data.screening_shedule_access} id='screening_shedule_access'
-                                                                value={Edit_Data.screening_shedule_access}
-                                                                onChange={() => set_Edit_Data((prev) => ({
-                                                                    ...prev,
-                                                                    screening_shedule_access: !prev.screening_shedule_access
-                                                                }))} />
-                                                            <label htmlFor="screening_shedule_access">
-                                                                Screening shedule access
-                                                            </label>
-                                                        </div>
-
-
-
-                                                    </article>
-
-
-                                                </section>
-                                            </div>
-
-                                            <div className="col-12 text-end mt-3">
-                                                <button type="submit" disabled={loading == 'edit'} onClick={Update_Employee}
-                                                    // data-bs-dismiss="modal"  
-                                                    className="btn btn-primary text-white fw-medium px-2 px-lg-5">
-                                                    {loading == 'edit' ? 'loading...' : "Update"} </button>
-                                            </div>
-
-
-
-
-
+                                            </section>}
+                                            {Edit_Data.Employeement_Type == 'permanent' && <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="gender" className="form-label">Probation type <span class='text-danger'>*</span> </label>
+                                                <select value={Edit_Data.probation_status} onChange={handleChangeEdit_data}
+                                                    className="form-control shadow-none bg-light"
+                                                    id="gender"
+                                                    name="probation_status"
+                                                    // Update gender state when the select input changes
+                                                    required>
+                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                    <option value="probationer">Probationer </option>
+                                                    {/* <option value="confirmed"> Confirmed </option> */}
+                                                </select>
+                                            </div>}
+                                            {Edit_Data.probation_status == 'probationer' &&
+                                                <section className="col-md-6 col-lg-4 mb-3">
+                                                    <label htmlFor="gender" className="form-label">Probation Duration <span class='text-danger'>*</span> </label>
+                                                    <div>
+                                                        <input type="date" value={Edit_Data.probation_Duration_From} name='probation_Duration_From'
+                                                            onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' /> -
+                                                        <input type="date" value={Edit_Data.probation_Duration_To} name='probation_Duration_To'
+                                                            onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' />
+                                                    </div>
+                                                </section>}
 
                                         </div>
 
+                                        <section>
+                                            <h4>Permissions </h4>
+                                            <article className='flex flex-wrap  '>
+                                                <div className="col-md-6 col-lg-4 mb-3">
+                                                    <input type="checkbox" className=''
+                                                        checked={Edit_Data.interview_shedule_access} id='interview_shedule_access'
+                                                        value={Edit_Data.interview_shedule_access}
+                                                        onChange={() => set_Edit_Data((prev) => ({
+                                                            ...prev,
+                                                            interview_shedule_access: !prev.interview_shedule_access
+                                                        }))} />
+                                                    <label htmlFor="interview_shedule_access">
+                                                        Interview shedule access
+                                                    </label>
+                                                </div>
+                                                <div className="col-md-6 col-lg-4 mb-3">
+                                                    <input type="checkbox" className='' checked={Edit_Data.applied_list_access} id='applied_list_access'
+                                                        value={Edit_Data.applied_list_access}
+                                                        onChange={() => set_Edit_Data((prev) => ({
+                                                            ...prev,
+                                                            applied_list_access: !prev.applied_list_access
+                                                        }))} />
+                                                    <label htmlFor="applied_list_access">
+                                                        Applied list access
+                                                    </label>
+                                                </div>
+                                                <div className="col-md-6 col-lg-4 mb-3">
+                                                    <input type="checkbox" className='' checked={Edit_Data.final_status_access} id='final_status_access'
+                                                        value={Edit_Data.final_status_access}
+                                                        onChange={() => set_Edit_Data((prev) => ({
+                                                            ...prev,
+                                                            final_status_access: !prev.final_status_access
+                                                        }))} />
+                                                    <label htmlFor="final_status_access">
+                                                        Final status access
+                                                    </label>
+                                                </div>
+                                                <div className="col-md-6 col-lg-4 mb-3">
+                                                    <input type="checkbox" className='' checked={Edit_Data.screening_shedule_access} id='screening_shedule_access'
+                                                        value={Edit_Data.screening_shedule_access}
+                                                        onChange={() => set_Edit_Data((prev) => ({
+                                                            ...prev,
+                                                            screening_shedule_access: !prev.screening_shedule_access
+                                                        }))} />
+                                                    <label htmlFor="screening_shedule_access">
+                                                        Screening shedule access
+                                                    </label>
+                                                </div>
 
 
+
+                                            </article>
+
+
+                                        </section>
                                     </div>
-                                    {/* form end */}
 
-
-
+                                    <div className="col-12 text-end mt-3">
+                                        <button type="submit" disabled={loading == 'edit'} onClick={Update_Employee}
+                                            // data-bs-dismiss="modal"  
+                                            className="btn btn-primary text-white fw-medium px-2 px-lg-5">
+                                            {loading == 'edit' ? 'loading...' : "Update"} </button>
+                                    </div>
                                 </div>
 
                             </div>
-                        </div>
-                    </div>
+                        </Modal.Body>
+                    </Modal>
+
+
 
 
                 </div >

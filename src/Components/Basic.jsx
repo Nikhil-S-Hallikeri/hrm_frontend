@@ -8,7 +8,7 @@ import Slider from "react-slick";
 import '../assets/css/media.css'
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { port } from '../App'
+import { domain, port } from '../App'
 import '../assets/css/main.css'
 
 
@@ -435,7 +435,7 @@ const Basic = () => {
         const formdata = new FormData();
         formdata.append('CandidateID', canid);
         formdata.append('mail_sended_by', Empid);
-        formdata.append('FormURL', `http://localhost:3000/Doc/`);
+        formdata.append('FormURL', `${domain}/Doc/`);
 
 
         axios.post(`${port}/root/DocumentsUploadForm`, formdata)
@@ -508,7 +508,7 @@ const Basic = () => {
 
                                 <div>
                                     <h4 style={{ position: 'relative', top: '5px' }}>{Hiredcounts.consider_to_client}</h4>
-                                    <p data-bs-toggle="modal" data-bs-target="#exampleModal10" onClick={() => setConsiderToClient("Consider_to_Client")}>Consider To Client</p>
+                                    <p data-bs-toggle="modal" data-bs-target="#exampleModal10" onClick={() => setConsiderToClient("Consider_to_Client")}>Consider To Client for Merida </p>
                                 </div>
 
                                 <div>

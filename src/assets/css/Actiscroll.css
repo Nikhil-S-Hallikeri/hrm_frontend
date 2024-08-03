@@ -6,7 +6,25 @@
     scrollbar-color: #888 #e0e0e0;
     /* For Firefox */
 }
-
+.sticky-left {
+    position: sticky;
+    left: 0px;
+    background-color: #fff;
+    z-index: 11;
+  }
+  .sticky-left1 {
+    position: sticky;
+    left: 150px;
+    background-color: #fff;
+    z-index: 11;
+  }
+  .sticky-left2 {
+    position: sticky;
+    left: 300px;
+    background-color: #fff;
+    z-index: 11;
+  }
+  
 .scrollbar1::-webkit-scrollbar {
     width: 8px;
 }
@@ -84,4 +102,7 @@
 
 .scrollmade::-webkit-scrollbar {
     display: none;
+}
+.formbg{
+    background-color: rgb(233,231,236);
 }

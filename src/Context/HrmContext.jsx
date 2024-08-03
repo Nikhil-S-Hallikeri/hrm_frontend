@@ -1,6 +1,8 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { port } from '../App'
 import axios from 'axios'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 
 
@@ -13,6 +15,33 @@ const HrmContext = (props) => {
     let [pendingLeave, setPendingLeave] = useState()
     let [leaveData, setLeaveData] = useState()
     let [designation, setDesignation] = useState()
+    let [religion, setReligion] = useState()
+    let [preTaxDeduction, setPreTaxDeduction] = useState()
+    let [postTaxDeduction, setPostDeduction] = useState()
+    let getPreTaxDeduction = () => {
+        axios.get(`${port}/root/pms/AllowanceTemplateCreating?type=Pre_Tax_Deduction`).then((response) => {
+            console.log("earn", response.data);
+            setPreTaxDeduction(response.data)
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+    let getPostTaxDeduction = () => {
+        axios.get(`${port}/root/pms/AllowanceTemplateCreating?type=Post_Tax_Deduction`).then((response) => {
+            console.log("earn", response.data);
+            setPostDeduction(response.data)
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+    let getReligion = () => {
+        axios.get(`${port}/root/ems/Religions/`).then((response) => {
+            console.log(response.data);
+            setReligion(response.data)
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
     let getLeaveData = () => {
         axios.get(`${port}/root/lms/LeaveTypes/`).then((response) => {
             setLeaveData(response.data)
@@ -21,6 +50,36 @@ const HrmContext = (props) => {
             console.log(error);
         })
     }
+
+    let user = JSON.parse(sessionStorage.getItem('user'))
+    let [count, setCount] = useState({
+        employeePage: false,
+        offeraproval: false,
+        leavepage: false,
+        leaveApproval: false
+    })
+    let getApprovalRequest = () => {
+        if (user) {
+            axios.get(`${port}/root/OfferLetterApprovalList/${user.EmployeeId}/`).then((response) => {
+                console.log("hellow", response.data);
+                if (response.data && response.data.length > 0) {
+                    setCount((prev) => ({
+                        ...prev,
+                        employeePage: true,
+                        offeraproval: true
+                    }))
+                }
+            }).catch((error) => {
+                console.log("hellow", error);
+            })
+        }
+    }
+    useEffect(() => {
+        getReligion()
+        getApprovalRequest()
+        getPreTaxDeduction()
+        getPostTaxDeduction()
+    }, [])
     function convertToReadableDateTime(isoDateTime) {
         const date = new Date(isoDateTime);
         // Extract the date components
@@ -34,7 +93,7 @@ const HrmContext = (props) => {
         const ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12 || 12; // Convert to 12-hour format
         // Format the date and time
-        const formattedDate = `${day}/${month}/${year}`;
+        const formattedDate = `${day}-${month}-${year}`;
         const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
         return `${formattedDate} ${formattedTime}`;
     }
@@ -42,6 +101,20 @@ const HrmContext = (props) => {
         let datenow = new Date()
         return `${datenow.getDate()}/${datenow.getMonth()}/${datenow.getFullYear()}`
     }
+    function formatDate(dateString) {
+        const months = [
+            "January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"
+        ];
+
+        const dateParts = dateString.split("-");
+        const year = dateParts[0];
+        const month = months[parseInt(dateParts[1], 10) - 1];
+        const day = dateParts[2];
+
+        return `${day} ${month} ${year}`;
+    }
+
     function formatISODate(isoString) {
         const [time, offset] = isoString.split('+');
         const [hours, minutes, seconds] = time.substring(1).split(':');
@@ -60,7 +133,7 @@ const HrmContext = (props) => {
         const formattedMinutes = minutes;
 
         // Construct the 12-hour time format
-        const formattedTime = `${formattedHours}:${formattedMinutes}:${seconds} ${period}`;
+        const formattedTime = `${formattedHours}:${formattedMinutes} ${period}`;
 
         return formattedTime;
     }
@@ -114,16 +187,12 @@ const HrmContext = (props) => {
     function convertToNormalTime(timeString) {
         // Split the time string into hours, minutes, and seconds
         const [hours, minutes, seconds] = timeString.split(':').map(Number);
-
         // Determine AM or PM
         const ampm = hours >= 12 ? 'PM' : 'AM';
-
         // Convert hours from 24-hour to 12-hour format
         const normalHours = hours % 12 || 12; // Adjust hours, converting 0 to 12 for 12 AM
-
         // Format the time string
         const formattedTime = `${normalHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
-
         return formattedTime;
     }
     let getDesignations = () => {
@@ -190,16 +259,46 @@ Merida Tech Minds (OPC) Pvt. Ltd.`
         if (empid) {
             axios.get(`${port}/root/lms/Reporting/Employee/PendingLeaves/${empid.EmployeeId}/`).then((response) => {
                 setLeaveRequestReporting(response.data)
+                if (response.data && response.data.length > 0) {
+                    setCount((prev) => ({
+                        ...prev,
+                        leavepage: true,
+                        leaveApproval: true
+                    }))
+                }
                 console.log("leave", response.data);
             }).catch((error) => {
                 console.log(error);
             })
         }
     }
+    let [data, setData] = useState()
+
+    let getEarningData = () => {
+        axios.get(`${port}/root/pms/AllowanceTemplateCreating?type=Earning`).then((response) => {
+            console.log("earn", response.data);
+            setData(response.data)
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+    let deleteSalaryComponent = (id) => {
+        axios.delete(`${port}/root/pms/AllowanceDelete/${id}/`).then((response) => {
+            toast.success('Component deleted successfully')
+            getPreTaxDeduction()
+            getPostTaxDeduction()
+            getEarningData()
+        }).catch((error) => {
+            toast.error('Error acquired')
+            console.log(error);
+        })
+    }
     let valueShare = {
+        deleteSalaryComponent, getEarningData, data,
+        religion, getReligion, count, formatDate, preTaxDeduction, postTaxDeduction, getPreTaxDeduction, getPostTaxDeduction,
         getPendingLeave, pendingLeave, setPendingLeave, leaveRequestsReporting, setLeaveRequestReporting, getLeaveRequestsReporting,
         changeDateYear, activeSetting, setActiveSetting, mailContent, openNavbar, setNavbar, convertToNormalTime, activePage, setActivePage,
-        leaveData, setLeaveData, getLeaveData,
+        leaveData, setLeaveData, getLeaveData, getDesignations, designation, setDesignation,
         timeValidate, getProperDate, getCurrentDate, convertToReadableDateTime, testing, convertTimeTo12HourFormat, formatISODate
     }
     return (

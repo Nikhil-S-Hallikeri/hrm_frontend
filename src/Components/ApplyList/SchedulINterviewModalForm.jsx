@@ -6,13 +6,13 @@ import { toast } from 'react-toastify';
 import { HrmStore } from '../../Context/HrmContext';
 
 const SchedulINterviewModalForm = (props) => {
-    let { show, fetchdata, setshow, persondata, setPersondata, candidateId, setcandidateId,
+    let { show, fetchdata, setshow,fetchdata1, persondata, setPersondata, candidateId, setcandidateId,
         fetchdata2 } = props
     console.log(persondata);
     let [outsideMail, setOutSideMail] = useState()
     let [outsideINterview, setOutsideInterview] = useState(false)
     let [loading, setloading] = useState(false)
-    let { convertTimeTo12HourFormat, timeValidate } = useContext(HrmStore)
+    let { changeDateYear, convertTimeTo12HourFormat, timeValidate } = useContext(HrmStore)
     const [formData, setFormData] = useState({
         Candidate: "",
         InterviewRoundName: '',
@@ -70,7 +70,7 @@ const SchedulINterviewModalForm = (props) => {
         formData.login_user = Empid
         if (outsideMail) {
             formData.Other_EMP_Mail = outsideMail
-            formData.review_form=`${domain}/interviewreview`
+            formData.review_form = `${domain}/interviewreview`
         }
         console.log("schedule_Interview",
             "formData", formData,
@@ -84,13 +84,19 @@ const SchedulINterviewModalForm = (props) => {
             setshow(false)
             fetchdata2()
             fetchdata()
+            fetchdata1()
             setloading(false)
             console.log("schedule_Interview_Data_res", res.data);
         }).catch((err) => {
             setloading(false)
-            console.log("schedule_Interview_Data_res_err", err.data);
+            console.log("schedule_Interview_Data_res_err", err);
         })
     };
+    useEffect(() => {
+        if (formData && (formData.InterviewTime || formData.InterviewDate)) {
+            setMailContent(`Dear Candidate \n Congratulations!! \n  We are glad to inform you that you have selected for the Next round. \nDate : ${formData.InterviewDate && changeDateYear(formData.InterviewDate)} \nTiming : ${formData.InterviewTime && convertTimeTo12HourFormat(formData.InterviewTime)}`)
+        }
+    }, [formData.InterviewTime, formData.InterviewDate])
     useEffect(() => {
         sentparticularData()
         console.log(persondata);
@@ -122,9 +128,9 @@ const SchedulINterviewModalForm = (props) => {
                             </label>
                             <select id="InterviewRoundName" name="InterviewRoundName" value={formData.InterviewRoundName} onChange={handleInputChange} required class="form-control">
                                 <option value="" selected>Select Round</option>
+                                <option value="ceo_round" >CEO Round</option>
                                 <option value="hr_round" >HR Round</option>
                                 <option value="manager_round" >Manager Round</option>
-
                                 <option value="technical_round" >Technical Round </option>
                             </select>
                         </div>
@@ -137,7 +143,7 @@ const SchedulINterviewModalForm = (props) => {
                             <section className='flex justify-between my-2'>
                                 <label for="interviewer">Interviewer:</label>
                                 <article className='flex gap-2 items-center'>
-                                    Outsider :
+                                    Consultant :
                                     <div type='button'
                                         onClick={() => {
                                             setOutsideInterview(!outsideINterview);
@@ -160,7 +166,7 @@ const SchedulINterviewModalForm = (props) => {
                                     </option>
                                 ))}
                             </select>}
-                            {outsideINterview && <input type="text" id="mailId" placeholder='Enter the mail' value={outsideMail}
+                            {outsideINterview && <input type="text" id="mailId" placeholder='Enter mail' value={outsideMail}
                                 onChange={(e) => setOutSideMail(e.target.value)} class="form-control" />}
                         </div>
                         <div class="form-group">

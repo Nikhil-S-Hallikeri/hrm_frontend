@@ -197,7 +197,7 @@ const LeaveSetting = () => {
 
                     </article>
                     <article className='my-2'>
-                        <p className='fw-semibold m-0 '> Earned Leave</p>
+                        <p className='fw-semibold m-0 '> Paid Leave</p>
                         <div className='flex items-center my-2 gap-2'>
                             <input value={leaveObj.earned_leave} checked={leaveObj.earned_leave}
                                 onChange={(e) => setLeaveObj((prev) => ({

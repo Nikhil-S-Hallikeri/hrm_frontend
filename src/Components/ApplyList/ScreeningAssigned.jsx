@@ -25,7 +25,7 @@ const ScreeningAssigned = (props) => {
     const [interviewtime, setinterviewtime] = useState('');
 
     let { handlescreenedsearchvalue, searchscreenValue, fetchdata, fetchdata2,
-        handle_screened_filter_value, handleCheckboxChange1,
+        handle_screened_filter_value, handleCheckboxChange1, fetchdata1,
         screeninglist_All, int_int_data, load1, screeninglistCompleted,
         search_filter_screened, screeninglist, Screening_screening_data, Screening_candidate_data } = props
     let [interviewSchedulForm, setInterviewScheduleForm] = useState(false)
@@ -183,6 +183,7 @@ const ScreeningAssigned = (props) => {
                         setInterviewScheduleForm(true)
                         setCandidateIdInterview(persondata.CandidateId)
                     }
+                    fetchdata1()
                     setNative(''); setTravellBy(''); setAboutfamily('');
                     setMeritalStatus(''); setComments('');
                     setScreeningscreeningstatus('')
@@ -203,10 +204,10 @@ const ScreeningAssigned = (props) => {
                 persondata={persondata}
                 setshow={setscreeningCompletedCandidateDetailModal} setPersondata={setPersondata}
                 data={screeningCompletedApplicant} />}
-            {persondata && <SchedulINterviewModalForm candidateId={candidateIdInterview} setcandidateId={setCandidateIdInterview}
+            {persondata && <SchedulINterviewModalForm fetchdata1={fetchdata1} candidateId={candidateIdInterview} setcandidateId={setCandidateIdInterview}
                 fetchdata={fetchdata} fetchdata2={fetchdata2} show={interviewSchedulForm} persondata={persondata}
                 setshow={setInterviewScheduleForm} setPersondata={setPersondata} />}
-            <div className='d-flex justify-content-between mb-4 '>
+            <div className='d-flex justify-content-between mb-2 '>
                 <div>
                     <div class="input-group mb-3 ">
                         <span class="input-group-text" id="basic-addon1"> <i class="fa-solid fa-magnifying-glass" ></i>  </span>
@@ -218,7 +219,7 @@ const ScreeningAssigned = (props) => {
                 </div>
                 <div>
                     <li class="nav-item text-primary d-flex me-4" style={{ fontSize: '18px' }} >
-                        <select className="form-select shadow-none" id="ageGroup" style={{ width: '100px', height: '30px', fontSize: '9px', outline: 'none' }}
+                        {/* <select className="form-select shadow-none" id="ageGroup" style={{ width: '100px', height: '30px', fontSize: '9px', outline: 'none' }}
                             value={search_filter_screened} onChange={(e) => {
                                 handle_screened_filter_value(e.target.value)
                             }} >
@@ -227,20 +228,25 @@ const ScreeningAssigned = (props) => {
                             <option value="Week">Week</option>
                             <option value="Month">Month</option>
                             <option value="Year">Year</option>
-                        </select>
+                        </select> */}
 
                     </li>
                 </div>
             </div>
-            <main className='border-1 bg-slate-400 rounded w-fit'>
+            <select name="" value={assignOrCompleted} onChange={(e) => setAssignedorCompleted(e.target.value)}
+                className='btngrd border-2 flex ms-auto bg-opacity-70 outline-none rounded border-violet-100 text-white text-xs p-2 ' id="">
+                <option value="Assigned" className='text-black'>Assigned</option>
+                <option value="Completed" className='text-black'>Completed</option>
+            </select>
+            {/* <main className='border-1 bg-slate-400 rounded w-fit'>
                 <button onClick={() => setAssignedorCompleted('Assigned')} className={`rounded transition duration-500 text-white p-2 ${assignOrCompleted == 'Assigned' ? "bg-blue-500" : 'bg-slate-400'}`}>
                     Assigned
                 </button>
                 <button onClick={() => setAssignedorCompleted('Completed')} className={`rounded transition duration-500 text-white p-2 ${assignOrCompleted == 'Completed' ? "bg-blue-500" : 'bg-slate-400'}`}>Completed</button>
-            </main>
+            </main> */}
 
             {/* Second */}
-            <div className='rounded h-[50vh] pt-0 overflow-y-scroll scrollbar1 tablebg table-responsive mt-4'>
+            <div className='rounded h-[40vh] pt-0 overflow-y-scroll scrollbar1 tablebg table-responsive mt-4'>
                 <table className="w-full ">
                     <thead >
                         <tr className='sticky top-0 bgclr1 '>
@@ -673,7 +679,7 @@ const ScreeningAssigned = (props) => {
                                     <div className="row m-0 pb-2 mt-4">
 
                                         <div className="mb-3  col-md-6 col-lg-6">
-                                            <label htmlFor="ageGroup" className="form-label text-success">6 Days Working:</label>
+                                            <label htmlFor="ageGroup" className="form-label ">6 Days Working:</label>
                                             <select className="form-select " id="ageGroup" value={sixDaysWorking} onChange={(e) => setsixDaysWorking(e.target.value)}>
                                                 <option value="">Select</option>
                                                 <option value="yes">Yes</option>
@@ -681,7 +687,7 @@ const ScreeningAssigned = (props) => {
                                             </select>
                                         </div>
                                         <div className="mb-3  col-md-6 col-lg-6">
-                                            <label htmlFor="ageGroup" className="form-label text-success">Flexibility on work Timings:</label>
+                                            <label htmlFor="ageGroup" className="form-label">Flexibility on work Timings:</label>
                                             <select className="form-select " id="ageGroup" value={FlexibilityonWorkingTimings} onChange={(e) => setFlexibilityonWorkingTimings(e.target.value)}>
                                                 <option value="">Select</option>
                                                 <option value="yes">Yes</option>
@@ -715,7 +721,7 @@ const ScreeningAssigned = (props) => {
                                             </select>
                                         </div>
                                         <div className="mb-3  col-md-6 col-lg-6">
-                                            <label htmlFor="ageGroup" className="form-label"> Have personal Laptop dor work purpose  : </label>
+                                            <label htmlFor="ageGroup" className="form-label"> Have personal Laptop for work purpose  : </label>
                                             <select className="form-select " id="ageGroup" value={carrylaptop} onChange={(e) => setcarrylaptop(e.target.value)}>
                                                 <option value="">Select</option>
                                                 <option value="yes">Yes</option>
@@ -768,7 +774,7 @@ const ScreeningAssigned = (props) => {
                                                 <option value="scheduled">Shortlisted to Next Round</option>
                                                 <option value="rejected"> Rejected </option>
                                                 <option value="walkout">Walked-out </option>
-                                                <option value="to_client">Consider to Client Requirments </option>
+                                                <option value="to_client">Consider to Client for Merida </option>
                                             </select>
                                         </div>
                                         <div className="col-md-12 col-lg-12 mb-3">

@@ -9,7 +9,7 @@ import '../assets/css/modal.css'
 import { Link, useNavigate } from 'react-router-dom';
 import { Alert, AlertTitle } from '@mui/material';
 import Finalstatuscomment from './Finalstatuscomment';
-import { port } from '../App'
+import { domain, port } from '../App'
 
 
 const Applay = () => {
@@ -978,7 +978,7 @@ const Applay = () => {
         const formdata = new FormData();
         formdata.append('DocumentInstance', e);
         formdata.append('CandidateID', x);
-        formdata.append('FormURL', `http://localhost:3000/BgverificationForm/`);
+        formdata.append('FormURL', `${domain}/BgverificationForm/`);
 
         axios.post(`${port}/root/BG_VerificationMailSend`, formdata)
             .then((r) => {
@@ -1967,7 +1967,7 @@ const Applay = () => {
                                                                         setselectstatus(true)
                                                                     }}>
                                                                         <option value="">Pending</option>
-                                                                        <option value="consider to client">Consider to Client</option>
+                                                                        <option value="consider to client">Consider to Client for Merida </option>
                                                                         <option value="Internal Hiring">Internal Hireing</option>
                                                                         <option value="Reject">Reject</option>
                                                                         <option value="On Hold">On Hold</option>
@@ -3080,7 +3080,7 @@ const Applay = () => {
                                                     <label htmlFor="ageGroup" className="form-label">Interview Status:</label>
                                                     <select className="form-select" id="ageGroup" value={Interviewstatus} onChange={(e) => setInterviewstatus(e.target.value)}>
                                                         <option value="">Select</option>
-                                                        <option value="Consider to Client">Consider to Client</option>
+                                                        <option value="Consider to Client">Consider to Client for Merida</option>
                                                         <option value="Internal Hiring">Internal Hiring</option>
                                                         <option value="Reject">Reject</option>
                                                         <option value="On-Hold">On Hold</option>

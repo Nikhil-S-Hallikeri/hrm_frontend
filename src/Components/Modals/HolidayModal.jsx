@@ -1,11 +1,13 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Modal } from 'react-bootstrap'
 import { port } from '../../App'
 import { toast } from 'react-toastify'
+import { HrmStore } from '../../Context/HrmContext'
 
 const HolidayModal = ({ show, setshow, getHoliday }) => {
     let [loading, setloading] = useState(false)
+    let { religion } = useContext(HrmStore)
     let [obj, setobj] = useState({
         OccasionName: '',
         Religion: '',
@@ -89,9 +91,11 @@ const HolidayModal = ({ show, setshow, getHoliday }) => {
                             <select type="text" value={obj.Religion} onChange={handleChange}
                                 name='Religion' className='p-2 border-2 outline-none rounded block w-[90%] my-2 ' >
                                 <option value="">Select Relegion</option>
-                                <option value="Christian">Christian </option>
-                                <option value="Hindhu">Hindhu </option>
-                                <option value="Muslim">Muslim </option>
+                                {
+                                    religion && religion.map((obj) => (
+                                        <option value={obj.id}> {obj.religion_name} </option>
+                                    ))
+                                }
 
                             </select>
                         </div>}
@@ -109,7 +113,7 @@ const HolidayModal = ({ show, setshow, getHoliday }) => {
 
                     </section>
                     <button onClick={handleSave} disabled={loading} className='p-2 px-3 savebtn rounded text-white w-40 text-center justify-center ms-auto flex'>
-                        {loading?'Loading..':"Save"}
+                        {loading ? 'Loading..' : "Save"}
                     </button>
 
 

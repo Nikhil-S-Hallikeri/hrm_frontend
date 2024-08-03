@@ -1,80 +1,72 @@
 import axios from 'axios';
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import { usePDF } from 'react-to-pdf';
-import {port} from '../App' 
+import { domain, port } from '../App'
+import HrmContext, { HrmStore } from '../Context/HrmContext';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { useParams } from 'react-router-dom';
 
 
 
-const Tempone = () => {
-
-    const { toPDF, targetRef } = usePDF({ Offer_Letter: 'page.pdf' });
-
+const Tempone = ({ data, targetRef }) => {
+    let { changeDateYear } = useContext(HrmStore)
     let offer_letter_data = JSON.parse(sessionStorage.getItem('offer_letter_form'))
     let Login = JSON.parse(sessionStorage.getItem('user'))
-
-
-      console.log("SS",offer_letter_data.Date_Of_Joning);
-
-
-    const sendbackend = async () => {
-        toPDF();
-        alert('Offer Letter sent successfully')
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        const pdfBlob = await fetch('page.pdf').then((res) => res.blob());
-        console.log(pdfBlob)
-        const formData = new FormData();
-        formData.append('PDF_File', pdfBlob, 'page.pdf');
-        formData.append('Letter_sended_by', Login.EmployeeId);
-        formData.append('Date_of_Joining', offer_letter_data.Date_Of_Joning);
-        formData.append('Employeement_Type', offer_letter_data.Employee_Current_Role);
-        formData.append('probation_Duration_From', offer_letter_data.Probation_From_Date);
-        formData.append('probation_Duration_To', offer_letter_data.Probation_To_Date);
-        formData.append('WorkLocation', offer_letter_data.workLocation);
-        formData.append('CTC', offer_letter_data.ctc);
-        formData.append('internship_Duration_From', offer_letter_data.Intern_From_Date);
-        formData.append('internship_Duration_To', offer_letter_data.Intern_To_Date);
-        formData.append('probation_status', offer_letter_data.Under_Probation);
-        formData.append('notice_period', offer_letter_data.notice_period);
-        // formData.append('dob', offer_letter_data.dob);
-        // formData.append('dob', offer_letter_data.offer_letter_ID);
-        // formData.append('dob', offer_letter_data.offer_letter_Phone);
-        // formData.append('dob', offer_letter_data.offer_letter_designation);
-        // formData.append('dob', offer_letter_data.offer_letter_email);
-        // formData.append('dob', offer_letter_data.offer_letter_name);
-      
-        formData.append('Accept_Form', `http://localhost:3000/offeraccept/`);
-        // http://localhost:3000/offeraccept/:id
-
-        
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
+    
+    let [loading, setloading] = useState(false)
+    const convertDivToPDFAndSend = async () => {
+        const input = document.getElementById('contentpdf');
+        if (!input) {
+            console.error("Div not found");
+            return;
         }
-
+        setloading(true)
         try {
+            const canvas = await html2canvas(input);
+
+            // Create a new jsPDF instance
+            const pdf = new jsPDF('p', 'px', [canvas.width, canvas.height + 10]);
+            const imgData = canvas.toDataURL('image/png');
+
+            // Add image data to PDF
+            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+
+            pdf.save('orignal.pdf')
+            // Generate the PDF as a Blob
+            const pdfBlob = pdf.output('blob');
+            return
+
+            // Create a File object from the Blob
+            const pdfFile = new File([pdfBlob], 'divContent.pdf', { type: 'application/pdf' });
+
+            console.log(pdfFile);
+            // return
+            // Create FormData and append the PDF Blob
+            const formData = new FormData();
+            formData.append('PDF_File', pdfFile,);
+
+            // Send the PDF to the backend
             const response = await axios.post(`${port}/root/Offerletter/${offer_letter_data.offer_letter_ID}/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-           
-            console.log('PDF sent successfully:', response.data);
+            setloading(false)
+            console.log('PDF sent successfully', response.data);
         } catch (error) {
-            console.error('Error sending PDF:', error);
+            setloading(false)
+            console.error('Error converting div to PDF and sending:', error);
         }
     };
-
+    console.log("jellow", data);
     const currentDate = new Date();
     const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
 
     return (
         <>
 
-            <div className='p-4' ref={targetRef}>
-
-                <div>
-                    <h2 className='text-center'>Offer Letter</h2>
-                </div>
+            <div id='contentpdf' className='p-4 bg-white' ref={targetRef} >
                 <div className='m-3'>
 
                     <div className='p-4'>
@@ -82,25 +74,31 @@ const Tempone = () => {
                             <strong>Date : {formattedDate}  </strong>
                         </p>
                         <p>
-                            <strong> Name :  {offer_letter_data.offer_letter_name} </strong>
-                        
+                            <strong> Name :  {data.Name} </strong>
+
                         </p>
-                        <h2>Letter of Appointment</h2>
+                        <h3 className='text-center underline underline-offset-4 '> Letter of Offer </h3>
                         <p>
-                            Further to the subsequent meetings and interviews, we are pleased to appoint you as " <span className='fw-bold'> {offer_letter_data.offer_letter_designation} </span> ” effectiveDate Of Joining. As per the requirement of our company, your appointment will be on the terms and conditions mentioned below:
+                            Further to the subsequent meetings and interviews, we are pleased to appoint you as "
+                            <span className='fw-bold'>
+                                {data.position_name} </span> ” effective <span className='fw-semibold '>
+                                {data && changeDateYear(data.Date_of_Joining)}</span>
+                            . As per the requirement of our company, your appointment will be on the terms and conditions mentioned below:
                         </p>
                     </div>
 
                     <ol>
                         <li>
                             <strong>Commencement Date</strong>
-                            <p>Your appointment will be effectiveDate Of Joining. This offer of appointment is valid only till the date of joining you have accepted and committed as per the offer letter, and it will automatically cease in the event of you not joining us by the said date.</p>
+                            <p>Your appointment will be effective <span className='fw-semibold '>
+                                {data && changeDateYear(data.Date_of_Joining)}</span>. This offer of appointment is valid only till the date of joining you have accepted and committed as per the offer letter, and it will automatically cease in the event of you not joining us by the said date.</p>
                         </li>
                         <li>
                             <strong>Place of Work</strong>
                             <ol>
                                 <li>
-                                    <p>Your place of posting will be at our office in Jayanagar 4th Block, Bengaluru, till the Company intimates you otherwise.</p>
+                                    <p> Your place of posting will be at our office in <span className='fw-semibold '>
+                                        {data.WorkLocation} </span> , till the Company intimates you otherwise.</p>
                                 </li>
                                 <li>
                                     <p>You are liable to be transferred from one job to another job, or from one Department to another Department, any Centers/Branches or associate company of “Merida Tech Minds (OPC) Pvt. Ltd”, as existing or may be set up in future within or outside India. In such cases, you will automatically be governed by the terms and conditions of employment applicable to you in the transferee company.</p>
@@ -112,7 +110,8 @@ const Tempone = () => {
                             <ol>
                                 <li>
                                     <strong>Fixed Pay:</strong>
-                                    <p>Your Fixed compensation will be Rs.Fixed Salary/- per annum. The same is subject to all statutory deductions.</p>
+                                    <p>Your Fixed compensation will be Rs. <span className='fw-semibold'>
+                                        {data.CTC} </span>/- per annum. The same is subject to all statutory deductions.</p>
                                 </li>
                                 <li>
                                     <p>Fixed Pay will be paid on a Monthly basis.</p>
@@ -218,10 +217,11 @@ const Tempone = () => {
                             <strong>Separation / Termination of Employment</strong>
                             <ol>
                                 <li>
-                                    <p>Should you desire to leave the services of Merida Tech Minds, either during your training or immediately after your training or during your Probationary Period or after confirmation of your services, you are required to furnish/serve at least 45 days’ notice period, failing to which Rs.50,000/- compensation to be paid against notice period buyout in lieu thereof, before you can be relieved from the services of Merida Tech Minds. Based on the business necessity and the designation the company holds the right to revisit the notice period.</p>
+                                    <p>Should you desire to leave the services of Merida Tech Minds, either during your training or immediately after your training or during your Probationary Period or after confirmation of your services, you are required to furnish/serve at least <span className='fw-semibold'> {data.notice_period}</span>  days’ notice period, failing to which Rs.50,000/- compensation to be paid against notice period buyout in lieu thereof, before you can be relieved from the services of Merida Tech Minds. Based on the business necessity and the designation the company holds the right to revisit the notice period.</p>
                                 </li>
                                 <li>
-                                    <p>The 45 days salary compensation option is applicable and available only for employees who have successfully completed their probationary period and who inform on their resignation and who separate from the Company on a mutual note (where the company has agreed upon relieving without notice period but in compensation in lieu paid in full) without serving the notice period. Either during the course of the Probationary period or after completion of the probationary, if the separation is without any information and not turning up to work resulting in absconding from one's work then you will be liable to pay Rs.50,000/- or 45 Days compensation whichever is higher towards your compensation. In lieu of not abiding by the same, the company shall proceed in Termination and will proceed legally to claim/recover what is agreed in this letter.</p>
+                                    <p>The <span className='fw-semibold'> {data.notice_period}</span> days salary compensation option is applicable and available only for employees who have successfully completed their probationary period and who inform on their resignation and who separate from the Company on a mutual note
+                                        (where the company has agreed upon relieving without notice period but in compensation in lieu paid in full) without serving the notice period. Either during the course of the Probationary period or after completion of the probationary, if the separation is without any information and not turning up to work resulting in absconding from one's work then you will be liable to pay Rs.50,000/- or <span className='fw-semibold'> {data.notice_period}</span>  Days compensation whichever is higher towards your compensation. In lieu of not abiding by the same, the company shall proceed in Termination and will proceed legally to claim/recover what is agreed in this letter.</p>
                                 </li>
                                 <li>
                                     <p>During your probation period, based on not clearing the training, failing to clear the background verification, medical or Criminal verification and/or failure to provide sufficient documentary evidence and /or non-performance and /or any ethical and / or behavioral issues and/or any other concerns that are against the policy and practice of Merida Tech Minds, your employment with the “Merida Tech Minds”, can be terminated without any notice or salary in lieu.</p>
@@ -233,7 +233,7 @@ const Tempone = () => {
                                     <p>The company believes in performance and in giving equal opportunity to all employees to come forth with their performance. However, the company holds the right to end your employment on the grounds of non-performance / lack of performance and the process will be governed as per the Performance Improvement Plan (PIP) followed by the Company. The grounds of non-performance / lack of performance will be as explained and detailed in the Performance Improvement Plan (PIP). The Plan is subject to change based on the current industry and company standards.</p>
                                 </li>
                                 <li>
-                                    <p>Your Date of Birth as confirmed by you isDate Of Birth and you will retire from the services of the company on the day you complete 58 years of age. The company, however, reserves the right to modify and amend the retirement policy and age.</p>
+                                    <p>Your Date of Birth as confirmed by you is <span className='fw-semibold'>{data && changeDateYear(data.DOB)}</span>  and you will retire from the services of the company on the day you complete 58 years of age. The company, however, reserves the right to modify and amend the retirement policy and age.</p>
                                 </li>
                                 <li>
                                     <p>You must be physically and mentally fit to be able to handle the role given and the same must be certified by an authorized medical practitioner (acceptable and suggested by the company only). If found otherwise either before your employment or while your employment with Merida Tech Minds, the company holds all rights to make the needed decision based on the severity of the case. You will be signing a medical declaration form, and the further proceedings will be as per the same.</p>
@@ -257,18 +257,18 @@ const Tempone = () => {
                         <p>
                             Authorized Signatory
                         </p>
-                        <h3>DECLARATION</h3>
+                        <h3 className='text-center underline-offset-4 underline '>DECLARATION</h3>
                         <p>
-                            I abide by the conditions stipulated in the Letter of Appointment datedDate and as desired.
+                            I abide by the conditions stipulated in the Letter of Appointment dated <span className='fw-semibold'> {formattedDate} </span> and as desired.
                         </p>
                         <p>
-                            I will join the services onDate of Joining
+                            I will join the services on <span className='fw-semibold '>  {data && changeDateYear(data.Date_of_Joining)}</span>.
                             <br />
-                            Name : {offer_letter_data.offer_letter_name}
+                            Name : {data.Name}
                             <br />
                             Signature:
                             <br />
-                            Date:  {offer_letter_data.offeredDate}
+                            Date:
                         </p>
 
                     </div>
@@ -277,11 +277,7 @@ const Tempone = () => {
 
 
             </div>
-            <div className='d-flex justify-content-end p-3' id='buttons'>
-                {/* <button className='btn btn-success btn-sm me-3' onClick={() => toPDF()}>Download PDF</button> */}
 
-                <button className='btn btn-warning btn-sm' onClick={sendbackend}>Submit</button>
-            </div>
 
         </>
 

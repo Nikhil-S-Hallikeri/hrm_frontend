@@ -5,7 +5,7 @@ import axios from 'axios'
 import { Link, json, useNavigate } from 'react-router-dom';
 import { Alert, AlertTitle } from '@mui/material';
 import Finalstatuscomment from '../Finalstatuscomment';
-import { port } from '../../App'
+import { domain, port } from '../../App'
 import Final_status_comment from '../Final_status_comment';
 import { HrmStore } from '../../Context/HrmContext';
 import Sidebar from '../Sidebar';
@@ -13,14 +13,20 @@ import ScreeningAssigned from './ScreeningAssigned';
 import InterviewCompletedModal from '../Modals/InterviewCompletedModal';
 import SchedulINterviewModalForm from './SchedulINterviewModalForm';
 import { toast } from 'react-toastify';
-import { Modal } from 'react-bootstrap';
+import { Modal, OverlayTrigger } from 'react-bootstrap';
+import FinalResultCompleted from '../Modals/FinalResultCompleted';
+import InfoIcon from '../../SVG/InfoIcon';
+import InfoButton from '../SettingComponent/InfoButton';
 
 
 const Applylist = () => {
   let username = JSON.parse(sessionStorage.getItem('user')).UserName
+  let user = JSON.parse(sessionStorage.getItem('user'))
   let loginID = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).employee_Id
-  let { testing, convertToReadableDateTime, timeValidate, getCurrentDate } = useContext(HrmStore)
+  let { testing, convertToReadableDateTime, timeValidate, getCurrentDate, getProperDate } = useContext(HrmStore)
   let [interviewCompletedDetailsModal, setInterviewCompleteDetailsModal] = useState()
+  let [finalResultObj, setFinalResultObj] = useState()
+  let [interviewlistSorting, setInterviewListSorting] = useState()
   let [interviewModal, setInterviewModal] = useState(false)
   let [selectedFinalResultName, setselectedFinalResultName] = useState()
   let [selectedCandidate, setSelectedCandidate] = useState()
@@ -36,6 +42,7 @@ const Applylist = () => {
   let [interviewformFillingModal, setinterviewFormFillingModal] = useState(false)
   let [interviewReviewmodalShowing, setinterviewreviewModalShowing] = useState(false)
   let [interviewlist, setInterviewlist] = useState([])
+  let [interviewCompletedList, setInterviewCompletedList] = useState()
   let [filteredInterviewList, setFilteredInterviewList] = useState()
   let [interviewfilterWord, setInterviewFilterWord] = useState()
   let [completedlist, setCompletedlist] = useState([])
@@ -54,7 +61,19 @@ const Applylist = () => {
   let [ScreeningRound, setScreeningRound] = useState([])
   const [Interviewstatus, setInterviewStatus] = useState('');
 
+  let [interviewFilterObject, setInterviewFilterObject] = useState({
+    from: '',
+    to: '',
+    name: ''
+  })
+  let handleInterviewFilterObject = (e) => {
+    let { name, value } = e.target
+    setInterviewFilterObject((prev) => ({
+      ...prev,
+      [name]: value
+    }))
 
+  }
 
   const [persondata, setPersondata] = useState({})
 
@@ -196,9 +215,11 @@ const Applylist = () => {
     }
   };
   useEffect(() => {
-    if (interviewlist)
+    if (interviewlist && intervewAsssignedcompleted == 'Assigned')
       setFilteredInterviewList(interviewlist)
-  }, [interviewlist])
+    if (interviewCompletedList && intervewAsssignedcompleted == 'Completed')
+      setFilteredInterviewList(interviewCompletedList)
+  }, [interviewlist, interviewCompletedList])
 
   console.log(selectedCandidates);
 
@@ -671,44 +692,38 @@ const Applylist = () => {
 
 
 
-  useEffect(() => {
-    if (intervewAsssignedcompleted) { fetchdata2() }
-  }, [intervewAsssignedcompleted])
+
 
 
 
 
   let fetchdata2 = async () => {
     try {
-      let interviewAssinged = await axios.get(`${port}/root/New-Interview-assigned-list/${Empid}/${intervewAsssignedcompleted}/`)
-      let interviewAssigned2 = await axios.get(`${port}/root/New-Candidate-Interview-list/${Empid}/${intervewAsssignedcompleted}/`)
-      let uni2 = []
-      let uni1 = []
-      let uni3 = []
-      if (interviewAssinged && interviewAssinged.data) {
-        [...interviewAssinged.data].reverse().forEach((obj) => {
-          if (!uni1.find((obj3) => obj3.Candidate == obj.Candidate)) {
-            uni1.push(obj)
-          }
-        })
-      }
+      const [interviewAssigned, interviewAssigned2, interviewCompleted1, interviewCompleted2] = await Promise.all([
+        axios.get(`${port}/root/New-Interview-assigned-list/${Empid}/Assigned/`),
+        axios.get(`${port}/root/New-Candidate-Interview-list/${Empid}/Assigned/`),
+        axios.get(`${port}/root/New-Interview-assigned-list/${Empid}/Completed/`),
+        axios.get(`${port}/root/New-Candidate-Interview-list/${Empid}/Completed/`)
+      ]);
 
-      if (interviewAssigned2 && interviewAssigned2.data) {
-        [...interviewAssigned2.data].reverse().forEach((obj) => {
-          if (!uni2.find((obj2) => obj2.Candidate == obj.Candidate)) {
-            uni2.push(obj)
-          }
-        })
-      }
-      [...uni1, ...uni2].forEach((obj) => {
-        if (!uni3.find((obj2) => obj2.Candidate == obj.Candidate)) {
-          uni3.push(obj)
+      const combinedData = [...(interviewAssigned.data || []), ...(interviewAssigned2.data || [])];
+      const uniqueCandidates = [];
+      const combinedData2 = [...(interviewCompleted1.data || []), ...(interviewCompleted2.data || [])]
+      const uniqueCandidatesCompleted = []
+
+      combinedData.reverse().forEach((obj) => {
+        if (!uniqueCandidates.find((candidate) => candidate.Candidate === obj.Candidate)) {
+          uniqueCandidates.push(obj);
         }
-      })
-      setInterviewlist([...uni3])
+      });
+      combinedData2.reverse().forEach((obj) => {
+        if (!uniqueCandidatesCompleted.find((candidate) => candidate.Candidate === obj.Candidate)) {
+          uniqueCandidatesCompleted.push(obj);
+        }
+      });
 
-      console.log("Interview_list", [...interviewAssinged.data, ...interviewAssigned2.data]);
-      console.log("Interview_list", [...uni1]);
+      setInterviewlist([...uniqueCandidates]);
+      setInterviewCompletedList([...uniqueCandidatesCompleted])
     } catch (error) {
       console.log("Interview_list", error);
     }
@@ -769,7 +784,37 @@ const Applylist = () => {
       });
   };
 
+  useEffect(() => {
+    if (intervewAsssignedcompleted) {
+      setInterviewListSorting('')
+      setInterviewFilterObject({
+        from: '',
+        to: '',
+        name: ''
+      })
+    }
+  }, [intervewAsssignedcompleted])
+  let handlefinlterinterviewFunction = (e) => {
+    let { name: value, from, to } = interviewFilterObject;
 
+    if (to && !from) {
+      toast.warning('Enter the from date');
+      return;
+    }
+    let list = intervewAsssignedcompleted == 'Assigned' ? [...interviewlist] : [...interviewCompletedList]
+    let newarry = [...list].filter((obj) =>
+      obj.Candidate_name.toLowerCase().indexOf(value.toLowerCase()) != -1 ||
+      obj.interviewer_name.toLowerCase().indexOf(value.toLowerCase()) != -1 ||
+      obj.ScheduledBy_name.toLowerCase().indexOf(value.toLowerCase()) != -1 ||
+      obj.Applied_Designation.toLowerCase().indexOf(value.toLowerCase()) != -1)
+    if (from && to) {
+      newarry = newarry.filter((obj) => getProperDate(obj.ScheduledOn) >= from && getProperDate(obj.ScheduledOn) <= to)
+    }
+    else if (from) {
+      newarry = newarry.filter((obj) => getProperDate(obj.ScheduledOn) >= from)
+    }
+    setFilteredInterviewList(newarry)
+  }
   const [Screening_candidate_data, setScreening_candidate_data] = useState({})
   const [Screening_screening_data, setScreening_screening_data] = useState({})
   const [Screening_screening_review1, setScreening_screening_review1] = useState({})
@@ -1230,7 +1275,9 @@ const Applylist = () => {
 
 
   }
-
+  useEffect(() => {
+    fetchdata2()
+  }, [])
 
 
   const setCandid_id = (e) => {
@@ -1258,7 +1305,7 @@ const Applylist = () => {
     const formdata = new FormData();
     formdata.append('DocumentInstance', e);
     formdata.append('CandidateID', x);
-    formdata.append('FormURL', `http://localhost:3000/BgverificationForm/`);
+    formdata.append('FormURL', `${domain}/BgverificationForm/`);
 
     axios.post(`${port}/root/BG_VerificationMailSend`, formdata)
       .then((r) => {
@@ -1355,24 +1402,60 @@ const Applylist = () => {
 
           <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item text-primary d-flex " role="presentation">
-              <h6 class='mt-2 heading nav-link active'
-                style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">
-                Applyed Candidates List</h6>
-              <small className='text-danger ms-2   rounded-circle' >
-                {filteredApplyList != undefined && filteredApplyList.length} </small>
+              <section className={`mt-2 heading d-flex align-items-center gap-2 nav-link active`}
+                style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }}
+                id="pills-home-tab" data-bs-toggle="pill"
+                data-bs-target="#pills-home" role="tab" aria-controls="pills-home"
+                aria-selected="true">
+                <img className='w-14 ' src={require('../../assets/Images/circle1.png')} alt="" />
+                <div className='text-sm'>
+                  Applyed Candidates List
+
+                  <small className='bg-green-400 my-2 text-white px-3 ms-2 w-fit text-xs block rounded' >
+                    {filteredApplyList != undefined && filteredApplyList.length} Candidates </small>
+                </div>
+              </section>
             </li>
 
             <li class="nav-item text-primary d-flex" role="presentation">
-              <h6 class='mt-2 heading nav-link' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Screened Canditates List</h6>
-              <small className='text-danger ms-2   rounded-circle'> {screeninglist != undefined && screeninglistCompleted != undefined && screeninglist.length + screeninglistCompleted.length} </small>
+              <section class='mt-2 d-flex align-items-center gap-2 heading nav-link'
+                style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }}
+                id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" role="tab"
+                aria-controls="pills-profile" aria-selected="false">
+                <img className='w-14 ' src={require('../../assets/Images/circle4.png')} alt="" />
+                <div className='text-sm'>  Screening process
+                  <div className='flex my-2 text-xs justify-between gap-2 flex-wrap'>
+
+                    <small className='bg-red-400 text-white px-3  block rounded'> {screeninglist != undefined && screeninglist.length} Assigned </small>
+                    <small className='bg-green-400 text-white px-3 block rounded'>{screeninglistCompleted != undefined && screeninglistCompleted.length} Completed </small>
+                  </div></div>
+              </section>
             </li>
             <li class="nav-item text-primary d-flex" role="presentation">
-              <h6 class='mt-2 heading nav-link' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Interviewed Canditates List</h6>
-              <small className='text-danger ms-2   rounded-circle'> {filteredInterviewList != undefined && filteredInterviewList.length} </small>
+              <section class='mt-2 d-flex align-items-center gap-2 heading nav-link'
+                style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }}
+                id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" role="tab"
+                aria-controls="pills-contact" aria-selected="false">
+                <img className='w-14 ' src={require('../../assets/Images/circle2.png')} alt="" />
+                <div className='text-sm'> Interview process
+                  <div className='flex my-2 text-xs justify-between gap-2 flex-wrap'>
+
+                    <small className='bg-red-400 text-white px-3  block rounded'>{interviewlist != undefined && interviewlist.length} Assigned </small>
+                    <small className='bg-green-400 text-white px-3 block rounded'>{interviewCompletedList != undefined && interviewCompletedList.length} Completed </small>
+                  </div>
+                </div>
+              </section>
             </li>
             <li class="nav-item text-primary d-flex" role="presentation">
-              <h6 class='mt-2 heading nav-link' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-completed-tab" data-bs-toggle="pill" data-bs-target="#pills-completed" role="tab" aria-controls="pills-completed" aria-selected="false">Final Status List</h6>
-              <small className='text-danger ms-2   rounded-circle'> {FinalData != undefined && FinalData.length} </small>
+              <section class='mt-2 d-flex align-items-center gap-2 heading nav-link' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-completed-tab" data-bs-toggle="pill" data-bs-target="#pills-completed" role="tab"
+                aria-controls="pills-completed" aria-selected="false">
+                <img className='w-14 ' src={require('../../assets/Images/circle3.png')} alt="" />
+                <div className='text-sm'>  Final Status
+
+                  <small className='bg-green-400 my-2 text-white ms-2 block  rounded text-xs px-3'> {FinalData != undefined && FinalData.length} resulted </small>
+                </div>
+              </section>
+
             </li>
           </ul>
         </div>
@@ -1387,18 +1470,21 @@ const Applylist = () => {
                 {/* Tab 1 start */}
                 <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
 
-                  <div className='Assign_Applaylist d-flex justify-content-end '>
+                  <div className=' d-flex justify-content-end '>
 
                     <div class="dropup-center dropstart ">
 
-                      <button class="btn-success btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <button class="btn-success btn btn-sm dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
                         Assign
                       </button>
 
                       <ul class="dropdown-menu  text-center" style={{ width: '150px' }}>
                         {recname.map((e) => {
                           return (
-                            <li onClick={() => sendSelectedDataToApi(e.EmployeeId)} key={e.EmployeeId} className='dropdown-item p-1' >Rec Name :  {e.Name} </li>
+                            <li onClick={() => sendSelectedDataToApi(e.EmployeeId)} key={e.EmployeeId}
+                              className='dropdown-item p-1 text-xs text-break '> Rec Name :
+                              <span className='text-break break-words ' > {e.Name && e.Name.slice(0, 15)}{e.Name && e.Name.length > 15 && '...'}  </span></li>
                           )
                         })}
                       </ul>
@@ -1412,30 +1498,20 @@ const Applylist = () => {
                   </div>
 
 
-                  <div className='flex justify-between items-center   mb-4 '>
+                  <div className='flex justify-between items-center   mb-2 '>
                     <div className=' '>
-                      <div class="input-group  "  >
-                        <span class="input-group-text" id="basic-addon1"> <i class="fa-solid fa-magnifying-glass" ></i>  </span>
+                      <div className=" p-2  relative">
+                        <button className='absolute -top-2 right-2 '>
+                          <InfoButton size={12} content="Search by Candidate name,Candidate id,Email, Applied designation " />
+                        </button>
                         <input type="text" value={searchValue} style={{ width: '200px', height: '30px', fontSize: '9px', outline: 'none' }}
                           onChange={(e) => {
                             handlesearchvalue(e.target.value)
-                          }} class="form-control shadow-none" aria-label="Username" aria-describedby="basic-addon1" />
+                          }} placeholder='Search..' className=" bgclr p-2 rounded  " aria-label="Username" aria-describedby="basic-addon1" />
                       </div>
                     </div>
                     <div className='flex gap-3 flex-wrap '>
-                      <div className='flex items-center gap-2 text-xs'>
-                        Time :
-                        <select className="form-select shadow-none" id="ageGroup"
-                          style={{ width: '100px', height: '30px', fontSize: '9px', outline: 'none' }}
-                          value={search_filter_applylist} onChange={(e) => {
-                            handle_filter_apply_value(e.target.value)
-                          }}>
-                          <option value="">Filter</option>
-                          <option value="Today">Day</option>
-                          <option value="Week">Week</option>
-                          <option value="Month">Month</option>
-                          <option value="Year">Year</option>
-                        </select></div>
+
                       <div className='flex items-center gap-2 text-xs'>
                         Screening process :
 
@@ -1447,11 +1523,11 @@ const Applylist = () => {
                           }
                         }}
                           className='p-1 text-sm flex ms-auto outline-none border-1 rounded' name="" id="">
-                          <option value="Pending">Pending </option>
-                          <option value=""> Select All</option>
+                          <option value="Pending">Yet to assign </option>
+                          <option value="">All</option>
 
-                          <option value="Assigned">Assinged </option>
-                          <option value="Completed">Completed </option>
+                          <option value="Assigned">Yet to screen </option>
+                          {/* <option value="Completed">Completed </option> */}
                         </select>
                       </div>
                     </div>
@@ -1779,7 +1855,7 @@ const Applylist = () => {
                   id="pills-profile" role="tabpanel"
                   aria-labelledby="pills-profile-tab" tabindex="0">
 
-                  <ScreeningAssigned fetchdata={fetchdata} fetchdata2={fetchdata2} handle_screened_filter_value={handle_screened_filter_value}
+                  <ScreeningAssigned fetchdata={fetchdata} fetchdata1={fetchdata1} fetchdata2={fetchdata2} handle_screened_filter_value={handle_screened_filter_value}
                     search_filter_screened={search_filter_screened} screeninglist_All={screeninglist_All}
                     handlescreenedsearchvalue={handlescreenedsearchvalue} int_int_data={int_int_data} load1={load1}
                     searchscreenValue={searchscreenValue} handleCheckboxChange1={handleCheckboxChange1}
@@ -1835,30 +1911,63 @@ const Applylist = () => {
                 {/* Tab 3 start */}
                 <div class="tab-pane fade " id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">
 
-                  <div className='d-flex justify-content-between mb-4 ' >
+                  <div className='d-flex justify-between mb-2 ' >
 
                     <ul class="nav nav-pills mb-1 w-100 ms-4"
                       style={{ display: 'flex', justifyContent: 'space-between' }}
                       id="pills-tab" role="tablist">
 
-                      <div>
+                      <div className=''>
 
-                        <div class="rounded mb-2 border-2 text-sm bgclr p-1">
-                          <input type="text" value={interviewfilterWord} placeholder='Search...'
-                            onChange={(e) => {
-                              setInterviewFilterWord(e.target.value)
-                              let value = e.target.value
-                              let newarry = [...interviewlist].filter((obj) =>
-                                obj.Candidate_name.toLowerCase().indexOf(value.toLowerCase()) != -1 ||
-                                obj.interviewer_name.toLowerCase().indexOf(value.toLowerCase()) != -1 ||
-                                obj.ScheduledBy_name.toLowerCase().indexOf(value.toLowerCase()) != -1 ||
-                                obj.Applied_Designation.toLowerCase().indexOf(value.toLowerCase()) != -1)
-                              setFilteredInterviewList(newarry)
-                            }} class="outline-none bg-transparent shadow-none p-1 " />
+                        <div class="rounded relative shadow mb-2 border-2 text-sm bgclr p-1">
+                          <button className='absolute -top-5 right-2 '>
+                            <InfoButton size={12} content={"Search by Name, Interviewer Name, Scheduled By,Applied Designation"} />
+                          </button>
+                          <input type="text" value={interviewFilterObject.name} name='name'
+                            onChange={handleInterviewFilterObject} onKeyDown={(e) => {
+                              if (e.key == 'Enter')
+                                handlefinlterinterviewFunction()
+                            }} placeholder='Search...'
+                            class="outline-none bg-transparent shadow-none p-1 " />
                         </div>
-                      </div>
 
-                      <div>
+
+
+
+                      </div>
+                      {/* Range filter */}
+                      <section className='bgclr px-1 shadow flex items-center rounded text-sm'>
+                        From :
+                        <input value={interviewFilterObject.from} name='from' onChange={handleInterviewFilterObject}
+                          type="date" className='outline-none bg-transparent mx-1 ' />
+                      </section>
+                      <section className='bgclr px-1 shadow flex items-center rounded text-sm'>
+                        To :
+                        <input value={interviewFilterObject.to} name='to' onChange={handleInterviewFilterObject}
+                          type="date" className='outline-none bg-transparent mx-1 ' />
+                      </section>
+                      <button onClick={handlefinlterinterviewFunction} className='savebtn shadow text-white w-40 rounded border-green-100 border-2 '>
+                        Search
+                      </button>
+                      <div className='flex rounded  px-1 bgclr shadow justify-end items-center text-sm '>
+                        Sort By :
+                        <select name="" value={interviewlistSorting}
+                          onChange={(e) => {
+                            let value = e.target.value
+                            setInterviewListSorting(e.target.value)
+                            if (value == 'AZ')
+                              setFilteredInterviewList((prev) => [...prev].sort((a, b) => a.Candidate_name.localeCompare(b.Candidate_name)))
+                            if (value == 'ZA')
+                              setFilteredInterviewList((prev) => [...prev].sort((a, b) => b.Candidate_name.localeCompare(a.Candidate_name)))
+                          }}
+                          className='rounded bg-transparent outline-none mx-2 ' id="">
+                          <option value="">Select</option>
+                          <option value="AZ">A - Z </option>
+                          <option value="ZA">Z - A </option>
+
+                        </select>
+                      </div>
+                      {/* <div>
                         <li class="nav-item text-primary d-flex me-4" style={{ fontSize: '18px' }} >
                           <select className="form-select shadow-none" id="ageGroup" style={{ width: '100px', height: '30px', fontSize: '9px', outline: 'none' }}
                             value={search_filter_Interview} onChange={(e) => {
@@ -1871,24 +1980,36 @@ const Applylist = () => {
                             <option value="Year">Year</option>
                           </select>
                         </li>
-                      </div>
+                      </div> */}
 
 
                     </ul>
 
                   </div>
-                  <div className='rounded bg-slate-400 w-fit'>
-                    <button onClick={() => setInterviewAssignedcompleted('Assigned')} className={`${intervewAsssignedcompleted == 'Assigned' ? "bg-blue-600" : 'bg-slate-400'}
+                  <select name="" value={intervewAsssignedcompleted}
+                    onChange={(e) => {
+                      setInterviewAssignedcompleted(e.target.value)
+                      if (e.target.value == 'Assigned')
+                        setFilteredInterviewList(interviewlist)
+                      if (e.target.value == 'Completed')
+                        setFilteredInterviewList(interviewCompletedList)
+                    }}
+                    className='btngrd border-2 flex ms-auto bg-opacity-70 outline-none rounded border-violet-100 text-white text-xs p-2 ' id="">
+                    <option value="Assigned" className='text-black'>Assigned</option>
+                    <option value="Completed" className='text-black'>Completed</option>
+                  </select>
+                  {/* <div className='rounded bg-slate-400 w-fit'>
+                    <button onClick={() => { setInterviewAssignedcompleted('Assigned'); setFilteredInterviewList(interviewlist) }} className={`${intervewAsssignedcompleted == 'Assigned' ? "bg-blue-600" : 'bg-slate-400'}
                      text-white p-2 duration-500 transition rounded `}>Assigned </button>
-                    <button onClick={() => setInterviewAssignedcompleted('Completed')} className={`${intervewAsssignedcompleted == 'Completed' ? "bg-blue-600" : 'bg-slate-400'}
+                    <button onClick={() => { setInterviewAssignedcompleted('Completed'); setFilteredInterviewList(interviewCompletedList) }} className={`${intervewAsssignedcompleted == 'Completed' ? "bg-blue-600" : 'bg-slate-400'}
                      text-white p-2 duration-500 transition rounded `}>Completed </button>
-                  </div>
+                  </div> */}
                   {/*  */}
-                  <div className='rounded tablebg h-[50vh] 
+                  <div className='rounded tablebg h-[45vh] 
                   overflow-y-scroll mt-4 m-1 ms-4'>
                     <table class="w-full "  >
                       <thead >
-                        <tr >
+                        <tr className='sticky top-0 bgclr1 '>
                           <th scope="col"><span className='fw-medium'>All</span></th>
                           <th scope="col"><span className='fw-medium'>Name</span></th>
                           <th scope="col"><span className='fw-medium'>Canditate Id</span></th>
@@ -1910,8 +2031,9 @@ const Applylist = () => {
                             <th scope="col"><span className='fw-medium'>Interview Status </span></th>}
 
                           <th scope="col"><span className='fw-medium'>Scheduled By</span></th>
-                          {intervewAsssignedcompleted == 'Completed' && <th scope="col"><span className='fw-medium'>
-                            Schedule Interview </span></th>}
+                          {intervewAsssignedcompleted == 'Completed' &&
+                            <th scope="col"><span className='fw-medium'>
+                              Schedule Interview </span></th>}
                           {/* <th scope="col"><span className='fw-medium'>---</span></th> */}
                         </tr>
                       </thead>
@@ -1930,13 +2052,13 @@ const Applylist = () => {
                         </button>
                         </td>
                       </tr> */}
-                      {<InterviewCompletedModal show={interviewCompletedDetailsModal}
+                      {<InterviewCompletedModal getfunction={fetchdata2} show={interviewCompletedDetailsModal}
                         setshow={setInterviewCompleteDetailsModal} />}
-
                       <tbody className=' '>
                         {filteredInterviewList != undefined && filteredInterviewList != undefined &&
                           filteredInterviewList.map((e) => (
                             <tr key={e.id}>
+                              {console.log("hi", e)}
                               <td scope="row"><input type="checkbox" value={e.Candidate} onChange={handleCheckboxChange2} /></td>
 
                               {intervewAsssignedcompleted == "Assigned"
@@ -1961,7 +2083,45 @@ const Applylist = () => {
                               <td>{e.Applied_Designation}</td>
 
                               {/* <td>{e.InterviewDate}</td> */}
-                              <td>{e.interviewer_name}</td>
+                              <td>
+                                {/* {e.interviewer_name} */}
+                                <select id="interviewer" disabled={intervewAsssignedcompleted == 'Completed'}
+                                  name="interviewer" value={e.interviewer}
+                                  onChange={(ev) => {
+                                    let obj = {
+                                      id: e.id,
+                                      ScheduledBy: user.EmployeeId,
+                                      interviewer: ev.target.value
+                                    }
+                                    console.log('hi', user.EmployeeId);
+                                    console.log('hi', e.id);
+                                    console.log('hi', obj);
+                                    console.log('hi', ev.target.value);
+                                    axios.patch(`${port}/root/interviewschedule`, obj).then((response) => {
+                                      console.log('hi', response.data);
+                                      fetchdata2()
+                                      toast.success('Interview rescheduled successfully')
+                                    }).catch((error) => {
+                                      console.log("hi", error);
+                                    })
+
+
+                                  }}
+
+                                  className="p-2 rounded outline-none bgclr1 text-blue-600 w-40 ">
+                                  {/* <option value="" selected>Select Name</option> */}
+                                  {interviewers.map(interviewer => (
+                                    <option key={interviewer.EmployeeId}
+                                      value={interviewer.EmployeeId}>
+                                      {`${interviewer.Name},${interviewer.EmployeeId}`}
+                                    </option>
+                                  ))}
+                                </select>
+                              </td>
+
+
+
+
                               <td>{convertToReadableDateTime(e.ScheduledOn)}</td>
 
                               <td>{e.Assigned_Status}</td>
@@ -1995,7 +2155,7 @@ const Applylist = () => {
                       </tbody>
                       {/* open Particular Data Start */}
 
-                      <SchedulINterviewModalForm fetchdata={fetchdata} fetchdata2={fetchdata2}
+                      <SchedulINterviewModalForm fetchdata={fetchdata} fetchdata1={fetchdata1} fetchdata2={fetchdata2}
                         candidateId={selectedCandidate} show={interviewModal}
                         setshow={setInterviewModal} />
                       <Modal show={interviewReviewmodalShowing} onHide={() => setinterviewreviewModalShowing(false)}
@@ -2544,7 +2704,8 @@ const Applylist = () => {
                   <div className='d-flex justify-content-between ' >
                     <ul class="nav nav-pills mb-1 w-100" style={{ display: 'flex', justifyContent: 'space-between' }} id="pills-tab" role="tablist">
 
-                      <div className='bgclr rounded p-1'>
+                      <div className='bgclr relative rounded p-1'>
+                        <button className='absolute right-0 -top-5 '><InfoButton content={"Search by Name , Candidate ID, Final Result , Applied designation , Mail, Contact"} size={12} /> </button>
                         <input type="text"
                           onChange={(e) => {
                             let value = e.target.value
@@ -2560,8 +2721,25 @@ const Applylist = () => {
                           }}
                           className='outline-none text-sm bg-transparent' placeholder='Search...  ' />
                       </div>
+                      <div className='flex items-center bgclr  rounded px-2 text-sm '>
+                        Sort By :
+                        <select name=""
+                          onChange={(e) => {
+                            let value = e.target.value
+                            if (value == 'AZ')
+                              setFilterFinalData((prev) => [...prev].sort((a, b) => a.FirstName.localeCompare(b.FirstName)))
+                            if (value == 'ZA')
+                              setFilterFinalData((prev) => [...prev].sort((a, b) => b.FirstName.localeCompare(a.FirstName)))
+                          }}
+                          className='outline-none bg-transparent ' id="">
+                          <option value="">Select</option>
+                          <option value="AZ">A - Z </option>
+                          <option value="ZA">Z - A </option>
 
-                      <div>
+                        </select>
+                      </div>
+
+                      {/* <div>
                         <li class="nav-item text-primary d-flex me-4" style={{ fontSize: '18px' }} >
 
                           <select className="form-select shadow-none" id="ageGroup" style={{ width: '100px', height: '30px', fontSize: '9px', outline: 'none' }}
@@ -2577,7 +2755,7 @@ const Applylist = () => {
                           </select>
 
                         </li>
-                      </div>
+                      </div> */}
 
 
                     </ul>
@@ -2596,18 +2774,21 @@ const Applylist = () => {
                           <th scope="col"><span className='fw-medium'>Email</span></th>
                           <th scope="col"><span className='fw-medium'>Phone</span></th>
                           <th scope="col"><span className='fw-medium'>Applied Designation</span></th>
+                          <th scope="col"><span className='fw-medium'>Experience/Fresher</span></th>
+
                           <th scope="col"><span className='fw-medium'>Final Result</span></th>
                         </tr>
                       </thead>
                       {filterFinalData != undefined && filterFinalData != undefined && filterFinalData.map((e) => {
+                        console.log('final', e);
                         return (
                           <tbody>
-                            <tr key={e.id}>
-                              <td scope="row"><input type="checkbox" value={e.CandidateId} onChange={handleCheckboxChange3} /></td>
-
-                              <td onClick={() => Callfinal_details_data(e.CandidateId, e.id)} data-bs-toggle="modal" data-bs-target="#exampleModal12"
+                            <tr key={e.id} className={` ${e.FinalResult == 'offered' && 'bg-blue-50'} ${e.FinalResult == 'Reject' && e.InterviewStatus != 'Completed' && 'bg-red-50'} `} >
+                              <td scope="row"><input type="checkbox" value={e.CandidateId}
+                                onChange={handleCheckboxChange3} /></td>
+                              <td onClick={() => setFinalResultObj(e)}
                                 style={{ cursor: 'pointer', color: 'blue' }}>{e.FirstName}</td>
-                              <td > {e.CandidateId}</td>
+                              <td > {e.CandidateId} </td>
                               <td >{e.Email}</td>
                               <td >{e.PrimaryContact}</td>
                               <td >{e.AppliedDesignation}</td>
@@ -2615,22 +2796,31 @@ const Applylist = () => {
                                 details
                               </button>
                               </td> */}
+                              <td> {e.current_position} </td>
                               <td>
                                 <div>
                                   {/* <label htmlFor="ageGroup" className="form-label">Interview Status:</label> */}
-                                  <select className="form-select" id="ageGroup" value={e.FinalResult} onChange={(d) => {
-                                    setseleceted_candidateid(e.CandidateId)
-                                    setfinal_status_value(d.target.value)
-                                    setselectstatus(true)
-                                    setselectedFinalResultName(e.FirstName)
-                                  }}>
+                                  {e.FinalResult == 'offered' ? <p className=' '>
+                                    Offered
+
+                                  </p> : (e.FinalResult == 'Reject' && e.InterviewStatus != 'Completed') ? <p>
+                                    Rejected in Screening
+                                  </p> : <select className=" w-[200px] rounded p-2 outline-none  " id="ageGroup"
+                                    value={e.FinalResult} onChange={(d) => {
+                                      setseleceted_candidateid(e.CandidateId)
+                                      setfinal_status_value(d.target.value)
+                                      setselectstatus(true)
+                                      setselectedFinalResultName(e.FirstName)
+                                    }}>
                                     <option value="">Select</option>
                                     {/* <option value="Pending">Pending</option> */}
-                                    <option value="consider_to_client">Consider to Client Requirments</option>
+                                    <option value="consider_to_client">Consider to Client for Merida</option>
                                     <option value="Internal_Hiring">Internal Hiring</option>
                                     <option value="Reject">Reject</option>
-                                    <option value="on_hold">On Hold</option>
-                                  </select>
+                                    <option value="On_Hold">On Hold</option>
+                                    <option value="Rejected_by_Candidate"> Rejected by Candidate </option>
+
+                                  </select>}
                                 </div>
 
                               </td>
@@ -2640,6 +2830,7 @@ const Applylist = () => {
 
                         )
                       })}
+                      <FinalResultCompleted show={finalResultObj} setshow={setFinalResultObj} />
 
 
                       {/* open Particular Data Start */}
@@ -3533,15 +3724,15 @@ const Applylist = () => {
                           value={persondata.TotalExperience} />
                       </div>}
                       {interviewRoundType == 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="" className="form-label">Coding questions score (1-10) :</label>
-                        <input type="number" placeholder='1-10 ' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id=""
+                        <label htmlFor="" className="form-label">Coding questions score (1-5) :</label>
+                        <input type="number" placeholder='1-5 ' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id=""
                           value={codeans} onChange={(e) => {
                             if (Number(e.target.value) <= 0) {
                               setCodeAns("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setCodeAns(10)
+                            if (Number(e.target.value) > 5) {
+                              setCodeAns(5)
                               return
                             }
                             else
@@ -3550,16 +3741,16 @@ const Applylist = () => {
                       </div>}
                       {interviewRoundType != 'technical_round' &&
                         <div className="col-md-6 col-lg-4 p-3 mb-3">
-                          <label htmlFor="jobStability" className="form-label">Job Stability with Previous Employer (1-10) :</label>
-                          <input type="number" placeholder='1-10 ' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="jobStability"
+                          <label htmlFor="jobStability" className="form-label">Job Stability with Previous Employer (1-5) :</label>
+                          <input type="number" placeholder='1-5 ' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="jobStability"
                             value={jobStability} onChange={(e) => {
 
                               if (Number(e.target.value) <= 0) {
                                 setJobStability("")
                                 return
                               }
-                              if (Number(e.target.value) > 10) {
-                                setJobStability(10)
+                              if (Number(e.target.value) > 5) {
+                                setJobStability(5)
                                 return
                               }
                               else
@@ -3572,18 +3763,18 @@ const Applylist = () => {
                           value={reasonLeaving} onChange={(e) => setReasonLeaving(e.target.value)} />
                       </div>}
                       {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="appearancePersonality" className="form-label">Appearance & Personality (1-10) :</label>
+                        <label htmlFor="appearancePersonality" className="form-label">Appearance & Personality (1-5) :</label>
                         <input type="number" className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="appearancePersonality"
                           value={appearancePersonality}
-                          placeholder='1-10'
+                          placeholder='1-5'
                           onChange={(e) => {
 
                             if (Number(e.target.value) <= 0) {
                               setAppearancePersonality("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setAppearancePersonality(10)
+                            if (Number(e.target.value) > 5) {
+                              setAppearancePersonality(5)
                               return
                             }
                             else
@@ -3592,16 +3783,16 @@ const Applylist = () => {
                           }} />
                       </div>}
                       {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="clarityThought" className="form-label">Clarity of Thought (1-10) :</label>
+                        <label htmlFor="clarityThought" className="form-label">Clarity of Thought (1-5) :</label>
                         <input type="number" className="p-2 border-1 rounded border-slate-400 w-full block outline-none"
-                          id="clarityThought" value={clarityThought} placeholder='1-10'
+                          id="clarityThought" value={clarityThought} placeholder='1-5'
                           onChange={(e) => {
                             if (Number(e.target.value) <= 0) {
                               setClarityThought("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setClarityThought(10)
+                            if (Number(e.target.value) > 5) {
+                              setClarityThought(5)
                               return
                             }
                             else
@@ -3610,15 +3801,15 @@ const Applylist = () => {
                           }} />
                       </div>}
                       {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="englishSkills" className="form-label">English Language Skills (1-10) :</label>
-                        <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="englishSkills" value={englishSkills}
+                        <label htmlFor="englishSkills" className="form-label">English Language Skills (1-5) :</label>
+                        <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="englishSkills" value={englishSkills}
                           onChange={(e) => {
                             if (Number(e.target.value) <= 0) {
                               setEnglishSkills("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setEnglishSkills(10)
+                            if (Number(e.target.value) > 5) {
+                              setEnglishSkills(5)
                               return
                             }
                             else
@@ -3626,15 +3817,15 @@ const Applylist = () => {
                           }} />
                       </div>}
                       <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="technicalAwareness" className="form-label">Awareness on Technical Dynamics (1-10) :</label>
-                        <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="technicalAwareness" value={technicalAwareness}
+                        <label htmlFor="technicalAwareness" className="form-label">Awareness on Technical Dynamics (1-5) :</label>
+                        <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="technicalAwareness" value={technicalAwareness}
                           onChange={(e) => {
                             if (Number(e.target.value) <= 0) {
                               setTechnicalAwareness("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setTechnicalAwareness(10)
+                            if (Number(e.target.value) > 5) {
+                              setTechnicalAwareness(5)
                               return
                             }
                             else
@@ -3642,15 +3833,15 @@ const Applylist = () => {
                           }} />
                       </div>
                       {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="interpersonalSkills" className="form-label">Interpersonal Skills / Attitude (1-10) :</label>
-                        <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="interpersonalSkills"
+                        <label htmlFor="interpersonalSkills" className="form-label">Interpersonal Skills / Attitude (1-5) :</label>
+                        <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="interpersonalSkills"
                           value={interpersonalSkills} onChange={(e) => {
                             if (Number(e.target.value) <= 0) {
                               setInterpersonalSkills("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setInterpersonalSkills(10)
+                            if (Number(e.target.value) > 5) {
+                              setInterpersonalSkills(5)
                               return
                             }
                             else
@@ -3659,15 +3850,15 @@ const Applylist = () => {
                           } />
                       </div>}
                       <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="confidenceLevel" className="form-label">Confidence Level (1-10) :</label>
-                        <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="confidenceLevel"
+                        <label htmlFor="confidenceLevel" className="form-label">Confidence Level (1-5) :</label>
+                        <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="confidenceLevel"
                           value={confidenceLevel} onChange={(e) => {
                             if (Number(e.target.value) <= 0) {
                               setConfidenceLevel("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setConfidenceLevel(10)
+                            if (Number(e.target.value) > 5) {
+                              setConfidenceLevel(5)
                               return
                             }
                             else
@@ -3684,15 +3875,15 @@ const Applylist = () => {
                       </div>}
 
                       {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="logicalReasoning" className="form-label">Analytical & Logical Reasoning Skills (1-10) :</label>
-                        <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="logicalReasoning" value={logicalReasoning}
+                        <label htmlFor="logicalReasoning" className="form-label">Analytical & Logical Reasoning Skills (1-5) :</label>
+                        <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="logicalReasoning" value={logicalReasoning}
                           onChange={(e) => {
                             if (Number(e.target.value) <= 0) {
                               setLogicalReasoning("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setLogicalReasoning(10)
+                            if (Number(e.target.value) > 5) {
+                              setLogicalReasoning(5)
                               return
                             }
                             else
@@ -3710,15 +3901,15 @@ const Applylist = () => {
                           placeholder='type here..' id="achievementOrientation" value={achievementOrientation} onChange={(e) => setAchievementOrientation(e.target.value)} />
                       </div>}
                       <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="driveProblemSolving" className="form-label">Drive / Problem Solving Abilities (1-10) :</label>
-                        <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="driveProblemSolving" value={driveProblemSolving}
+                        <label htmlFor="driveProblemSolving" className="form-label">Drive / Problem Solving Abilities (1-5) :</label>
+                        <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="driveProblemSolving" value={driveProblemSolving}
                           onChange={(e) => {
                             if (Number(e.target.value) <= 0) {
                               setDriveProblemSolving("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setDriveProblemSolving(10)
+                            if (Number(e.target.value) > 5) {
+                              setDriveProblemSolving(5)
                               return
                             }
                             else
@@ -3726,15 +3917,15 @@ const Applylist = () => {
                           }} />
                       </div>
                       <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="takeUpChallenges" className="form-label">Ability to Take Up Challenges (1-10) :</label>
-                        <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="takeUpChallenges" value={takeUpChallenges}
+                        <label htmlFor="takeUpChallenges" className="form-label">Ability to Take Up Challenges (1-5) :</label>
+                        <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="takeUpChallenges" value={takeUpChallenges}
                           onChange={(e) => {
                             if (Number(e.target.value) <= 0) {
                               setTakeUpChallenges("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setTakeUpChallenges(10)
+                            if (Number(e.target.value) > 5) {
+                              setTakeUpChallenges(5)
                               return
                             }
                             else
@@ -3742,29 +3933,29 @@ const Applylist = () => {
                           }} />
                       </div>
                       <div className="col-md-6 col-lg-4 p-3 mb-3">
-                        <label htmlFor="leadershipAbilities" className="form-label">Leadership Abilities (1-10) :</label>
-                        <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="leadershipAbilities" value={leadershipAbilities}
+                        <label htmlFor="leadershipAbilities" className="form-label">Leadership Abilities (1-5) :</label>
+                        <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="leadershipAbilities" value={leadershipAbilities}
                           onChange={(e) => {
                             if (Number(e.target.value) <= 0) {
                               setLeadershipAbilities("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setLeadershipAbilities(10)
+                            if (Number(e.target.value) > 5) {
+                              setLeadershipAbilities(5)
                               return
                             }
                             else
                               setLeadershipAbilities(e.target.value)
                           }} />
                       </div>
-                      {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
+                      {/* {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
                         <label htmlFor="companyInterest" className="form-label">Interest With The Company:</label>
                         <select className="form-select" id="companyInterest" value={companyInterest} onChange={(e) => setCompanyInterest(e.target.value)}>
                           <option value="">Select</option>
                           <option value="yes">Yes</option>
                           <option value="no">No</option>
                         </select>
-                      </div>}
+                      </div>} */}
 
                       {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
                         <label htmlFor="researchCompany" className="form-label">Researched About The Company:</label>
@@ -3776,15 +3967,15 @@ const Applylist = () => {
                       </div>}
 
                       {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3 ">
-                        <label htmlFor="targetPressure" className="form-label">Ability to Handle Targets / Pressure (1-10) :</label>
-                        <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="targetPressure" value={targetPressure}
+                        <label htmlFor="targetPressure" className="form-label">Ability to Handle Targets / Pressure (1-5) :</label>
+                        <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="targetPressure" value={targetPressure}
                           onChange={(e) => {
                             if (Number(e.target.value) <= 0) {
                               setTargetPressure("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setTargetPressure(10)
+                            if (Number(e.target.value) > 5) {
+                              setTargetPressure(5)
                               return
                             }
                             else
@@ -3792,15 +3983,15 @@ const Applylist = () => {
                           }} />
                       </div>}
                       {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3 ">
-                        <label htmlFor="customerService" className="form-label">Customer Service (1-10) :</label>
-                        <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="customerService" value={customerService}
+                        <label htmlFor="customerService" className="form-label">Customer Service (1-5) :</label>
+                        <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="customerService" value={customerService}
                           onChange={(e) => {
                             if (Number(e.target.value) <= 0) {
                               setCustomerService("")
                               return
                             }
-                            if (Number(e.target.value) > 10) {
-                              setCustomerService(10)
+                            if (Number(e.target.value) > 5) {
+                              setCustomerService(5)
                               return
                             }
                             else
@@ -3808,7 +3999,7 @@ const Applylist = () => {
                           }} />
                       </div>}
                       <div className="col-md-6 col-lg-4 p-3 mb-3 ">
-                        <label htmlFor="overallRanking" className="form-label">Overall Candidate Ranking (1 to 10):</label>
+                        <label htmlFor="overallRanking" className="form-label">Overall Candidate Ranking (1 to 5):</label>
                         <input type="number" disabled={true} className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="overallRanking"
                           value={overallRanking}
                           onChange={(e) => setOverallRanking(e.target.value)} />
@@ -4000,7 +4191,7 @@ const Applylist = () => {
                           <label htmlFor="ageGroup" className="form-label">Interview Status: <span id='interviewstatuserror' className='text-red-500'>* </span> </label>
                           <select className="form-select" id="ageGroup" value={Interviewstatus} onChange={(e) => setInterviewStatus(e.target.value)}>
                             <option value="">Select</option>
-                            <option value="consider_to_client">Consider to Client requirments</option>
+                            <option value="consider_to_client">Consider to Client for Merida</option>
                             <option value="Internal_Hiring">Shortlisted to Next Round </option>
                             <option value="Reject">Reject</option>
                             <option value="On_Hold">On Hold</option>

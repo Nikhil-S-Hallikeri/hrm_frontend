@@ -7,7 +7,7 @@ const ScrollButton = ({ path, name, css, active ,activeSetting, setActiveSetting
 
     return (
         <div>
-            <button onClick={() => { setActiveSetting(active); navigate(`/settings${path}`) }} 
+            <button onClick={() => { setActiveSetting(active); navigate(`${path}`) }} 
             className={`p-[10px] rounded-full w-44 transition duration-500
         ${activeSetting == active ? 'btngrd border-slate-500 fw-medium text-white'
                     : 'bgclr border-slate-50'} `} >

@@ -40,7 +40,9 @@ const Empsidebar = () => {
                             img='/assets/Images/profile.png' /> */}
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} drop={[
                             { name: 'Reporting Team', path: '/Report_Manager_Reporting_team' },
-                            logindata.is_reporting_manager && { name: 'Approval', path: '/dash/approvals' },
+                            logindata.is_reporting_manager && { name: 'Leave Approval', path: '/dash/approvals' },
+                            // logindata.is_reporting_manager && { name: 'Appraisal', path: '/dash/appraisalform' },
+
                         ]}
                             label='Employee' active='Employee'
                             img='/assets/Images/profile.png' />

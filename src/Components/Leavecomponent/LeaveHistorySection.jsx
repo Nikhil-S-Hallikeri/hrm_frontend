@@ -32,6 +32,7 @@ const LeaveHistorySection = ({ setActiveSection }) => {
                                 <th>Applied Date </th>
                                 <th>Leave Date </th>
                                 <th>No of Days leave </th>
+                                <th className=' '>Process reason </th>
                                 <th> Status</th>
                             </tr>
                         </thead>
@@ -47,6 +48,11 @@ const LeaveHistorySection = ({ setActiveSection }) => {
                                     <td>{obj.from_date && changeDateYear(obj.from_date)}
                                         {obj.days > 1 && obj.to_date ? " to " + changeDateYear(obj.to_date) : ''} </td>
                                     <td>{obj.days} </td>
+                                    <td className=' text-wrap'> 
+                                        {obj.rm_reason && <p className='fw-semibold w-[300px]'>Reporting Manager : <span className='fw-normal '>
+                                            {obj.rm_reason}</span>  </p>}
+                                        {obj.hr_reason && <p className='fw-semibold w-[300px]'>HR Manager :  <span className='fw-normal '>{obj.hr_reason} </span></p>}
+                                    </td>
                                     <td>{obj.approved_status} </td>
                                 </tr>
                             ))}

@@ -18,7 +18,6 @@ import Dummudoc from './Components/dummydoc'
 import Tempone from './Components/Tempone'
 import Activites from './Components/Activites'
 import Employeeallform from './Components/Employeeallform'
-import Downloadpdf from './Components/Downloadpdf'
 import Offeraccept from './Components/Offeraccept'
 import Employeeseparation from './Components/Employeeseparation'
 import Bgverificationform from './Components/Bgverificationform'
@@ -65,7 +64,6 @@ import Forgot_pass_otp_verification from './Components/Forgot_pass_otp_verificat
 import Rec_applyed_list from './Components/Rec_applyed_list'
 import Can from './Components/Can'
 import Final_status_comment from './Components/Final_status_comment'
-import Letter_of_appointment from './Components/Letter_of_appointment'
 import Employee_interview_applicants from './Components/Employee_interview_applicants'
 import Sweet_aleart from './Components/Sweet_aleart'
 import Acti_ from './Components/Acti_'
@@ -91,11 +89,21 @@ import DasRouter from './Pages/DasRouter'
 import SettingRouter from './Pages/SettingPage/SettingRouter'
 import ApprovalPage from './Pages/Approval/ApprovalPage'
 import AttendenceAdmin from './Pages/AttendenceAdmin'
-// export const port ="http://192.168.0.117:9000/"
-export const port = "http://192.168.0.107:9000/"
+import InternLetter from './Pages/InternLetter'
+import OfferLetterFormPage from './Components/Modals/OfferLetterFormPage'
+import OfferTemplate from './Pages/OfferTemplate'
+import OfferApprovalPage from './Pages/Approval/OfferApprovalPage'
+import SelfEvaluation from './Pages/Employee_Performance/SelfEvaluation'
+import JFPreview from './Pages/JoiningFormalities/JFPreview'
+import ManagerReview from './Pages/Employee_Performance/ManagerReview'
+import Scanner from './Pages/Scanner/Scanner'
+import MeetingReview from './Pages/Employee_Performance/MeetingReview'
+export const port = "http://192.168.172.249:9000/"
+// export const port = "http://192.168.197.249:9000/"
+// export const port = "http://192.168.18.17:9000/"
 // export const port = "https://hrmbackendapi.meridahr.com/"
 // export const domain='https://hrm.meridahr.com'
-export const domain = 'http://192.168.0.111:3001'
+export const domain = 'http://192.168.172.237:3000'
 
 const App = () => {
   // const port = "http://192.168.0.106:9000"
@@ -108,16 +116,18 @@ const App = () => {
 
         <Routes>
           <Route element={<Login__></Login__>} path='/'></Route>
-
+          <Route path='/scanner' element={<Scanner/>}/>
           <Route element={<Signup></Signup>} path='/Signup'></Route>
           <Route path='/dash/*' element={<DasRouter />} />
           <Route element={<Protect Child={Hrdashpage} />} path='dashboard/HR'></Route>
           <Route element={<Protect Child={Hrdashpage} />} path='dashboard/Admin'></Route>
           <Route element={<Protect Child={Recruiterdashpage} />} path='dashboard/Recruiter'></Route>
           <Route element={<Protect Child={Empdashpage} />} path='dashboard/Employee'></Route>
+          <Route element={<JFPreview />} path='/preview/:id' />
+          <Route element={<JFPreview />} path='/employeeVerification/:id' />
 
           <Route path='/attendence-list' element={<AttendenceAdmin />} />
-
+          <Route path='/candidateOfferLetter/:id' element={<OfferTemplate />} />
           <Route element={<Applylist></Applylist>} path='/Applaylist'></Route>
           <Route element={<Employees></Employees>} path='/Employees'></Route>
           <Route element={<Applicants></Applicants>} path='/Applicants'></Route>
@@ -125,19 +135,22 @@ const App = () => {
           <Route element={<Canditatereg></Canditatereg>} path='/Canditate_Registration_Form'></Route>
           <Route element={<Intassform></Intassform>} path='/Interview-Assessment-form'></Route>
           <Route element={<Docupload></Docupload>} path='/DocmentUpload'></Route>
-
           <Route element={<Dummudoc></Dummudoc>} path='/Doc/:id/:login'></Route>
-
+          <Route element={<OfferLetterFormPage />} path='/offerletter/:id' />
           <Route element={<Tempone></Tempone>} path='/Temp'></Route>
+          <Route element={<InternLetter />} path='/intern' />
           <Route element={<Activites></Activites>} path='/Activites'></Route>
-          <Route element={<Employeeallform></Employeeallform>} path='/Employeeallform/:id'></Route>
-          <Route element={<Downloadpdf></Downloadpdf>} path='/Pdfdown'></Route>
+          <Route element={<Employeeallform></Employeeallform>} path='/Employeeallform/:id/*'></Route>
+
           <Route path='/settings/*' element={<SettingRouter />} />
           <Route element={<Offeraccept></Offeraccept>} path='/offeraccept/:id'></Route>
+          <Route path='/selfEvaluation/:id' element={<SelfEvaluation />} />
+          <Route path='/employePerformanceEvaluation/:id' element={<ManagerReview />} />
+          <Route path='/meetingReview/:id' element={<MeetingReview/>}/>
 
           <Route element={<Employeeseparation></Employeeseparation>} path='/Employeeseparation'></Route>
 
-          <Route element={<Bgverificationform></Bgverificationform>} path='/BgverificationForm/:id'></Route>
+          <Route element={<Bgverificationform></Bgverificationform>} path='/BgverificationForm/:id/:fid'></Route>
 
           <Route element={<Forgotpass></Forgotpass>} path='/Forgotpassword/:id/'></Route>
 
@@ -220,7 +233,6 @@ const App = () => {
 
           <Route element={<Final_status_comment></Final_status_comment>} path='/Final_status_comment'></Route>
 
-          <Route element={<Letter_of_appointment></Letter_of_appointment>} path='/Letter_of_appointment'></Route>
 
           <Route element={<Employee_interview_applicants></Employee_interview_applicants>} path='/Employee_interview_applicants'></Route>
 
@@ -230,8 +242,7 @@ const App = () => {
 
           <Route element={<Interview_sche></Interview_sche>} path='/Interview_sche'></Route>
 
-
-          <Route element={<Letter_of__appointment></Letter_of__appointment>} path='/Letter_of__appointment'></Route>
+          <Route element={<SelfEvaluation />} path='/selfEavluation/:id' />
 
 
 

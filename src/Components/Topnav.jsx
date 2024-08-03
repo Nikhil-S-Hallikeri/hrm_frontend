@@ -4,12 +4,13 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { Bar, Doughnut, Line } from 'react-chartjs-2'
 import { port } from '../App'
+import { Offcanvas } from 'react-bootstrap';
 
 
 const Topnav = ({ name }) => {
 
     const user = JSON.parse(sessionStorage.getItem('user'))
-
+    let [showNotification, setShowNotification] = useState()
     let logindata = JSON.parse(sessionStorage.getItem('user'))
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
 
@@ -192,24 +193,20 @@ const Topnav = ({ name }) => {
                     </section>
                     {/* search end */}
                     <div className="  d-flex justify-content-evenly align-items-center" style={{ width: '18%' }}>
+                        {/* notification */}
+                        <div onClick={() => setShowNotification(true)} className='p-1 relative rounded bg-slate-200 w-7 h-7 '>
+                            <img className='w-5'
+                                src={require('../assets/Images/Notification.png')} alt="Notification" />
+                            {noti != undefined && noti.length > 0 &&
+                                <p className='bg-red-500 m-0 rounded-full w-2 h-2 absolute -top-1 right-0 '>
+                                </p>}
+                        </div>
 
-                        <div className='p-1 relative rounded bg-slate-200 w-7 h-7 '>
-                                <img data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
-                                    aria-controls="offcanvasScrolling" className='w-5'
-                                    src={require('../assets/Images/Notification.png')} alt="Notification" />
-                                {noti != undefined && noti.length > 0 &&
-                                    <p className='bg-red-500 m-0 rounded-full w-2 h-2 absolute -top-1 right-0 '>
-                                    </p>}
-                            </div>
-
-                        <div class="offcanvas offcanvas-right border"
-                            style={{ position: 'absolute', top: '70px', right: '20px', width: '', height: '500px' }}
-                            data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
-                            <div class="offcanvas-header">
-                                <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Notifications</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                            </div>
-                            <div class="offcanvas-body">
+                        <Offcanvas show={showNotification} placement='end' onHide={() => setShowNotification(false)} >
+                            <Offcanvas.Header closeButton>
+                                Notification
+                            </Offcanvas.Header>
+                            <Offcanvas.Body>
 
                                 {noti.map((e) => {
                                     return (
@@ -220,7 +217,8 @@ const Topnav = ({ name }) => {
                                                 </div>
                                                 <div className='ms-3 ' style={{ width: '60%' }}>
                                                     <small>Name</small>
-                                                    <p className=''>  <small style={{ fontSize: '12px', width: '100%', cursor: 'pointer' }}  >{e.message}</small></p>
+                                                    <p className=''>
+                                                        <small style={{ fontSize: '12px', width: '100%', cursor: 'pointer' }}  >{e.message}</small></p>
 
                                                 </div>
                                                 <div className='ms-2 ' style={{ width: '28%' }}>
@@ -230,10 +228,11 @@ const Topnav = ({ name }) => {
                                             </div>
                                         </div>
                                     )
-
                                 })}
-                            </div>
-                        </div>
+                            </Offcanvas.Body>
+                        </Offcanvas>
+
+
 
                         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">

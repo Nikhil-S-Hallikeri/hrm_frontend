@@ -190,9 +190,9 @@ const Mass_mail = () => {
             <div>
                 <form>
                     {/* Form start */}
-                    <div className="row justify-content-center m-0">
+                    <div className="row  justify-content-center m-0">
                         <h3 className='mt-2 text-center p-3' style={{ color: 'rgb(76,53,117)' }}>Mass Mail</h3>
-                        <div className="col-lg-12 p-4 mt-2 border rounded-lg">
+                        <div className="col-lg-12 container mx-auto formbg p-4 mt-2 border rounded-lg">
                             <div className="row m-0 pb-2" style={{ lineHeight: '30px' }}>
                                 {/* Form fields */}
 
@@ -251,21 +251,8 @@ const Mass_mail = () => {
                                                     <th scope="col" className='fw-medium'>Phone</th>
                                                     <th scope="col" className='fw-medium'>Join Date</th>
                                                     <th scope="col" className='fw-medium'>Role</th> */}
-
-
-
-
-
-
                                                 </tr>
                                             </thead>
-
-
-
-
-
-                                           
-
                                             {Employeelist != undefined && Employeelist.map((e) => {
                                                 return (
 

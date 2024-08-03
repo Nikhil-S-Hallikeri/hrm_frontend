@@ -167,7 +167,7 @@ const Recruiterdashpage = () => {
 
                                 <div>
                                     <h4 style={{ position: 'relative', top: '5px' }}>0</h4>
-                                    <p >Consider To Client</p>
+                                    <p >Consider To Client for Merida</p>
                                 </div>
 
                                 <div>

@@ -190,7 +190,7 @@ const Repoting_team_report = () => {
 
                 <Empsidebar></Empsidebar>
             </div>
-            <div className=' m-0 p-sm-4 container mx-auto flex-1 ' style={{ borderRadius: '10px' }}>
+            <div className=' container mx-auto flex-1 ' style={{ borderRadius: '10px' }}>
                     <Topnav></Topnav>
 
                 {/* Reporting Team List Start */}
@@ -212,8 +212,8 @@ const Repoting_team_report = () => {
 
                     </div>
 
-                    <div className=' p-1 mt-3 table-responsive' style={{ marginLeft: '10px' }}>
-                        <table class="table" >
+                    <div className=' p-1 mt-3 rounded tablebg table-responsive'>
+                        <table class="w-full " >
                             <thead >
                                 <tr>
                                     <th scope="col">#</th>

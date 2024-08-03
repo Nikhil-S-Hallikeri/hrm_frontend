@@ -7,6 +7,8 @@ import { HrmStore } from '../Context/HrmContext'
 import PlusIcon from '../SVG/PlusIcon'
 import CreateDepartment from './Modals/CreateDepartment'
 import CreateDesignation from './Modals/CreateDesignation'
+import ThreeDot from '../SVG/ThreeDot'
+import { toast } from 'react-toastify'
 
 
 
@@ -18,7 +20,8 @@ const Employeees = () => {
     const [AllEmployeelist, setAllEmployeelist] = useState([])
     let [deptModal, setdeptmodal] = useState(false)
     let [designationModal, setDesignationmodal] = useState(false)
-
+    let [deptIndex, setDepartmentIndex] = useState()
+    let [deptIdforDesignation, setDeptIdForDesignation] = useState()
 
     const [EMPLOYEE_INFORMATION, setEMPLOYEE_INFORMATION] = useState([])
     const [EDUCATION_DETAILS, setEDUCATION_DETAILS] = useState([])
@@ -129,8 +132,7 @@ const Employeees = () => {
 
     return (
         <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
-            <div className=''>
-
+            <div className='flex'>
                 <Sidebar value={"dashboard"} ></Sidebar>
             </div>
             <div className=' m-0 m-sm-4  flex-1  mx-auto ' style={{ borderRadius: '10px' }}>
@@ -145,11 +147,11 @@ const Employeees = () => {
                         <h6 className='mt-2 heading' style={{ color: 'rgb(76,53,117)' }}>Department List</h6>
                         <section className='flex gap-3'>
 
-                            <button onClick={() => setdeptmodal(true)} className='flex gap-2 items-center text-sm 
+                            <button onClick={() =>{ setdeptmodal(true);setDepartmentIndex(false)}} className='flex gap-2 items-center text-sm 
                         rounded p-2 px-3 shadow-sm btngrd text-white'>
                                 <PlusIcon />  Add Department
                             </button>
-                            <button onClick={() => setDesignationmodal(true)} className='flex gap-2 items-center text-sm 
+                            <button onClick={() => {setDesignationmodal(true);setDepartmentIndex(false)}} className='flex gap-2 items-center text-sm 
                         rounded p-2 px-3 shadow-sm btngrd text-white'>
                                 <PlusIcon />  Add Designation
                             </button>
@@ -157,35 +159,61 @@ const Employeees = () => {
                         </section>
 
                     </div>
-                    <CreateDepartment show={deptModal} setshow={setdeptmodal} getdept={getDept} />
-                    <CreateDesignation show={designationModal} setshow={setDesignationmodal} />
+                    {setdeptmodal && <CreateDepartment did={deptIndex} show={deptModal} setshow={setdeptmodal} getdept={getDept} />}
+                    {designationModal && <CreateDesignation setdid={setDepartmentIndex} deptid={deptIdforDesignation} getdesignation={Call_Designation_list}
+                        did={deptIndex} show={designationModal} setshow={setDesignationmodal} />}
 
                     <div className='row  m-0 p-1 mt-3'>
 
-                        {AllDepartmentlist != undefined && AllDepartmentlist != undefined && AllDepartmentlist.map((e, index) => {
-                            return (
+                        {AllDepartmentlist != undefined && AllDepartmentlist != undefined &&
+                            AllDepartmentlist.map((e, index) => {
+                                return (
 
-                                <div className="col-md-12 col-lg-4 mb-3  p-2">
-
-                                    <div onClick={() => {
-                                        setDEPARTMENT_LIST(false)
-                                        setDESIGNATION_LIST(true)
-                                        Call_Designation_list(e.id)
-                                    }} className='p-2 border-2 rounded border-white cursor-pointer
+                                    <div onMouseLeave={() => setDepartmentIndex(-1)} className="col-md-12 col-lg-4 mb-3  p-2">
+                                        <section className='relative  '>
+                                            <button onClick={() => {
+                                                if (deptIndex != e.id)
+                                                    setDepartmentIndex(e.id)
+                                                else
+                                                    setDepartmentIndex(-1)
+                                            }} className='absolute top-0 right-0 p-2 '>
+                                                <ThreeDot size={5} />
+                                            </button>
+                                            {deptIndex == e.id && <article className='absolute text-xs top-1 rounded p-2 right-5 bg-white shadow ' >
+                                                <button onClick={() => setdeptmodal(true)} className='block hover:text-blue-400 '>
+                                                    Edit
+                                                </button>
+                                                <button onClick={() => {
+                                                    axios.delete(`${port}/root/ems/Departments/${deptIndex}/`).then((response) => {
+                                                        toast.success('Deleted Successfully')
+                                                        getDept()
+                                                    }).catch((error) => { toast.error('error acquired'); console.log(error) })
+                                                }} className='block my-1 hover:text-red-600 '>
+                                                    Delete
+                                                </button>
+                                            </article>}
+                                            <div onClick={() => {
+                                                setDEPARTMENT_LIST(false)
+                                                setDESIGNATION_LIST(true)
+                                                Call_Designation_list(e.id)
+                                                setDeptIdForDesignation(e.id)
+                                            }} className='p-2 border-2 rounded border-white cursor-pointer
                                      bg-slate-50 order-secondary' >
-                                        <div className='d-flex'>
-                                            <div className='w-75'>
-                                                <h2 style={{ cursor: 'pointer' }} className='ps-3 '> {e.Department}</h2>
-                                                <h6 style={{ color: 'rgb(76,53,117)' }} className='ps-3'>Department</h6>
+                                                <div className='d-flex'>
+                                                    <div className='w-75'>
+                                                        <h2 style={{ cursor: 'pointer' }} className='ps-3 text-xl '> {e.Department}</h2>
+                                                        <h6 className='ps-3 text-slate-500 '> Department </h6>
+                                                    </div>
+                                                    <div className='w-25 text-center '>
+                                                        <h2 style={{ color: 'rgb(76,53,117)' }} className='mt-3 '>{e.No_Of_Employees}</h2>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className='w-25 text-center '>
-                                                <h2 style={{ color: 'rgb(76,53,117)' }} className='mt-3 '>{e.No_Of_Employees}</h2>
-                                            </div>
-                                        </div>
+
+                                        </section>
                                     </div>
-                                </div>
-                            )
-                        })}
+                                )
+                            })}
                     </div>
                 </div>
                 {/* DEPARTMENT LIST END */}
@@ -217,40 +245,63 @@ const Employeees = () => {
 
                     <div className='row  m-0 p-1 mt-3'>
 
-                        {AllDesignationlist != undefined && AllDesignationlist != undefined && AllDesignationlist.map((e, index) => {
-                            return (
+                        {AllDesignationlist != undefined && AllDesignationlist != undefined &&
+                            AllDesignationlist.map((e, index) => {
+                                return (
 
-                                <div className="col-md-12 col-lg-4 mb-3  p-2">
+                                    <div onMouseLeave={() => setDepartmentIndex(-1)} className="col-md-12 col-lg-4 mb-3  p-2">
+                                        <section className='relative  '>
+                                            <button onClick={() => {
+                                                if (deptIndex != e.id)
+                                                    setDepartmentIndex(e.id)
+                                                else
+                                                    setDepartmentIndex(-1)
+                                            }} className='absolute top-0 right-0 p-2 '>
+                                                <ThreeDot size={5} />
+                                            </button>
+                                            {deptIndex == e.id && <article className='absolute text-xs top-1 rounded p-2 right-5 bg-white shadow ' >
+                                                <button onClick={() => setDesignationmodal(true)} className='block hover:text-blue-400 '>
+                                                    Edit
+                                                </button>
+                                                <button onClick={() => {
+                                                    axios.delete(`${port}/root/ems/Designations/${e.id}/`).then((response) => {
+                                                        toast.success('Deleted Successfully')
+                                                        Call_Designation_list(deptIdforDesignation)
+                                                    }).catch((error) => { toast.error('error acquired'); console.log(error) })
+                                                }} className='block my-1 hover:text-red-600 '>
+                                                    Delete
+                                                </button>
+                                            </article>}
+                                            <div onClick={() => {
+                                                Call_Employee_list(e.id)
+                                                setDESIGNATION_LIST(false)
+                                                setEMPLOYEE_DATA_LIST(true)
+                                            }
+                                            } style={{ height: '100px' }}
+                                                className='p-2 cursor-pointer w-full rounded-xl bg-slate-50 border-white border-2 border-secondary' >
 
-                                    <div onClick={() => {
-                                        Call_Employee_list(e.id)
-                                        setDESIGNATION_LIST(false)
-                                        setEMPLOYEE_DATA_LIST(true)
-                                    }
-                                    } style={{ width: '330px', height: '100px' }} className='p-2 cursor-pointer rounded-xl bg-slate-50 border-white border-2 border-secondary' >
-
-                                        <div className='d-flex'>
-                                            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'start' }} className='w-75 pt-1'>
-                                                <h5 style={{ cursor: 'pointer' }} className='ps-3 '
+                                                <div className='d-flex'>
+                                                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'start' }} className='w-75 pt-1'>
+                                                        <h5 style={{ cursor: 'pointer' }} className='ps-3 '
 
 
-                                                >{e.Designation}</h5>
-                                                <p style={{ color: 'rgb(76,53,117)' }} className='ps-3'>Department</p>
+                                                        >{e.Designation}</h5>
+                                                        <p style={{ color: 'rgb(76,53,117)' }} className='ps-3'></p>
+                                                    </div>
+                                                    <div className='w-25 text-center '>
+                                                        <h1 style={{ color: 'rgb(76,53,117)' }} className='mt-2 '>{e.No_Of_Employees}</h1>
+                                                    </div>
+
+                                                </div>
+
                                             </div>
-                                            <div className='w-25 text-center '>
-                                                <h1 style={{ color: 'rgb(76,53,117)' }} className='mt-2 '>{e.No_Of_Employees}</h1>
-                                            </div>
-
-                                        </div>
-
+                                        </section>
                                     </div>
 
-                                </div>
 
 
-
-                            )
-                        })}
+                                )
+                            })}
                     </div>
 
                 </div>

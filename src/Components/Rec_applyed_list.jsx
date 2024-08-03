@@ -9,7 +9,7 @@ import '../assets/css/modal.css'
 import { Link, useNavigate } from 'react-router-dom';
 import { Alert, AlertTitle } from '@mui/material';
 import Finalstatuscomment from './Finalstatuscomment';
-import { port } from '../App'
+import { domain, port } from '../App'
 import Recsidebar from './Recsidebar';
 import { toast } from 'react-toastify';
 import { HrmStore } from '../Context/HrmContext';
@@ -1095,7 +1095,7 @@ const Rec_applyed_list = () => {
     const formdata = new FormData();
     formdata.append('DocumentInstance', e);
     formdata.append('CandidateID', x);
-    formdata.append('FormURL', `http://localhost:3000/BgverificationForm/`);
+    formdata.append('FormURL', `${domain}/BgverificationForm/`);
 
     axios.post(`${port}/root/BG_VerificationMailSend`, formdata)
       .then((r) => {
@@ -1259,7 +1259,7 @@ const Rec_applyed_list = () => {
                       </div>
                     </div>
                     <div className='flex gap-3 flex-wrap '>
-                      <div className='flex items-center gap-2 text-xs'>
+                      {/* <div className='flex items-center gap-2 text-xs'>
                         Time :
                         <select className="form-select shadow-none" id="ageGroup"
                           style={{ width: '100px', height: '30px', fontSize: '9px', outline: 'none' }}
@@ -1271,7 +1271,7 @@ const Rec_applyed_list = () => {
                           <option value="Week">Week</option>
                           <option value="Month">Month</option>
                           <option value="Year">Year</option>
-                        </select></div>
+                        </select></div> */}
                       <div className='flex items-center gap-2 text-xs'>
                         Screening process :
 
@@ -1283,11 +1283,10 @@ const Rec_applyed_list = () => {
                           }
                         }}
                           className='p-1 text-sm flex ms-auto outline-none border-1 rounded' name="" id="">
-                          <option value="Pending">Pending </option>
-
+                          <option value="Pending">Yet to Assign </option>
                           <option value=""> Select All</option>
-                          <option value="Assigned">Assinged </option>
-                          <option value="Completed">Completed </option>
+                          <option value="Assigned">Yet to Screen </option>
+                          {/* <option value="Completed">Completed </option> */}
                         </select>
                       </div>
                     </div>
@@ -1768,7 +1767,7 @@ const Rec_applyed_list = () => {
                                         <label htmlFor="ageGroup" className="form-label">Interview Status:</label>
                                         <select className="form-select" id="ageGroup" value={Interviewstatus} onChange={(e) => setInterviewstatus(e.target.value)}>
                                           <option value="">Select</option>
-                                          <option value="Consider to Client">Consider to Client</option>
+                                          <option value="Consider to Client">Consider to Client for Merida</option>
                                           <option value="Internal Hiring">Internal Hiring</option>
                                           <option value="Reject">Reject</option>
                                           <option value="On-Hold">On Hold</option>
@@ -2144,8 +2143,8 @@ const Rec_applyed_list = () => {
                     </div>
                   </ul>
 
-                  <div className='rounded mt-4 m-1'>
-                    <table class="table caption-top     table-hover">
+                  <div className='rounded tablebg table-responsive mt-4 m-1'>
+                    <table class="w-full">
                       <thead >
                         <tr >
                           {/* <th scope="col"></th> */}
@@ -2191,7 +2190,7 @@ const Rec_applyed_list = () => {
 
                           <tbody>
                             <tr key={e.id}>
-                              <th scope="row"><input type="checkbox" value={e.CandidateId} onChange={handleCheckboxChange} /></th>
+                              <td scope="row"><input type="checkbox" value={e.CandidateId} onChange={handleCheckboxChange} /></td>
                               <td >{e.name}</td>
                               <td > {e.phone}</td>
                               <td >{e.location}</td>
@@ -2621,7 +2620,7 @@ const Rec_applyed_list = () => {
                                         <label htmlFor="ageGroup" className="form-label">Interview Status:</label>
                                         <select className="form-select" id="ageGroup" value={Interviewstatus} onChange={(e) => setInterviewstatus(e.target.value)}>
                                           <option value="">Select</option>
-                                          <option value="Consider to Client">Consider to Client</option>
+                                          <option value="Consider to Client">Consider to Client for Merida</option>
                                           <option value="Internal Hiring">Internal Hiring</option>
                                           <option value="Reject">Reject</option>
                                           <option value="On-Hold">On Hold</option>
@@ -3539,7 +3538,7 @@ const Rec_applyed_list = () => {
                           <label htmlFor="ageGroup" className="form-label">Interview Status:</label>
                           <select className="form-select" id="ageGroup" value={Interviewstatus} onChange={(e) => setInterviewstatus(e.target.value)}>
                             <option value="">Select</option>
-                            <option value="Consider to Client">Consider to Client</option>
+                            <option value="Consider to Client">Consider to Client for Merida</option>
                             <option value="Internal Hiring">Internal Hiring</option>
                             <option value="Reject">Reject</option>
                             <option value="On-Hold">On Hold</option>

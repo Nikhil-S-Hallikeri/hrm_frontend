@@ -1,68 +1,54 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import {port} from '../App' 
+import { domain, port } from '../App'
+import { toast } from 'react-toastify';
 
 
 const Offeraccept = () => {
-
     const { id } = useParams();
-
+    let [response, setresponseSubmited] = useState(false)
+    let [seconds, setseconds] = useState(5)
     const [JoingDate, setJoingDate] = useState([])
-
-
     {
         JoingDate.map((e) => {
-
             console.log("map", e.Date_of_Joining);
-
         })
     }
-
     useEffect(() => {
         const currentDate = new Date().toISOString().slice(0, 10); // Get current date in "YYYY-MM-DD" format
-
         // console.log("currentDate", currentDate);
         // console.log(JoingDate);
+        if (JoingDate) {
+            JoingDate.map((e, index) => {
+                // console.log(e.Date_of_Joining);
+                if (e.Date_of_Joining == currentDate && !e.Mail_Status) {
 
-        JoingDate.map((e, index) => {
+                    const formData = new FormData();
+                    formData.append('CandidateId', e.CandidateId);
+                    formData.append('FormURL', `${domain}/Employeeallform/`);
 
-            // console.log(e.Date_of_Joining);
+                    axios.post(`${port}/root/JoiningAppointmentMail`, formData).then((res) => {
+                        console.log(res);
+                    })
+                    console.log("Date matched! Calling API..." + index);
+                } else {
 
-            if (e.Date_of_Joining == currentDate && !e.Mail_Status ) {
-
-                const formData = new FormData();
-                formData.append('CandidateId', e.CandidateId);
-                formData.append('FormURL', `http://localhost:3000/Employeeallform/`);
-
-                axios.post(`${port}/root/JoiningAppointmentMail`, formData).then((res) => {
-                    console.log(res);
-                })
-                console.log("Date matched! Calling API..." + index);
-            } else {
-
-                console.log("Date does not match. No API call needed." + index);
-            }
-        });
-    })
+                    console.log("Date does not match. No API call needed." + index);
+                }
+            });
+        }
+    }, [JoingDate])
 
     const checkDateAndCallAPI = () => {
-        // Get the current system date
-        const currentDate = new Date().toISOString().slice(0, 10); // Get current date in "YYYY-MM-DD" format
-
-        // console.log("currentDate", currentDate);
-        // console.log(JoingDate);
+        const currentDate = new Date().toISOString().slice(0, 10);
 
         JoingDate.map((e, index) => {
 
-            // console.log(e.Date_of_Joining);
-
-            if (e.Date_of_Joining   == currentDate && !e.Mail_Status ) {
-
-                
+            if (e.Date_of_Joining == currentDate && !e.Mail_Status) {
                 const formData = new FormData();
                 formData.append('CandidateId', e.CandidateId);
-                formData.append('FormURL', `http://localhost:9000/Employeeallform/`);
+                formData.append('FormURL', `${domain}/Employeeallform/`);
 
                 axios.post(`${port}/root/JoiningAppointmentMail`, formData).then((res) => {
                     console.log(res);
@@ -87,28 +73,27 @@ const Offeraccept = () => {
         checkDateAndCallAPI();
         setModalOpen(true); // Open the modal when the component mounts
     }, []); // Empty dependency array ensures this effect runs only once
-
-
-
+    let getReportStatus = () => {
+        axios.get(`${port}/root/OfferAcceptStatus/${id}/`).then((response) => {
+            console.log(response.data.message);
+            setresponseSubmited(response.data.message == 'Completed')
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
     const handleAccept = (e) => {
-
         const formData = new FormData();
         formData.append('remarks', comments);
         formData.append('Status', e);
-
         for (let pair of formData.entries()) {
             console.log(pair[0] + ': ' + pair[1]);
         }
-
-        alert('Offer Accepted')
-
         axios.post(`${port}/root/OfferAcceptStatus/${id}/`, formData)
-
             .then((res) => {
                 console.log("Offer_Accepted_res", res.data);
                 setJoingDate(res.data)
-
-
+                toast.success('Offer Accepted')
+                getReportStatus()
             }).catch((err) => {
                 console.log("Offer_Accepted_err", err.data);
             })
@@ -119,27 +104,22 @@ const Offeraccept = () => {
         const formData = new FormData();
         formData.append('remarks', comments);
         formData.append('Status', e);
-
         for (let pair of formData.entries()) {
             console.log(pair[0] + ': ' + pair[1]);
         }
-        alert('Offer Not Accepted')
-
-
         axios.post(`${port}/root/OfferAcceptStatus/${id}/`, formData)
             .then((res) => {
                 console.log("Offer_Accepted_res", res.data);
-
-
+                toast.success('Offer Not Accepted')
+                getReportStatus()
             }).catch((err) => {
                 console.log("Offer_Accepted_err", err.data);
             })
     };
 
-
-
-
-
+    useEffect(() => {
+        getReportStatus()
+    }, [])
     return (
         <div>
             {modalOpen && (
@@ -148,31 +128,38 @@ const Offeraccept = () => {
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h4 className="text-center">Job Acceptance Letter</h4>
-                                <button type="button" className="btn-close" onClick={() => setModalOpen(false)} aria-label="Close"></button>
+                                {/* <button type="button" className="btn-close"
+                                    onClick={() => setModalOpen(false)} aria-label="Close"></button> */}
                             </div>
                             <div className="modal-body">
                                 <div>
-                                    <div className='d-flex justify-content-center flex-column border p-2'>
+                                    {!response ? <div className='d-flex justify-content-center flex-column p-2'>
                                         <small>Your Comments</small>
                                         <div className='mt-3 p-2'>
                                             <textarea
                                                 name=""
                                                 id=""
-                                                className='w-100'
+                                                className='w-100 bgclr rounded outline-none p-2 '
                                                 style={{ minHeight: '100px' }}
                                                 value={comments}
                                                 onChange={(e) => setComments(e.target.value)}
-                                            ></textarea>
+                                            >
+                                            </textarea>
                                         </div>
-                                    </div>
+
+                                    </div> :
+                                        <section>
+                                            <p className='text-center'>Response has been submitted !!! </p>
+                                        </section>
+                                    }
                                 </div>
                             </div>
-                            <div className="modal-footer">
+                            {!response && <div className="modal-footer">
                                 <div className='d-flex justify-content-evenly'>
-                                    <button className='btn btn-success me-2 ' onClick={() => handleAccept('Accept')} aria-label="Close">Accept</button>
-                                    <button className='btn btn-danger' onClick={() => handleNotAccept('Reject')} aria-label="Close">Not Accept</button>
+                                    <button disabled={!comments} className='btn btn-success me-2 ' onClick={() => handleAccept('Accept')} aria-label="Close">Accept</button>
+                                    <button disabled={!comments} className='btn btn-danger' onClick={() => handleNotAccept('Reject')} aria-label="Close">Not Accept</button>
                                 </div>
-                            </div>
+                            </div>}
                         </div>
                     </div>
                 </div>

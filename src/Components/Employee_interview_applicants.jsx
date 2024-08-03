@@ -2106,7 +2106,7 @@ const Employee_interview_applicants = () => {
                           <label htmlFor="ageGroup" className="form-label">Interview Status:</label>
                           <select className="form-select" id="ageGroup" value={Interviewstatus} onChange={(e) => setInterviewStatus(e.target.value)}>
                             <option value="">Select</option>
-                            <option value="consider_to_client">Consider to Client</option>
+                            <option value="consider_to_client">Consider to Client for Merida </option>
                             <option value="Internal_Hiring">Internal Hiring</option>
                             <option value="Reject">Rejects</option>
                             <option value="On_Hold">On Hold</option>

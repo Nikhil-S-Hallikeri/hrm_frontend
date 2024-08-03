@@ -49,13 +49,13 @@ const LeaveApprovalBox = () => {
         <div className='col-sm-4 bgclr rounded-xl p-3' >
             <section className='flex my-2 gap-3 justify-between flex-wrap items-center'>
                 <h6 className='poppins fw-semibold text-blue-900 text-center'>Reporting Team</h6>
-                <select name="" value={activeSection} onChange={(e)=>setActiveSection(e.target.value)}  
-                className='p-1 rounded shadow outline-none text-sm' id="">
+                <select name="" value={activeSection} onChange={(e) => setActiveSection(e.target.value)}
+                    className='p-1 rounded shadow outline-none text-sm' id="">
                     <option value="request">
-                        <button  className={`duration-500 ${activeSection == 'request' && 'btngrd text-white'} rounded text-xs p-1 `}>Request </button>
+                        <button className={`duration-500 ${activeSection == 'request' && 'btngrd text-white'} rounded text-xs p-1 `}>Request </button>
                     </option>
                     <option value="report">
-                        <button  className={`duration-500 rounded text-xs p-1 ${activeSection == 'report' && 'btngrd text-white'}`}>Report </button>
+                        <button className={`duration-500 rounded text-xs p-1 ${activeSection == 'report' && 'btngrd text-white'}`}>Report </button>
                     </option>
                 </select>
             </section>
@@ -113,8 +113,8 @@ const LeaveApprovalBox = () => {
                             <p className='m-auto'>No Leave approved for this Week </p>
                         </div>
                     }
-                    <button onClick={() => navigate('/dash/history')} 
-                    className='btngrd text-xs rounded border-2 border-green-50 p-1 px-2 
+                    <button onClick={() => navigate('/dash/history')}
+                        className='btngrd text-xs rounded border-2 border-green-50 p-1 px-2 
                     mx-auto flex text-white my-2'>
                         Check Page
                     </button>

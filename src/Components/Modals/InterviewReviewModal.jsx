@@ -267,20 +267,20 @@ const InterviewReviewModal = (props) => {
               </div>
               {persondata && persondata && !persondata.Fresher && <div className="col-md-6 col-lg-4 p-3 mb-3">
                 <label htmlFor="experience" className="form-label" >Related Experience:</label>
-                <input type="number" placeholder='1-30 years '
-                  className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="experience"
-                  value={persondata && persondata.TotalExperience} />
+                <input type="number" placeholder='In years '
+                className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="experience"
+                value={persondata && persondata.TotalExperience} />
               </div>}
               {interviewRoundType == 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                <label htmlFor="" className="form-label">Coding questions score (1-10) :</label>
-                <input type="number" placeholder='1-10 ' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id=""
+                <label htmlFor="" className="form-label">Coding questions score (1-5) :</label>
+                <input type="number" placeholder='1-5 ' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id=""
                   value={codeans} onChange={(e) => {
                     if (Number(e.target.value) <= 0) {
                       setCodeAns("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setCodeAns(10)
+                    if (Number(e.target.value) > 5) {
+                      setCodeAns(5)
                       return
                     }
                     else
@@ -289,16 +289,16 @@ const InterviewReviewModal = (props) => {
               </div>}
               {interviewRoundType != 'technical_round' &&
                 <div className="col-md-6 col-lg-4 p-3 mb-3">
-                  <label htmlFor="jobStability" className="form-label">Job Stability with Previous Employer (1-10) :</label>
-                  <input type="number" placeholder='1-10 ' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="jobStability"
+                  <label htmlFor="jobStability" className="form-label">Job Stability with Previous Employer (1-5) :</label>
+                  <input type="number" placeholder='1-5 ' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="jobStability"
                     value={jobStability} onChange={(e) => {
 
                       if (Number(e.target.value) <= 0) {
                         setJobStability("")
                         return
                       }
-                      if (Number(e.target.value) > 10) {
-                        setJobStability(10)
+                      if (Number(e.target.value) > 5) {
+                        setJobStability(5)
                         return
                       }
                       else
@@ -311,18 +311,18 @@ const InterviewReviewModal = (props) => {
                   value={reasonLeaving} onChange={(e) => setReasonLeaving(e.target.value)} />
               </div>}
               {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                <label htmlFor="appearancePersonality" className="form-label">Appearance & Personality (1-10) :</label>
+                <label htmlFor="appearancePersonality" className="form-label">Appearance & Personality (1-5) :</label>
                 <input type="number" className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="appearancePersonality"
                   value={appearancePersonality}
-                  placeholder='1-10'
+                  placeholder='1-5'
                   onChange={(e) => {
 
                     if (Number(e.target.value) <= 0) {
                       setAppearancePersonality("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setAppearancePersonality(10)
+                    if (Number(e.target.value) > 5) {
+                      setAppearancePersonality(5)
                       return
                     }
                     else
@@ -331,16 +331,16 @@ const InterviewReviewModal = (props) => {
                   }} />
               </div>}
               {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                <label htmlFor="clarityThought" className="form-label">Clarity of Thought (1-10) :</label>
+                <label htmlFor="clarityThought" className="form-label">Clarity of Thought (1-5) :</label>
                 <input type="number" className="p-2 border-1 rounded border-slate-400 w-full block outline-none"
-                  id="clarityThought" value={clarityThought} placeholder='1-10'
+                  id="clarityThought" value={clarityThought} placeholder='1-5'
                   onChange={(e) => {
                     if (Number(e.target.value) <= 0) {
                       setClarityThought("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setClarityThought(10)
+                    if (Number(e.target.value) > 5) {
+                      setClarityThought(5)
                       return
                     }
                     else
@@ -349,15 +349,15 @@ const InterviewReviewModal = (props) => {
                   }} />
               </div>}
               {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                <label htmlFor="englishSkills" className="form-label">English Language Skills (1-10) :</label>
-                <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="englishSkills" value={englishSkills}
+                <label htmlFor="englishSkills" className="form-label">English Language Skills (1-5) :</label>
+                <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="englishSkills" value={englishSkills}
                   onChange={(e) => {
                     if (Number(e.target.value) <= 0) {
                       setEnglishSkills("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setEnglishSkills(10)
+                    if (Number(e.target.value) > 5) {
+                      setEnglishSkills(5)
                       return
                     }
                     else
@@ -365,15 +365,15 @@ const InterviewReviewModal = (props) => {
                   }} />
               </div>}
               <div className="col-md-6 col-lg-4 p-3 mb-3">
-                <label htmlFor="technicalAwareness" className="form-label">Awareness on Technical Dynamics (1-10) :</label>
-                <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="technicalAwareness" value={technicalAwareness}
+                <label htmlFor="technicalAwareness" className="form-label">Awareness on Technical Dynamics (1-5) :</label>
+                <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="technicalAwareness" value={technicalAwareness}
                   onChange={(e) => {
                     if (Number(e.target.value) <= 0) {
                       setTechnicalAwareness("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setTechnicalAwareness(10)
+                    if (Number(e.target.value) > 5) {
+                      setTechnicalAwareness(5)
                       return
                     }
                     else
@@ -381,15 +381,15 @@ const InterviewReviewModal = (props) => {
                   }} />
               </div>
               {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                <label htmlFor="interpersonalSkills" className="form-label">Interpersonal Skills / Attitude (1-10) :</label>
-                <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="interpersonalSkills"
+                <label htmlFor="interpersonalSkills" className="form-label">Interpersonal Skills / Attitude (1-5) :</label>
+                <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="interpersonalSkills"
                   value={interpersonalSkills} onChange={(e) => {
                     if (Number(e.target.value) <= 0) {
                       setInterpersonalSkills("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setInterpersonalSkills(10)
+                    if (Number(e.target.value) > 5) {
+                      setInterpersonalSkills(5)
                       return
                     }
                     else
@@ -398,15 +398,15 @@ const InterviewReviewModal = (props) => {
                   } />
               </div>}
               <div className="col-md-6 col-lg-4 p-3 mb-3">
-                <label htmlFor="confidenceLevel" className="form-label">Confidence Level (1-10) :</label>
-                <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="confidenceLevel"
+                <label htmlFor="confidenceLevel" className="form-label">Confidence Level (1-5) :</label>
+                <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="confidenceLevel"
                   value={confidenceLevel} onChange={(e) => {
                     if (Number(e.target.value) <= 0) {
                       setConfidenceLevel("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setConfidenceLevel(10)
+                    if (Number(e.target.value) > 5) {
+                      setConfidenceLevel(5)
                       return
                     }
                     else
@@ -423,15 +423,15 @@ const InterviewReviewModal = (props) => {
               </div>}
 
               {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
-                <label htmlFor="logicalReasoning" className="form-label">Analytical & Logical Reasoning Skills (1-10) :</label>
-                <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="logicalReasoning" value={logicalReasoning}
+                <label htmlFor="logicalReasoning" className="form-label">Analytical & Logical Reasoning Skills (1-5) :</label>
+                <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="logicalReasoning" value={logicalReasoning}
                   onChange={(e) => {
                     if (Number(e.target.value) <= 0) {
                       setLogicalReasoning("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setLogicalReasoning(10)
+                    if (Number(e.target.value) > 5) {
+                      setLogicalReasoning(5)
                       return
                     }
                     else
@@ -449,15 +449,15 @@ const InterviewReviewModal = (props) => {
                   placeholder='type here..' id="achievementOrientation" value={achievementOrientation} onChange={(e) => setAchievementOrientation(e.target.value)} />
               </div>}
               <div className="col-md-6 col-lg-4 p-3 mb-3">
-                <label htmlFor="driveProblemSolving" className="form-label">Drive / Problem Solving Abilities (1-10) :</label>
-                <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="driveProblemSolving" value={driveProblemSolving}
+                <label htmlFor="driveProblemSolving" className="form-label">Drive / Problem Solving Abilities (1-5) :</label>
+                <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="driveProblemSolving" value={driveProblemSolving}
                   onChange={(e) => {
                     if (Number(e.target.value) <= 0) {
                       setDriveProblemSolving("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setDriveProblemSolving(10)
+                    if (Number(e.target.value) > 5) {
+                      setDriveProblemSolving(5)
                       return
                     }
                     else
@@ -465,15 +465,15 @@ const InterviewReviewModal = (props) => {
                   }} />
               </div>
               <div className="col-md-6 col-lg-4 p-3 mb-3">
-                <label htmlFor="takeUpChallenges" className="form-label">Ability to Take Up Challenges (1-10) :</label>
-                <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="takeUpChallenges" value={takeUpChallenges}
+                <label htmlFor="takeUpChallenges" className="form-label">Ability to Take Up Challenges (1-5) :</label>
+                <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="takeUpChallenges" value={takeUpChallenges}
                   onChange={(e) => {
                     if (Number(e.target.value) <= 0) {
                       setTakeUpChallenges("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setTakeUpChallenges(10)
+                    if (Number(e.target.value) > 5) {
+                      setTakeUpChallenges(5)
                       return
                     }
                     else
@@ -481,29 +481,29 @@ const InterviewReviewModal = (props) => {
                   }} />
               </div>
               <div className="col-md-6 col-lg-4 p-3 mb-3">
-                <label htmlFor="leadershipAbilities" className="form-label">Leadership Abilities (1-10) :</label>
-                <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="leadershipAbilities" value={leadershipAbilities}
+                <label htmlFor="leadershipAbilities" className="form-label">Leadership Abilities (1-5) :</label>
+                <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="leadershipAbilities" value={leadershipAbilities}
                   onChange={(e) => {
                     if (Number(e.target.value) <= 0) {
                       setLeadershipAbilities("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setLeadershipAbilities(10)
+                    if (Number(e.target.value) > 5) {
+                      setLeadershipAbilities(5)
                       return
                     }
                     else
                       setLeadershipAbilities(e.target.value)
                   }} />
               </div>
-              {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
+              {/* {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
                 <label htmlFor="companyInterest" className="form-label">Interest With The Company:</label>
                 <select className="form-select" id="companyInterest" value={companyInterest} onChange={(e) => setCompanyInterest(e.target.value)}>
                   <option value="">Select</option>
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
                 </select>
-              </div>}
+              </div>} */}
 
               {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
                 <label htmlFor="researchCompany" className="form-label">Researched About The Company:</label>
@@ -515,15 +515,15 @@ const InterviewReviewModal = (props) => {
               </div>}
 
               {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3 ">
-                <label htmlFor="targetPressure" className="form-label">Ability to Handle Targets / Pressure (1-10) :</label>
-                <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="targetPressure" value={targetPressure}
+                <label htmlFor="targetPressure" className="form-label">Ability to Handle Targets / Pressure (1-5) :</label>
+                <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="targetPressure" value={targetPressure}
                   onChange={(e) => {
                     if (Number(e.target.value) <= 0) {
                       setTargetPressure("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setTargetPressure(10)
+                    if (Number(e.target.value) > 5) {
+                      setTargetPressure(5)
                       return
                     }
                     else
@@ -531,15 +531,15 @@ const InterviewReviewModal = (props) => {
                   }} />
               </div>}
               {interviewRoundType != 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3 ">
-                <label htmlFor="customerService" className="form-label">Customer Service (1-10) :</label>
-                <input type="number" placeholder='1-10' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="customerService" value={customerService}
+                <label htmlFor="customerService" className="form-label">Customer Service (1-5) :</label>
+                <input type="number" placeholder='1-5' className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="customerService" value={customerService}
                   onChange={(e) => {
                     if (Number(e.target.value) <= 0) {
                       setCustomerService("")
                       return
                     }
-                    if (Number(e.target.value) > 10) {
-                      setCustomerService(10)
+                    if (Number(e.target.value) > 5) {
+                      setCustomerService(5)
                       return
                     }
                     else
@@ -739,7 +739,7 @@ const InterviewReviewModal = (props) => {
                   <label htmlFor="ageGroup" className="form-label">Interview Status : <span className='text-red-500 '>*</span></label>
                   <select className="form-select" id="ageGroup" value={Interviewstatus} onChange={(e) => setInterviewStatus(e.target.value)}>
                     <option value="">Select</option>
-                    <option value="consider_to_client">Consider to Client requirments</option>
+                    <option value="consider_to_client">Consider to Client for Merida</option>
                     <option value="Internal_Hiring">Shortlisted to Next Round </option>
                     <option value="Reject">Reject</option>
                     <option value="On_Hold">On Hold</option>
