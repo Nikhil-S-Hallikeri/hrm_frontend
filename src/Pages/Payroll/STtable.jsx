@@ -1,11 +1,25 @@
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { port } from '../../App'
 
 const STtable = () => {
     let navigate = useNavigate()
+    let [templates, setTemplates] = useState()
+    let getTemplate = () => {
+        axios.get(`${port}/root/pms/SalaryTemplates`).then((response) => {
+            setTemplates(response.data)
+            console.log(response.data);
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+    useEffect(() => {
+        getTemplate()
+    }, [])
     return (
         <div>
-            <button onClick={()=>navigate('/dash/salary-templates/template')} className='btngrd text-white p-2 rounded text-sm ms-auto flex my-3 '>
+            <button onClick={() => navigate('/dash/salary-templates/template')} className='btngrd text-white p-2 rounded text-sm ms-auto flex my-3 '>
                 Create New
             </button>
             <main className='table-responsive tablebg rounded ' >
@@ -15,14 +29,18 @@ const STtable = () => {
                             Template name
                         </th>
                         <th>Description </th>
-                        <th>Status </th>
+                        {/* <th>Status </th> */}
                     </tr>
-                    <tr>
-                        <td className='text-blue-600' >Template 1 </td>
-                        <td>salary template with the Basic salary and Other salary </td>
-                        <td className={` text-green-600 `}> Active </td>
-                    </tr>
-
+                    {
+                        templates && templates.map((obj) => (
+                            <tr>
+                                <td onClick={() => navigate(`/dash/salary-templates/template/${obj.id}`)}
+                                    className='text-blue-600 cursor-pointer' > {obj.template_name} </td>
+                                <td> {obj.description} </td>
+                                {/* <td className={` text-green-600 `}> Active </td> */}
+                            </tr>
+                        ))
+                    }
                 </table>
             </main>
 

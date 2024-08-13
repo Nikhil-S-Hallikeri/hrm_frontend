@@ -1,14 +1,14 @@
 import React from 'react'
 import InfoButton from './InfoButton';
 
-const InputFieldform = ({ size, name, optionObj,required, link, disabled, placeholder, label, options, value, index, info, handleChange, type, limit }) => {
+const InputFieldform = ({ size, name, accept, optionObj, required, link, disabled, placeholder, label, options, value, index, info, handleChange, type, limit }) => {
 
 
     return (
         <div className={`${size ? size : "col-md-6 col-lg-4"} mb-3`}>
             <label htmlFor="lastName" className="form-label flex  ">
                 {label}
-                {required && <span className='text-red-600'> * </span> }
+                {required && <span className='text-red-600'> * </span>}
                 {link && type == 'file' && typeof link == 'string' && <a href={link} target='_blank' >uploaded file </a>}
                 {info && <InfoButton content={info} size={11} />}
             </label>
@@ -16,7 +16,7 @@ const InputFieldform = ({ size, name, optionObj,required, link, disabled, placeh
 
 
             {type != 'textarea' && !options && !optionObj &&
-                <input placeholder={placeholder} type={type} disabled={disabled ? disabled : false} className="p-2 block rounded bgclr w-full outline-none shadow-none" value={value}
+                <input placeholder={placeholder} accept={accept} type={type} disabled={disabled ? disabled : false} className="p-2 block rounded bgclr w-full outline-none shadow-none" value={value}
                     onChange={(e) => {
                         if (limit) {
                             if (e.target.value >= 0 && e.target.value <= limit) {

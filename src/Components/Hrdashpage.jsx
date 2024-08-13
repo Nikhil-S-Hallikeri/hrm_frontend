@@ -614,7 +614,7 @@ const Hrdashpage = () => {
 
                                                         {status != 'Reject' && <th scope="col"><span className='fw-medium'>Fresher/Experience </span></th>}
 
-                                                        {(status == 'Internal_Hiring' ||status == 'consider_to_client') && <th scope="col"><span className='fw-medium'>BGV Document Upload</span></th>}
+                                                        {(status == 'Internal_Hiring' || status == 'consider_to_client') && <th scope="col"><span className='fw-medium'>BGV Document Upload</span></th>}
                                                         {status != 'ShartlistCanditates' && status != 'Reject' && status != 'All Applicants' &&
                                                             <th scope="col"><span className='fw-medium'>Offer Letter</span></th>}
                                                         <th scope="col"><span className='fw-medium'>Action</span></th>
@@ -637,9 +637,10 @@ const Hrdashpage = () => {
                                                                 <td >{e.Email}</td>
                                                                 {status != 'offered' && <td >{e.PrimaryContact}</td>}
                                                                 {status != 'offered' && <td >{e.AppliedDesignation}</td>}
-                                                                {status != 'offered' && <td >{e.Final_Results}</td>}
-                                                                {status == 'offered' && <td className={`  `} > {e.Accept_status == 'Accept' ? 'Accepted' :
-                                                                    e.Accept_status == 'Reject' ? 'Rejected' : ''} </td>}
+                                                                {status != 'offered' && <td >{e.Final_Results == 'Reject' ? 'Rejected' : e.Final_Results}</td>}
+                                                                {status == 'offered' && <td className={`  `} >
+                                                                    {e.Accept_status == 'Accept' ? 'Accepted' :
+                                                                        e.Accept_status == 'Reject' ? 'Rejected' : ''} </td>}
                                                                 {status == 'offered' && <td> {e.remarks} </td>}
 
 
@@ -650,7 +651,7 @@ const Hrdashpage = () => {
 
                                                                 {status == 'offered' && <td> {e.Date_of_Joining} </td>}
                                                                 {status != 'Reject' && <td> {e.current_position} </td>}
-                                                                {(status == 'Internal_Hiring' ||status == 'consider_to_client') &&
+                                                                {(status == 'Internal_Hiring' || status == 'consider_to_client') &&
                                                                     <td className={` ${e.Final_Results === 'Internal Hiring' ? 'd-none' : 'd-flex'}`}>
                                                                         {e.Experience ? e.Documents_Upload_Status === "Uploaded" ?
                                                                             (<button className='btn btn-success btn-sm' data-bs-dismiss="modal"
@@ -674,7 +675,8 @@ const Hrdashpage = () => {
                                                                                 }}
                                                                             >Offer Letter
                                                                             </button> : <p> BGV has to complete </p>}
-                                                                    </td>}
+                                                                    </td>
+                                                                }
                                                                 <td>
                                                                     <button onClick={() => setFinalResultObj(e)} className='p-2 rounded bg-blue-600 text-sm text-white '>
                                                                         view

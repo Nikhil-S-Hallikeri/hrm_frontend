@@ -14,7 +14,13 @@ const PostTaxDeduction = () => {
         name_in_payslip: '',
         type: 'Post_Tax_Deduction',
         deduction_frequency: '',
-        post_tax_d_status: false
+        post_tax_d_status: false,
+        fixed_amount: '',
+        percentage_of_ctc: '',
+        caluculate_type: '',
+        fixed_amount: '',
+        percentage_of_ctc: '',
+        caluculate_type: '',
     })
     let handleChange = (e) => {
         let { name, value } = e.target
@@ -73,6 +79,23 @@ const PostTaxDeduction = () => {
             <main className='formbg row p-4 ' >
                 <InputFieldform required={true} value={formObj.name_in_payslip} handleChange={handleChange}
                     type='text' name='name_in_payslip' label='Name in Payslip' />
+                <div className=" col-md-4 col-sm-6 ">
+                    <label className='mb-1 my-1'>Calculation Type </label>
+                    <select onChange={handleChange} value={formObj.caluculate_type}
+                        className='w-full bgclr p-2 rounded outline-none '
+                        name="caluculate_type" id="">
+                        <option value="">Select</option>
+                        <option value="Flat_Amount">Flat amount </option>
+                        <option value="Percentage_oF_CTC">Percentage of component <span className='text-sm ' >(Variable amount paid during any payroll.) </span>  </option>
+
+                    </select>
+                </div>
+                {formObj.caluculate_type == 'Flat_Amount' &&
+                    <InputFieldform placeholder={0} value={formObj.fixed_amount} handleChange={handleChange} name='fixed_amount' label='Enter Amount' limit={99999999} />}
+                {formObj.caluculate_type == 'Percentage_oF_CTC' &&
+                    < InputFieldform value={formObj.percentage_of_ctc} handleChange={handleChange} name='percentage_of_ctc'
+                        info='Give a  percentage_of_ctc it will be consider as a  percentage_of_ctc of CTC only.'
+                        placeholder={0} label='Enter Percentage' limit={100} />}
                 <section>
                     <p className='fw-semibold'> Select the deduction frequency </p>
                     <div className='flex gap-2 items-center' >

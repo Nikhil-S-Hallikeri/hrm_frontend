@@ -107,6 +107,8 @@ const JFIdentityForm = ({ id, page, data }) => {
                     handleChange={handleChange} type='text' />
                 <InputFieldform disabled={page} label='Passport Valid upto date' value={formObj.validate} name='validate'
                     handleChange={handleChange} type='date' />
+                    <InputFieldform disabled={page} label='Passport Proof' name='passport_proof' link={formObj.passport_proof}
+                    handleChange={handleChange} type='file' />
             </main>
             {!page && <section className='flex justify-between my-2'>
                 <button onClick={() => { saveData(); navigate(`/Employeeallform/${id}/personal_info`) }} className='p-2 bg-slate-400 text-white rounded'>

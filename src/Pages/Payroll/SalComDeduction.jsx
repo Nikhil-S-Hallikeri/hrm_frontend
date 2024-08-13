@@ -21,6 +21,8 @@ const SalComDeduction = () => {
                     <tr className='sticky top-0  ' >
                         <th>Name</th>
                         <th>Deduction type  </th>
+                        <th>Calculation type</th>
+
                         <th>Deduction Frequency</th>
                         <th>Status  </th>
                     </tr>
@@ -37,6 +39,9 @@ const SalComDeduction = () => {
                             {console.log(obj)}
                             <td onClick={() => navigate(`/dash/salaryComponent/pre-tax-deduction/${obj.id}`)} className='text-blue-600 cursor-pointer '> {obj.name_in_payslip}  </td>
                             <td>{obj.deduction_associate_with ? obj.deduction_associate_with : obj.deducting_plan}  </td>
+                            <td>
+                                {obj.caluculate_type == "Flat_Amount" ? 'Flat amount' :
+                                    `${obj.percentage_of_ctc}% of CTC`} </td>
                             <td>{obj.deduction_frequency && 'Recurring'} </td>
                             <td> <span className={` ${obj.pre_tax_d_status ? 'text-green-600' : 'text-slate-600'} `} > {obj.pre_tax_d_status ? 'Active' : 'Inactive'} </span> </td>
                         </tr>
@@ -55,6 +60,9 @@ const SalComDeduction = () => {
                             {console.log(obj)}
                             <td onClick={() => navigate(`/dash/salaryComponent/post-tax-deduction/${obj.id}`)} className='text-blue-600 cursor-pointer '> {obj.name_in_payslip}  </td>
                             <td>{obj.deduction_associate_with ? obj.deduction_associate_with : obj.deducting_plan}  </td>
+                            <td>
+                                {obj.caluculate_type == "Flat_Amount" ? 'Flat amount' :
+                                    `${obj.percentage_of_ctc}% of CTC`} </td>
                             <td>{obj.deduction_frequency == 'recurring' ? 'Recurring' :
                                 obj.deduction_frequency == 'OneTime' ? 'One time' : ''} </td>
                             <td> <span className={` ${obj.post_tax_d_status ? 'text-green-600' : 'text-slate-600'} `} > {obj.post_tax_d_status ? 'Active' : 'Inactive'} </span> </td>

@@ -567,7 +567,9 @@ const Reporting_team = () => {
 
                             <button className='btn btn-sm btn-success ms-2' data-bs-toggle="modal" data-bs-target="#exampleModal26">View</button>
                             <button disabled={selectedCandidates.length == 0} className='btn btn-sm btn-warning ms-3' data-bs-toggle="modal" data-bs-target="#exampleModal23">Add Activity</button>
-                            <button disabled={selectedCandidates.length == 0} className='btn btn-sm btn-warning ms-4' data-bs-toggle="modal" data-bs-target="#exampleModal25">Add Interview</button>
+                            <button 
+                            disabled={selectedCandidates.length == 0} 
+                            className='btn btn-sm btn-warning ms-4' data-bs-toggle="modal" data-bs-target="#exampleModal25">Add Interview</button>
                         </div>
                         {/* Add Activity */}
                         <div class="modal fade" id="exampleModal23" tabindex="-1" aria-labelledby="exampleModalLabel23" aria-hidden="true">
@@ -703,21 +705,22 @@ const Reporting_team = () => {
                                             <div key={index}>
                                                 <div className="row">
                                                     <div className="col-md-6 col-lg-6 mb-3">
-                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>{index + 1} Postion Name *</label>
+                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>{index + 1} Postion Name</label>
                                                         <input type="text" name="position" value={qualification.position} onChange={(e) => handleInputChange1(index, e)} className="form-control  shadow-none" />
                                                     </div>
                                                     <div className="col-md-6 col-lg-6 mb-3">
-                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Interview Scheduling Targets *</label>
+                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Number of Openings</label>
+                                                        <input type="number" name="Offers_target" value={qualification.Offers_target} onChange={(e) => handleInputChange1(index, e)} className="form-control  shadow-none" />
+                                                    </div>
+                                                    <div className="col-md-6 col-lg-6 mb-3">
+                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Interview Scheduling Targets</label>
                                                         <input type="number" name="targets" value={qualification.targets} onChange={(e) => handleInputChange1(index, e)} className="form-control  shadow-none" />
                                                     </div>
                                                     <div className="col-md-6 col-lg-6 mb-3">
-                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}> Walkins Targets *</label>
+                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}> Walkins Targets </label>
                                                         <input type="number" name="Walkins_target" value={qualification.Walkins_target} onChange={(e) => handleInputChange1(index, e)} className="form-control  shadow-none" />
                                                     </div>
-                                                    <div className="col-md-6 col-lg-6 mb-3">
-                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Offer Targets *</label>
-                                                        <input type="number" name="Offers_target" value={qualification.Offers_target} onChange={(e) => handleInputChange1(index, e)} className="form-control  shadow-none" />
-                                                    </div>
+
 
                                                 </div>
 

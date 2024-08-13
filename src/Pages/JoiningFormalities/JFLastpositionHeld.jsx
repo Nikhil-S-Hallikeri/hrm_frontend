@@ -96,7 +96,7 @@ const JFLastpositionHeld = ({ id, page, data }) => {
                     name='organisation' placeholder='YWQ Pvt LTD' type='text' />
                 <InputFieldform disabled={page} label="Designation" value={formObj.designation} handleChange={handleChange}
                     name='designation' placeholder='' type='text' />
-                <InputFieldform disabled={page} label="Date of Joining" value={formObj.doj} handleChange={handleChange}
+                <InputFieldform disabled={page} label="Date of Join" value={formObj.doj} handleChange={handleChange}
                     name='doj' type='date' />
 
                 <InputFieldform disabled={page} placeholder='Hari' label="Reporting Person Name" value={formObj.repoting_to_name} handleChange={handleChange}
@@ -107,7 +107,7 @@ const JFLastpositionHeld = ({ id, page, data }) => {
                     name='repoting_to_email' type='text' />
                 <InputFieldform disabled={page} placeholder='' label="Reporting Person Phone" value={formObj.repoting_to_phone} handleChange={handleChange}
                     name='repoting_to_phone' type='text' />
-                <InputFieldform disabled={page} placeholder='' label="Annual CTC" value={formObj.gross_salary_per_month} handleChange={handleChange}
+                <InputFieldform disabled={page} limit={999999999} placeholder='' label="Annual CTC" value={formObj.gross_salary_per_month} handleChange={handleChange}
                     name='gross_salary_per_month' type='text' />
                 <InputFieldform disabled={page} placeholder='' label="Address" value={formObj.address} handleChange={handleChange}
                     name='address' type='textarea' />

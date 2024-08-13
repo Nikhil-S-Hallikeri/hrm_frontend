@@ -34,6 +34,9 @@ const Empsidebar = () => {
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Employee_interview_applicants`}
                             label='Applicants' active='Applicants'
                             img='/assets/Images/Paper.png' />
+                        <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/dash/payslip/${logindata.EmployeeId}`}
+                            label='Payslip' active='payroll'
+                            img='/assets/Images/payroll.png' />
                         {/* <NavbarButton openNavbar={openNavbar} setopen={setNavbar}
                             path={`/Report_Manager_Reporting_team`}
                             label=' Reporting Team' active='team'

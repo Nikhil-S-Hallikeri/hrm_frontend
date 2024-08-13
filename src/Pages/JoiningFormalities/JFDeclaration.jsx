@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { port } from '../../App'
 import { HrmStore } from '../../Context/HrmContext'
+import { toast } from 'react-toastify'
 
 const JFDeclaration = ({ id, page, data }) => {
     let navigate = useNavigate()
@@ -28,18 +29,22 @@ const JFDeclaration = ({ id, page, data }) => {
         }))
     }
     let saveData = () => {
+        // alert('method')
         if (formObj.id) {
+            // formObj('hellow')
             UpdateData()
         }
         else {
+            // alert('save')
             const formData = new FormData()
-            formData.append('signature', formObj.signature)
+            // formData.append('signature', formObj.signature)
             formData.append('date', timeValidate())
             formData.append('name', formObj.name)
             formData.append('place', formObj.place)
 
             axios.post(`${port}/root/ems/declaration/${data.id}/`, formData).then((response) => {
                 console.log(response.data);
+                // toast.success('jerold')
                 getData()
             }).catch((error) => {
                 console.log(error);
@@ -48,7 +53,7 @@ const JFDeclaration = ({ id, page, data }) => {
     }
     let UpdateData = () => {
         const formData = new FormData()
-        formData.append('signature', formObj.signature)
+        // formData.append('signature', formObj.signature)
         formData.append('date', timeValidate())
         formData.append('name', formObj.name)
         formData.append('place', formObj.place)
@@ -60,7 +65,7 @@ const JFDeclaration = ({ id, page, data }) => {
         })
     }
     let getData = () => {
-        if (data) {
+        if (data.id) {
             axios.get(`${port}/root/ems/declaration/${data.id}/`).then((response) => {
                 console.log("get", response.data);
                 setFormObj(response.data)
@@ -103,7 +108,7 @@ const JFDeclaration = ({ id, page, data }) => {
                         <input disabled={page} type="file" id='signature' name='signature' onChange={handleChange} accept="image/*"
                             placeholder='write a name' className='text-center 
                          outline-none hidden w-52 bg-transparent mx-2 border-bottom px-1 border-slate-500 ' /> */}
-
+                        <p className='text-center mb-0 '>{formObj.name} </p>
                         <p className='p-2 text-xl fw-semibold '>Employee Signature </p>
                     </div>
 
@@ -113,11 +118,17 @@ const JFDeclaration = ({ id, page, data }) => {
             </main>
 
             {!page && <section className='flex justify-between my-2'>
-                <button onClick={() => { saveData(); navigate(`/Employeeallform/${id}/document`) }} className='p-2 bg-slate-400 text-white rounded'>
+                <button onClick={() => {
+                    saveData();
+                    navigate(`/Employeeallform/${id}/document`)
+                }} className='p-2 bg-slate-400 text-white rounded'>
                     Previous
                 </button>
                 <button
-                    onClick={() => navigate(`/preview/${id}/`)}
+                    onClick={() => {
+                        saveData();
+                        navigate(`/preview/${id}/`)
+                    }}
                     className='p-2 bg-red-600 text-white rounded'>
                     Preview
                 </button>

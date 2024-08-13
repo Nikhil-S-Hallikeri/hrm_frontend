@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 const JFReference = ({ id, data, page }) => {
     let navigate = useNavigate()
     const [references, setReferences] = useState([
-        { person_name: '', relation: '', address: '', phone: '', city: '', country: '', email: '', state: '', pincode: null }
+        { person_name: '', relation: '',  phone: '', email: '', }
     ]);
     let handleChange = (e, index) => {
         let { name, value } = e.target
@@ -20,7 +20,7 @@ const JFReference = ({ id, data, page }) => {
     let addColumn = () => {
         setReferences((prev) => [
             ...prev,
-            { person_name: '', relation: '', address: '', phone: '', city: '', country: '', email: '', state: '', pincode: null }
+            { person_name: '', relation: '',  phone: '', email: '', }
         ])
     }
     let saveData = () => {
@@ -82,7 +82,7 @@ const JFReference = ({ id, data, page }) => {
                         <InputFieldform disabled={page} label="Email Id" type='email' placeholder='Email' value={obj.email}
                             handleChange={handleChange} index={index} name='email' />
                         <InputFieldform disabled={page} label="Designation" placeholder='Relation' type='text' value={obj.relation}
-                            handleChange={handleChange} index={index} name='Designation' />
+                            handleChange={handleChange} index={index} name='relation' />
                         {/* <InputFieldform disabled={page} label="Address Line 1" type='text' placeholder='23/4 Sri Venkateswara,' value={obj.address}
                             handleChange={handleChange} index={index} name='address' /> */}
                         {/* <InputFieldform disabled={page} label="City" placeholder='City' type='text' value={obj.city}

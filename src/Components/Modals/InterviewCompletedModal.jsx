@@ -7,7 +7,7 @@ import FinalStatus from './FinalStatus'
 import SchedulINterviewModalForm from '../ApplyList/SchedulINterviewModalForm'
 
 const InterviewCompletedModal = (props) => {
-    let { show, setshow, id, getfunction } = props
+    let { show, setshow, id, getfunction, setinterviewReviewModal, rountstatus } = props
     let empStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
     let userPermission = JSON.parse(sessionStorage.getItem('user')).user_permissions
     let [finalStatus, setFinalStatus] = useState(false)
@@ -29,7 +29,7 @@ const InterviewCompletedModal = (props) => {
 
             {show && <Modal show={show} className=' ' centered size='xl' onHide={() => setshow(false)} >
                 <Modal.Header className='bg-yellow-50 bg-opacity-50 ' closeButton>
-                    <h4 className='text-violet-700 ' >Interview Completed Details</h4>
+                    <h4 className='text-violet-700 ' >Interviews so far Details</h4>
                 </Modal.Header>
                 <Modal.Body className='bg-yellow-50 bg-opacity-50 '>
                     {data && data.candidate_data && <main className=''>
@@ -519,10 +519,19 @@ const InterviewCompletedModal = (props) => {
 
                 </Modal.Body>
                 <Modal.Footer>
-                    {(empStatus == 'Admin' || empStatus == 'HR' || userPermission.final_status_access) &&
+                    {(empStatus == 'Admin' || empStatus == 'HR' || userPermission.final_status_access) && rountstatus != 'Assigned' &&
                         <button onClick={() => { setFinalStatus(show); setshow(false) }} className='bg-blue-600 text-white rounded p-2'>
                             Final Status
                         </button>}
+                    {
+                        rountstatus == 'Assigned' &&
+                        <button onClick={() => {
+                            setinterviewReviewModal(true);
+                            setshow(false)
+                        }} className='bg-blue-600 text-white rounded p-2' >
+                            Proceed
+                        </button>
+                    }
                     {/* {(empStatus == 'Admin' || empStatus == 'HR' || userPermission.interview_shedule_access) &&
                         <button onClick={() => { setFinalStatus(show); setshow(false) }} className='bg-slate-600 text-white rounded p-2'>
                             Assign Interview

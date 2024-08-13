@@ -27,12 +27,21 @@ const JFAttachments = ({ id, page, data }) => {
         }
         else {
             const formData = new FormData()
-            formData.append('Degree_mark_sheets', formObj.Degree_mark_sheets)
-            formData.append('Offer_letter_copy', formObj.Offer_letter_copy)
-            formData.append('permanent_address_proof', formObj.permanent_address_proof)
-            formData.append('present_address_proof', formObj.present_address_proof)
-            formData.append('upload_photo', formObj.upload_photo)
-
+            if (formObj.Degree_mark_sheets) {
+                formData.append('Degree_mark_sheets', formObj.Degree_mark_sheets)
+            }
+            if (formObj.Offer_letter_copy) {
+                formData.append('Offer_letter_copy', formObj.Offer_letter_copy)
+            }
+            if (formObj.permanent_address_proof) {
+                formData.append('permanent_address_proof', formObj.permanent_address_proof)
+            }
+            if (formObj.present_address_proof) {
+                formData.append('present_address_proof', formObj.present_address_proof)
+            }
+            if (formObj.upload_photo) {
+                formData.append('upload_photo', formObj.upload_photo)
+            }
             axios.post(`${port}/root/ems/attachments/${data.id}/`, formData).then((response) => {
                 console.log(response.data);
                 getData()
@@ -43,11 +52,21 @@ const JFAttachments = ({ id, page, data }) => {
     }
     let UpdateData = () => {
         const formData = new FormData()
-        formData.append('Degree_mark_sheets', formObj.Degree_mark_sheets)
-        formData.append('Offer_letter_copy', formObj.Offer_letter_copy)
-        formData.append('permanent_address_proof', formObj.permanent_address_proof)
-        formData.append('present_address_proof', formObj.present_address_proof)
-        formData.append('upload_photo', formObj.upload_photo)
+        if (formObj.Degree_mark_sheets) {
+            formData.append('Degree_mark_sheets', formObj.Degree_mark_sheets)
+        }
+        if (formObj.Offer_letter_copy) {
+            formData.append('Offer_letter_copy', formObj.Offer_letter_copy)
+        }
+        if (formObj.permanent_address_proof) {
+            formData.append('permanent_address_proof', formObj.permanent_address_proof)
+        }
+        if (formObj.present_address_proof) {
+            formData.append('present_address_proof', formObj.present_address_proof)
+        }
+        if (formObj.upload_photo) {
+            formData.append('upload_photo', formObj.upload_photo)
+        }
         axios.patch(`${port}/root/ems/update-attachments/${formObj.id}/`, formData).then((response) => {
             console.log(response.data);
             getData()
@@ -92,19 +111,19 @@ const JFAttachments = ({ id, page, data }) => {
                         handleChange={handleChange} type='file' />
                     <InputFieldform disabled={page} label='Present address proof ' link={formObj.present_address_proof} name='present_address_proof'
                         handleChange={handleChange} type='file' />
-                    <InputFieldform disabled={page} label='Passport size photograph' link={formObj.upload_photo} name='upload_photo'
+                    <InputFieldform disabled={page} accept='image/*' label='Passport size photograph' link={formObj.upload_photo} name='upload_photo'
                         handleChange={handleChange} type='file' />
 
                 </section>
 
 
             </main>
-           
+
             {!page && <section className='flex justify-between my-2'>
-                <button onClick={() => {saveData(); navigate(`/Employeeallform/${id}/additional_info`)}} className='p-2 bg-slate-400 text-white rounded'>
+                <button onClick={() => { saveData(); navigate(`/Employeeallform/${id}/additional_info`) }} className='p-2 bg-slate-400 text-white rounded'>
                     Previous
                 </button>
-                <button onClick={() =>{saveData(); navigate(`/Employeeallform/${id}/document`)}} className='p-2 bg-slate-400 text-white rounded'>
+                <button onClick={() => { saveData(); navigate(`/Employeeallform/${id}/document`) }} className='p-2 bg-slate-400 text-white rounded'>
                     Next
                 </button>
             </section>}

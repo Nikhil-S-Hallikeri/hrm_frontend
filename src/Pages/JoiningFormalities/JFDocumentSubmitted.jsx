@@ -85,8 +85,8 @@ const JFDocumentSubmitted = ({ id, page, data }) => {
                             <tr>
                                 <th>No</th>
                                 <th>Documents</th>
-                                <th>Submitted</th>
-                                <th>Will Submit On</th>
+                                {/* <th>Submitted</th> */}
+                                <th> Submit Date</th>
                                 {formobj.length > 5 && <th>Action  </th>}
 
                             </tr>
@@ -95,8 +95,10 @@ const JFDocumentSubmitted = ({ id, page, data }) => {
                             {formobj && formobj.map((document, index) => (
                                 <tr key={index}>
                                     <td>{index + 1}</td>
-                                    <td><input disabled={page} type="text" placeholder='Document' name="Document" value={document.Document} onChange={(e) => handleChange(e, index)} className="p-2 bg-transparent outline-none border-0 shadow-none" /></td>
-                                    <td>
+                                    <td><input disabled={page} type="text" placeholder='Document' name="Document" value={document.Document}
+                                        onChange={(e) => handleChange(e, index)} className="p-2 bg-transparent outline-none border-0 shadow-none" />
+                                    </td>
+                                    {/* <td>
                                         <select disabled={page} className='p-2 block rounded bg-transparent w-full outline-none shadow-none'
                                             name="submitted" value={document.submitted} onChange={(e) => handleChange(e, index)}
                                             id="">
@@ -106,10 +108,8 @@ const JFDocumentSubmitted = ({ id, page, data }) => {
 
                                         </select>
 
-                                        {/* <input type="text" placeholder='yes/no' name="submitted"
-                                            value={document.submitted} onChange={(e) => handleChange(index, e)}
-                                            className="p-2 bg-transparent outline-none border-0 shadow-none" /> */}
-                                    </td>
+                                    
+                                    </td> */}
                                     <td className='w-[200px] '>
                                         {!document.submitted ?
                                             <input disabled={page} type="date" placeholder='Date' name="will_submit_date"
@@ -120,7 +120,7 @@ const JFDocumentSubmitted = ({ id, page, data }) => {
                                                 }}
                                                 className="p-2 w-[200px] bg-transparent outline-none border-0 shadow-none" />
                                             :
-                                            <p className='mb-0 w-[200px] '> --- </p>
+                                            <p className='mb-0 w-[200px] '> {document.submitted_date &&document.submitted_date.slice(0,10) } </p>
                                         }
                                     </td>
                                     {formobj.length > 5 && document.id && <td>
@@ -133,12 +133,12 @@ const JFDocumentSubmitted = ({ id, page, data }) => {
                         </tbody>
                     </table>
                 </section>
-                <button onClick={addColumn} disabled={page} className='p-2 rounded bg-blue-600 text-white my-2 flex ms-auto'>
+                {/* <button onClick={addColumn} disabled={page} className='p-2 rounded bg-blue-600 text-white my-2 flex ms-auto'>
                     Add
-                </button>
+                </button> */}
             </main>
 
-           
+
             {!page && <section className='flex justify-between my-2'>
                 <button onClick={() => {
                     saveData();

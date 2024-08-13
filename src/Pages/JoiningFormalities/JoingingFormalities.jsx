@@ -117,10 +117,6 @@ const JoingingFormalities = ({ id, getData, page, formObj, setFormObj, handleFor
                                     <label htmlFor="secondaryContact" className="form-label">Pincode</label>
                                     <input disabled={page} type="number" placeholder='627006' className="p-2 block rounded bgclr w-full outline-none shadow-none" value={formObj && formObj.permanent_pincode} onChange={(e) => handleFormObj(e)} id="State" name="permanent_pincode" />
                                 </div>
-
-
-
-
                             </div>
                         </div>
                     </div>
@@ -128,7 +124,8 @@ const JoingingFormalities = ({ id, getData, page, formObj, setFormObj, handleFor
                 {/* <button className=' ' onClick={saveData} >
                     save
                 </button> */}
-                {!page && <button onClick={() => { navigate(`/Employeeallform/${id}/ed-form`); saveData() }} className='p-2 bg-slate-400 text-white rounded my-2 flex ms-auto '>
+                {!page && <button onClick={() => { saveData(); navigate(`/Employeeallform/${id}/ed-form`); }}
+                    className='p-2 bg-slate-400 text-white rounded my-2 flex ms-auto '>
                     Next
                 </button>}
             </div>

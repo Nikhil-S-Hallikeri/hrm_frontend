@@ -18,6 +18,15 @@ const HrmContext = (props) => {
     let [religion, setReligion] = useState()
     let [preTaxDeduction, setPreTaxDeduction] = useState()
     let [postTaxDeduction, setPostDeduction] = useState()
+    let [templates, setTemplates] = useState()
+    let getTemplate = () => {
+        axios.get(`${port}/root/pms/SalaryTemplates`).then((response) => {
+            setTemplates(response.data)
+            console.log(response.data);
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
     let getPreTaxDeduction = () => {
         axios.get(`${port}/root/pms/AllowanceTemplateCreating?type=Pre_Tax_Deduction`).then((response) => {
             console.log("earn", response.data);
@@ -113,6 +122,18 @@ const HrmContext = (props) => {
         const day = dateParts[2];
 
         return `${day} ${month} ${year}`;
+    }
+    function getMonthYear(dateString) {
+        const months = [
+            "January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"
+        ];
+
+        const dateParts = dateString.split("-");
+        const year = dateParts[0];
+        const month = months[parseInt(dateParts[1], 10) - 1];
+
+        return `${month} ${year}`;
     }
 
     function formatISODate(isoString) {
@@ -293,8 +314,26 @@ Merida Tech Minds (OPC) Pvt. Ltd.`
             console.log(error);
         })
     }
+    function numberToWords(num) {
+        console.log(num);
+        const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+        if (num === 0) return 'Zero';
+
+        function convertToWords(n) {
+            if (n < 20) return ones[n];
+            if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + ones[n % 10] : '');
+            if (n < 1000) return ones[Math.floor(n / 100)] + ' Hundred' + (n % 100 !== 0 ? ' ' + convertToWords(n % 100) : '');
+            if (n < 100000) return convertToWords(Math.floor(n / 1000)) + ' Thousand' + (n % 1000 !== 0 ? ' ' + convertToWords(n % 1000) : '');
+            if (n < 10000000) return convertToWords(Math.floor(n / 100000)) + ' Lakh' + (n % 100000 !== 0 ? ' ' + convertToWords(n % 100000) : '');
+            return convertToWords(Math.floor(n / 10000000)) + ' Crore' + (n % 10000000 !== 0 ? ' ' + convertToWords(n % 10000000) : '');
+        }
+
+        return convertToWords(num);
+    }
     let valueShare = {
-        deleteSalaryComponent, getEarningData, data,
+        deleteSalaryComponent, getEarningData, data, getMonthYear, getTemplate, templates, numberToWords,
         religion, getReligion, count, formatDate, preTaxDeduction, postTaxDeduction, getPreTaxDeduction, getPostTaxDeduction,
         getPendingLeave, pendingLeave, setPendingLeave, leaveRequestsReporting, setLeaveRequestReporting, getLeaveRequestsReporting,
         changeDateYear, activeSetting, setActiveSetting, mailContent, openNavbar, setNavbar, convertToNormalTime, activePage, setActivePage,

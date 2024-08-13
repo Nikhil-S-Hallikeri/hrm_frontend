@@ -6,6 +6,7 @@ import axios from 'axios';
 import Recsidebar from './Recsidebar';
 import { HrmStore } from '../Context/HrmContext';
 import InfoButton from './SettingComponent/InfoButton';
+import Empsidebar from './Empsidebar';
 
 const generateDates = (month, year) => {
     const dates = [];
@@ -281,11 +282,15 @@ const Acti_ = () => {
     };
 
 
+    let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
 
     return (
         <div className='d-flex' style={{ width: '100%', minHeight: '100%', }}>
             <div className='d-none d-lg-flex'>
-                <Recsidebar value={"dashboard"}></Recsidebar>
+                {employeeStatus && employeeStatus == 'Employee' && <Empsidebar />}
+                {employeeStatus && employeeStatus == 'Recruiter' && <Recsidebar />}
+                {employeeStatus && employeeStatus == 'HR' && <Sidebar />}
+                {employeeStatus && employeeStatus == 'Admin' && <Sidebar />}
             </div>
             <div className='m-0 m-sm-4 flex-1 container mx-auto' style={{ borderRadius: '10px' }}>
 
@@ -330,7 +335,7 @@ const Acti_ = () => {
                                                 {dates.map(date => (
                                                     <th key={date} rowSpan={2} className='text-center pb-4'>{date}</th>
                                                 ))}
-                                            </tr>   
+                                            </tr>
                                             <tr className='sticky left-0 '>
                                                 <th scope="col" className='ms-3 break-words text-break sticky-left ' style={{ width: '150px' }}>Activity Name</th>
                                                 <th scope="col" className='text-center break-words text-break sticky-left1 ' style={{ width: '150px' }}>Target <span className='text-xs'>(Each day) </span> </th>
@@ -343,15 +348,15 @@ const Acti_ = () => {
                                                     <td className='break-words text-break sticky-left bgclr1 ' style={{ width: '150px' }} >
                                                         <input type="text" disabled
                                                             value={activity.Activity_Name}
-                                                            className="p-2 rounded border-0  shadow-none"  style={{ width: '150px' }} />
+                                                            className="p-2 rounded border-0  shadow-none" style={{ width: '150px' }} />
                                                     </td>
                                                     <td className='break-words text-break sticky-left1 bgclr1 ' style={{ width: '150px' }} >
-                                                        <input type="text" disabled  style={{ width: '150px' }}
+                                                        <input type="text" disabled style={{ width: '150px' }}
                                                             value={`${activity.targets} `}
                                                             className="p-2 rounded  border-0  shadow-none text-center" />
                                                     </td>
                                                     <td className='break-words text-break sticky-left2 bgclr1 ' style={{ width: '150px' }} >
-                                                        <p  style={{ width: '150px' }}
+                                                        <p style={{ width: '150px' }}
                                                             className={`p-2 text-black mb-0 rounded 
                                                                         ${Number(activity.Total_Achived) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 50 ? 'bg-red-300' :
                                                                     activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 70 ? 'bg-yellow-300' :
@@ -435,7 +440,7 @@ const Acti_ = () => {
                                             {Interview_Scheduledget.map((activity, mainindex) => (
                                                 <tr key={mainindex}>
                                                     <td className='break-words text-break sticky-left bgclr1 ' style={{ width: '150px' }} >
-                                                        <input type="text"  style={{ width: '150px' }}
+                                                        <input type="text" style={{ width: '150px' }}
                                                             value={activity.position}
 
                                                             className="form-control border-0 shadow-none" />
@@ -447,13 +452,13 @@ const Acti_ = () => {
                                                             className="form-control border-0 shadow-none text-center" />
                                                     </td> */}
                                                     <td className='break-words text-break sticky-left1 bgclr1 ' style={{ width: '150px' }} >
-                                                        <input type="number" disabled  style={{ width: '150px' }}
+                                                        <input type="number" disabled style={{ width: '150px' }}
                                                             value={activity.targets}
                                                             className="p-2 rounded w-32 border-0 shadow-none text-center" />
                                                     </td>
                                                     <td className='break-words text-break sticky-left2 bgclr1 ' style={{ width: '150px' }} >
 
-                                                        <p  style={{ width: '150px' }}
+                                                        <p style={{ width: '150px' }}
                                                             className={`p-2 text-black mb-0 rounded 
                                                                         ${Number(activity.Total_Achived) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 50 ? 'bg-red-300' :
                                                                     activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 70 ? 'bg-yellow-300' :
@@ -536,7 +541,7 @@ const Acti_ = () => {
                                             {Walkinsget.map((activity, mainindex) => (
                                                 <tr key={mainindex}>
                                                     <td className='break-words text-break sticky-left bgclr1 ' style={{ width: '150px' }} >
-                                                        <input type="text"  style={{ width: '150px' }}
+                                                        <input type="text" style={{ width: '150px' }}
                                                             value={activity.position}
 
                                                             className="form-control border-0 shadow-none" />

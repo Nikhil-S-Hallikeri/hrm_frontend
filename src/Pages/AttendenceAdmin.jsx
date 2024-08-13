@@ -66,7 +66,7 @@ const AttendenceAdmin = () => {
     let formdata = new FormData()
     formdata.append('file_path', e.target.files[0])
     console.log(e.target.files[0]);
-    axios.post(`${port}/root/lms/Bulk_Attendance_Data/`).then((response) => {
+    axios.post(`${port}/root/lms/Bulk_Attendance_Data/`, formdata).then((response) => {
       toast.success('Excel file value uploaded successfully')
       getAttendanceList()
     }).catch((error) => {
@@ -87,13 +87,18 @@ const AttendenceAdmin = () => {
     <div className=''>
       <Topnav name='Attendence List' />
       {trigger && <DownloadContent trigger={trigger} settrigger={settrigger}
-        data={filteredAttendanceList} name={`Attendence${filterDetails.name&& `_${filterDetails.name}`}_${filterDetails.year}_${months[filterDetails.month-1]}`} />}
+        data={filteredAttendanceList} name={`Attendence${filterDetails.name && `_${filterDetails.name}`}_${filterDetails.year}_${months[filterDetails.month - 1]}`} />}
       <section className='flex gap-3 flex-wrap'>
         <div className='shadow  flex gap-1 items-center text-slate-500 text-sm bgclr w-48 p-1 rounded-xl '>
           <div>
             <SearchIcon size={20} />
           </div>
-          <input type="text" value={filterDetails.name} name='name' onChange={handleChangeFilterDetails}
+          <input type="text" value={filterDetails.name}
+            onKeyDown={(e) => {
+              if (e.key = 'Enter')
+                filterlist()
+            }}
+            name='name' onChange={handleChangeFilterDetails}
             className='outline-none p-1 bg-transparent ' placeholder='Search by Name..' />
         </div>
         {/* <div className='shadow bgclr w-48 p-1 py-0 rounded-xl '>

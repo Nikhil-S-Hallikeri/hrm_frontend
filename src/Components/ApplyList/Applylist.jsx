@@ -2052,21 +2052,25 @@ const Applylist = () => {
                         </button>
                         </td>
                       </tr> */}
-                      {<InterviewCompletedModal getfunction={fetchdata2} show={interviewCompletedDetailsModal}
+                      {<InterviewCompletedModal setinterviewReviewModal={setinterviewFormFillingModal }
+                        rountstatus={intervewAsssignedcompleted}
+                        getfunction={fetchdata2} show={interviewCompletedDetailsModal}
                         setshow={setInterviewCompleteDetailsModal} />}
                       <tbody className=' '>
                         {filteredInterviewList != undefined && filteredInterviewList != undefined &&
                           filteredInterviewList.map((e) => (
                             <tr key={e.id}>
                               {console.log("hi", e)}
-                              <td scope="row"><input type="checkbox" value={e.Candidate} onChange={handleCheckboxChange2} /></td>
+                              <td scope="row">
+                                <input type="checkbox" value={e.Candidate} onChange={handleCheckboxChange2} /></td>
 
                               {intervewAsssignedcompleted == "Assigned"
                                 && <td
                                   onClick={() => {
                                     sentparticularData1(e.Candidate, e.id);
                                     setInterviewRoundType(e.InterviewRoundName)
-                                    setinterviewreviewModalShowing(true)
+                                    // setinterviewreviewModalShowing(true)
+                                    setInterviewCompleteDetailsModal(e.Candidate)
                                   }}
                                   style={{ cursor: 'pointer', color: 'blue' }}>
 
@@ -2318,7 +2322,10 @@ const Applylist = () => {
 
 
                                 {/* <button type="button" class="btn btn-info">Offer Letter</button> */}
-                                <button onClick={() => { setinterviewFormFillingModal(true); setinterviewreviewModalShowing(false) }}
+                                <button onClick={() => {
+                                  setinterviewFormFillingModal(true);
+                                  setinterviewreviewModalShowing(false)
+                                }}
                                   className='btn btn-success btn-sm'>
                                   Proceed
                                 </button>

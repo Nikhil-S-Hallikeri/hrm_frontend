@@ -98,12 +98,12 @@ import JFPreview from './Pages/JoiningFormalities/JFPreview'
 import ManagerReview from './Pages/Employee_Performance/ManagerReview'
 import Scanner from './Pages/Scanner/Scanner'
 import MeetingReview from './Pages/Employee_Performance/MeetingReview'
-export const port = "http://192.168.172.249:9000/"
+// export const port = "http://192.168.172.249:9000/"
 // export const port = "http://192.168.197.249:9000/"
 // export const port = "http://192.168.18.17:9000/"
-// export const port = "https://hrmbackendapi.meridahr.com/"
-// export const domain='https://hrm.meridahr.com'
-export const domain = 'http://192.168.172.237:3000'
+export const port = "https://hrmbackendapi.meridahr.com/"
+export const domain='https://hrm.meridahr.com'
+// export const domain = 'http://192.168.18.24:3001'
 
 const App = () => {
   // const port = "http://192.168.0.106:9000"
@@ -116,7 +116,7 @@ const App = () => {
 
         <Routes>
           <Route element={<Login__></Login__>} path='/'></Route>
-          <Route path='/scanner' element={<Scanner/>}/>
+          <Route path='/scanner' element={<Scanner />} />
           <Route element={<Signup></Signup>} path='/Signup'></Route>
           <Route path='/dash/*' element={<DasRouter />} />
           <Route element={<Protect Child={Hrdashpage} />} path='dashboard/HR'></Route>
@@ -146,7 +146,7 @@ const App = () => {
           <Route element={<Offeraccept></Offeraccept>} path='/offeraccept/:id'></Route>
           <Route path='/selfEvaluation/:id' element={<SelfEvaluation />} />
           <Route path='/employePerformanceEvaluation/:id' element={<ManagerReview />} />
-          <Route path='/meetingReview/:id' element={<MeetingReview/>}/>
+          <Route path='/meetingReview/:id' element={<MeetingReview />} />
 
           <Route element={<Employeeseparation></Employeeseparation>} path='/Employeeseparation'></Route>
 
@@ -186,7 +186,7 @@ const App = () => {
 
           <Route element={<Performance_metrics></Performance_metrics>} path='/Performance_metrics'></Route>
 
-          <Route element={<Sample_acti></Sample_acti>} path='/Sample_acti'></Route>
+          <Route element={<Acti_ />} path='/Sample_acti'></Route>
 
           <Route element={<Actisam></Actisam>} path='/Actisam'></Route>
 

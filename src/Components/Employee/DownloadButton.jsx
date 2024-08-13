@@ -9,7 +9,7 @@ const DownloadButton = ({ toPDF }) => {
         const pdfBlob = await fetch('page.pdf').then((res) => res.blob());
     }
     return (
-        <div>
+        <div className='my-4' >
             <button className='bg-blue-600 text-white rounded p-2  ' onClick={downloadPDF}>
                 Download
             </button>

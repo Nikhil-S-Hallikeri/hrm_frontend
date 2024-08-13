@@ -12,11 +12,12 @@ const SalComCreateComponent = () => {
     let navigate = useNavigate()
     let [formObj, setFormObj] = useState({
         pay_type: '',
-        caluculate_type: '',
+        
         name_in_payslip: '',
         earning_status: false,
         fixed_amount: '',
         percentage_of_ctc: '',
+        caluculate_type: '',
         consider_for_esi: false,
         consider_for_epf: false,
         earning_name: '',

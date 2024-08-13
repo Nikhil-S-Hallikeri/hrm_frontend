@@ -19,6 +19,8 @@ import SalaryComponent from './Payroll/SalaryComponent'
 import SalaryTemplate from './Payroll/SalaryTemplate'
 import STEmployeeAssigning from './Payroll/STEmployeeAssigning'
 import PaySlip from './Payroll/PaySlip'
+import PayslipTable from './Payroll/PayslipTable'
+import ShiftTiming from './Others/ShiftTiming'
 
 const DasRouter = () => {
     let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
@@ -49,7 +51,9 @@ const DasRouter = () => {
                         <Route path='/salaryComponent/*' element={<SalaryComponent />} />
                         <Route path='/salary-templates/*' element={<SalaryTemplate />} />
                         <Route path='/salary-assigning' element={<STEmployeeAssigning />} />
-                        <Route path='/payslip' element={<PaySlip/>}/>
+                        <Route path='/payslip/:id' element={<PaySlip />} />
+                        <Route path='/employeesPayslip' element={<PayslipTable />} />
+                        <Route path='/shiftTimings' element={<ShiftTiming />} />
 
 
                     </Routes>

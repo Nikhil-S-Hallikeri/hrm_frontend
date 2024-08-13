@@ -7,14 +7,14 @@ import { port } from '../../App'
 const JFBankAcctDetails = ({ id, page, data }) => {
     let navigate = useNavigate()
     let [formObj, setFormObj] = useState({
-        EMP_Information: data.id,
+        EMP_Information: data && data.id,
         bank_name: '',
         account_no: '',
         ifsc: '',
         branch: '',
         branch_address: '',
         account_proof: '',
-        Holder_Name:''
+        Holder_Name: ''
     })
     let handleChange = (e) => {
         let { name, value, files } = e.target
@@ -69,7 +69,7 @@ const JFBankAcctDetails = ({ id, page, data }) => {
 
             console.log(formObj);
 
-            axios.post(`${port}/root/ems/bank-account-details/${data.id}/`, formData).then((response) => {
+            axios.post(`${port}/root/ems/bank-account-details/${data && data.id}/`, formData).then((response) => {
                 console.log(response.data);
                 getData()
             }).catch((error) => {
@@ -99,7 +99,7 @@ const JFBankAcctDetails = ({ id, page, data }) => {
     }
     let getData = () => {
         if (data) {
-            axios.get(`${port}/root/ems/bank-account-details/${data.id}/`).then((response) => {
+            axios.get(`${port}/root/ems/bank-account-details/${data && data.id}/`).then((response) => {
                 console.log("get", response.data);
                 setFormObj(response.data)
             }).catch((error) => {
@@ -118,24 +118,30 @@ const JFBankAcctDetails = ({ id, page, data }) => {
                     handleChange={handleChange} type='text' />
                 <InputFieldform disabled={page} placeholder='7220134250234 ' label='Account Number' value={formObj.account_no} name='account_no'
                     handleChange={handleChange} type='text' limit={9999999999999999} />
-                <InputFieldform  placeholder='Name according to Bank Passbook ' label='Full Name' value={formObj.Holder_Name} name='Holder_Name'
+                <InputFieldform placeholder='Name according to Bank Passbook ' label='Full Name' value={formObj.Holder_Name} name='Holder_Name'
                     handleChange={handleChange} type='text' />
-                <InputFieldform  placeholder='Kumbakonam ' disabled={true} label='Branch' value={formObj.branch} name='branch'
+                <InputFieldform placeholder='Kumbakonam ' disabled={true} label='Branch' value={formObj.branch} name='branch'
                     handleChange={handleChange} type='text' />
-                <InputFieldform  placeholder='Bank of India' disabled={true} label='Bank Name' value={formObj.bank_name} name='bank_name'
+                <InputFieldform placeholder='Bank of India' disabled={true} label='Bank Name' value={formObj.bank_name} name='bank_name'
                     handleChange={handleChange} type='text' />
                 <InputFieldform disabled={page} placeholder=' ' label='Bank Proof' name='account_proof' link={formObj.account_proof}
                     handleChange={handleChange} type='file' />
-                <InputFieldform  placeholder='Bank Address' disabled={true} label='Bank Address' value={formObj.branch_address} name='branch_address'
+                <InputFieldform placeholder='Bank Address' disabled={true} label='Bank Address' value={formObj.branch_address} name='branch_address'
                     handleChange={handleChange} type='textarea' />
 
 
             </main>
             {!page && <section className='flex justify-between my-2'>
-                <button onClick={() => { saveData(); navigate(`/Employeeallform/${id}/empl_info`) }} className='p-2 bg-slate-400 text-white rounded'>
+                <button onClick={() => {
+                    saveData();
+                    navigate(`/Employeeallform/${id}/empl_info`)
+                }} className='p-2 bg-slate-400 text-white rounded'>
                     Previous
                 </button>
-                <button onClick={() => { saveData(); navigate(`/Employeeallform/${id}/pf_details`) }} className='p-2 bg-slate-400 text-white rounded'>
+                <button onClick={() => {
+                    saveData();
+                    navigate(`/Employeeallform/${id}/pf_details`)
+                }} className='p-2 bg-slate-400 text-white rounded'>
                     Next
                 </button>
 

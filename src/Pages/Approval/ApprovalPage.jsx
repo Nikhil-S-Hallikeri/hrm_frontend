@@ -195,12 +195,14 @@ const ApprovalPage = () => {
                                             className='absolute top-1 right-0 '> <QuestionIcon size={12} /> </button>}
                                         {((obj.hr_status == null && (userStatus == 'HR' || userStatus == 'Admin'))
                                             || (obj.rm_status == null && (userStatus != 'HR' || userStatus != 'Admin')))
-                                            && <button onClick={() => setreasonModal({
+                                            &&
+                                            <button onClick={() => setreasonModal({
                                                 obj: obj,
                                                 status: 'rejected',
                                                 index: index
                                             })} className='p-1 px-2 text-sm shadow-sm rounded bg-red-600 text-white  '>
-                                                {loading == `rejected${index}` ? 'Loading..' : "Decline"} </button>}
+                                                {loading == `rejected${index}` ? 'Loading..' : "Decline"}
+                                            </button>}
                                         {((obj.hr_status == null && (userStatus == 'HR' || userStatus == 'Admin'))
                                             || (obj.rm_status == null && (userStatus != 'HR' || userStatus != 'Admin')))
                                             && <button onClick={() => setreasonModal({
@@ -213,7 +215,8 @@ const ApprovalPage = () => {
                                         {
                                             ((obj.hr_status != null && obj.rm_status != null) ||
                                                 (userStatus != 'HR' && userStatus != 'Admin'))
-                                            && <button onClick={() => setLeaveResendModal(obj)} className='btngrd text-white p-1 rounded '> view </button>
+                                            && <button onClick={() => setLeaveResendModal(obj)} className='btngrd text-white p-1 rounded '>
+                                                view </button>
                                         }
                                     </td>
 

@@ -18,7 +18,10 @@ const PreTaxDeduction = () => {
         emp_contribution_ctc: false,
         pre_tax_d_status: false,
         caluculate_on_prorata_basic: false,
-        deduction_frequency: 'recurring'
+        deduction_frequency: 'recurring',
+        fixed_amount: '',
+        percentage_of_ctc: '',
+        caluculate_type: '',
     })
     let handleChange = (e) => {
         let { name, value } = e.target
@@ -98,6 +101,25 @@ const PreTaxDeduction = () => {
                         options={assiociation} />}
                 <InputFieldform required={true} label='Name in Payslip' value={formObj.name_in_payslip} name='name_in_payslip'
                     handleChange={handleChange} type='text' />
+
+                <div className=" col-md-4 col-sm-6 ">
+                    <label className='mb-1 my-1'>Calculation Type </label>
+                    <select onChange={handleChange} value={formObj.caluculate_type}
+                        className='w-full bgclr p-2 rounded outline-none '
+                        name="caluculate_type" id="">
+                        <option value="">Select</option>
+                        <option value="Flat_Amount">Flat amount </option>
+                        <option value="Percentage_oF_CTC">Percentage of component <span className='text-sm ' >(Variable amount paid during any payroll.) </span>  </option>
+
+                    </select>
+                </div>
+                {formObj.caluculate_type == 'Flat_Amount' &&
+                    <InputFieldform placeholder={0} value={formObj.fixed_amount} handleChange={handleChange} name='fixed_amount' label='Enter Amount' limit={99999999} />}
+                {formObj.caluculate_type == 'Percentage_oF_CTC' &&
+                    < InputFieldform value={formObj.percentage_of_ctc} handleChange={handleChange} name='percentage_of_ctc'
+                        info='Give a  percentage_of_ctc it will be consider as a  percentage_of_ctc of CTC only.'
+                        placeholder={0} label='Enter Percentage' limit={100} />}
+
                 <div className='flex gap-2 items-center' >
                     <input type="checkbox" checked={formObj.emp_contribution_ctc}
                         onChange={() => setFormObj((prev) => ({

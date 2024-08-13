@@ -40,13 +40,16 @@ const Sidebar = () => {
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Reporting_team`}
                             label='My team' active='Reporting_team'
                             img='/assets/Images/profile.png' />
-                        {/* <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Sample_acti`}
+                        <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Sample_acti`}
                             label='Activities' active='activity'
-                            img='/assets/Images/Work.png' /> */}
+                            img='/assets/Images/Work.png' />
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} drop={[
                             { name: 'Salary component', path: '/dash/salaryComponent' },
                             { name: 'Salary template', path: '/dash/salary-templates' },
-                            { name: 'Assign Employee', path: '/dash/salary-assigning' }
+                            { name: 'Assign Employee', path: '/dash/salary-assigning' },
+                            { name: 'Employees payslip', path: '/dash/employeesPayslip' },
+
+
                         ]}
                             label='Payroll' active='payroll'
                             img='/assets/Images/payroll.png'
@@ -73,7 +76,6 @@ const Sidebar = () => {
                             drop={[
                                 { name: 'Approval', path: '/dash/approvals', light: count && count.leaveApproval },
                                 { name: 'Attendence list', path: '/dash/attendence-list' },
-
                                 { name: 'Leave Setting', path: '/dash/leaveCreation' },
                             ]} />
 

@@ -37,7 +37,7 @@ const OfferApprovalPage = () => {
                 <th>Prepared By </th>
                 <th>Prepared Date </th>
                 <th> Package</th>
-                <th>Verification assigned </th>
+                <th>Verification assigned to </th>
                 <th>Status </th>
                 <th> Action</th>
               </tr>

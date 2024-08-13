@@ -34,7 +34,9 @@ const SalComEarning = () => {
                                 <td onClick={() => navigate(`/dash/salaryComponent/earning/${obj.id}`)} className='cursor-pointer text-blue-600 '>
                                     {obj.name_in_payslip} </td>
                                 <td>{obj.earning_name} </td>
-                                <td>{obj.pay_type == "Fixed_Pay" ? 'Fixed' : 'Variable'} ; {obj.caluculate_type == "Flat_Amount" ? 'Flat amount' : `${obj.percentage_of_ctc}% of CTC`} </td>
+                                <td>{obj.pay_type == "Fixed_Pay" ? 'Fixed' : 'Variable'} ; 
+                                    {obj.caluculate_type == "Flat_Amount" ? 'Flat amount' : 
+                                    `${obj.percentage_of_ctc}% of CTC`} </td>
                                 <td>{obj.consider_for_epf ? "yes" : 'no'} </td>
                                 <td>{obj.consider_for_esi ? "yes" : 'no'} </td>
                                 <td> <span className={`${obj.earning_status ? "text-green-600" : 'text-slate-400'}  `} > {obj.earning_status ? "Active" : 'Inactive'} </span> </td>

@@ -13,6 +13,7 @@ import EditPen from '../SVG/EditPen'
 import CreateReligion from './Employee/CreateReligion'
 import CreateDepartment from './Modals/CreateDepartment'
 import { Modal } from 'react-bootstrap'
+import EmployeeSalaryAdding from './Modals/EmployeeSalaryAdding'
 
 
 const Allemp = () => {
@@ -21,7 +22,7 @@ const Allemp = () => {
     let empStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
     let [addEmpModal, setAddEmpModal] = useState(false)
     let [editModal, setEditModal] = useState(false)
-
+    let [editModalPage, setEditModalPage] = useState('Info')
     const [selectedFile, setSelectedFile] = useState(null);
     let [showreligion, setShowReligion] = useState(false)
     let [showDepartment, setShowDepartment] = useState(false)
@@ -485,7 +486,37 @@ const Allemp = () => {
     const [Edit_id, set_Edit_id] = useState('')
     let [loading, setloading] = useState('')
 
-
+    let resetEditModal = () => {
+        setEditModal(false);
+        setEditModalPage('Info')
+        set_Edit_Data({
+            full_name: '',
+            date_of_birth: '',
+            gender: '',
+            email: '',
+            mobile: '',
+            weight: '',
+            height: '',
+            permanent_address: '',
+            present_address: '',
+            hired_date: '',
+            Dashboard: '',
+            Department_id: '',
+            religion: '',
+            Position_id: '',
+            Reporting_To: '',
+            'Employeement_Type': '',
+            'internship_Duration_From': '',
+            'internship_Duration_To': '',
+            'probation_status': '',
+            'probation_Duration_From': '',
+            'probation_Duration_To': '',
+            interview_shedule_access: '',
+            screening_shedule_access: '',
+            final_status_access: '',
+            applied_list_access: ''
+        })
+    }
     let Update_Employee = () => {
         console.log("Update_Data1", Edit_Data, Edit_Data.religion);
         setloading('edit')
@@ -497,9 +528,10 @@ const Allemp = () => {
             }
         }).then((r) => {
             console.log("Update_Data", r.data)
-            toast.success('User Updated successfully')
+            // toast.success('User Updated successfully')
             setloading('')
             fetchdata()
+            setEditModalPage('sal')
         }).catch((err) => {
             console.log("Update_Data", err)
             setloading('')
@@ -577,7 +609,8 @@ const Allemp = () => {
                                         handlesearchvalue(e.target.value)
                                     }} class="form-control shadow-none" aria-label="Username" aria-describedby="basic-addon1" />
                             </div>
-                            <EmployeeCreation show={addEmpModal} setshow={setAddEmpModal} getEmp={fetchdata} />
+                            <EmployeeCreation show={addEmpModal} id={Edit_id} setid={set_Edit_id}
+                                setshow={setAddEmpModal} getEmp={fetchdata} />
                             <div className='' >
                                 <button className='btn bg-primary-subtle' onClick={() => setAddEmpModal(true)}
                                     style={{ width: '120px', height: '32px', outline: 'none', fontSize: '14px' }}
@@ -836,9 +869,12 @@ const Allemp = () => {
                                         <td> {e.hired_date}</td>
                                         <td> {e.Designation}</td>
                                         <td className='flex items-center gap-3 '>
-
-
-                                            <button onClick={() => { Edit_Employee(e.id); setEditModal(true) }}
+                                            <button onClick={() => {
+                                                Edit_Employee(e.id);
+                                                // set_Edit_id(e.id)
+                                                // setAddEmpModal(true)
+                                                setEditModal(true)
+                                            }}
                                             //  data-bs-toggle="modal" data-bs-target="#exampleModal_Edit" 
                                             >
                                                 <EditPen />
@@ -855,28 +891,22 @@ const Allemp = () => {
                                                 </button>
                                             }
                                         </td>
-
-
                                     </tr>
-
-
                                 )
                             })}
-
-
-
                         </tbody>
                     </table>
                     {showreligion && <CreateReligion show={showreligion} setshow={setShowReligion} />}
                     {showDepartment && <CreateDepartment show={showDepartment} setshow={setShowDepartment} getdept={getDepart} />}
-                    <Modal show={editModal} centered size='xl' onHide={() => setEditModal(false)} >
+                    <Modal show={editModal} centered size='xl'
+                        onHide={() => { resetEditModal() }} >
                         <Modal.Header closeButton>
                             <h3 className='poppins' style={{ color: 'rgb(76,53,117)' }} >
                                 Update Employee Information</h3>
                         </Modal.Header>
                         <Modal.Body>
                             <div className="row justify-content-center m-0">
-                                <div className="col-lg-12 p-4 mt-2 border rounded-lg">
+                                {editModalPage == 'Info' && <div className="col-lg-12 p-4 mt-2 border rounded-lg">
 
 
                                     {/* ---------------------------------PERSONAL DETAILS--------------------------------------------------------- */}
@@ -1145,14 +1175,15 @@ const Allemp = () => {
 
                                         </section>
                                     </div>
-
                                     <div className="col-12 text-end mt-3">
                                         <button type="submit" disabled={loading == 'edit'} onClick={Update_Employee}
                                             // data-bs-dismiss="modal"  
                                             className="btn btn-primary text-white fw-medium px-2 px-lg-5">
-                                            {loading == 'edit' ? 'loading...' : "Update"} </button>
+                                            {loading == 'edit' ? 'loading...' : "Next"} </button>
                                     </div>
-                                </div>
+
+                                </div>}
+                                {editModalPage == 'sal' && <EmployeeSalaryAdding id={Edit_Data.id} emp={Edit_Data} setpage={setEditModalPage} />}
 
                             </div>
                         </Modal.Body>

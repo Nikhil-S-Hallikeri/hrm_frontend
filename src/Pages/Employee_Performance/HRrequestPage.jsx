@@ -76,16 +76,20 @@ const HRrequestPage = () => {
     }
     let sendRequest = () => {
         setloading(true)
-        axios.post(`${port}/root/lms/AppraisalInvitation/`, employee).then((response) => {
-            console.log(response.data);
-            toast.success('Mail has been sended')
-            reset()
-            setloading(false)
-        }).catch((error) => {
-            console.log(error);
-            setloading(false)
+        axios.post(`${port}/root/lms/AppraisalInvitation/`,
+            {
+                ...employee, invited_by: Empid, emp_form_link: `${domain}/selfEvaluation/`,
+                rm_form_link: `${domain}/employePerformanceEvaluation/`
+            }).then((response) => {
+                console.log(response.data);
+                toast.success('Mail has been sended')
+                reset()
+                setloading(false)
+            }).catch((error) => {
+                console.log(error);
+                setloading(false)
 
-        })
+            })
     }
     let getRequest = () => {
         axios.get(`${port}/root/lms/AppraisalInvitation/?inviter_id=${Empid}`).then((response) => {

@@ -82,10 +82,10 @@ const SelfEvaluation = () => {
 
     let saveform = () => {
         const formData = new FormData()
-        if (!selfEvaluationData.employee_signature) {
-            toast.warning('Upload the signature Image')
-            return;
-        }
+        // if (!selfEvaluationData.employee_signature) {
+        //     toast.warning('Upload the signature Image')
+        //     return;
+        // }
         setLoading(true)
         formData.append('id', id)
         // formData.append('DATE_OF_REVIEW', selfEvaluationData.DATE_OF_REVIEW)
@@ -114,8 +114,8 @@ const SelfEvaluation = () => {
         formData.append('works_to_full_potential', selfEvaluationData.works_to_full_potential)
         formData.append('overall', selfEvaluationData.overall)
 
-
-        axios.patch(`${port}/root/lms/GetSelfAppraisal`, formData).then((response) => {
+        delete selfEvaluationData.employee_signature
+        axios.patch(`${port}/root/lms/GetSelfAppraisal`, selfEvaluationData).then((response) => {
             toast.success('Form has been submitted')
             getEmployee()
             setLoading(false)

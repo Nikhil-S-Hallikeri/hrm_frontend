@@ -5,36 +5,40 @@ import { port } from '../../App'
 import { toast } from 'react-toastify'
 import CreateDepartment from './CreateDepartment'
 import CreateDesignation from './CreateDesignation'
+import EmployeeSalaryAdding from './EmployeeSalaryAdding'
 
 const EmployeeCreation = (props) => {
-    let { show, setshow, getEmp } = props
+    let { id, show, setshow, getEmp } = props
+
     let [loading, setloading] = useState(false)
+    let [page, setPage] = useState('Info')
     let [createDesignation, setCreatedesignation] = useState(false)
     let [obj, setobj] = useState({
-        'full_name': '',
-        'email': '',
-        'gender': '',
-        'date_of_birth': '',
-        'mobile': '',
-        'weight': '',
-        'height': '',
-        'permanent_address': '',
-        'present_address': '',
-        'hired_date': '',
-        'Dasboard_Dig': '',
-        'Designation': '',
-        'reporting_to': '',
-        'Department': '',
+        full_name: '',
+        date_of_birth: '',
+        gender: '',
+        email: '',
+        mobile: '',
+        weight: '',
+        height: '',
+        permanent_address: '',
+        present_address: '',
+        hired_date: '',
+        Dashboard: '',
+        Department_id: '',
+        religion: '',
+        Position_id: '',
+        Reporting_To: '',
         'Employeement_Type': '',
-        'internship_Duration_From': null,
-        'internship_Duration_To': null,
+        'internship_Duration_From': '',
+        'internship_Duration_To': '',
         'probation_status': '',
-        'probation_Duration_From': null,
-        'probation_Duration_To': null,
-        'applied_list_access': false,
-        'screening_shedule_access': false,
-        'interview_schedule_access': false,
-        'final_status_access': false
+        'probation_Duration_From': '',
+        'probation_Duration_To': '',
+        interview_shedule_access: '',
+        screening_shedule_access: '',
+        final_status_access: '',
+        applied_list_access: ''
     })
     let [createDepartmentModal, setCreateDepartmentModal] = useState(false)
     let handleChange = (e) => {
@@ -126,7 +130,10 @@ const EmployeeCreation = (props) => {
             interview_shedule_access: obj.interview_schedule_access ? "true" : 'false',
             final_status_access: obj.final_status_access ? "true" : 'false',
         });
+        if (id)
+            Update_Employee()
         setloading(true)
+
         axios.post(`${port}root/ems/NewEmployeesAdding/`, {
             ...obj,
             applied_list_access: obj.applied_list_access ? "true" : 'false',
@@ -180,7 +187,41 @@ const EmployeeCreation = (props) => {
     useEffect(() => {
         getDesignation()
     }, [])
+    let getEmployeeData = (ide) => {
+        axios.get(`${port}/root/ems/Get-Employee/${ide}/`).then((e) => {
+            setobj(e.data)
+            // console.log('Update_Data', e.data.Department_id);
+            console.log('Update_Data', e.data);
 
+            Call_Department(e.data.Department_id)
+            console.log("Employee_Data", e.data);
+        }).catch((err) => {
+            console.log("Employee_Data_err", err.data);
+        })
+    }
+    useEffect(() => {
+        if (id) {
+            getEmployeeData(id)
+        }
+    }, [id])
+    let Update_Employee = () => {
+        setloading('edit')
+        axios.patch(`${port}root/ems/Employee-Update/${id}/`, {
+            Update_Data: {
+                ...obj,
+                "Department": obj.Department_id,
+                "Position": obj.Position_id
+            }
+        }).then((r) => {
+            console.log("Update_Data", r.data)
+            toast.success('User Updated successfully')
+
+        }).catch((err) => {
+            console.log("Update_Data", err)
+            setloading('')
+
+        })
+    }
     return (
         <div>
             <Modal className=' ' centered size='xl' show={show} onHide={() => { setshow(false); reset() }} >
@@ -188,9 +229,10 @@ const EmployeeCreation = (props) => {
                 </Modal.Header>
                 <Modal.Body>
                     <form>
+                        <h3 className='mt-2 text-center p-3' style={{ color: 'rgb(76,53,117)' }}>Enter Employee Information</h3>
                         {/* Form start */}
-                        <div className="row justify-content-center m-0">
-                            <h3 className='mt-2 text-center p-3' style={{ color: 'rgb(76,53,117)' }}>Enter Employee Information</h3>
+                        {page == 'Info' && <div className="row justify-content-center m-0">
+
                             <div className="col-lg-12 p-4 mt-2 border rounded-lg">
                                 <form >
                                     {/* ---------------------------------PERSONAL DETAILS--------------------------------------------------------- */}
@@ -459,25 +501,28 @@ const EmployeeCreation = (props) => {
 
                                     </section>}
 
-                                    <div className="col-12 text-end mt-3">
-                                        <button type="button" disabled={loading} onClick={Add_Employee}
-                                            //  data-bs-dismiss="modal"  
-                                            className="btn btn-primary text-white fw-medium px-2 px-lg-5">
-                                            {loading ? "Loading.." : "Submit"}
-                                        </button>
-                                    </div>
+
+
+
                                 </form>
                             </div>
-                        </div>
-                        {/* form end */}
+                            <div className="col-12 text-end mt-3">
+                                <button type="button" disabled={loading} onClick={() => {
+                                    Add_Employee()
+                                    setPage('sal')
+                                }}
+                                    //  data-bs-dismiss="modal"  
+                                    className="btn btn-primary text-white fw-medium px-2 px-lg-5">
+                                    {loading ? "Loading.." : "Next"}
+                                </button>
+                            </div>
+                        </div>}
+                        {page == 'sal' && <EmployeeSalaryAdding setpage={setPage} />}
 
+                        {/* form end */}
                     </form>
 
-
                 </Modal.Body>
-                <Modal.Footer>
-
-                </Modal.Footer>
             </Modal>
         </div>
     )
