@@ -4,6 +4,7 @@ import Recruiterdashpage from './Components/Recruiterdashpage'
 import Empdashpage from './Components/Empdashpage'
 import Signup from './Components/Signup'
 import Login from './Components/Login'
+import 'react-quill/dist/quill.snow.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Hrslider from './Components/Hrslider'
 import Applylist from './Components/ApplyList/Applylist'
@@ -98,12 +99,19 @@ import JFPreview from './Pages/JoiningFormalities/JFPreview'
 import ManagerReview from './Pages/Employee_Performance/ManagerReview'
 import Scanner from './Pages/Scanner/Scanner'
 import MeetingReview from './Pages/Employee_Performance/MeetingReview'
+import Das from './Pages/Das'
+import ExitProcessRouter from './Pages/ExitProcess/ExitProcessRouter'
 // export const port = "http://192.168.172.249:9000/"
-// export const port = "http://192.168.197.249:9000/"
-// export const port = "http://192.168.18.17:9000/"
-export const port = "https://hrmbackendapi.meridahr.com/"
-export const domain='https://hrm.meridahr.com'
-// export const domain = 'http://192.168.18.24:3001'
+// export const port = "http://192.168.18.26:9000/"
+export const port = "http://192.168.151.249:9000/"
+// export const port = "https://hrmbackendapi.meridahr.com/"
+// export const domain = 'https://hrm.meridahr.com'
+export const domain = 'http://192.168.151.237:3001'
+export const das = 'https://das.meridahr.com'
+// export const das = 'http://192.168.18.24:3001'
+export const meridahrport = 'https://backendapi.meridahr.com'
+// export const meridahrport = 'http://192.168.218.249:7000'
+
 
 const App = () => {
   // const port = "http://192.168.0.106:9000"
@@ -113,10 +121,11 @@ const App = () => {
 
       <BrowserRouter>
         <ToastContainer autoClose={3000} position='top-center' />
-
         <Routes>
           <Route element={<Login__></Login__>} path='/'></Route>
+
           <Route path='/scanner' element={<Scanner />} />
+          <Route path='/das' element={<Das />} />
           <Route element={<Signup></Signup>} path='/Signup'></Route>
           <Route path='/dash/*' element={<DasRouter />} />
           <Route element={<Protect Child={Hrdashpage} />} path='dashboard/HR'></Route>
@@ -141,7 +150,6 @@ const App = () => {
           <Route element={<InternLetter />} path='/intern' />
           <Route element={<Activites></Activites>} path='/Activites'></Route>
           <Route element={<Employeeallform></Employeeallform>} path='/Employeeallform/:id/*'></Route>
-
           <Route path='/settings/*' element={<SettingRouter />} />
           <Route element={<Offeraccept></Offeraccept>} path='/offeraccept/:id'></Route>
           <Route path='/selfEvaluation/:id' element={<SelfEvaluation />} />
@@ -199,7 +207,7 @@ const App = () => {
 
           <Route element={<Employee_separation_request></Employee_separation_request>} path='/Employee_Separation'></Route>
 
-          <Route element={<Employee_request_form></Employee_request_form>} path='/Employee_request_form'></Route>
+          <Route element={<ExitProcessRouter />} path='/Employee_request_form/*'></Route>
 
           <Route element={<Applay></Applay>} path='/Applay_List'></Route>
           <Route element={<InterviewReviewModal />} path='/interviewreview/:id'> </Route>

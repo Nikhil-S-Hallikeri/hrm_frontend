@@ -108,6 +108,8 @@ const BackgroundDocumentid = () => {
                         {
                             objform && [...objform].map((obj, index) => (
                                 <tr>
+                                    {console.log(obj)
+                                    }
                                     <td>{index + 1} </td>
                                     <td>{obj.Provious_Company} </td>
                                     <td>{obj.Provious_Designation} </td>
@@ -121,8 +123,10 @@ const BackgroundDocumentid = () => {
                                     <td>{obj.HR_name}</td>
                                     <td>{obj.HR_email} </td>
                                     <td>{obj.HR_phone}</td>
-                                    <td> <a href={obj.Document} download >Download </a> </td>
-                                    <td><a href={obj.Salary_Drawn_Payslips} download > Download </a>  </td>
+                                    <td> <a href={obj.Document} download>
+                                        {obj.Document ? "Download" : "Not Uploaded"}</a> </td>
+                                    <td><a href={obj.Salary_Drawn_Payslips} download >
+                                        {obj.Salary_Drawn_Payslips ? " Download " : "Not Uploaded"} </a>  </td>
                                     <td className='sticky right-0 bgclr1 '> {obj.BG_Virification_status != 'Completed' &&
                                         <button onClick={() => {
                                             // window.open(`/BgverificationForm/${id}/${obj.id}`, '_blank')
@@ -130,7 +134,8 @@ const BackgroundDocumentid = () => {
                                         }}
                                             className='btngrd p-1 text-xs rounded text-white  '> Verify </button>}
                                         {obj.BG_Virification_status == 'Completed' &&
-                                            <button onClick={() => navigate(`/dash/bgverificationDetails/${obj.id}`)} className='savebtn p-1 text-xs rounded text-white ' >
+                                            <button onClick={() => navigate(`/dash/bgverificationDetails/${obj.id}`)}
+                                                className='savebtn p-1 text-xs rounded text-white ' >
                                                 Verified
                                             </button>} </td>
                                 </tr>

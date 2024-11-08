@@ -16,6 +16,7 @@ const ApprovalPage = () => {
     let id = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).id
     let [reason, setreason] = useState()
     let userStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
+
     let reportingStatus = JSON.parse(sessionStorage.getItem('user')).is_reporting_manager
     let [reasonModal, setreasonModal] = useState({
         obj: null,
@@ -174,6 +175,7 @@ const ApprovalPage = () => {
                                     <th>Leave Type </th>
                                     <th className='w-[300px] '>Leave Reason </th>
                                     <th>No of Days leave </th>
+                                    <th>Document </th>
                                     <th>Applied on </th>
                                     <th>Leave Dates </th>
                                     <th> Status</th>
@@ -187,14 +189,22 @@ const ApprovalPage = () => {
                                     <td> {obj.LeaveType} </td>
                                     <td className='w-[200px] xl:w-[400px] text-wrap '>{obj.reason} </td>
                                     <td>{obj.days} </td>
+                                    <td>{obj.Document ? <a href={obj.Document} target='_blank'>
+                                        Click Here </a> : 'None'}  </td>
                                     <td>{changeDateYear(obj.applied_date)} </td>
                                     <td>{changeDateYear(obj.from_date)}{obj.days > 1 ? "-" + changeDateYear(obj.to_date) : ''} </td>
                                     <td>{obj.approved_status} </td>
                                     <td className='flex gap-2 p-3 relative'>
-                                        {(obj.hr_status || obj.rm_status) && <button onClick={() => setLeaveResendModal(obj)}
-                                            className='absolute top-1 right-0 '> <QuestionIcon size={12} /> </button>}
+                                        {(obj.hr_status || obj.rm_status) &&
+                                            <button onClick={() => setLeaveResendModal(obj)}
+                                                className='absolute top-1 right-0 '> <QuestionIcon size={12} />
+                                            </button>}
+
+
+
+
                                         {((obj.hr_status == null && (userStatus == 'HR' || userStatus == 'Admin'))
-                                            || (obj.rm_status == null && (userStatus != 'HR' || userStatus != 'Admin')))
+                                            || (obj.rm_status == null && (userStatus != 'HR' || userStatus == 'Admin')))
                                             &&
                                             <button onClick={() => setreasonModal({
                                                 obj: obj,
@@ -203,14 +213,22 @@ const ApprovalPage = () => {
                                             })} className='p-1 px-2 text-sm shadow-sm rounded bg-red-600 text-white  '>
                                                 {loading == `rejected${index}` ? 'Loading..' : "Decline"}
                                             </button>}
-                                        {((obj.hr_status == null && (userStatus == 'HR' || userStatus == 'Admin'))
-                                            || (obj.rm_status == null && (userStatus != 'HR' || userStatus != 'Admin')))
+
+
+                                        {(
+                                            (obj.hr_status == null && (userStatus == 'HR' || userStatus == 'Admin'))
+                                            || (obj.rm_status == null && (userStatus != 'HR' || userStatus == 'Admin'))
+
+                                        )
                                             && <button onClick={() => setreasonModal({
                                                 obj: obj,
                                                 status: 'approved',
                                                 index: index
                                             })} className='p-1 px-2 text-sm shadow-sm rounded bg-green-600 text-white  '>
-                                                {loading == `approved${index}` ? 'Loading' : "Accept"} </button>}
+                                                {loading == `approved${index}` ? 'Loading' : "Accept"}
+                                                {console.log(userStatus != 'Admin')
+                                                }
+                                            </button>}
 
                                         {
                                             ((obj.hr_status != null && obj.rm_status != null) ||

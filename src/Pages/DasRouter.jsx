@@ -21,6 +21,9 @@ import STEmployeeAssigning from './Payroll/STEmployeeAssigning'
 import PaySlip from './Payroll/PaySlip'
 import PayslipTable from './Payroll/PayslipTable'
 import ShiftTiming from './Others/ShiftTiming'
+import ClientTablePage from './Client/ClientTablePage'
+import ClientCreation from './Client/ClientCreation'
+import ParticularClientPage from './Client/ParticularClientPage'
 
 const DasRouter = () => {
     let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
@@ -54,6 +57,10 @@ const DasRouter = () => {
                         <Route path='/payslip/:id' element={<PaySlip />} />
                         <Route path='/employeesPayslip' element={<PayslipTable />} />
                         <Route path='/shiftTimings' element={<ShiftTiming />} />
+                        <Route path='/client/*' element={<ClientTablePage />} />
+                        <Route path='/client/:id/*' element={<ParticularClientPage />} />
+                        <Route path='/addClient' element={<ClientCreation />} />
+
 
 
                     </Routes>

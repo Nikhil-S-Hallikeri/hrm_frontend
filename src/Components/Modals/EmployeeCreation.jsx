@@ -14,31 +14,34 @@ const EmployeeCreation = (props) => {
     let [page, setPage] = useState('Info')
     let [createDesignation, setCreatedesignation] = useState(false)
     let [obj, setobj] = useState({
-        full_name: '',
-        date_of_birth: '',
-        gender: '',
-        email: '',
-        mobile: '',
-        weight: '',
-        height: '',
-        permanent_address: '',
-        present_address: '',
-        hired_date: '',
-        Dashboard: '',
-        Department_id: '',
-        religion: '',
-        Position_id: '',
-        Reporting_To: '',
-        'Employeement_Type': '',
-        'internship_Duration_From': '',
-        'internship_Duration_To': '',
-        'probation_status': '',
-        'probation_Duration_From': '',
-        'probation_Duration_To': '',
-        interview_shedule_access: '',
-        screening_shedule_access: '',
-        final_status_access: '',
-        applied_list_access: ''
+        full_name: null,
+        date_of_birth: null,
+        gender: null,
+        email: null,
+        mobile: null,
+        weight: null,
+        secondary_mobile_number:'',
+        height: null,
+        employee_attendance_id: null,
+        permanent_address: null,
+        present_address: null,
+        secondary_email: '',
+        hired_date: null,
+        Dashboard: null,
+        Department_id: null,
+        religion: null,
+        Position_id: null,
+        Reporting_To: null,
+        'Employeement_Type': null,
+        'internship_Duration_From': null,
+        'internship_Duration_To': null,
+        'probation_status': null,
+        'probation_Duration_From': null,
+        'probation_Duration_To': null,
+        interview_shedule_access: null,
+        screening_shedule_access: null,
+        final_status_access: null,
+        applied_list_access: null
     })
     let [createDepartmentModal, setCreateDepartmentModal] = useState(false)
     let handleChange = (e) => {
@@ -59,7 +62,7 @@ const EmployeeCreation = (props) => {
             }))
         }
         if (name == 'internship_Duration_From' && value > obj.internship_Duration_To
-            && obj.internship_Duration_To != '') {
+            && obj.internship_Duration_To != null) {
             setobj((prev) => ({
                 ...prev,
                 internship_Duration_From: obj.internship_Duration_To
@@ -74,7 +77,7 @@ const EmployeeCreation = (props) => {
             return
         }
         if (name == 'probation_Duration_From' && value > obj.probation_Duration_To &&
-            obj.probation_Duration_To != '') {
+            obj.probation_Duration_To != null) {
             setobj((prev) => ({
                 ...prev,
                 probation_Duration_From: obj.probation_Duration_To
@@ -95,24 +98,27 @@ const EmployeeCreation = (props) => {
     }
     let reset = () => {
         setobj({
-            'full_name': '',
-            'email': '',
-            'gender': '',
-            'date_of_birth': '',
-            'mobile': '',
-            'weight': '',
-            'height': '',
-            'permanent_address': '',
-            'present_address': '',
-            'hired_date': '',
-            'Dasboard_Dig': '',
-            'Designation': '',
-            'reporting_to': '',
-            'Department': '',
-            'Employeement_Type': '',
+            'full_name': null,
+            'email': null,
+            employee_attendance_id: null,
+            'gender': null,
+            'date_of_birth': null,
+            'mobile': null,
+            'weight': null,
+            'height': null,
+            'permanent_address': null,
+            'present_address': null,
+            'hired_date': null,
+            'Dasboard_Dig': null,
+            'Designation': null,
+            'reporting_to': null,
+            'Department': null,
+            secondary_email: '',
+            secondary_mobile_number:'',
+            'Employeement_Type': null,
             'internship_Duration_From': null,
             'internship_Duration_To': null,
-            'probation_status': '',
+            'probation_status': null,
             'probation_Duration_From': null,
             'probation_Duration_To': null,
             'applied_list_access': false,
@@ -199,11 +205,11 @@ const EmployeeCreation = (props) => {
             console.log("Employee_Data_err", err.data);
         })
     }
-    useEffect(() => {
-        if (id) {
-            getEmployeeData(id)
-        }
-    }, [id])
+    // useEffect(() => {
+    //     if (id) {
+    //         getEmployeeData(id)
+    //     }
+    // }, [id])
     let Update_Employee = () => {
         setloading('edit')
         axios.patch(`${port}root/ems/Employee-Update/${id}/`, {
@@ -218,7 +224,7 @@ const EmployeeCreation = (props) => {
 
         }).catch((err) => {
             console.log("Update_Data", err)
-            setloading('')
+            setloading(null)
 
         })
     }
@@ -270,25 +276,58 @@ const EmployeeCreation = (props) => {
                                                 </select>
                                             </div>
                                             <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="email" className="form-label">Email <span class='text-danger'>*</span> </label>
+                                                <label htmlFor="email" className="form-label"> Primary Email <span class='text-danger'>*</span> </label>
                                                 <input type="email" className="form-control shadow-none bg-light" id=" Email"
                                                     name="email"
                                                     value={obj.email} onChange={handleChange} required />
                                             </div>
                                             <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="primaryContact" className="form-label">Phone <span class='text-danger'>*</span> </label>
+                                                <label htmlFor="email" className="form-label"> Secondary Email <span class='text-danger'></span> </label>
+                                                <input type="email" className="form-control shadow-none bg-light" id=" Email"
+                                                    name="secondary_email"
+                                                    value={obj.secondary_email} onChange={handleChange} required />
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="email" className="form-label">Attendance Id <span class='text-danger'>*</span> </label>
+                                                <input type="text" className="form-control shadow-none bg-light" id=" Email"
+                                                    name="employee_attendance_id"
+                                                    value={obj.employee_attendance_id} onChange={handleChange} required />
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="primaryContact" className="form-label">Primary Phone <span class='text-danger'>*</span> </label>
                                                 <input type="number" className="form-control shadow-none bg-light" id="PrimaryContact" name="mobile"
                                                     value={obj.mobile} onChange={(e) => {
                                                         if (e.target.value <= 0) {
                                                             setobj((prev) => ({
                                                                 ...prev,
-                                                                mobile: ''
+                                                                mobile: null
                                                             }))
                                                         }
                                                         else if (e.target.value.length > 10) {
                                                             setobj((prev) => ({
                                                                 ...prev,
                                                                 mobile: prev.mobile
+                                                            }))
+                                                        }
+                                                        else {
+                                                            handleChange(e)
+                                                        }
+                                                    }} required />
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="primaryContact" className="form-label">Secondary Phone <span class='text-danger'></span> </label>
+                                                <input type="number" className="form-control shadow-none bg-light" id="PrimaryContact" name="secondary_mobile_number"
+                                                    value={obj.secondary_mobile_number} onChange={(e) => {
+                                                        if (e.target.value <= 0) {
+                                                            setobj((prev) => ({
+                                                                ...prev,
+                                                                secondary_mobile_number: null
+                                                            }))
+                                                        }
+                                                        else if (e.target.value.length > 10) {
+                                                            setobj((prev) => ({
+                                                                ...prev,
+                                                                secondary_mobile_number: prev.secondary_mobile_number
                                                             }))
                                                         }
                                                         else {

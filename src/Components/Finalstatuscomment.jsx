@@ -1,26 +1,26 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import {port} from '../App' 
+import { port } from '../App'
 
 
-const Finalstatuscomment = ({ selectstatus,candidateid,final_status_value,setselectstatus}) => {
+const Finalstatuscomment = ({ selectstatus, candidateid, final_status_value, setselectstatus }) => {
 
 
   let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
 
-  console.log("Selected candidate id",candidateid)
-  console.log("status",final_status_value)
+  console.log("Selected candidate id", candidateid)
+  console.log("status", final_status_value)
   const [statusreview, setStatusreview] = useState("")
 
-  
-  const navi=useNavigate();
+
+  const navi = useNavigate();
 
 
   let handlestatusreview = (e) => {
     e.preventDefault();
     // console.log(statusreview,candidateid);
-   
+
 
     const formData1 = new FormData()
 
@@ -38,7 +38,7 @@ const Finalstatuscomment = ({ selectstatus,candidateid,final_status_value,setsel
       .then((r) => {
         alert("Final status comment send Successfull")
         console.log("statusreview_res", r.data)
-        setselectstatus((prev)=>!prev)
+        setselectstatus((prev) => !prev)
 
       })
       .catch((err) => {
@@ -49,11 +49,11 @@ const Finalstatuscomment = ({ selectstatus,candidateid,final_status_value,setsel
 
 
 
- 
+
 
 
   return (
-    <div className={`${selectstatus ? '' : 'd-none'}`} style={{ width: '100%',minHeight : '100vh', background: 'bg-transparent', position: 'absolute' }}>
+    <div className={`${selectstatus ? '' : 'd-none'}`} style={{ width: '100%', minHeight: '100vh', background: 'bg-transparent', position: 'absolute' }}>
 
 
       <form style={{ width: '350px', minHeight: '80px', backgroundColor: 'rgb(238,238,238)', borderRadius: '10px', position: 'relative', left: '750px', top: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -70,7 +70,8 @@ const Finalstatuscomment = ({ selectstatus,candidateid,final_status_value,setsel
 
         <div className="row m-0 pb-2 mt-5">
           <div className="col-md-12 col-lg-12 mb-3">
-            <textarea name="" id="" style={{ width: '300px', minHeight: '100px' }} value={statusreview} onChange={(e) => setStatusreview(e.target.value)} ></textarea>
+            <textarea name="" id="" style={{ width: '300px', minHeight: '100px' }} value={statusreview}
+              onChange={(e) => setStatusreview(e.target.value)} ></textarea>
           </div>
         </div>
 

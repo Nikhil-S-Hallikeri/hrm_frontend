@@ -104,9 +104,11 @@ const JFPreview = () => {
                 </main>
             }
 
-            {EmployeeInformation && showModal && <WebsiteAccessibilityModal obj={EmployeeInformation}
-                id={EmployeeInformation.Candidate_id} name={EmployeeInformation.full_name} getData={getEmployeeINformation}
-                showModal={showModal} setShowModal={setShowModal} />}
+            {EmployeeInformation && showModal &&
+                <WebsiteAccessibilityModal obj={EmployeeInformation}
+                    id={EmployeeInformation.Candidate_id} name={EmployeeInformation.full_name}
+                    getData={getEmployeeINformation}
+                    showModal={showModal} setShowModal={setShowModal} />}
 
         </div>
     )

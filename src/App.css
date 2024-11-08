@@ -136,7 +136,10 @@ input[type=number] {
     left: 0;
     top: 0;
 }
-
+.sticky-right{
+    position: sticky;
+    right: 0;
+}
 .border-bottom {
     border-bottom: 2px solid rgb(55, 54, 54);
 

@@ -70,7 +70,7 @@ const EmployeeSalaryAdding = ({ id, emp, setpage }) => {
         if (bankDetails.ifsc != '') {
             getBranch()
         }
-        console.log(emp.employee_Id);
+        // console.log(emp.employee_Id);
     }, [bankDetails.ifsc])
     let saveData = () => {
         postSalary()
@@ -99,6 +99,7 @@ const EmployeeSalaryAdding = ({ id, emp, setpage }) => {
                 getData()
             }).catch((error) => {
                 console.log(error);
+                toast.error('Error acquired')
             })
         }
     }
@@ -125,6 +126,7 @@ const EmployeeSalaryAdding = ({ id, emp, setpage }) => {
             toast.success('Employee Updated')
         }).catch((error) => {
             console.log(error);
+            toast.error('Error acquires')
         })
     }
     let getData = () => {

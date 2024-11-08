@@ -9,6 +9,7 @@ import '../assets/css/media.css'
 import Recsidebar from './Recsidebar';
 import ReactSpeedometer from "react-d3-speedometer";
 import HrmContext, { HrmStore } from '../Context/HrmContext';
+import WishesCom from './WishesCom';
 
 
 const Recruiterdashpage = () => {
@@ -123,8 +124,8 @@ const Recruiterdashpage = () => {
     }, [])
 
     return (
-        <div className=' d-flex' 
-        style={{ width: '100%', minHeight: '100%', }}>
+        <div className=' d-flex'
+            style={{ width: '100%', minHeight: '100%', }}>
 
             <div className='d-none d-lg-flex' >
 
@@ -132,7 +133,7 @@ const Recruiterdashpage = () => {
             </div>
             <div className=' m-0 p-sm-3 flex-1 container mx-auto ' style={{ borderRadius: '10px' }}>
                 <Topnav></Topnav>
-
+                <WishesCom />
                 <div className="  d-flex mt-4 inner_sections" >
 
 

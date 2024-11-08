@@ -1,14 +1,20 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import '../assets/css/Login_.css'
 import { useState } from 'react'
 import '../assets/css/login.css'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { port } from '../App'
 
 const Login__ = () => {
 
     console.log(port);
+    let [searchValue] = useSearchParams()
+    let uservalue = searchValue.get('user')
+    let passwordValue = searchValue.get('password') &&
+        encodeURIComponent(searchValue.get('password'))
+    console.log(uservalue, passwordValue);
+
 
     const [employeeId1, setEmployeeId1] = useState("");
     const [password1, setPassword1] = useState("");
@@ -27,24 +33,30 @@ const Login__ = () => {
     const handleSubmit1 = async (e) => {
         // e.preventDefault();
         // Check if employeeId1 and password1 are not empty
-        if (!employeeId1.trim()) {
+        if (!employeeId1.trim() && !uservalue) {
             alert("Please enter the Employee ID");
             return;
         }
 
-        if (!password1.trim()) {
+        if (!password1.trim() && !passwordValue) {
             alert("Please enter the password");
             return;
         }
         const formdata = new FormData()
         console.log(employeeId1, password1)
-        formdata.append('EmployeeId', employeeId1)
-        formdata.append('Password', password1)
+        console.log(uservalue, (passwordValue));
+
+        formdata.append('EmployeeId', uservalue ? uservalue : employeeId1)
+        formdata.append('Password', passwordValue != null ? passwordValue : password1)
         // axios.post('http://192.168.0.107:9000/root/login', formdata)
         axios.post(`${port}/root/login`, formdata)
             .then((r) => {
                 console.log("Login", r.data)
                 sessionStorage.setItem('user', JSON.stringify(r.data))
+                sessionStorage.setItem('daspk', JSON.stringify(r.data.pk))
+                sessionStorage.setItem('dasid', JSON.stringify(r.data.employee_id))
+                sessionStorage.setItem('email', JSON.stringify(r.data.email))
+                sessionStorage.setItem('status', JSON.stringify(r.data.Dash_Status))
                 navigate(`/dashboard/${r.data.Disgnation}`)
 
             })
@@ -53,6 +65,13 @@ const Login__ = () => {
                 console.log("Login Error", err.response.data)
             })
     };
+
+
+    useEffect(() => {
+        if (uservalue && passwordValue)
+            handleSubmit1()
+
+    }, [uservalue, passwordValue])
 
     // LOGIN END
 
@@ -180,8 +199,8 @@ const Login__ = () => {
 
                                 <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                                     <div class="inputGroup">
-                                        <input onKeyDown={(e)=>{
-                                            if(e.key=='Enter'){
+                                        <input onKeyDown={(e) => {
+                                            if (e.key == 'Enter') {
                                                 handleSubmit1()
                                             }
                                         }} type={showPassword ? "text" : "password"} autocomplete="off" placeholder='Password' value={password1} onChange={(e) => setPassword1(e.target.value)} />

@@ -16,6 +16,8 @@ import ShortcutCard from './HomeComponent/ShortcutCard';
 import LeaveApprovalBox from './HomeComponent/LeaveApprovalBox';
 import BackgroundDocumentshow from './HomeComponent/BackgroundDocumentshow';
 import FinalResultCompleted from './Modals/FinalResultCompleted';
+import WishesCom from './WishesCom';
+import MyAttendance from './Employee/MyAttendance';
 
 
 
@@ -422,17 +424,14 @@ const Hrdashpage = () => {
 
     // }
 
-    const [canid, setCanId] = useState(" ")
-    const [canemail, setEmail] = useState(" ")
-
-
+    const [canid, setCanId] = useState("")
+    let [mailOject, setMailObj] = useState()
+    const [canemail, setEmail] = useState("")
+    const [mailContent, setMailContent] = useState('')
     const sentid = (e, d) => {
-
         setCanId(e)
         setEmail(d)
-
         console.log("sentid", setCanId, setEmail);
-
     }
 
     const [offer_letter_name, setoffer_letter_name] = useState('')
@@ -441,6 +440,27 @@ const Hrdashpage = () => {
     const [offer_letter_Phone, setoffer_letter_Phone] = useState('')
     const [offer_letter_designation, setoffer_letter_designation] = useState('')
 
+    useEffect(() => {
+        if (mailOject) {
+            console.log("Mail obj", mailOject);
+            setMailContent(`Dear ${mailOject.FirstName},
+Congratulations!
+We are pleased to inform you that you have been selected for the ${mailOject.AppliedDesignation} role at
+Merida. As the next step in our hiring process, we require a background
+verification to confirm your qualifications and ensure a smooth on-boarding experience.
+
+Your prompt attention to this matter will help us expedite your on-boarding process. We look
+forward to your successful background verification and to welcoming you aboard.
+
+To complete the process click the following Link : ${domain}/Doc/${canid}/${Empid}
+
+Thank you for your cooperation!
+Best regards,
+HR TEAM
+MERIDA HR`)
+        }
+
+    }, [mailOject])
     const offer_letter = (i, p, m, n, d, dob) => {
 
         console.log("offer_letter", i, p, m, n);
@@ -465,13 +485,15 @@ const Hrdashpage = () => {
         const formdata = new FormData();
         formdata.append('CandidateID', canid);
         formdata.append('mail_sended_by', Empid);
-        formdata.append('FormURL', `${domain}/Doc/`);
-
+        formdata.append('FormURL', `${domain}/Doc/${canid}/${Empid}`);
+        formdata.append('mail_content', mailContent)
         setLoadingMailing('mail')
         axios.post(`${port}/root/DocumentsUploadForm`, formdata)
             .then((r) => {
                 toast.success('BG Document Verification Form send successfull...');
                 console.log("DocumentsUploadForm_res", r.data);
+                setmailModal(false)
+                setMailContent('')
                 setLoadingMailing('')
             })
             .catch((err) => {
@@ -507,6 +529,7 @@ const Hrdashpage = () => {
             <section className='flex-1 container pt-4 min-h-[100vh] transition duration-700 w-full  '>
                 <Topnav> </Topnav>
                 {/* Sliders */}
+                <WishesCom />
                 <div className={` mx-auto ${openNavbar ? 'max-w-[650px] xl:max-w-[900px] ' : "lg:max-w-[900px]  xl:max-w-full "}  `}>
                     <h5 className='text-3xl my-3 '>Overview </h5>
 
@@ -548,8 +571,15 @@ const Hrdashpage = () => {
 
                     </Slider>
                 </div>
-                <main className='my-3'>
-                    <LeaveApprovalBox />
+                <main className='my-5 row '>
+                    <section className='col-md-6 ' >
+                        <LeaveApprovalBox />
+
+                    </section>
+                    <section className='col-md-6 ' >
+                        <MyAttendance />
+
+                    </section>
                 </main>
             </section>
 
@@ -660,20 +690,21 @@ const Hrdashpage = () => {
                                                                             </button>)
                                                                             :
                                                                             (<button className='btn btn-danger btn-sm' data-bs-dismiss="modal"
-                                                                                onClick={() => { sentid(e.CandidateId, e.Email); setmailModal(true) }} >
+                                                                                onClick={() => { sentid(e.CandidateId, e.Email); setmailModal(true); setMailObj(e) }} >
                                                                                 Upload Your BG Document
                                                                             </button>)
                                                                             : <p className='mb-0 text-center w-full '> Not Required </p>}
                                                                     </td>}
                                                                 {status != 'ShartlistCanditates' && status != 'Reject' && status != 'All Applicants' &&
                                                                     <td className={`text-center `}>
-                                                                        {((e.Experience && e.BG_Status == 'Verified') || e.Fresher) ?
+                                                                        {((e.Experience && e.BG_Status == 'Verified') || e.Fresher ||
+                                                                            e.verification_status == "Approved") ?
                                                                             <button data-bs-dismiss="modal" className={`btn btn-info btn-sm   ${e.Final_Results === 'Reject' ? 'd-none' : 'd-block '} `}
                                                                                 onClick={() => {
                                                                                     offer_letter(e.FirstName, e.CandidateId, e.Email, e.PrimaryContact, e.AppliedDesignation, e.DOB);
                                                                                     navigate(`/offerletter/${e.CandidateId}`)
                                                                                 }}
-                                                                            >Offer Letter
+                                                                            > Offer Letter
                                                                             </button> : <p> BGV has to complete </p>}
                                                                     </td>
                                                                 }
@@ -713,6 +744,11 @@ const Hrdashpage = () => {
                                         <div className="col-md-12 col-lg-12 mb-3">
                                             <label htmlFor="lastName" className="form-label">Email</label>
                                             <input type="text" className="form-control shadow-none bg-light" value={canemail} />
+                                        </div>
+                                        <div>
+                                            Mail Content
+                                            <textarea value={mailContent} onChange={(e) => setMailContent(e.target.value)}
+                                                rows={5} className="form-control shadow-none bg-light"> </textarea>
                                         </div>
 
                                     </div>

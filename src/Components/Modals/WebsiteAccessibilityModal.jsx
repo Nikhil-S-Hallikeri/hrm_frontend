@@ -18,14 +18,47 @@ const WebsiteAccessibilityModal = ({ obj, getData, showModal, name, id, setShowM
     })
     let [acceptObj, setAcceptObj] = useState({
         mailstatus: true,
-        mail_content: `Dear ${name},
-        We have a recevied a form and everything looks fine. Credentials for our website login will be given below.  You can later change your password using your EmployeeId.
-        User Name : ${obj && obj.employee_Id}
-        Password : MTM@123
-       
-Regards ,
-Merida HR Team.`
+        mail_content: ``,
+        subject: 'Your Login Credentials for Merida'
     })
+    console.log(obj);
+    useEffect(() => {
+        if (obj) {
+            setAcceptObj((prev) => ({
+                ...prev,
+                mail_content: `<div class="container">
+        <p>Dear <strong>${obj.full_name}  </strong>,</p>
+
+        <p>Welcome to <strong> Merida </strong>!</p>
+
+        <p>We are excited to have you join our team as a <strong>${obj.offered_position} </strong>. To help you get started, we have created your login credentials for our internal systems.</p>
+
+        <h3>Your Login Information:</h3>
+        <ul>
+            <li><strong>Username:</strong> ${obj.employee_Id} </li>
+            <li><strong>Temporary Password:</strong>MTM@123</li>
+        </ul>
+
+        <h3>Next Steps:</h3>
+        <ol>
+            <li><strong>Login:</strong> Please log in to our system at <strong> ${domain} </strong> using the credentials provided above.</li>
+            <li><strong>Password Change:</strong> For security purposes, you will be prompted to change your temporary password upon your first login. Choose a strong, secure password that you can remember.</li>
+            <li><strong>Setup:</strong> Once logged in, you can access (relevant systems, e.g., email, HR portal, company intranet) and complete any initial setup required for your role.</li>
+        </ol>
+
+        <h3>Additional Information:</h3>
+        <ul>
+            <li><strong>Support:</strong> If you encounter any issues or need assistance with your login, please contact our IT support team at <strong>(IT Support Email/Phone Number)</strong>.</li>
+            <li><strong>Orientation:</strong> We will be in touch with details regarding your orientation and on-boarding schedule, which will help you get acquainted with our systems and processes.</li>
+        </ul>
+
+        <p>If you have any questions before your start date or need further assistance, please do not hesitate to reach out to us at <strong> ${obj.contact_info} </strong>.</p>
+
+        <p>Best regards,</p>
+    </div>`
+            }))
+        }
+    }, [obj])
     let handleacceptObj = (e) => {
         let { name, value } = e.target
         setAcceptObj((prev) => ({
@@ -57,17 +90,23 @@ Merida HR Team.`
         }))
     }
     let acceptEmployee = (objt) => {
+        setloading(true)
         let formObj = {
             ProfileVerification: showModal,
             Verifier: empUser.EmployeeId,
             mail_send_status: objt.mailstatus,
             mail_content: objt.mail_content,
+            subject: objt.subject,
             Password: 'MTM@123'
         }
         axios.post(`${port}/root/ems/EmployeeCreation/${obj.id}/`, formObj).then((response) => {
             console.log(response.data);
+            setloading(false)
+            getData()
+            setShowModal('')
         }).catch((error) => {
             console.log(error);
+            setloading(false)
         })
     }
     let updateData = () => {
@@ -92,7 +131,7 @@ Merida HR Team.`
         })
         // sentparticularData()
     }, [])
-    let navigate=useNavigate()
+    let navigate = useNavigate()
     let handleDecline = () => {
         let formObj = {
             ProfileVerification: showModal,
@@ -139,15 +178,24 @@ Merida HR Team.`
                                     </section>
                                 </div>
 
-                                {acceptObj.mailstatus == true && <div className=''>
-                                    Mail Content :
-                                    <textarea className=' block bgclr p-2 w-full
+                                {acceptObj.mailstatus == true &&
+                                    <>
+                                        <div>
+                                            Mail Subject :
+                                            <input type="text" className=' block bgclr p-2 w-full my-2
+                                     rounded outline-none ' value={acceptObj.subject} name='subject'
+                                                onChange={handleacceptObj} />
+                                        </div>
+                                        <div className=''>
+                                            Mail Content :
+                                            <textarea className=' block bgclr p-2 w-full
                                      rounded outline-none ' name="mail_content"
-                                        onChange={handleacceptObj} rows={8}
-                                        value={acceptObj.mail_content} id="">
+                                                onChange={handleacceptObj} rows={8}
+                                                value={acceptObj.mail_content} id="">
 
-                                    </textarea>
-                                </div>}
+                                            </textarea>
+                                        </div>
+                                    </>}
                                 <section className='row my-3'>
 
                                     <div className="col-md-6 col-lg-4 mb-3 ">
@@ -239,13 +287,11 @@ Merida HR Team.`
 
                                 </section>
                                 <button onClick={() => {
-                                    setloading(true)
+                                    // setloading(true)
                                     acceptEmployee(acceptObj)
-                                    setTimeout(() => {
-                                        updateData()
-                                    }, 2000);
-                                    setloading(false)
-                                    getData()
+                                    // setTimeout(() => {
+                                    //     updateData()
+                                    // }, 2000);
                                 }} disabled={loading} className='flex ms-auto savebtn text-white p-2 rounded '>
                                     {loading ? 'Loading..' : "Submit"}
                                 </button>

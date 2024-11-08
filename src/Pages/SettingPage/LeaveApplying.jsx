@@ -46,21 +46,19 @@ const LeaveApplying = () => {
                         <OverlayTrigger key={index}
                             placement="top" delay={{ show: 150, hide: 200 }}
                             overlay={renderTooltip(obj.leave_discription)} >
-                            <section className='bgclr rounded gap-3 p-2 w-[16rem]'>
-                                <p className='break-words text-sm mb-0 fw-semibold'>{obj.LeaveType}</p>
-                                <div className=' flex  items-center '>
-                                    <div className='w-2/3'>
-                                        <h4 className='fw-semibold text-4xl'>{obj.Available_leaves} </h4>
-                                        <p className='break-words text-xs mb-0 fw-semibold'>Available </p>
-
-                                    </div>
-                                    <div>
-                                        <h4 className='fw-semibold text-4xl'>{obj.utilised_leaves} </h4>
-                                        <p className='break-words text-xs mb-0 fw-semibold'>Utilized </p>
-
-                                    </div>
-                                    {/* <img className='w-14 h-fit' src={require('../../assets/Images/leavepage.png')} alt="Leave Image" /> */}
+                            <section className='bgclr rounded gap-3 p-2 min-w-[16rem]'>
+                                {console.log(obj, "leave")
+                                }
+                                <article className='flex justify-between gap-2 ' >
+                                    <p className='break-words text-xs mb-0 fw-bold'>{obj.LeaveType}</p>
+                                    <p className='text-xs mb-0 fw-semibold ' >Granted : {obj.no_of_leaves}</p>
+                                </article>
+                                <div className='text-center mx-auto '>
+                                    <h4 className='fw-semibold mb-0 text-2xl'>{obj.Available_leaves ? obj.Available_leaves : 0} </h4>
+                                    <p className='break-words text-xs m-0 fw-semibold'>Balance </p>
                                 </div>
+                                {/* <img className='w-14 h-fit' src={require('../../assets/Images/leavepage.png')} alt="Leave Image" /> */}
+                                <p className='mb-0 text-xs fw-semibold '  > {obj.utilised_leaves} of {obj.no_of_leaves} Consumed </p>
                             </section>
                         </OverlayTrigger>
                     ))

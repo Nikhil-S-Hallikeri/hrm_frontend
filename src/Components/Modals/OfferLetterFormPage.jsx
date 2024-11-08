@@ -31,6 +31,8 @@ const OfferLetterFormPage = () => {
         internship_Duration_To: null,
         probation_status: null,
         notice_period: null,
+        offer_expire: null,
+        contact_info: null
     })
     let handleFormobj = (e) => {
         let { name, value } = e.target
@@ -64,8 +66,8 @@ const OfferLetterFormPage = () => {
             setformobj((prev) => ({
                 ...prev,
                 internship_Duration_From: formobj.Date_of_Joining,
-                probation_Duration_From: null ,
-                probation_status:null,
+                probation_Duration_From: null,
+                probation_status: null,
                 probation_Duration_To: null
             }))
         }
@@ -96,7 +98,7 @@ const OfferLetterFormPage = () => {
         delete formobj.CandidateId
         delete formobj.letter_verified_by
         delete formobj.letter_prepared_by
-        console.log(formobj);
+        console.log(formobj);   
         axios.patch(`${port}/root/OfferLetterDetails/${formobj.id}/`, formobj).then((response) => {
             console.log(response.data);
             getCandidate()
@@ -216,6 +218,18 @@ const OfferLetterFormPage = () => {
                                         <input type="date" id="Offerddate" name="Date_of_Joining" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
                                             value={formobj.Date_of_Joining} onChange={handleFormobj} />
                                     </div>
+                                    <div class="col-md-6 col-lg-4 mb-3">
+                                        <label for="Offerddate"> Deadline for offer acceptance :</label>
+                                        <input type="date" id="" name="offer_expire"
+                                            required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                            value={formobj.offer_expire} onChange={handleFormobj} />
+                                    </div>
+                                    <div class="col-md-6 col-lg-4 mb-3">
+                                        <label for="Offerddate">HR Contact info :</label>
+                                        <input type="text" id="" name="contact_info" placeholder='email or phone content for the candidate '
+                                            required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                            value={formobj.contact_info} onChange={handleFormobj} />
+                                    </div>
                                     {/* <div class="col-md-6 col-lg-4 mb-3">
                                         <label for="Offerddate">Notice Period :</label>
                                         <input type="number" id="Offerddate" name="notice_period" required
@@ -324,9 +338,12 @@ const OfferLetterFormPage = () => {
 
                                 <div class="col-md-6 col-lg-12 px-3 d-flex  justify-content-end ">
 
-                                    {!show && <button onClick={submitForm} type='button' className='savebtn px-3 text-white p-2 border-2 border-green-100 rounded '>
-                                        Save
-                                    </button>}
+                                    {!show &&
+                                        <button onClick={submitForm} type='button'
+                                            className='savebtn px-3 text-white p-2 border-2 border-green-100 rounded '>
+                                            Save
+                                        </button>
+                                    }
                                     {
                                         show && <button onClick={() => navigate(`/candidateOfferLetter/${id}`)}
                                             className='bg-slate-500 text-white rounded p-2 '>Show Template </button>

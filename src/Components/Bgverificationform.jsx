@@ -93,7 +93,7 @@ const BgverificationForm = () => {
             formObj.CandidateWorksFrom != '' && formObj.Candidate_Behavior_Feedback != '' && formObj.Candidate_Leaving_Reason != '' &&
             formObj.Candidate_Rehire != '' && formObj.Candidates_Achieve_Targets != '' && formObj.Candidates_ability != '' &&
             formObj.Comments_On_Candidate != '' && formObj.Ever_Handled_Team != '' && 
-            formObj.PackageOffered != '' && formObj.Remarks != '' && formObj.TeamSize != '' && formObj.VerifiersDesignation &&
+            formObj.PackageOffered != '' && formObj.Remarks != '' && formObj.VerifiersDesignation &&
             formObj.VerifiersEmployer != '' && formObj.VerifiersName != '' && formObj.VerifiersPhoneNumber != ''
         ) {
             axios.post(`${port}/root/BG_Verification/`, formObj)
@@ -264,7 +264,7 @@ const BgverificationForm = () => {
                                                 </select>
                                             </div>
                                             <div className="col-md-3 col-lg-4 my-2 flex flex-col justify-between mb-3">
-                                                <label htmlFor="teamSize" className="form-label text-slate-600 poppins fw-medium">Team Size <span className='text-red-600'>*</span> </label>
+                                                <label htmlFor="teamSize" className="form-label text-slate-600 poppins fw-medium">Team Size </label>
                                                 <input type="number" className="bgclr block p-2 rounded w-full outline-none shadow-none" id="teamSize"
                                                     name="TeamSize" placeholder='10' value={formObj.TeamSize} onChange={(e) => { if (e.target.value >= 0) handleChange(e) }} required />
                                             </div>

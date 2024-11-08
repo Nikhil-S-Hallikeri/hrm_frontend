@@ -1,9 +1,16 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { port } from '../App'
+import { toast } from 'react-toastify';
+import Sidebar from './Sidebar';
+import Empsidebar from './Empsidebar';
+import Recsidebar from './Recsidebar';
+import ReactQuill from 'react-quill';
 
 
 const Mass_mail = () => {
+    let [loading, setLoading] = useState(false)
+    let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
     const [Employee_Id, setEmployee_Id] = useState("");
     const [Name, setName] = useState("");
     const [phone, setphone] = useState("");
@@ -99,8 +106,10 @@ const Mass_mail = () => {
                 console.log("Department_err", err.data);
 
             })
-        else
+        else {
             getAllemp()
+            setDesignation([])
+        }
 
 
     };
@@ -115,7 +124,6 @@ const Mass_mail = () => {
             setEmployeelist(res.data.EmployeeMails)
         }).catch((err) => {
             console.log("Department_err", err.data);
-
         })
 
     };
@@ -134,18 +142,37 @@ const Mass_mail = () => {
     const sendSelectedDataToApi = (e) => {
         e.preventDefault()
 
-
-
         const formData2 = new FormData();
-        formData2.append('Department', Department);
-        formData2.append('selectedCandidates', selectedCandidates);
-        formData2.append('Subject', Subject);
-        formData2.append('Date', Date);
-        formData2.append('Message', Message);
+        // formData2.append('Department', Department);
+        formData2.append('subject', Subject);
+        // formData2.append('subject', Date);
+        formData2.append('message', Message);
+        formData2.append('mail_sentby', JSON.parse(sessionStorage.getItem('dasid')));
 
+        for (let index = 0; index < selectedCandidates.length; index++) {
+            formData2.append('employee_mails_list', selectedCandidates[index]);
+
+        }
         for (let pair of formData2.entries()) {
             console.log(pair[0] + ': ' + pair[1]);
         }
+
+        setLoading(true)
+        // return
+        axios.post(`${port}/root/ems/MassMails`, formData2).then((response) => {
+            toast.success('Email Sended')
+            setLoading(false)
+            console.log(response.data, 'mail');
+            setSubject('')
+            setMessage('')
+            setSelectedCandidates([])
+
+        }).catch((error) => {
+            console.log(error, 'mail');
+            toast.error('Error occured')
+            setLoading(false)
+
+        })
 
 
         // axios.post(`${port}/root/ScreeningAssigning/`, { Candidates: selectedCandidates, Recruiterid: id, login_user: Empid })
@@ -173,7 +200,7 @@ const Mass_mail = () => {
         console.log(employeeId);
 
         axios.get(`${port}/root/ems/EmployeeId/Mail/${employeeId}/`).then((res) => {
-            console.log("Search_Employee_res :", employeeId , res.data);
+            console.log("Search_Employee_res :", employeeId, res.data);
             setEmployeelist(res.data.EmployeeMails)
         }).catch((err) => {
             console.log("Department_err", err.data);
@@ -185,9 +212,14 @@ const Mass_mail = () => {
 
 
     return (
-        <div>
-            {/* LEAVE APPLY START */}
-            <div>
+        <div className='flex '>
+            <div className='d-none d-lg-flex '>
+                {employeeStatus && employeeStatus == 'Employee' && <Empsidebar />}
+                {employeeStatus && employeeStatus == 'Recruiter' && <Recsidebar />}
+                {employeeStatus && employeeStatus == 'HR' && <Sidebar />}
+                {employeeStatus && employeeStatus == 'Admin' && <Sidebar />}
+            </div>
+            <div className='flex-1 container mx-auto '>
                 <form>
                     {/* Form start */}
                     <div className="row  justify-content-center m-0">
@@ -202,12 +234,9 @@ const Mass_mail = () => {
                                     <select className="form-select shadow-none" id="ageGroup" value={Department} onChange={handleDepartmentChange}>
                                         <option value="">Select</option>
 
-                                        {Departments != undefined && Departments != undefined &&  Departments.map((e) => {
+                                        {Departments != undefined && Departments != undefined && Departments.map((e) => {
                                             return (
-
-
-                                                <option value={e}>{e}</option>
-
+                                                <option value={e}> {e} </option>
                                             )
                                         })}
                                     </select>
@@ -226,52 +255,57 @@ const Mass_mail = () => {
 
                                     </select>
                                 </div>
-                                <div class="col-md-6 col-lg-4 mb-3">
+                                {/* <div class="col-md-6 col-lg-4 mb-3">
                                     <label htmlFor="ageGroup" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Search* </label>
 
                                     <div class="input-group ">
                                         <input type="text" value={employeeId} onChange={handleChange} class="form-control shadow-none" aria-label="Recipient's username" placeholder='Type Employee ID' aria-describedby="button-addon2" />
                                         <button class="btn btn-outline-secondary" onClick={sendDataToAPI} type="button" id="button-addon2">Button</button>
                                     </div>
-                                </div>
-                                <div className="col-md-6 col-lg-4 ">
-                                    <label htmlFor="lastName" className="form-label" style={{ color: 'rgb(76,53,117)' }}>EmployeeFilter*</label>
-                                </div>
+                                </div> */}
 
                                 <div className="col-md-6 col-lg-12 mb-3">
-                                    <div className='rounded border table-responsive  m-1'>
-                                        <table class="table caption-top   table-hover">
+                                    <label htmlFor="lastName" className="form-label" style={{ color: 'rgb(76,53,117)' }}>EmployeeFilter*</label>
+                                    <div className='rounded tablebg border table-responsive  m-1'>
+                                        <table class="w-full ">
                                             <thead >
                                                 <tr >
                                                     {/* <th scope="col"></th> */}
-                                                    <th scope="col"><span className='fw-medium'></span>All</th>
-                                                    {/* <th scope="col" className='fw-medium'>Name</th> */}
+                                                    <th scope="col"><span className='fw-medium'></span> Select  </th>
+                                                    <th>Employee ID </th>
+                                                    <th>Name </th>
                                                     <th scope="col" className='fw-medium'>Email</th>
-                                                    {/* <th scope="col" className='fw-medium'>Employee ID</th>
-                                                    <th scope="col" className='fw-medium'>Phone</th>
-                                                    <th scope="col" className='fw-medium'>Join Date</th>
-                                                    <th scope="col" className='fw-medium'>Role</th> */}
+                                                    <th>Department </th>
+                                                    <th>Designation </th>
+                                                    <th>Phone </th>
+
                                                 </tr>
                                             </thead>
                                             {Employeelist != undefined && Employeelist.map((e) => {
                                                 return (
 
                                                     <tbody>
-                                                        <tr>
-                                                            <th scope="row"><input type="checkbox" value={e} onChange={handleCheckboxChange} /></th>
+                                                        <tr className='cursor-pointer hover:bg-blue-50 ' onClick={() => {
+                                                            if (selectedCandidates.find((obj) => obj == e.email))
+                                                                setSelectedCandidates(selectedCandidates.filter((obj) => obj != e.email))
+                                                            else
+                                                                setSelectedCandidates((prev) => [...prev, e.email])
+                                                        }} >
+                                                            <td scope="row">
 
-                                                            <td >{e}</td>
+                                                                <input type="checkbox" checked={selectedCandidates.find((obj) => obj == e.email)} /></td>
 
-
+                                                            <td>{e.employee_Id} </td>
+                                                            <td> {e.full_name} </td>
+                                                            <td > {e.email} </td>
+                                                            <td>{e.Department} </td>
+                                                            <td>{e.Designation} </td>
+                                                            <td>{e.mobile} </td>
                                                         </tr>
                                                     </tbody>
 
                                                 )
                                             })}
-
-
-
-
                                         </table>
                                     </div>
                                 </div>
@@ -289,14 +323,16 @@ const Mass_mail = () => {
                                     </select>
                                 </div> */}
 
-                                <div className="col-md-6 col-lg-4 mb-3">
+                                {/* <div className="col-md-6 col-lg-4 mb-3">
                                     <label htmlFor="secondaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Date *</label>
                                     <input type="date" className="form-control shadow-none" value={Date} onChange={(e) => setDate(e.target.value)} id="State" name="State" />
-                                </div>
+                                </div> */}
 
                                 <div className="col-md-6 col-lg-12 mb-3">
                                     <label htmlFor="ageGroup" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Message*</label>
-                                    <textarea type="text" className="form-control shadow-none" style={{ lineHeight: '50px' }} value={Message} onChange={(e) => setMessage(e.target.value)} id="State" name="State" />
+                                    <ReactQuill theme="snow" className='bg-white  ' value={Message} onChange={setMessage} />
+                                    {/* <textarea type="text" className="form-control shadow-none" style={{ lineHeight: '50px' }}
+                                        value={Message} onChange={(e) => setMessage(e.target.value)} id="State" name="State" /> */}
 
                                 </div>
 
@@ -308,7 +344,10 @@ const Mass_mail = () => {
                     {/* Button start */}
                     <div className="d-flex justify-content-end mt-2">
                         <div className='d-flex gap-2 p-3'>
-                            <button type="submit" className="btn btn-success btn-sm" onClick={sendSelectedDataToApi}>Send Mail</button>
+                            <button disabled={loading} type="submit" className="btn btn-success btn-sm"
+                                onClick={sendSelectedDataToApi}>
+                                {loading ? "Loading" : " Send Mail "}
+                            </button>
                         </div>
                     </div>
                     {/* Button end */}

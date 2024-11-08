@@ -14,9 +14,6 @@ const Topnav = ({ name }) => {
     let logindata = JSON.parse(sessionStorage.getItem('user'))
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
 
-    console.log("empid", Empid);
-
-
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const toggleDropdown = () => {
@@ -28,12 +25,13 @@ const Topnav = ({ name }) => {
     const navigate = useNavigate()
 
     const logout = () => {
+        sessionStorage.removeItem('user')
+        navigate("/")
         axios.post(`${port}/root/logout/${user.EmployeeId}/`)
             .then((r) => {
                 console.log(" Logout Successfull", r.data)
                 sessionStorage.removeItem('user')
                 navigate("/")
-
             })
             .catch((err) => {
                 console.log("Logout Error", err)
@@ -291,7 +289,8 @@ const Topnav = ({ name }) => {
                                                     <li className='nav-link text-secondary' style={{ position: 'relative', right: '12px' }} > <i class="fa-solid fa-user me-4   text-black"></i>My Profile</li>
                                                 </Link>
 
-                                                <li className='nav-link text-secondary' style={{ position: 'relative', right: '12px' }} onClick={logout}> <i class="fa-solid fa-right-from-bracket me-3  text-black"></i> Log Out</li>
+                                                <li className='nav-link text-secondary' style={{ position: 'relative', right: '12px' }}
+                                                    onClick={logout}> <i class="fa-solid fa-right-from-bracket me-3  text-black"></i> Log Out</li>
                                             </ul>
                                         </ul>
 

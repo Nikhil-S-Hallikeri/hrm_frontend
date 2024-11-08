@@ -6,9 +6,10 @@ import { toast } from 'react-toastify';
 import { HrmStore } from '../../Context/HrmContext';
 
 const SchedulINterviewModalForm = (props) => {
-    let { show, fetchdata, setshow,fetchdata1, persondata, setPersondata, candidateId, setcandidateId,
+    let { show, fetchdata, setshow, fetchdata1, persondata,
+        setPersondata, candidateId, setcandidateId, data,
         fetchdata2 } = props
-    console.log(persondata);
+    console.log(show,'interview');
     let [outsideMail, setOutSideMail] = useState()
     let [outsideINterview, setOutsideInterview] = useState(false)
     let [loading, setloading] = useState(false)
@@ -21,11 +22,13 @@ const SchedulINterviewModalForm = (props) => {
         InterviewDate: '',
         InterviewTime: '',
         InterviewType: '',
-        login_user: ''
+        login_user: '',
+        zoomLink: ''
     });
+    let [sendStatus, setSendStatus] = useState(false)
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     const [Candidateid, setCandidate] = useState("")
-    let [mailContent, setMailContent] = useState(`Dear Candidate \n Congratulations!! \n  We are glad to inform you that you have selected for the Next round. \nDate : ${formData.InterviewDate} \nTiming : ${formData.InterviewTime}  `)
+    let [mailContent, setMailContent] = useState(``)
 
     // Define the function 
     const sentparticularData = (id) => {
@@ -76,6 +79,8 @@ const SchedulINterviewModalForm = (props) => {
             "formData", formData,
             "Login_user", Empid);
         setloading(true)
+        formData.mail_status = sendStatus ? 'Yes' : 'No'
+        console.log(formData);
         axios.post(`${port}/root/interviewschedule`, {
             ...formData,
             Email_Message: mailContent.replace(/\\n/g, '\n')
@@ -86,6 +91,17 @@ const SchedulINterviewModalForm = (props) => {
             fetchdata()
             fetchdata1()
             setloading(false)
+            setFormData({
+                Candidate: "",
+                InterviewRoundName: '',
+                TaskAssigned: '',
+                interviewer: '',
+                InterviewDate: '',
+                InterviewTime: '',
+                InterviewType: '',
+                login_user: '',
+                zoomLink: ''
+            })
             console.log("schedule_Interview_Data_res", res.data);
         }).catch((err) => {
             setloading(false)
@@ -93,10 +109,41 @@ const SchedulINterviewModalForm = (props) => {
         })
     };
     useEffect(() => {
-        if (formData && (formData.InterviewTime || formData.InterviewDate)) {
-            setMailContent(`Dear Candidate \n Congratulations!! \n  We are glad to inform you that you have selected for the Next round. \nDate : ${formData.InterviewDate && changeDateYear(formData.InterviewDate)} \nTiming : ${formData.InterviewTime && convertTimeTo12HourFormat(formData.InterviewTime)}`)
+        if (formData && show && (formData.InterviewTime || formData.InterviewDate || formData.zoomLink)) {
+            setMailContent(`
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <p>Dear <strong> ${show.Candidate_name} </strong>,</p>
+
+    <p>We are pleased to inform you that you have advanced to the next round of interviews for the
+     <strong> ${show.Applied_Designation} </strong> role at 
+     <strong> Merida </strong>.
+    Congratulations!</p>
+
+    <h3 style="color: #4CAF50;">Interview Details:</h3>
+    <ul style="margin-left: 20px;">
+        <li><strong>Date:</strong> ${formData.InterviewDate && changeDateYear(formData.InterviewDate)}.</li>
+        <li><strong>Time:</strong>  ${formData.InterviewTime && convertTimeTo12HourFormat(formData.InterviewTime)}.</li>
+       ${formData.InterviewType == 'online' ? `<li><strong>Location:</strong> ${formData.zoomLink} </li>  ` : ''}
+    </ul>
+
+    <h3 style="color: #4CAF50;">Preparation:</h3>
+    <ul style="margin-left: 20px;">
+        <li>Please review any specific materials, topics, or preparation guidelines, if applicable.</li>
+        <li>If the interview is virtual, ensure that you have access to the specific platform (e.g., Zoom, Teams).</li>
+    </ul>
+
+    <p>Kindly acknowledge the above interview schedule.</p>
+
+    <p>If you have any questions or need further information before the interview, please do not hesitate to reach out.</p>
+
+    <p>Thank you for your continued interest in <strong> Merida </strong>. We look forward to speaking with you soon.</p>
+
+    <p>Best regards,</p>
+    <p><strong>HR TEAM</strong></p>
+    </body>
+         `)
         }
-    }, [formData.InterviewTime, formData.InterviewDate])
+    }, [formData.InterviewTime, formData.InterviewDate, formData.zoomLink])
     useEffect(() => {
         sentparticularData()
         console.log(persondata);
@@ -104,7 +151,6 @@ const SchedulINterviewModalForm = (props) => {
     const [interviewers, setInterviewers] = useState([]);
     useEffect(() => {
         axios.get(`${port}/root/interviewschedule`).then((e) => {
-
             console.log("Interviewer Data", e.data);
             setInterviewers(e.data)
         })
@@ -116,7 +162,7 @@ const SchedulINterviewModalForm = (props) => {
                 <Modal.Header closeButton>
                     <h1 class="modal-title fs-5" >Schedule Interview </h1>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className=' h-[80vh] overflow-y-scroll ' >
                     <form id="interviewForm" onSubmit={handleSubmit} class="styled-form">
                         <div class="form-group">
                             <label for="candidateId">Candidate ID:</label>
@@ -153,13 +199,14 @@ const SchedulINterviewModalForm = (props) => {
                                                 interviewer: ''
                                             }))
                                         }}
-                                        className={`w-16 h-8 flex rounded-full  shadow-sm ${outsideINterview ? 'bg-green-100' : 'bg-red-100'} bg-blue-100 `}>
+                                        className={`w-16 h-8 flex rounded-full  shadow-sm 
+                                        ${outsideINterview ? 'bg-green-100' : 'bg-red-100'} bg-blue-100 `}>
                                         <p className={`w-6 ${outsideINterview ? 'translate-x-9 ' : 'translate-x-1'} h-6 my-auto m-0 duration-300 bg-white rounded-full shadow-sm `}> </p>
                                     </div>
                                 </article>
                             </section>
                             {!outsideINterview && <select id="interviewer" name="interviewer" value={formData.interviewer} onChange={handleInputChange} required class="form-control">
-                                <option value="" selected>Select Name</option>
+                                <option value="" selected> Select Name </option>
                                 {interviewers.map(interviewer => (
                                     <option key={interviewer.EmployeeId} value={interviewer.EmployeeId}>
                                         {`${interviewer.EmployeeId},${interviewer.Name}`}
@@ -170,17 +217,17 @@ const SchedulINterviewModalForm = (props) => {
                                 onChange={(e) => setOutSideMail(e.target.value)} class="form-control" />}
                         </div>
                         <div class="form-group">
-                            <label for="interviewDate">Interview Date:</label>
+                            <label for="interviewDate"> Interview Date : </label>
                             <input type="date" id="InterviewDate" name="InterviewDate" value={formData.InterviewDate}
                                 onChange={handleInputChange} required class="form-control" />
                         </div>
                         <div class="form-group">
-                            <label for="interviewTime">Interview Time:</label>
+                            <label for="interviewTime"> Interview Time : </label>
                             <input type="time" id="InterviewTime" name="InterviewDTime" onChange={handleTimeInputChange} required class="form-control" />
                         </div>
 
                         <div class="form-group">
-                            <label for="InterviewType">Interview Type:</label>
+                            <label for="InterviewType"> Interview Type : </label>
                             <select id="InterviewType" name="InterviewType" value={formData.InterviewType} onChange={handleInputChange} required class="form-control">
                                 <option value="" selected>Select Round</option>
                                 <option value="online" >Online</option>
@@ -188,9 +235,29 @@ const SchedulINterviewModalForm = (props) => {
 
                             </select>
                         </div>
+                        {formData.InterviewType == 'online' && <div class="form-group">
+                            <label for="candidateId">Link for online Interview :</label>
+                            <input type="text" id="zoomLink" placeholder='Link for Interview'
+                                name='zoomLink' onChange={handleInputChange}
+                                value={formData.zoomLink}
+                                class="form-control" />
+                        </div>}
                         <div>
-                            <label htmlFor="" className='my-3'> Mail Content : <span className='text-blue-600 text-xs '>( Use \n to insert the Line in the mail )</span>  </label>
-                            <textarea name="" value={mailContent} className='outline-none border-2 rounded p-2 block w-full ' rows={5} onChange={(e) => setMailContent(e.target.value)} id="">  </textarea>
+                            <label htmlFor="" className='my-3 flex items-center gap-2 '> Mail Content :
+                                <div className='flex items-center gap-2 ' >
+                                    Yes <div onClick={() => setSendStatus(!sendStatus)}
+                                        className={`${sendStatus ? 'bg-green-200 ' : 'bg-red-200'} w-10 relative 
+                                         duration-500 border-2 rounded-full h-5  `} >
+                                        <span type='button' className={`w-4 ${sendStatus ? 'translate-x-[1px] ' : 'translate-x-[18px] '}
+                                             duration-500 absolute rounded-full h-4  bg-white  `}>
+                                        </span>
+                                    </div>
+                                    No
+                                </div>
+                            </label>
+                            {sendStatus && <textarea name="" value={mailContent}
+                                className='outline-none border-2 rounded p-2 block w-full ' rows={5}
+                                onChange={(e) => setMailContent(e.target.value)} id="">  </textarea>}
                         </div>
                         <div class="form-group my-3 d-flex justify-content-between">
                             {/* <button class="btn btn-primary">Send Email</button> */}

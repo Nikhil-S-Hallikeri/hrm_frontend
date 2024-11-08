@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { domain, port } from '../App'
 import axios from 'axios'
 import Tempone from '../Components/Tempone'
@@ -10,9 +10,11 @@ import { Modal } from 'react-bootstrap'
 import { usePDF } from 'react-to-pdf'
 import DownloadButton from '../Components/Employee/DownloadButton'
 import GeneratePDF from '../Components/ApplyList/GeneratePDF'
+import { Helmet } from 'react-helmet'
+import ReactQuill from 'react-quill'
 
 const OfferTemplate = () => {
-    let { getCurrentDate } = useContext(HrmStore)
+    let { getCurrentDate, changeDateYear } = useContext(HrmStore)
     let { id } = useParams()
     let [loading, setloading] = useState('')
     let [response, setresponseSubmited] = useState(false)
@@ -66,7 +68,7 @@ const OfferTemplate = () => {
     let [mailcontent, setMailcontent] = useState({
         show: false,
         content: ` `,
-        subject: 'Offer Letter '
+        subject: `Congratulations! Offer for   `
     })
     const handleNotAccept = () => {
         const formData = new FormData();
@@ -114,13 +116,52 @@ const OfferTemplate = () => {
     };
     useEffect(() => {
         if (formobj.id) {
+            console.log("offer", formobj);
+
             setMailcontent((prev) => ({
                 ...prev,
-                content: `Dear ${formobj.Name},\nWe are letting u know that you have selected this the offer we have been come Out with.You can check the Offer in the given link below.
-Link : ${domain}/candidateOfferLetter/${formobj.CandidateId}/`
+                subject: `Congratulations! Offer for ${formobj.position_name} `,
+                content: `<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px; background-color: #f4f4f4;">
+
+    <div style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 600px; margin: auto;">
+        <p>Dear <strong>${formobj.Name}</strong>,</p>
+
+        <p>We are thrilled to inform you that you have been selected for the 
+        <strong> ${formobj.position_name} </strong> role at <strong> Merida </strong>! Congratulations on this achievement.</p>
+
+        <h3 style="color: #4CAF50; margin-top: 20px;">Offer Details:</h3>
+        <ul style="margin-left: 20px; padding-left: 0;">
+            <li style="margin-bottom: 10px;"><strong>Position:</strong> ${formobj.position_name} </li>
+            <li style="margin-bottom: 10px;"><strong>Start Date:</strong>
+             ${formobj.Date_of_Joining} </li>
+            <li style="margin-bottom: 10px;"><strong>Location:</strong> ${formobj.WorkLocation} </li>
+        </ul>
+
+        <h3 style="color: #4CAF50; margin-top: 20px;">Next Steps:</h3>
+        <ol style="margin-left: 20px; padding-left: 0;">
+            <li style="margin-bottom: 10px;"><strong>Offer Letter:</strong> 
+             Please review the offer and confirm your acceptance by 
+            <strong> ${formobj.offer_expire && changeDateYear(formobj.offer_expire)} </strong> by 
+            <a href='${domain}/candidateOfferLetter/${formobj.CandidateId}/' target='_blank'>
+             clicking here </a> . </li>
+            <li style="margin-bottom: 10px;"><strong>On-Boarding:</strong> 
+            Upon acceptance, we will provide you with additional information regarding the on-boarding process, including orientation details, required documents, and any other relevant information.</li>
+        </ol>
+
+        <p>If you have any questions or need further clarification regarding the offer or the on-boarding process, please do not hesitate to contact us.</p>
+
+        <p>Once again, congratulations and welcome to the team! We are excited about the skills and experience you will bring to 
+        <strong> Merida </strong> and look forward to working with you.</p>
+
+        <p>Best regards,</p>
+        <p><strong>HR TEAM</strong></p>
+    </div>
+
+</body> 
+`
             }))
         }
-    }, [formobj.id])
+    }, [formobj])
     const sendbackend = async () => {
         setloading('submit')
         // toPDF();
@@ -205,8 +246,12 @@ Link : ${domain}/candidateOfferLetter/${formobj.CandidateId}/`
 
         }
     }, [id])
+    let navigate = useNavigate()
     return (
         <div>
+            <Helmet>
+                <meta name="viewport" content="width=1024, initial-scale=1.0" />
+            </Helmet>
             {formobj && (formobj.Accept_status == "Reject" && !user) ?
                 <main className='h-[100vh] flex '>
                     <section className='bgclr p-3 flex items-center
@@ -235,8 +280,15 @@ Link : ${domain}/candidateOfferLetter/${formobj.CandidateId}/`
                             {/* <button className='btn btn-success btn-sm me-3' onClick={() => toPDF()}>Download PDF</button> */}
                             {(formobj.verification_status == 'Pending' || formobj.verification_status == 'Denied')
                                 && !formobj.letter_verified_by && user && user.Disgnation != 'Admin' &&
-                                <button onClick={sendRequest} className='p-2 mx-2 rounded savebtn text-white border-2 border-green-100'>
-                                    Send Approval Request </button>
+                                <section>
+                                    <button onClick={() => navigate(`/offerletter/${id}`)} className=' p-2 px-4 mx-2 rounded bg-slate-600 text-white border-2
+                                 ' >
+                                        Edit
+                                    </button>
+                                    <button onClick={sendRequest} className='p-2 mx-2 rounded savebtn text-white border-2
+                                 border-green-100'>
+                                        Send Approval Request </button>
+                                </section>
                             }
                             {user && (user.EmployeeId == formobj.letter_verified_by && (formobj.verification_status == 'Pending' || formobj.verification_status == 'Denied')) && <div>
                                 <button onClick={() => setCommentObj((prev) => ({ ...prev, status: 'Approved', show: true }))} className='savebtn p-2 border-2 border-green-100 rounded text-white '>
@@ -300,14 +352,19 @@ Link : ${domain}/candidateOfferLetter/${formobj.CandidateId}/`
                         </div>
                         <div className='' >
                             Mail Content :
-                            <textarea name="" rows={7}
+                            <ReactQuill theme='snow' value={mailcontent.content}
+                                onChange={(e) => setMailcontent((prev) => ({
+                                    ...prev,
+                                    content: e
+                                }))} className='' />
+                            {/* <textarea name="" rows={7}
                                 className='bgclr my-3 w-full block p-2 rounded outline-none ' value={mailcontent.content}
                                 onChange={(e) => setMailcontent((prev) => ({
                                     ...prev,
                                     content: e.target.value
                                 }))} id="">
 
-                            </textarea>
+                            </textarea> */}
                         </div>
 
                         {(formobj.verification_status == 'Approved' && !formobj.Letter_sended_status) &&

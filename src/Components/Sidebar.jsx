@@ -6,6 +6,7 @@ import { Navbar } from 'react-bootstrap'
 import { HrmStore } from '../Context/HrmContext'
 import NavbarButton from './HomeComponent/NavbarButton'
 import { light } from '@mui/material/styles/createPalette'
+import { das } from '../App'
 
 const Sidebar = () => {
     let [opentab, setOpenTab] = useState(false)
@@ -34,9 +35,16 @@ const Sidebar = () => {
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/dashboard/${logindata.Disgnation}`}
                             label='Dashboard' active='dashboard'
                             img='/assets/Images/dashboard.png' />
+                        <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/dash/client`}
+                            label='Client' active='client'
+                            img='/assets/Images/profile.png' />
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Applaylist`}
                             label='Applyed List' active='applylist'
                             img='/assets/Images/report.png' />
+                        <NavbarButton openNavbar={openNavbar} setopen={setNavbar}
+                            href={`${das}/hrms?user=${JSON.parse(sessionStorage.getItem('dasid'))}&password=${JSON.parse(sessionStorage.getItem('user')).Password}`}
+                            label='Das' active='das'
+                            img='/assets/Images/DasIcon.webp' />
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Reporting_team`}
                             label='My team' active='Reporting_team'
                             img='/assets/Images/profile.png' />
@@ -48,8 +56,6 @@ const Sidebar = () => {
                             { name: 'Salary template', path: '/dash/salary-templates' },
                             { name: 'Assign Employee', path: '/dash/salary-assigning' },
                             { name: 'Employees payslip', path: '/dash/employeesPayslip' },
-
-
                         ]}
                             label='Payroll' active='payroll'
                             img='/assets/Images/payroll.png'
@@ -61,6 +67,7 @@ const Sidebar = () => {
                             { name: 'Mass Communication', path: '/Mass_Mail' },
                             { name: 'Offer Approval', path: '/dash/offerApproval', light: count && count.offeraproval },
                             { name: 'Employee New Joining', path: '/New_Join_Employee' },
+                            { name: 'Resignation Request ', path: '/Employee_request_form' }
                         ]}
                             label='Employee' active='Employee' light={count && count.employeePage}
                             img='/assets/Images/Application.png' />

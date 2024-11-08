@@ -10,6 +10,8 @@ import Recsidebar from '../../Components/Recsidebar'
 import Sidebar from '../../Components/Sidebar'
 import ShowHolidays from './ShowHolidays'
 import AttendenceInfo from './AttendenceInfo'
+import JobPosting from './JobPosting'
+import JobListing from './JobListing'
 
 const SettingRouter = () => {
     let { setActivePage, activeSetting, setActiveSetting } = useContext(HrmStore)
@@ -33,9 +35,7 @@ const SettingRouter = () => {
                     <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Change Password' path='/settings/password' active='password' />
                     <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Holidays' path='/settings/holidays' active='holidays' />
                     <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Attendence' path='/settings/attendence' active='attendence' />
-
-
-
+                    <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Job Posting' path='/settings/jobposting' active='jobposting' />
                 </main>
                 <Routes>
                     <Route path='/*' element={<LeaveApplying />} />
@@ -43,6 +43,10 @@ const SettingRouter = () => {
                     <Route path='/password' element={<ChangePassword />} />
                     <Route path='/holidays' element={<ShowHolidays />} />
                     <Route path='/attendence' element={<AttendenceInfo />} />
+                    <Route path='/jobposting/*' element={<JobListing />} />
+                    <Route path='/jobposting/:id' element={<JobPosting />} />
+                    <Route path='/jobpost/' element={<JobPosting />} />
+
 
                 </Routes>
 

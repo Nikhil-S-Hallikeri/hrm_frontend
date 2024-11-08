@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from './Sidebar';
 import Topnav from './Topnav';
-import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { port } from '../App'
 import JoingingFormalities from '../Pages/JoiningFormalities/JoingingFormalities';
 import JFEducationForm from '../Pages/JoiningFormalities/JFEducationForm';
@@ -25,6 +25,9 @@ import JFDeclaration from '../Pages/JoiningFormalities/JFDeclaration';
 const Employeeallform = () => {
 
     const { id } = useParams();
+    let location = useLocation();
+    let queryParams = new URLSearchParams(location.search)
+    let empid = queryParams.get('empid')
 
     let Empid = JSON.parse(sessionStorage.getItem('Employee_Info'))
     let [EmployeeInformation, setEmployeeInformation] = useState({
@@ -58,22 +61,30 @@ const Employeeallform = () => {
     }
     let navigate = useNavigate()
     let getData = () => {
-        if (id) {
+        if (id && typeof id == "number") {
             axios.get(`${port}/root/ems/candidate_employee_information/${id}/`).then((response) => {
                 setEmployeeInformation(response.data)
-                console.log(response.data);
+                console.log(response.data, 'hellow');
             }).catch((error) => {
-                console.log(error);
+                console.log(error, 'hellow');
+            })
+        }
+        if (id && typeof id != "number") {
+            axios.get(`${port}/root/ems/Get_Employee_by_Emp/${id}/`).then((response) => {
+                console.log(response.data, "empid");
+                setEmployeeInformation(response.data)
+            }).catch((error) => {
+                console.log(error, 'empid');
             })
         }
     }
     useEffect(() => {
         getData()
-    }, [id])
+    }, [id, empid])
 
     return (
 
-        <div className='container-fluid p-3' style={{ width: '100%', minHeight: '100%'}}>
+        <div className='container-fluid p-3' style={{ width: '100%', minHeight: '100%' }}>
             {/* <section className='container-fluid w-full relative '>
                 <button className='bg-red-700'>
                     Employee Information
@@ -85,7 +96,7 @@ const Employeeallform = () => {
                 </div>
             </section> */}
             {
-                EmployeeInformation && !EmployeeInformation.form_submitted_status ?
+                (EmployeeInformation && !EmployeeInformation.form_submitted_status) || typeof id != 'number' ?
 
                     <Routes>
                         <Route path='/*' element={<JoingingFormalities id={id} formObj={EmployeeInformation}

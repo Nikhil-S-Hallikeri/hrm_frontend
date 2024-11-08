@@ -124,14 +124,22 @@ const JFDeclaration = ({ id, page, data }) => {
                 }} className='p-2 bg-slate-400 text-white rounded'>
                     Previous
                 </button>
-                <button
-                    onClick={() => {
-                        saveData();
-                        navigate(`/preview/${id}/`)
-                    }}
-                    className='p-2 bg-red-600 text-white rounded'>
-                    Preview
-                </button>
+                {
+                    typeof id == 'number' ? <button
+                        onClick={() => {
+                            saveData();
+                            navigate(`/preview/${id}/`)
+                        }}
+                        className='p-2 bg-red-600 text-white rounded'>
+                        Preview
+                    </button> :
+                        <button className='p-2 bg-blue-600 text-white rounded' onClick={() => {
+                            saveData();
+                            navigate(`/dash/employee/${id}`)
+                        }} >
+                            Employee Page
+                        </button>
+                }
             </section>}
 
         </div>

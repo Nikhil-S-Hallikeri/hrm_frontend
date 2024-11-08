@@ -15,11 +15,11 @@ const AttendenceShowingadminTable = ({ data, type }) => {
                         {type != 'personal' && <th>Name</th>}
                         {type != 'personal' && <th>Employee ID</th>}
                         <th>Date</th>
-                        <th>IN Time</th>
+                        <th>In Time</th>
                         <th>Out Time</th>
-                        <th>Hours worked </th>
+                        <th>Hours Worked </th>
                         <th>Late Arrival </th>
-                        <th>Early depature </th>
+                        <th>Early Depature </th>
                         <th>Status </th>
                         <th>Exception </th>
                         <th>Information </th>
@@ -28,8 +28,8 @@ const AttendenceShowingadminTable = ({ data, type }) => {
                 <tbody >
                     {
                         data && [...data].reverse().map((obj, index) => (
-                            <tr className={` ${obj.Status == 'absent' ? 'bg-red-50'
-                                : obj.Status == 'week_off' ? 'bg-yellow-50' : 'bg-green-50'} `}>
+                            <tr className={` ${obj.Status && obj.Status.toLowerCase() == 'absent' ? 'bg-red-50'
+                                : obj.Status && obj.Status.toLowerCase() == 'week_off' ? 'bg-yellow-50' : 'bg-green-50'} `}>
                                 <td>{index + 1} </td>
                                 {type != 'personal' && <td>{obj.Emp_Id && obj.Emp_Id.Name} </td>}
                                 {type != 'personal' && <td>{obj.Emp_Id && obj.Emp_Id.EmployeeId} </td>}

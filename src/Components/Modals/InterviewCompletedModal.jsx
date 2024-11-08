@@ -208,103 +208,112 @@ const InterviewCompletedModal = (props) => {
                                 </div>
                                 }
                                 {
-                                    data.screening_data.Date_of_assigned && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.Date_of_assigned && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
-                                            Assigned At : <span className='fw-normal break-words'>{convertToReadableDateTime(data.screening_data.Date_of_assigned)} </span>  </p>
+                                            Assigned At : <span className='fw-normal break-words'>
+                                                {data.screening_data &&
+                                                    convertToReadableDateTime(data.screening_data && data.screening_data.Date_of_assigned && data.screening_data.Date_of_assigned)}
+                                            </span>
+                                        </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.ReviewedBy && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.ReviewedBy && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
-                                            Reviewed By: <span className='fw-normal break-words'>{(data.screening_data.review.ReviewedBy)} </span>  </p>
+                                            Reviewed By: <span className='fw-normal break-words'>
+                                                {(data.screening_data && data.screening_data.review && data.screening_data.review.ReviewedBy)}
+                                            </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.ReviewedOn && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.ReviewedOn && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
-                                            Reviewed On : <span className='fw-normal break-words'>{convertToReadableDateTime(data.screening_data.review.ReviewedOn)} </span>  </p>
+                                            Reviewed On : <span className='fw-normal break-words'>
+                                                {convertToReadableDateTime(data.screening_data && data.screening_data.review && data.screening_data.review.ReviewedOn)}
+                                            </span>
+                                        </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.SpouseName && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.SpouseName && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             Spouse Name : <span className='fw-normal break-words'>{(data.screening_data.review.SpouseName)} </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.About_Family && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.About_Family && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             About Family : <span className='fw-normal break-words'>{data.screening_data.review.About_Family} </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.no_of_kids && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.no_of_kids && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             No of Children : <span className='fw-normal break-words'>{data.screening_data.review.no_of_kids} </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.TotalYearOfExp && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.TotalYearOfExp && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             Total years of Experience : <span className='fw-normal break-words'>{(data.screening_data.review.TotalYearOfExp)}
                                             </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.CurrentLocation && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.CurrentLocation && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             Current Location : <span className='fw-normal break-words'>{data.screening_data.review.CurrentLocation} </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.LanguagesKnown && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.LanguagesKnown && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             Languages know : <span className='fw-normal break-words'>{data.screening_data.review.LanguagesKnown} </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.LastCTC && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.LastCTC && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             Previous CTC : <span className='fw-normal break-words'>{data.screening_data.review.LastCTC} </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.MeritalStatus && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.MeritalStatus && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             Material Status : <span className='fw-normal break-words'>{data.screening_data.review.MeritalStatus} </span>  </p>
                                     </div>
                                 }{
-                                    data.screening_data.review.ModeOfCommutation && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.ModeOfCommutation && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             Mode of Transporation : <span className='fw-normal break-words'>{data.screening_data.review.ModeOfCommutation} </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.Native && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.Native && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             Native : <span className='fw-normal break-words'>{data.screening_data.review.Native} </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.PositionAppliedFor && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.PositionAppliedFor && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             Position applied for : <span className='fw-normal break-words'>{data.screening_data.review.PositionAppliedFor} </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.Residingat && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.Residingat && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             Resident At : <span className='fw-normal break-words'>{data.screening_data.review.Residingat} </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.Screening_Status && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.Screening_Status && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             Screening Status : <span className='fw-normal break-words'>{data.screening_data.review.Screening_Status} </span>  </p>
                                     </div>
                                 }
                                 {
-                                    data.screening_data.review.Comments && <div className=' col-lg-4 p-2 col-md-6  py-3'>
+                                    data.screening_data && data.screening_data.review && data.screening_data.review.Comments && <div className=' col-lg-4 p-2 col-md-6  py-3'>
                                         <p className='bg-white p-3 shadow-sm border-1 border-slate-400 border-opacity-50 rounded mb-0  fw-semibold'>
                                             Comments : <span className='fw-normal break-words'>{data.screening_data.review.Comments} </span>  </p>
                                     </div>
@@ -520,7 +529,9 @@ const InterviewCompletedModal = (props) => {
                 </Modal.Body>
                 <Modal.Footer>
                     {(empStatus == 'Admin' || empStatus == 'HR' || userPermission.final_status_access) && rountstatus != 'Assigned' &&
-                        <button onClick={() => { setFinalStatus(show); setshow(false) }} className='bg-blue-600 text-white rounded p-2'>
+                        <button
+                            onClick={() => { setFinalStatus(show); setshow(false) }}
+                            className='bg-blue-600 text-white rounded p-2'>
                             Final Status
                         </button>}
                     {

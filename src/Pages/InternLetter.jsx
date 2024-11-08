@@ -3,13 +3,56 @@ import { HrmStore } from '../Context/HrmContext'
 
 const InternLetter = ({ data, pdfRef }) => {
     let { getCurrentDate } = useContext(HrmStore)
+    console.log(data);
 
     return (
         <div ref={pdfRef} className='container bg-white  p-5'>
             <h6> Date : {getCurrentDate()} </h6>
 
-            <h4 className='text-center'>Letter Offer </h4>
-            <p>Dear {data.Name},</p>
+            <h4 className='text-center'>Internship Letter Offer </h4>
+            <div className="container">
+                <p>Dear <strong>{data.Name}</strong>,</p>
+
+                <p>We are excited to offer you an internship position with <strong> Merida </strong>! Congratulations on being selected for this opportunity.</p>
+
+                <h4>Internship Details:</h4>
+                <ul>
+                    <li><strong>Position:</strong> {data.position_name} </li>
+                    {/* <li><strong>Department:</strong> Department Name</li> */}
+                    <li><strong>Start Date :</strong> {data.internship_Duration_From} </li>
+                    <li><strong>End Date :</strong> {data.internship_Duration_To} </li>
+                    <li><strong>Location:</strong> {data.WorkLocation} </li>
+                </ul>
+
+                <h4>Stipend Information:</h4>
+                <ul>
+                    <li><strong>Monthly Stipend:</strong> {data.CTC} </li>
+                    <li><strong>Payment Schedule:</strong> 7th of month </li>
+                </ul>
+
+                <h4>What to Expect:</h4>
+                <ul>
+                    <li><strong>Orientation:</strong> You will receive details about your orientation and on-boarding process, including introductions to your team and an overview of your responsibilities.</li>
+                    <li><strong>Mentorship:</strong> A dedicated mentor will be assigned to support you throughout your internship, helping you gain valuable experience and knowledge.</li>
+                    <li><strong>Projects:</strong> You will have the opportunity to work on key projects or tasks.</li>
+                </ul>
+
+                <h4>Next Steps:</h4>
+                <ol>
+                    <li><strong>Offer Confirmation:</strong> Please confirm your acceptance of this internship offer by <strong> {data.offer_expire} </strong>. You can do this by replying to this email or contacting
+                        <strong>{data.contact_info} </strong>.</li>
+                    <li><strong>Documentation:</strong> We will send you further details regarding any required documentation, on-boarding procedures, and any preparatory information needed before your start date.</li>
+                </ol>
+
+                <p>If you have any questions or require additional information, please do not hesitate to reach out to us.</p>
+
+                <p>We look forward to having you on board and are excited about the contributions you will make to our team. Thank you for choosing <strong> Merida </strong> for your internship.</p>
+
+                <p>Best regards,</p>
+                <p><strong>HR TEAM</strong></p>
+            </div>
+
+            {/* <p>Dear {data.Name},</p>
             <p>
                 Further to the interviews you had with us and upon agreeing to the Terms and Conditions, Leave Policy,
                 Separation Policy, Working Policy, etc., we are pleased to welcome you as an intern at Merida Tech Minds as
@@ -102,7 +145,7 @@ const InternLetter = ({ data, pdfRef }) => {
             </p>
             <p>Name: {data.Name}</p>
             <p>Signature:</p>
-            <p>Date:</p>
+            <p>Date:</p> */}
         </div>
     )
 }

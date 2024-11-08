@@ -4,6 +4,8 @@ import axios from 'axios'
 import { port } from '../App'
 import { Link, useNavigate } from 'react-router-dom'
 import '../assets/css/Login_.css'
+import Topnav from './Topnav'
+import EmployeeProfile from '../Pages/EmployeeProfile'
 
 
 
@@ -241,7 +243,8 @@ const Profile_page = () => {
 
     return (
         <div>
-            <div style={{ width: '100%',minHeight: '100vh', background: 'rgb(245,245,245)' }}>
+            <div className='container mx-auto' style={{ width: '100%', minHeight: '100vh' }}>
+                <Topnav />
                 <Link to={`/dashboard/${logindata.Disgnation}`} className='text-black'>
 
                     <i class="fa-solid fa-arrow-left" style={{ position: 'absolute', left: '47px', top: '35px' }}></i>
@@ -251,7 +254,7 @@ const Profile_page = () => {
 
                     <div className="col-sm-8  ">
 
-                        <div className='p-2 p-sm-4 m-3 m-sm-4 bg-white rounded'>
+                        <div className='p-2 p-sm-4 bgclr rounded'>
 
                             <div className='d-flex row m-0'>
                                 <div className="profile_img col-sm-4  ">
@@ -307,11 +310,11 @@ const Profile_page = () => {
                                     <div className=' '>
 
                                         <ul className='mt-3 media-icons me-sm-0  me-5' >
-                                            <li className='nav-link border  border-success rounded-circle mt-2' style={{width:'35px',height:'35px',display:'flex',justifyContent:'center',alignItems:'center'}} ><i class="fa-solid fa-user-tie"></i></li>
-                                            <li className='nav-link  border  border-success rounded-circle mt-2' style={{width:'35px',height:'35px',display:'flex',justifyContent:'center',alignItems:'center'}} ><i class="fa-brands fa-github"></i></li>
-                                            <li className='nav-link  border  border-success rounded-circle mt-2' style={{width:'35px',height:'35px',display:'flex',justifyContent:'center',alignItems:'center'}} ><i class="fa-brands fa-linkedin"></i></li>
-                                            <li className='nav-link  border  border-success rounded-circle mt-2'  style={{width:'35px',height:'35px',display:'flex',justifyContent:'center',alignItems:'center'}}><i class="fa-brands fa-square-instagram"></i></li>
-                                            <li className='nav-link  border  border-success rounded-circle mt-2'  style={{width:'35px',height:'35px',display:'flex',justifyContent:'center',alignItems:'center'}}><i class="fa-brands fa-facebook"></i></li>
+                                            <li className='nav-link border  border-success rounded-circle mt-2' style={{ width: '35px', height: '35px', display: 'flex', justifyContent: 'center', alignItems: 'center' }} ><i class="fa-solid fa-user-tie"></i></li>
+                                            <li className='nav-link  border  border-success rounded-circle mt-2' style={{ width: '35px', height: '35px', display: 'flex', justifyContent: 'center', alignItems: 'center' }} ><i class="fa-brands fa-github"></i></li>
+                                            <li className='nav-link  border  border-success rounded-circle mt-2' style={{ width: '35px', height: '35px', display: 'flex', justifyContent: 'center', alignItems: 'center' }} ><i class="fa-brands fa-linkedin"></i></li>
+                                            <li className='nav-link  border  border-success rounded-circle mt-2' style={{ width: '35px', height: '35px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><i class="fa-brands fa-square-instagram"></i></li>
+                                            <li className='nav-link  border  border-success rounded-circle mt-2' style={{ width: '35px', height: '35px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><i class="fa-brands fa-facebook"></i></li>
                                         </ul>
 
                                     </div>
@@ -322,36 +325,29 @@ const Profile_page = () => {
 
                         </div>
 
-                        
+
 
                     </div>
                     <div className="col-sm-4   ">
 
-                        <div className='p-4 m-3 m-sm-4 bg-white rounded'>
+                        <div className='p-4 bgclr rounded'>
 
                             <h4 className='bg-light p-1'> <i class="fa-solid fa-person-running me-4 " style={{ color: 'rgb(76,53,117)' }}> </i> Action</h4>
 
                             <ul style={{ position: 'relative', right: '30px' }}>
 
                                 <li className='nav-link mt-4' data-bs-target="#exampleModal7" data-bs-toggle="modal" ><i class="fa-solid fa-key me-2"></i> Change Password</li>
-                                <li style={{ position: 'relative', top: '10px' }} className='nav-link mt-2'><i class="fa-solid fa-user me-2"></i> Edit Profile</li>
+                                {/* <li style={{ position: 'relative', top: '10px' }} className='nav-link mt-2'><i class="fa-solid fa-user me-2"></i> Edit Profile</li> */}
                                 <li style={{ position: 'relative', top: '20px' }} onClick={logout} className='nav-link mt-2'><i class="fa-solid fa-right-from-bracket me-2"></i> Log Out</li>
                             </ul>
 
                         </div>
 
-                        <div className='p-4 m-3 bg-white rounded'>
-                            <div class="dropdown">
-                                <h4 className='bg-light p-2 ' data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-person-circle-question me-4 " style={{ color: 'rgb(76,53,117)' }}> </i>  Request <i class="fa-solid fa-angle-down" style={{ position: 'relative', left: '150px' }}></i></h4>
-                                <ul class="dropdown-menu w-100 border-0">
-                                    <li data-bs-toggle="modal" data-bs-target="#exampleModal1"><a class="dropdown-item" href="#">Leave Request</a></li>
-                                    <li data-bs-toggle="modal" data-bs-target="#exampleModal2"><a class="dropdown-item" href="#">Resignation Request</a></li>
-                                    <li data-bs-toggle="modal" data-bs-target="#exampleModal3"><a class="dropdown-item" href="#">Work From Home Request</a></li>
-                                </ul>
-                            </div>
+                        {/* <div className='p-4 m-3 bgclr rounded'> */}
 
-                            {/* Change Password Start */}
-                            {/* <div class="modal fade" id="exampleModal7" tabindex="-1" aria-labelledby="exampleModalLabel7" aria-hidden="true">
+
+                        {/* Change Password Start */}
+                        {/* <div class="modal fade" id="exampleModal7" tabindex="-1" aria-labelledby="exampleModalLabel7" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -374,619 +370,56 @@ const Profile_page = () => {
                                     </div>
                                 </div>
                             </div> */}
-                            <div class="modal fade" id="exampleModal7" tabindex="-1" aria-labelledby="exampleModalLabel7" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel7">Change Password</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form>
-                                                <div class="mb-1 inputGroup w-100">
-                                                    <label for="oldPassword" class="form-label">Old Password</label>
-                                                    <input type="password" class="form-control shadow-none" id="oldPassword" name="oldPassword" value={oldPassword} onChange={(e) => setoldPassword(e.target.value)} required />
-                                                    <div class="invalid-feedback">
-                                                        Please enter your old password.
-                                                    </div>
-                                                </div>
-                                                <div class="mb-3 inputGroup w-100">
-                                                    <label for="newPassword" class="form-label">New Password</label>
-                                                    <input type="password" class="form-control shadow-none" id="newPassword" name="newPassword" value={newPassword} onChange={(e) => setnewPassword(e.target.value)} required />
-                                                    <div class="invalid-feedback">
-                                                        Please enter your new password.
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-primary" onClick={changepassword} >Submit</button>
-                                        </div>
+                        <div class="modal fade" id="exampleModal7" tabindex="-1" aria-labelledby="exampleModalLabel7" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel7">Change Password</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                </div>
-                            </div>
-                            {/* Change Password End */}
-
-                            {/* Leave Applay Form Start */}
-                            <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
-                                <div class="modal-dialog modal-xl">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-
-                                            <form>
-                                                {/* Form start */}
-                                                <div className="row justify-content-center m-0">
-                                                    <h3 className='mt-2 text-center p-3' style={{ color: 'rgb(76,53,117)' }}>Leave Apply form</h3>
-                                                    <div className="col-lg-12 p-4 mt-2 border rounded-lg">
-                                                        <div className="row m-0 pb-2" style={{ lineHeight: '30px' }}>
-                                                            {/* Form fields */}
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="Name" className="form-label">Employee_Id* </label>
-                                                                <input type="text" className="form-control shadow-none" id="Name" name="Name" value={Employee_Id} onChange={(e) => setEmployee_Id(e.target.value)} />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="Name" className="form-label">Name* </label>
-                                                                <input type="text" className="form-control shadow-none" id="Name" name="Name" value={Name} onChange={(e) => setName(e.target.value)} />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="lastName" className="form-label">phone*</label>
-                                                                <input type="tel" className="form-control shadow-none" value={phone} onChange={(e) => setphone(e.target.value)} id="LastName" name="LastName" />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="email" className="form-label">email*</label>
-                                                                <input type="email" className="form-control shadow-none" value={email} onChange={(e) => setemail(e.target.value)} id="Email" name="Email" />
-                                                            </div>
-
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label"> Reporting manager*</label>
-                                                                <input type="text" className="form-control shadow-none" value={Reporting_manager} onChange={(e) => setReporting_manager(e.target.value)} id="State" name="State" />
-                                                            </div>
-
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="ageGroup" className="form-label"> Employee type*</label>
-                                                                <select className="form-select" id="ageGroup" value={Employee_type} onChange={(e) => setEmployee_type(e.target.value)}>
-                                                                    <option value="">Select</option>
-                                                                    <option value="yes">Yes</option>
-                                                                    <option value="no">No</option>
-                                                                </select>
-                                                            </div>
-
-
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="ageGroup" className="form-label">  LeaveType*</label>
-                                                                <select className="form-select" id="ageGroup" value={LeaveType} onChange={(e) => setLeaveType(e.target.value)}>
-                                                                    <option value="">Select</option>
-                                                                    <option value="yes">Yes</option>
-                                                                    <option value="no">No</option>
-                                                                </select>
-                                                            </div>
-
-                                                            <div className="col-md-6 col-lg-3 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label">FromDate*</label>
-                                                                <input type="date" className="form-control shadow-none" value={FromDate} onChange={(e) => setFromDate(e.target.value)} id="State" name="State" />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-3 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label">ToDate*</label>
-                                                                <input type="date" className="form-control shadow-none" value={ToDate} onChange={(e) => setToDate(e.target.value)} id="State" name="State" />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-2 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label">Days</label>
-                                                                <input type="number" className="form-control shadow-none" value={Days} id="State" name="State" readOnly />
-                                                            </div>
-                                                            {/* Additional form fields */}
-                                                            {/* Add additional form fields here */}
-                                                            <div className="col-md-6 col-lg-12 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label">Reason*</label>
-                                                                <textarea type="email" className="form-control shadow-none" style={{ height: '80px' }} value={Reason} onChange={(e) => setReason(e.target.value)} id="State" name="State" />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-6 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label">Any proof*</label>
-                                                                <input type="email" className="form-control shadow-none" value={Any_proof} onChange={(e) => setAny_proof(e.target.value)} id="State" name="State" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                    <div class="modal-body">
+                                        <form>
+                                            <div class="mb-1 inputGroup w-100">
+                                                <label for="oldPassword" class="form-label">Old Password</label>
+                                                <input type="password" class="form-control shadow-none" id="oldPassword" name="oldPassword" value={oldPassword} onChange={(e) => setoldPassword(e.target.value)} required />
+                                                <div class="invalid-feedback">
+                                                    Please enter your old password.
                                                 </div>
-                                                {/* form end */}
-                                                {/* Button start */}
-                                                <div className="d-flex justify-content-end mt-2">
-                                                    <div className='d-flex gap-2 p-3'>
-                                                        <button type="submit" className="btn btn-success btn-sm" onClick={handle_Leave_apply_form}>Submit</button>
-                                                    </div>
-                                                </div>
-                                                {/* Button end */}
-                                            </form>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            {/* Leave Applay Form End */}
-
-                            {/* Resignation Form Start */}
-                            <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-                                <div class="modal-dialog modal-xl">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-
-                                            <form>
-                                                {/* Form start */}
-                                                <div className="row justify-content-center m-0 ">
-                                                    <h3 className='mt-2 text-center p-3' style={{ color: 'rgb(76,53,117)' }}>Employee Resignation Form</h3>
-
-                                                    <div className="col-lg-12 p-4 mt-4 border rounded-lg ">
-                                                        <div className="row m-0 pb-2">
-                                                            <div className="col-md-6 col-lg-6 mb-3">
-                                                                <label htmlFor="Name" className="form-label">Employee id* </label>
-                                                                <input type="text" className="form-control shadow-none" id="Name" name="Name" value={Profile_Info.employee_Id} />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-6 mb-3">
-                                                                <label htmlFor="Name" className="form-label">Name* </label>
-                                                                <input type="text" className="form-control shadow-none" id="Name" name="Name" value={Profile_Info.full_name} />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-6 mb-3">
-                                                                <label htmlFor="lastName" className="form-label">Position*</label>
-                                                                <input type="text" className="form-control shadow-none" value={Profile_Info.Position} id="LastName" name="LastName" />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-6 mb-3">
-                                                                <label htmlFor="email" className="form-label">Reporting manager*</label>
-                                                                <input type="text" className="form-control shadow-none" value={Profile_Info.RepotringTo_Name === null ? `${Profile_Info.full_name} , ${Profile_Info.RepotringTo_Id}` : `${Profile_Info.RepotringTo_Name} , ${Profile_Info.RepotringTo_Id}`} id="Email" name="Email" />
-                                                            </div>
-
-
-                                                            <div class="col-md-6 col-lg-6 mb-3">
-                                                                <label for="interviewer">HR manager*</label>
-                                                                <select id="interviewer" name="interviewer" onChange={(e) => setHRmanager(e.target.value)} required class="form-control">
-                                                                    <option value="" selected>Select Name</option>
-                                                                    {interviewers.map(interviewer => (
-                                                                        <option key={interviewer.EmployeeId} value={interviewer.EmployeeId}>
-                                                                            {`${interviewer.EmployeeId},${interviewer.Name}`}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-6 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label">resigned_letter file*</label>
-                                                                <input type="file" className="form-control shadow-none" onChange={(e) => setresigned_letter_file(e.target.files[0])} id="SecondaryContact" name="SecondaryContact" />
-                                                            </div>
-
-                                                            <div className="col-md-6 col-lg-12 mb-3">
-                                                                <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Reason*</label>
-                                                                <textarea type="text" className="form-control shadow-none" value={Reason1} onChange={(e) => setReason1(e.target.value)} id="PrimaryContact" name="PrimaryContact" style={{ height: '60px' }} />
-                                                            </div>
-
-                                                            <div className="col-md-6 col-lg-4 mb-3 mt-2 pt-3">
-                                                                <input type="checkbox" className=" shadow-none" value={Confirm_resignation} onChange={(e) => {
-                                                                    setConfirm_resignation(!Confirm_resignation)
-                                                                }} id="State" name="State" />
-                                                                <label htmlFor="secondaryContact" className="form-label ms-4">Confirm resignation</label>
-                                                            </div>
-
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {/* form end */}
-                                                {/* Button start */}
-                                                <div class=" d-flex justify-content-end mt-2">
-
-                                                    <div className='d-flex gap-2'>
-
-
-                                                        <button type="submit" class="btn btn-success btn-sm" onClick={handle_employee_Resignation_info}  >Submit</button>
-
-
-
-                                                    </div>
-                                                </div>
-                                                {/* Button end */}
-                                            </form>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            {/* Resignation Form End */}
-
-                            {/* Work Form Start */}
-                            <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
-                                <div class="modal-dialog modal-xl">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-
-                                            <form>
-                                                {/* Form start */}
-                                                <div className="row justify-content-center m-0">
-                                                    <h3 className='mt-2 text-center p-3' style={{ color: 'rgb(76,53,117)' }}>Leave Apply form</h3>
-                                                    <div className="col-lg-12 p-4 mt-2 border rounded-lg">
-                                                        <div className="row m-0 pb-2" style={{ lineHeight: '30px' }}>
-                                                            {/* Form fields */}
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="Name" className="form-label">Employee_Id* </label>
-                                                                <input type="text" className="form-control shadow-none" id="Name" name="Name" value={Employee_Id} onChange={(e) => setEmployee_Id(e.target.value)} />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="Name" className="form-label">Name* </label>
-                                                                <input type="text" className="form-control shadow-none" id="Name" name="Name" value={Name} onChange={(e) => setName(e.target.value)} />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="lastName" className="form-label">phone*</label>
-                                                                <input type="tel" className="form-control shadow-none" value={phone} onChange={(e) => setphone(e.target.value)} id="LastName" name="LastName" />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="email" className="form-label">email*</label>
-                                                                <input type="email" className="form-control shadow-none" value={email} onChange={(e) => setemail(e.target.value)} id="Email" name="Email" />
-                                                            </div>
-
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label"> Reporting manager*</label>
-                                                                <input type="text" className="form-control shadow-none" value={Reporting_manager} onChange={(e) => setReporting_manager(e.target.value)} id="State" name="State" />
-                                                            </div>
-
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="ageGroup" className="form-label"> Employee type*</label>
-                                                                <select className="form-select" id="ageGroup" value={Employee_type} onChange={(e) => setEmployee_type(e.target.value)}>
-                                                                    <option value="">Select</option>
-                                                                    <option value="yes">Yes</option>
-                                                                    <option value="no">No</option>
-                                                                </select>
-                                                            </div>
-
-
-                                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                                <label htmlFor="ageGroup" className="form-label">  LeaveType*</label>
-                                                                <select className="form-select" id="ageGroup" value={LeaveType} onChange={(e) => setLeaveType(e.target.value)}>
-                                                                    <option value="">Select</option>
-                                                                    <option value="yes">Yes</option>
-                                                                    <option value="no">No</option>
-                                                                </select>
-                                                            </div>
-
-                                                            <div className="col-md-6 col-lg-3 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label">FromDate*</label>
-                                                                <input type="date" className="form-control shadow-none" value={FromDate} onChange={(e) => setFromDate(e.target.value)} id="State" name="State" />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-3 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label">ToDate*</label>
-                                                                <input type="date" className="form-control shadow-none" value={ToDate} onChange={(e) => setToDate(e.target.value)} id="State" name="State" />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-2 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label">Days</label>
-                                                                <input type="number" className="form-control shadow-none" value={Days} id="State" name="State" readOnly />
-                                                            </div>
-                                                            {/* Additional form fields */}
-                                                            {/* Add additional form fields here */}
-                                                            <div className="col-md-6 col-lg-12 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label">Reason*</label>
-                                                                <textarea type="email" className="form-control shadow-none" style={{ height: '80px' }} value={Reason} onChange={(e) => setReason(e.target.value)} id="State" name="State" />
-                                                            </div>
-                                                            <div className="col-md-6 col-lg-6 mb-3">
-                                                                <label htmlFor="secondaryContact" className="form-label">Any proof*</label>
-                                                                <input type="email" className="form-control shadow-none" value={Any_proof} onChange={(e) => setAny_proof(e.target.value)} id="State" name="State" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {/* form end */}
-                                                {/* Button start */}
-                                                <div className="d-flex justify-content-end mt-2">
-                                                    <div className='d-flex gap-2 p-3'>
-                                                        <button type="submit" className="btn btn-success btn-sm" onClick={handle_Leave_apply_form}>Submit</button>
-                                                    </div>
-                                                </div>
-                                                {/* Button end */}
-                                            </form>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            {/* Work Form End */}
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div className="row m-0 ">
-                    <div className="col-sm-12">
-
-                        <div className='pt-2 p-1 m-3 bg-white rounded' >
-
-                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist" >
-
-                                <li class="nav-item text-primary d-flex " role="presentation">
-                                    <h6 class='mt-2 heading nav-link active' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">BIO</h6>
-                                </li>
-
-                                <li class="nav-item text-primary d-flex " role="presentation">
-                                    <h6 class='mt-2 heading nav-link ' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Tasks</h6>
-                                </li>
-
-                                <li class="nav-item text-primary d-flex " role="presentation">
-                                    <h6 class='mt-2 heading nav-link ' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Documents</h6>
-                                </li>
-
-                                <li class="nav-item text-primary d-flex " role="presentation">
-                                    <h6 class='mt-2 heading nav-link ' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-contact-tab1" data-bs-toggle="pill" data-bs-target="#pills-contact1" type="button" role="tab" aria-controls="pills-contact1" aria-selected="false">Team</h6>
-                                </li>
-
-                                <li class="nav-item text-primary d-flex " role="presentation">
-                                    <h6 class='mt-2 heading nav-link ' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-contact-tab2" data-bs-toggle="pill" data-bs-target="#pills-contact2" type="button" role="tab" aria-controls="pills-contact2" aria-selected="false">Projects</h6>
-                                </li>
-
-
-
-
-                            </ul>
-                            <div class="tab-content " id="pills-tabContent" style={{ position: 'relative', bottom: '20px' }}>
-                                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
-
-                                    <div className='p-3'>
-
-                                        {/* EMPLOYEE PROFILE  START */}
-                                        <div >
-
-
-
-                                            <div className=' mt-2'>
-
-                                                <section className='  h-100 ' style={{ backgroundColor: 'rgb(245,245,245)' }}>
-
-                                                    <div class="row m-0 p-1 mt-1">
-                                                        <div className=" col-md-6 col-lg-12  p-2">
-
-                                                            <div class="row m-0  ">
-
-                                                                <h5 className='me-2' style={{color:'rgb(76,53,117)'}}>Personal Informations</h5>
-                                                                <div className="col-sm-12  rounded p-3 mt-2" style={{ backgroundColor: 'rgb(255,255,255)' }}>
-
-                                                                    <div className='p-3 '>
-
-                                                                        <div className='mt-1'>
-                                                                            <h6> work</h6>
-
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6> Attendance</h6>
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6>Punctuality</h6>
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6>  Technical Skills</h6>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <div className=" col-md-6 col-lg-12  p-2">
-
-                                                            <div class="row m-0  ">
-
-                                                                <h5 style={{color:'rgb(76,53,117)'}}>Emergency Contact</h5>
-                                                                <div className="col-sm-12  rounded p-3 mt-2" style={{ backgroundColor: 'rgb(255,255,255)' }}>
-
-                                                                    <div className='p-3 '>
-
-                                                                        <div className='mt-1'>
-                                                                            <h6> work</h6>
-
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6> Attendance</h6>
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6>Punctuality</h6>
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6>  Technical Skills</h6>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <div className=" col-md-6 col-lg-12  p-2">
-
-                                                            <div class="row m-0  ">
-
-                                                                <h5 style={{color:'rgb(76,53,117)'}}>Bank information</h5>
-                                                                <div className="col-sm-12  rounded p-3 mt-2" style={{ backgroundColor: 'rgb(255,255,255)' }}>
-
-                                                                    <div className='p-3 '>
-
-                                                                        <div className='mt-1'>
-                                                                            <h6> work</h6>
-
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6> Attendance</h6>
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6>Punctuality</h6>
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6>  Technical Skills</h6>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <div className=" col-md-6 col-lg-12  p-2">
-
-                                                            <div class="row m-0  ">
-                                                                <h5 style={{color:'rgb(76,53,117)'}}>Family Informations</h5>
-
-                                                                <div className="col-sm-12  rounded p-3 mt-2" style={{ backgroundColor: 'rgb(255,255,255)' }}>
-
-                                                                    <div className='p-3 '>
-
-                                                                        <div className='mt-1'>
-                                                                            <h6> work</h6>
-
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6> Attendance</h6>
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6>Punctuality</h6>
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6>  Technical Skills</h6>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <div className=" col-md-6 col-lg-12 p-2">
-
-                                                            <div class="row m-0  ">
-
-                                                                <h5 style={{color:'rgb(76,53,117)'}}>Education Informations</h5>
-                                                                <div className="col-sm-12  rounded p-3 mt-2" style={{ backgroundColor: 'rgb(255,255,255)' }}>
-
-                                                                    <div className='p-3 '>
-
-                                                                        <div className='mt-1'>
-                                                                            <h6> work</h6>
-
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6> Attendance</h6>
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6>Punctuality</h6>
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6>  Technical Skills</h6>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <div className=" col-md-6 col-lg-12  p-2">
-
-                                                            <div class="row m-0  ">
-
-                                                                <h5 style={{color:'rgb(76,53,117)'}}>Experience</h5>
-                                                                <div className="col-sm-12  rounded p-3 mt-2" style={{ backgroundColor: 'rgb(255,255,255)' }}>
-
-                                                                    <div className='p-3 '>
-
-                                                                        <div className='mt-1'>
-                                                                            <h6> work</h6>
-
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6> Attendance</h6>
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6>Punctuality</h6>
-                                                                        </div>
-                                                                        <div className='mt-4'>
-
-                                                                            <h6>  Technical Skills</h6>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-
-
-                                                    </div>
-
-
-
-
-                                                </section>
                                             </div>
-                                        </div>
-                                        {/* EMPLOYEE PROFILE  END */}
-
+                                            <div class="mb-3 inputGroup w-100">
+                                                <label for="newPassword" class="form-label">New Password</label>
+                                                <input type="password" class="form-control shadow-none" id="newPassword" name="newPassword" value={newPassword} onChange={(e) => setnewPassword(e.target.value)} required />
+                                                <div class="invalid-feedback">
+                                                    Please enter your new password.
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
-                                </div>
-                                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
-
-                                    <div className='p-3'>
-
-                                        <p>
-                                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Delectus culpa assumenda mollitia ipsum doloremque et consectetur ut doloribus minima? Dicta culpa mollitia amet deserunt delectus et quod doloremque reprehenderit maiores.
-                                        </p>
-
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">
-
-                                    <div className='p-3'>
-
-                                        <p>
-                                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Delectus culpa assumenda mollitia ipsum doloremque et consectetur ut doloribus minima? Dicta culpa mollitia amet deserunt delectus et quod doloremque reprehenderit maiores.
-                                        </p>
-
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="pills-contact1" role="tabpanel" aria-labelledby="pills-contact-tab1" tabindex="0">
-
-                                    <div className='p-3'>
-
-                                        <p>
-                                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Delectus culpa assumenda mollitia ipsum doloremque et consectetur ut doloribus minima? Dicta culpa mollitia amet deserunt delectus et quod doloremque reprehenderit maiores.
-                                        </p>
-
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="pills-contact2" role="tabpanel" aria-labelledby="pills-contact-tab2" tabindex="0">
-
-                                    <div className='p-3'>
-
-                                        <p>
-                                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Delectus culpa assumenda mollitia ipsum doloremque et consectetur ut doloribus minima? Dicta culpa mollitia amet deserunt delectus et quod doloremque reprehenderit maiores.
-                                        </p>
-
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary" onClick={changepassword} >Submit</button>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
+                        {/* Change Password End */}
+
+
+
+
+
+
+
+                        {/* </div> */}
+
                     </div>
+
                 </div>
+
+
+                {/* <EmployeeProfile /> */}
 
             </div>
+
         </div>
     )
 }

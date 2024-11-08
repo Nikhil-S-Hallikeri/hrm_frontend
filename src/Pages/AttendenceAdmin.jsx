@@ -62,16 +62,21 @@ const AttendenceAdmin = () => {
     if (attendanceList)
       setFilteredAttendanceList(attendanceList)
   }, [attendanceList])
+  let [loading, setLoading] = useState(false)
   let uploadAttendence = (e) => {
+    setLoading(true)
     let formdata = new FormData()
     formdata.append('file_path', e.target.files[0])
     console.log(e.target.files[0]);
     axios.post(`${port}/root/lms/Bulk_Attendance_Data/`, formdata).then((response) => {
       toast.success('Excel file value uploaded successfully')
       getAttendanceList()
+      console.log(response.data);
+      setLoading(false)
     }).catch((error) => {
       console.log(error);
       toast.error('error acquired')
+      setLoading(false)
     })
   }
   let filterlist = () => {
@@ -138,14 +143,23 @@ const AttendenceAdmin = () => {
           Search
         </button>
 
-        <button className=' bg-slate-50 ms-auto hover:bg-slate-100 rounded-xl  shadow'>
+        {/* <button disabled={loading} className=' bg-slate-50 ms-auto hover:bg-slate-100 rounded-xl  shadow'>
+          <a href='' download="attendanceFormat" className='items-center text-decoration-none text-slate-800 gap-2 text-sm p-1 px-2
+          flex cursor-pointer w-full h-full'>
+            {loading ? "Loading..." : "DownLoad Format"}
+            <ExportIcon size={20} />
+          </a>
+        </button> */}
+        <button disabled={loading} className=' bg-slate-50 ms-auto hover:bg-slate-100 rounded-xl  shadow'>
           <label htmlFor="importattendence" className='items-center gap-2  p-1 px-2
           flex cursor-pointer w-full h-full'>
-            Import
+            {loading ? "Loading..." : "Import"}
             <ImportIcon size={20} />
           </label>
         </button>
-        <input onChange={uploadAttendence} id='importattendence' type="file" className='hidden' />
+
+        <input disabled={loading} onChange={uploadAttendence}
+          id='importattendence' type="file" className='hidden' />
         <button onClick={() => {
           if (filteredAttendanceList.length > 0)
             settrigger(true)

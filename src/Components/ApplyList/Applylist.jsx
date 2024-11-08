@@ -17,11 +17,14 @@ import { Modal, OverlayTrigger } from 'react-bootstrap';
 import FinalResultCompleted from '../Modals/FinalResultCompleted';
 import InfoIcon from '../../SVG/InfoIcon';
 import InfoButton from '../SettingComponent/InfoButton';
+import FinalStatus from '../Modals/FinalStatus';
 
 
 const Applylist = () => {
   let username = JSON.parse(sessionStorage.getItem('user')).UserName
   let user = JSON.parse(sessionStorage.getItem('user'))
+  let [finalStatus, setFinalStatus] = useState(false)
+  let [finalStatusName, setFinalStatusName] = useState()
   let loginID = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).employee_Id
   let { testing, convertToReadableDateTime, timeValidate, getCurrentDate, getProperDate } = useContext(HrmStore)
   let [interviewCompletedDetailsModal, setInterviewCompleteDetailsModal] = useState()
@@ -648,7 +651,7 @@ const Applylist = () => {
     axios.post(`${port}/root/appliedcandidateslist`).then((res) => {
       console.log("Applicand_list", res.data);
       setApplylist(res.data)
-      setFilteredApplyList([...res.data].filter((obj) => obj.ScreeningStatus == 'Pending'))
+      setFilteredApplyList([...res.data].filter((obj) => obj.ScreeningStatus == 'Pending' && obj.Final_Results == 'Pending'))
     })
   }
 
@@ -1441,7 +1444,9 @@ const Applylist = () => {
                   <div className='flex my-2 text-xs justify-between gap-2 flex-wrap'>
 
                     <small className='bg-red-400 text-white px-3  block rounded'>{interviewlist != undefined && interviewlist.length} Assigned </small>
-                    <small className='bg-green-400 text-white px-3 block rounded'>{interviewCompletedList != undefined && interviewCompletedList.length} Completed </small>
+                    <small className='bg-green-400 text-white px-3 block rounded'>
+                      {interviewCompletedList != undefined && interviewCompletedList.length} Completed
+                    </small>
                   </div>
                 </div>
               </section>
@@ -1517,7 +1522,7 @@ const Applylist = () => {
 
                         <select onChange={(e) => {
                           if (e.target.value != '') {
-                            setFilteredApplyList([...applylist].filter((obj) => obj.ScreeningStatus == e.target.value))
+                            setFilteredApplyList([...applylist].filter((obj) => obj.ScreeningStatus == e.target.value && obj.Final_Results == 'Pending'))
                           } else {
                             setFilteredApplyList(applylist)
                           }
@@ -1546,7 +1551,7 @@ const Applylist = () => {
                           <th scope="col"><span className='fw-medium'>Email</span></th>
                           <th scope="col"><span className='fw-medium'>Phone</span></th>
                           <th scope="col"><span className='fw-medium'>Applied on  </span></th>
-
+                          <th scope="col"><span className='fw-medium'>Source  </span></th>
                           <th scope="col"><span className='fw-medium'>Applied Designation</span></th>
 
                           <th scope="col"><span className='fw-medium'>View</span></th>
@@ -1575,6 +1580,8 @@ const Applylist = () => {
 
                       <tbody className=''>
                         {filteredApplyList != undefined && filteredApplyList != undefined && filteredApplyList.map((e) => {
+                          console.log(e, 'appliedjob');
+
                           return (
 
 
@@ -1587,7 +1594,7 @@ const Applylist = () => {
                               <td >{e.PrimaryContact}</td>
                               <td >{e.AppliedDate} {convertTimeTo12HourFormat(e.AppliedTime)}</td>
 
-
+                              <td> </td>
                               <td >{e.AppliedDesignation}</td>
                               <td onClick={() => sentparticularData(e.CandidateId)} className='text-center'><button type="button" style={{ backgroundColor: 'rgb(160,217,180)' }} class="btn  btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal23">
                                 open
@@ -1612,11 +1619,11 @@ const Applylist = () => {
                             </div>
                             <div class="modal-body">
 
-
                               <table class="table table-bordered">
                                 <tbody>
                                   <tr>
                                     <th>Name</th>
+
                                     <td>{persondata.FirstName} {persondata.LastName}</td>
                                   </tr>
                                   <tr>
@@ -1744,7 +1751,23 @@ const Applylist = () => {
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                               <div class="d-flex gap-2">
                                 {/* <button type="button" class="btn btn-primary">Assign Task</button> */}
-                                <button type="button" class="btn btn-success" data-bs-target="#exampleModalToggle5" data-bs-toggle="modal">Schedule Interview</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                  onClick={() => {
+                                    setFinalStatus(persondata.CandidateId)
+                                    setFinalStatusName(persondata.FirstName + ' ' + persondata.LastName)
+                                  }
+                                  } className='mx-2 bg-slate-700 text-white rounded px-3 ' >
+                                  Final Result
+                                </button>
+                                {/* <button type="button" class="btn btn-success" data-bs-target="#exampleModalToggle5"
+                                  data-bs-toggle="modal">Schedule Interview</button> */}
+                                <button type="button" data-bs-target="#exampleModal23"
+                                  data-bs-dismiss="modal" className='bg-blue-600 text-white rounded p-2 '
+                                  onClick={() => {
+                                    setInterviewModal(persondata);
+                                    setSelectedCandidate(persondata.CandidateId)
+                                  }}
+                                >Schedule Interview</button>
                                 {/* <button type="button" class="btn btn-info" data-bs-target="#exampleModalToggle7" data-bs-toggle="modal">Offer Letter</button> */}
                               </div>
                             </div>
@@ -2052,7 +2075,7 @@ const Applylist = () => {
                         </button>
                         </td>
                       </tr> */}
-                      {<InterviewCompletedModal setinterviewReviewModal={setinterviewFormFillingModal }
+                      {<InterviewCompletedModal setinterviewReviewModal={setinterviewFormFillingModal}
                         rountstatus={intervewAsssignedcompleted}
                         getfunction={fetchdata2} show={interviewCompletedDetailsModal}
                         setshow={setInterviewCompleteDetailsModal} />}
@@ -2140,7 +2163,7 @@ const Applylist = () => {
                               <td className='break-words '> {e.ScheduledBy_name} </td>
                               {intervewAsssignedcompleted == 'Completed' && <td >
                                 <button onClick={() => {
-                                  setInterviewModal(true)
+                                  setInterviewModal(e)
                                   setSelectedCandidate(e.Candidate)
                                   // sentparticularData2(e.Candidate, e.id);
                                 }} className='p-1 text-xs rounded bg-blue-600 text-white'>Assign Interview </button>
@@ -2812,22 +2835,24 @@ const Applylist = () => {
 
                                   </p> : (e.FinalResult == 'Reject' && e.InterviewStatus != 'Completed') ? <p>
                                     Rejected in Screening
-                                  </p> : <select className=" w-[200px] rounded p-2 outline-none  " id="ageGroup"
-                                    value={e.FinalResult} onChange={(d) => {
-                                      setseleceted_candidateid(e.CandidateId)
-                                      setfinal_status_value(d.target.value)
-                                      setselectstatus(true)
-                                      setselectedFinalResultName(e.FirstName)
-                                    }}>
-                                    <option value="">Select</option>
-                                    {/* <option value="Pending">Pending</option> */}
-                                    <option value="consider_to_client">Consider to Client for Merida</option>
-                                    <option value="Internal_Hiring">Internal Hiring</option>
-                                    <option value="Reject">Reject</option>
-                                    <option value="On_Hold">On Hold</option>
-                                    <option value="Rejected_by_Candidate"> Rejected by Candidate </option>
+                                  </p> :
+                                    <select className=" w-[200px] rounded p-2 outline-none "
+                                      id="ageGroup"
+                                      value={e.FinalResult} onChange={(d) => {
+                                        setseleceted_candidateid(e.CandidateId)
+                                        setfinal_status_value(d.target.value)
+                                        setselectstatus(e)
+                                        setselectedFinalResultName(e.FirstName)
+                                      }}>
+                                      <option value="">Select</option>
+                                      {/* <option value="Pending">Pending</option> */}
+                                      <option value="consider_to_client">Consider to Client for Merida</option>
+                                      <option value="Internal_Hiring">Internal Hiring</option>
+                                      <option value="Reject">Reject</option>
+                                      <option value="On_Hold">On Hold</option>
+                                      <option value="Rejected_by_Candidate"> Rejected by Candidate </option>
 
-                                  </select>}
+                                    </select>}
                                 </div>
 
                               </td>
@@ -3178,7 +3203,7 @@ const Applylist = () => {
                 <div class="modal-body">
                   <form id="interviewForm" onSubmit={handleSubmit} class="styled-form">
                     <div class="form-group">
-                      <label for="candidateId">Candidate ID:</label>
+                      <label for="candidateId">Candidate:</label>
                       <input type="text" id="CandidateId" value={persondata.CandidateId} class="form-control" />
                     </div>
                     <div class="form-group">
@@ -4232,11 +4257,10 @@ const Applylist = () => {
           </Modal.Body>
         </Modal>
         {/* INTERVIEW FORM End */}
-
-
       </div >
-
-      {/* <Finalstatuscomment setselectstatus={setselectstatus} final_status_value={final_status_value} selectstatus={selectstatus} candidateid={seleceted_candidateid}></Finalstatuscomment> */}
+      {finalStatus && <FinalStatus show={finalStatus} getfunction={fetchdata}
+        name={finalStatusName}
+        setshow={setFinalStatus} />}
       <Final_status_comment setselectstatus={setselectstatus} selectedName={selectedFinalResultName}
         final_status_value={final_status_value} fetchdata3={fetchdata3}
         selectstatus={selectstatus} candidateid={seleceted_candidateid} setfinalvalue={setfinal_status_value}></Final_status_comment>

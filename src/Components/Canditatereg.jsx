@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import App, { port } from '../App'
 import '../assets/css/fonts.css'
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -13,6 +13,14 @@ import { Modal } from 'react-bootstrap';
 
 const Canditatereg = () => {
     let { getDesignations, designation, setDesignation } = useContext(HrmStore)
+    let location = useLocation();
+    let queryParams = new URLSearchParams(location.search)
+    let source = queryParams.get('source')
+    let desig = queryParams.get('desig')
+    console.log(source, desig, 'name');
+
+
+
     let [loading, setloading] = useState()
     const [states, setStates] = useState([]);
     const [districts, setDistricts] = useState([]);
@@ -52,9 +60,28 @@ const Canditatereg = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [alertType, setAlertType] = useState('success');
     let [appliedFor, setAppliedFor] = useState('Job')
+    let [otherJob, setOtherjob] = useState()
 
 
+    useEffect(() => {
+        if (desig && designation) {
+            if (designation.find((obj, index) => obj.Name == desig)) {
+                setApplyed_Designation(desig)
+            }
+            else {
 
+                setApplyed_Designation('other')
+                setAltApplyedDesignation(desig)
+            }
+        }
+    }, [desig, designation])
+    useEffect(() => {
+        if (source) {
+            setOtherjob(source)
+            setJobportal('others')
+
+        }
+    }, [source])
 
 
     let handleSubmit = (e) => {
@@ -85,12 +112,16 @@ const Canditatereg = () => {
         formdata.append('CurrentCTC', currentCTC);
         formdata.append('ExpectedSalary', expectedSalary);
         formdata.append('ContactedBy', Contacted_by);
-        formdata.append('JobPortalSource', JobPortal);
         formdata.append('YearOfPassout', selectedYear);
         formdata.append('Gender', gender);
         formdata.append('Position', selectedOption);
-        formdata.append('Appling_for', appliedFor)
-        formdata.append('Applyed_Designation', Applyed_Designation == 'other' ? altApplyedDesignation : Applyed_Designation);
+        formdata.append('Appling_for', appliedFor);
+        if (otherJob && JobPortal == 'others')
+            formdata.append('JobPortalSource', otherJob);
+        else
+            formdata.append('JobPortalSource', JobPortal);
+
+        formdata.append('AppliedDesignation', Applyed_Designation == 'other' ? altApplyedDesignation : Applyed_Designation);
 
         for (let pair of formdata.entries()) {
             console.log(pair[0] + ': ' + pair[1]);
@@ -494,10 +525,6 @@ const Canditatereg = () => {
                                         <input type="text" className="bgclr p-2 w-full outline-none rounded " id="expectedSalary" name="expectedSalary" value={Contacted_by} onChange={(e) => setContactedBy(e.target.value)} required />
                                     </div>
 
-                                    {/* <div className="col-md-6 col-lg-3 mb-3">
-                                        <label htmlFor="expectedSalary" className="fw-medium my-1 text-slate-600 poppins ">Job Portal Source <span class='text-danger'>*</span></label>
-                                        <input type="text" className="bgclr p-2 w-full outline-none rounded " id="expectedSalary" name="expectedSalary" value={JobPortal} onChange={(e) => setJobportal(e.target.value)} required />
-                                    </div> */}
 
                                     <div className="col-md-6 col-lg-3 mb-3 ">
                                         <label htmlFor="yearOfPassOut" className="fw-medium my-1 text-slate-600 poppins ">Job Portal Source  </label>
@@ -505,6 +532,7 @@ const Canditatereg = () => {
                                             className="bgclr p-2 w-full outline-none rounded "
                                             id="yearOfPassOut"
                                             name="yearOfPassOut"
+                                            disabled={desig}
                                             value={JobPortal}
                                             onChange={(e) => setJobportal(e.target.value)}
                                         >
@@ -514,10 +542,14 @@ const Canditatereg = () => {
                                             <option value="foundit">Foundit</option>
                                             <option value="indeed">Indeed </option>
                                             <option value="others">Others</option>
-
-
                                         </select>
                                     </div>
+                                    {JobPortal == 'others' && <div className="col-md-6 col-lg-3 mb-3">
+                                        <label htmlFor="expectedSalary" className="fw-medium my-1 text-slate-600 poppins ">Other Source <span class='text-danger'>*</span></label>
+                                        <input type="text" disabled={desig} className="bgclr p-2 w-full outline-none rounded " id="expectedSalary"
+                                            name="expectedSalary" value={otherJob} onChange={(e) => setOtherjob(e.target.value)} required />
+                                    </div>}
+
                                 </div>
                             </div>
 

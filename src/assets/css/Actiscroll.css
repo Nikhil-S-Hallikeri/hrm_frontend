@@ -6,54 +6,6 @@
     scrollbar-color: #888 #e0e0e0;
     /* For Firefox */
 }
-.sticky-left {
-    position: sticky;
-    left: 0px;
-    background-color: #fff;
-    z-index: 11;
-  }
-  .sticky-left1 {
-    position: sticky;
-    left: 150px;
-    background-color: #fff;
-    z-index: 11;
-  }
-  .sticky-left2 {
-    position: sticky;
-    left: 300px;
-    background-color: #fff;
-    z-index: 11;
-  }
-  
-.scrollbar1::-webkit-scrollbar {
-    width: 8px;
-}
-.scrollbar1::-webkit-scrollbar-track {
-    background: #e0e0e0;
-
-    /* Track color */
-}
-
-.scrollbar1::-webkit-scrollbar-thumb {
-    background-color: #888;
-    /* Scrollbar color */
-    border-radius: 10px;
-    /* Roundness of the scrollbar */
-    border: 2px solid #e0e0e0;
-    /* Space around scrollbar */
-}
-.scrollbar1::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
-    /* Color on hover */
-}
-.scrollbar1::-webkit-scrollbar-corner {
-    background-color: #555;
-    /* Color on hover */
-}
-
-
-
-
 
 .table-responsive::-webkit-scrollbar {
     height: 8px;
@@ -79,6 +31,61 @@
     /* Color on hover */
 }
 
+.sticky-left {
+    position: sticky;
+    left: 0px;
+    background-color: #fff;
+    z-index: 11;
+}
+
+.sticky-left1 {
+    position: sticky;
+    left: 150px;
+    background-color: #fff;
+    z-index: 11;
+}
+
+.sticky-left2 {
+    position: sticky;
+    left: 300px;
+    background-color: #fff;
+    z-index: 11;
+}
+
+.scrollbar1::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollbar1::-webkit-scrollbar-track {
+    background: #e0e0e0;
+
+    /* Track color */
+}
+
+.scrollbar1::-webkit-scrollbar-thumb {
+    background-color: #888;
+    /* Scrollbar color */
+    border-radius: 10px;
+    /* Roundness of the scrollbar */
+    border: 2px solid #e0e0e0;
+    /* Space around scrollbar */
+}
+
+.scrollbar1::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+    /* Color on hover */
+}
+
+.scrollbar1::-webkit-scrollbar-corner {
+    background-color: #555;
+    /* Color on hover */
+}
+
+
+
+
+
+
 .downtoupani {
     animation: upanimation 0.5s linear forwards;
 }
@@ -103,6 +110,7 @@
 .scrollmade::-webkit-scrollbar {
     display: none;
 }
-.formbg{
-    background-color: rgb(233,231,236);
+
+.formbg {
+    background-color: rgb(233, 231, 236);
 }

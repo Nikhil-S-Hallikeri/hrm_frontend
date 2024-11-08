@@ -46,7 +46,7 @@ const LeaveApprovalBox = () => {
         getApprovedEmployee()
     }, [])
     return (
-        <div className='col-sm-4 bgclr rounded-xl p-3' >
+        <div className=' bgclr rounded-xl p-3' >
             <section className='flex my-2 gap-3 justify-between flex-wrap items-center'>
                 <h6 className='poppins fw-semibold text-blue-900 text-center'>Reporting Team</h6>
                 <select name="" value={activeSection} onChange={(e) => setActiveSection(e.target.value)}

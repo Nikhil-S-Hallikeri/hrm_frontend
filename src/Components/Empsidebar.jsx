@@ -4,6 +4,7 @@ import '../assets/css/media.css'
 import { Link } from 'react-router-dom'
 import NavbarButton from './HomeComponent/NavbarButton'
 import { HrmStore } from '../Context/HrmContext'
+import { das } from '../App'
 
 
 const Empsidebar = () => {
@@ -13,7 +14,7 @@ const Empsidebar = () => {
     let { activePage, setActivePage, openNavbar, setNavbar } = useContext(HrmStore)
     return (
         <div className={` ${openNavbar && 'w-[260px] '} `}>
-            <main className='sticky top-0 flex'>
+            <main className='sticky top-0 flex  ' >
                 <section className={`h-[100vh] z-10 py-4 w-[80px] rounded-tr-[40px] bg-white `}>
                     {/* <img className='absolute z-0 top-0 ' src={require('../assets/Images/navbar.png')} alt="Navbar" /> */}
                     <button className='flex mx-auto'>
@@ -30,7 +31,10 @@ const Empsidebar = () => {
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Employee_request_form`}
                             label='Request' active='request'
                             img='/assets/Images/report.png' />
-
+                        <NavbarButton openNavbar={openNavbar} setopen={setNavbar}
+                            href={`${das}/hrms?user=${JSON.parse(sessionStorage.getItem('dasid'))}&password=${JSON.parse(sessionStorage.getItem('user')).Password}`}
+                            label='Das' active='das'
+                            img='/assets/Images/DasIcon.webp' />
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Employee_interview_applicants`}
                             label='Applicants' active='Applicants'
                             img='/assets/Images/Paper.png' />

@@ -115,6 +115,8 @@ const HrmContext = (props) => {
             "January", "February", "March", "April", "May", "June", "July",
             "August", "September", "October", "November", "December"
         ];
+        if (dateString == null)
+            return false
 
         const dateParts = dateString.split("-");
         const year = dateParts[0];
@@ -135,10 +137,22 @@ const HrmContext = (props) => {
 
         return `${month} ${year}`;
     }
+    function formatTime(timeStr) {
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        let formattedTime = '';
 
+        if (hours > 0) {
+            formattedTime += `${hours} hr${hours > 1 ? 's' : ''} `;
+        }
+        if (minutes > 0 || hours === 0) { // Show minutes even if hours is 0
+            formattedTime += `${minutes} min${minutes > 1 ? 's' : ''}`;
+        }
+
+        return formattedTime.trim();
+    }
     function formatISODate(isoString) {
-        const [time, offset] = isoString.split('+');
-        const [hours, minutes, seconds] = time.substring(1).split(':');
+        const [time] = isoString.split('+');
+        const [hours, minutes, seconds] = time.split(':');
 
         // Convert hours to number
         let hoursNumber = parseInt(hours, 10);
@@ -333,6 +347,7 @@ Merida Tech Minds (OPC) Pvt. Ltd.`
         return convertToWords(num);
     }
     let valueShare = {
+        formatTime,
         deleteSalaryComponent, getEarningData, data, getMonthYear, getTemplate, templates, numberToWords,
         religion, getReligion, count, formatDate, preTaxDeduction, postTaxDeduction, getPreTaxDeduction, getPostTaxDeduction,
         getPendingLeave, pendingLeave, setPendingLeave, leaveRequestsReporting, setLeaveRequestReporting, getLeaveRequestsReporting,

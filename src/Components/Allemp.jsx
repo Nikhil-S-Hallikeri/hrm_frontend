@@ -109,12 +109,12 @@ const Allemp = () => {
         }))
     }
     const fetchdata = () => {
-        axios.get(`${port}/root/ems/AllEmployeesList/${Empid}/`).then((res) => {
+        axios.get(`${port}/root/ems/AllEmployeesList/${Empid}/?emp_status=active`).then((res) => {
             console.log("AllEmployee_res", res.data, Empid);
             setAllEmployeelist(res.data)
 
         }).catch((err) => {
-            console.log("AllEmployee_err", err.data);
+            console.log("AllEmployee_err", err);
         })
     }
 
@@ -402,11 +402,14 @@ const Allemp = () => {
 
     const [Edit_Data, set_Edit_Data] = useState({
         full_name: '',
+        employee_attendance_id: '',
         date_of_birth: '',
         gender: '',
         email: '',
         mobile: '',
         weight: '',
+        secondary_email: '',
+        secondary_mobile_number: '',
         height: '',
         permanent_address: '',
         present_address: '',
@@ -425,7 +428,8 @@ const Allemp = () => {
         interview_shedule_access: '',
         screening_shedule_access: '',
         final_status_access: '',
-        applied_list_access: ''
+        applied_list_access: '',
+        employee_status: ''
 
     })
 
@@ -505,6 +509,8 @@ const Allemp = () => {
             religion: '',
             Position_id: '',
             Reporting_To: '',
+            secondary_mobile_number: '',
+            secondary_email: '',
             'Employeement_Type': '',
             'internship_Duration_From': '',
             'internship_Duration_To': '',
@@ -535,6 +541,7 @@ const Allemp = () => {
         }).catch((err) => {
             console.log("Update_Data", err)
             setloading('')
+            toast.error('Error Acquired')
 
         })
     }
@@ -611,8 +618,9 @@ const Allemp = () => {
                             </div>
                             <EmployeeCreation show={addEmpModal} id={Edit_id} setid={set_Edit_id}
                                 setshow={setAddEmpModal} getEmp={fetchdata} />
+
                             <div className='' >
-                                <button className='btn bg-primary-subtle' onClick={() => setAddEmpModal(true)}
+                                <button className='btn bg-primary-subtle' onClick={() => { setAddEmpModal(true) }}
                                     style={{ width: '120px', height: '32px', outline: 'none', fontSize: '14px' }}
                                 // data-bs-toggle="modal" data-bs-target="#exampleModal232"
                                 >
@@ -817,58 +825,74 @@ const Allemp = () => {
                 {/* <button type="submit" onClick={Click} className="btn btn-primary text-white fw-medium px-2 px-lg-5">CLICK</button> */}
 
 
-                < div className='row tablebg table-responsive h-[60dvh] overflow-y-scroll rounded-xl my-3 mt-3' style={{ width: '100%' }}>
-                    <table class="w-full ">
+                < div className='row tablebg table-responsive max-h-[60vh] 
+                overflow-y-scroll rounded-xl my-3 mt-3 p-0' style={{ width: '100%' }}>
+                    <table class="w-full p-0 ">
                         <thead>
                             <tr className='sticky top-0 bgclr1 '>
 
-                                <th scope="col"><span className='fw-medium'>All</span></th>
+                                {/* <th scope="col"><span className='fw-medium'>All</span></th> */}
                                 <th scope="col">Name</th>
                                 <th scope="col">Employee ID</th>
                                 <th scope="col">Email</th>
+                                <th>Employeement Type </th>
                                 <th scope="col">Position</th>
 
                                 <th scope="col">Phone</th>
                                 <th scope="col">Join Date</th>
+                                <th>Department </th>
                                 <th scope="col">Role</th>
-                                <th scope="col">Action</th>
+                                <th>Qualification </th>
+                                <th>Blood group </th>
+                                <th>Emergency Contact </th>
+                                <th> Marital status</th>
+                                <th> AadharCard Number</th>
+                                <th> PanCard Number</th>
+                                <th> Current Experience </th>
+                                <th>Total Experience </th>
+                                <th>Current CTC </th>
+                                <th className="col sticky right-0 bgclr1 ">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {/* <tr>
-                                <th scope="row">1</th>
-                                <td>Rakesh</td>
-                                <td>rakkiii49sh8@gmail.com</td>
-                                <td>MTM123</td>
-                                <td>6381849973</td>
-                                <td>12/1/2023</td>
-                                <td>FrontEnd Developer</td>
-                                <td>
-                                    <button>✔</button>
-                                    <button>❌</button>
-                                </td>
-                            </tr> */}
+
                             {AllEmployeelist && AllEmployeelist.map((e, index) => {
+                                console.log(e, 'empdetails');
+
                                 return (
-                                    <tr key={e.id}>
-                                        <td scope="row"><input type="checkbox" value={e.employee_Id} onChange={handleCheckboxChange} /></td>
+                                    <tr key={e.id} className={`   `} >
+                                        {/* <td scope="row"><input type="checkbox" value={e.employee_Id}
+                                            onChange={handleCheckboxChange} /></td> */}
                                         <td
-                                            className=''>
+                                            className=' '>
                                             <button className=' '
                                                 onClick={() => {
                                                     sentparticularData(e.id, e.employeeProfile);
+                                                    navigate(`/dash/employee/${e.employee_Id}`)
                                                 }}>
                                                 {e.full_name}
                                             </button>
                                         </td>
                                         <td> {e.employee_Id}</td>
                                         <td> {e.email}</td>
+                                        <td>{e.Employeement_Type} </td>
                                         <td> {e.Dashboard}</td>
 
                                         <td> {e.mobile}</td>
                                         <td> {e.hired_date}</td>
+                                        <td>{e.Department} </td>
                                         <td> {e.Designation}</td>
-                                        <td className='flex items-center gap-3 '>
+                                        <td>{e.EducationDetails && e.EducationDetails[0] && e.EducationDetails[0].Qualification} </td>
+                                        <td>{e.EmergencyDetails && e.EmergencyDetails[0] && e.EmergencyDetails[0].blood_group} </td>
+                                        <td> {e.EmergencyContactDetails && e.EmergencyContactDetails[0] && `${e.EmergencyContactDetails[0].person_name}
+                                         (${e.EmergencyContactDetails[0].phone})`} </td>
+                                        <td>{e.PersonalInformation && e.PersonalInformation[0] && e.PersonalInformation[0].marital_status} </td>
+                                        <td> {e.EmployeeIdentity && e.EmployeeIdentity[0] && e.EmployeeIdentity[0].aadhar_no} </td>
+                                        <td> {e.EmployeeIdentity && e.EmployeeIdentity[0] && e.EmployeeIdentity[0].pan_no} </td>
+                                        <td>{e.Currrent_Experience} </td>
+                                        <td>{e.Total_Experience} </td>
+                                        <td>{e.salary_Template && e.salary_Template.CTC_per_annum} </td>
+                                        <td className='flex sticky-right bgclr1 items-center gap-3 '>
                                             <button onClick={() => {
                                                 Edit_Employee(e.id);
                                                 // set_Edit_id(e.id)
@@ -887,7 +911,6 @@ const Allemp = () => {
                                             {empStatus == 'Admin' &&
                                                 <button onClick={() => navigate(`/dash/employee/${e.employee_Id}`)}>
                                                     <ViewBtn />
-
                                                 </button>
                                             }
                                         </td>
@@ -902,7 +925,7 @@ const Allemp = () => {
                         onHide={() => { resetEditModal() }} >
                         <Modal.Header closeButton>
                             <h3 className='poppins' style={{ color: 'rgb(76,53,117)' }} >
-                                Update Employee Information</h3>
+                                Update Employee2 Information </h3>
                         </Modal.Header>
                         <Modal.Body>
                             <div className="row justify-content-center m-0">
@@ -938,14 +961,29 @@ const Allemp = () => {
                                                 </select>
                                             </div>
                                             <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="email" className="form-label">Email <span class='text-danger'>*</span> </label>
+                                                <label htmlFor="email" className="form-label">Primary Email <span class='text-danger'>*</span> </label>
                                                 <input type="email" className="form-control shadow-none bg-light" id=" Email" name="email"
                                                     value={Edit_Data.email} onChange={handleChangeEdit_data} />
                                             </div>
                                             <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="primaryContact" className="form-label">Phone <span class='text-danger'>*</span> </label>
+                                                <label htmlFor="email" className="form-label">Secondary Email <span class='text-danger'></span> </label>
+                                                <input type="email" className="form-control shadow-none bg-light" id=" Email" name="secondary_email"
+                                                    value={Edit_Data.secondary_email} onChange={handleChangeEdit_data} />
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="email" className="form-label">Attendence Id <span class='text-danger'>*</span> </label>
+                                                <input type="text" className="form-control shadow-none bg-light" id=" Email" name="employee_attendance_id"
+                                                    value={Edit_Data.employee_attendance_id} onChange={handleChangeEdit_data} />
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="primaryContact" className="form-label">Primary Phone <span class='text-danger'>*</span> </label>
                                                 <input type="tel" className="form-control shadow-none bg-light" id="PrimaryContact" name="mobile"
                                                     value={Edit_Data.mobile} onChange={handleChangeEdit_data} />
+                                            </div>
+                                            <div className="col-md-6 col-lg-4 mb-3">
+                                                <label htmlFor="primaryContact" className="form-label">Secondary Phone <span class='text-danger'>*</span> </label>
+                                                <input type="tel" className="form-control shadow-none bg-light" id="PrimaryContact" name="secondary_mobile_number"
+                                                    value={Edit_Data.secondary_mobile_number} onChange={handleChangeEdit_data} />
                                             </div>
                                             <div className="col-md-6 col-lg-2 mb-3">
                                                 <label htmlFor="secondaryContact" className="form-label">Weight  </label>
@@ -1035,6 +1073,8 @@ const Allemp = () => {
 
                                                 </select>
                                             </div>
+                                            {console.log(Edit_Data)
+                                            }
                                             <div className="col-md-6 col-lg-4 mb-3">
                                                 <label htmlFor="gender" className="form-label">Designation <span class='text-danger'>*</span> </label>
                                                 <select
@@ -1108,7 +1148,9 @@ const Allemp = () => {
                                             </div>}
                                             {Edit_Data.probation_status == 'probationer' &&
                                                 <section className="col-md-6 col-lg-4 mb-3">
-                                                    <label htmlFor="gender" className="form-label">Probation Duration <span class='text-danger'>*</span> </label>
+                                                    <label htmlFor="gender" className="form-label">Probation Duration
+                                                        <span class='text-danger'>*</span>
+                                                    </label>
                                                     <div>
                                                         <input type="date" value={Edit_Data.probation_Duration_From} name='probation_Duration_From'
                                                             onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' /> -
@@ -1116,6 +1158,29 @@ const Allemp = () => {
                                                             onChange={handleChangeEdit_data} className='outline-none p-2 bg-light rounded border-1 ' />
                                                     </div>
                                                 </section>}
+
+                                            <section>
+                                                <label htmlFor="activestatus" className="form-label"> Active status
+                                                </label>
+                                                <article onClick={() => (
+                                                    set_Edit_Data((prev) => ({
+                                                        ...prev,
+                                                        employee_status: Edit_Data.employee_status == 'active' ? 'in_active' : 'active'
+                                                    }))
+                                                )}
+                                                    className='flex gap-1 items-center ' >
+                                                    Block
+                                                    <div className={`  ${Edit_Data.employee_status == 'active' ? 'bg-green-100'
+                                                        : "bg-red-100"} relative w-10 h-5 rounded-full duration-500 border-2 `}>
+                                                        <button className={`  h-4 w-4 absolute ${Edit_Data.employee_status == 'active' && "translate-x-5"} duration-500 rounded-full bg-white `} >
+
+                                                        </button>
+                                                    </div>
+                                                    Active
+                                                </article>
+
+
+                                            </section>
 
                                         </div>
 
@@ -1183,7 +1248,8 @@ const Allemp = () => {
                                     </div>
 
                                 </div>}
-                                {editModalPage == 'sal' && <EmployeeSalaryAdding id={Edit_Data.id} emp={Edit_Data} setpage={setEditModalPage} />}
+                                {editModalPage == 'sal' &&
+                                    <EmployeeSalaryAdding id={Edit_Data.id} emp={Edit_Data} setpage={setEditModalPage} />}
 
                             </div>
                         </Modal.Body>

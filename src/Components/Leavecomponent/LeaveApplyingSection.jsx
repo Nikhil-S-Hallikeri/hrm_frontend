@@ -146,9 +146,10 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
                             onChange={handleChange} name='LeaveType' id="">
                             <option value="">Select</option>
                             {console.log(allocatedLeave)}
-                            {eligibleLeave && eligibleLeave.length > 0 && eligibleLeave.map((x) => (
-                                < option value={x.id} >{x.leave_name} </option>
-                            ))}
+                            {eligibleLeave && eligibleLeave.length > 0 &&
+                                eligibleLeave.map((x) => (
+                                    < option value={x.id} >{x.leave_name} </option>
+                                ))}
                         </select>
                     </div>
 

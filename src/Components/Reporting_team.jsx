@@ -19,7 +19,7 @@ const Reporting_team = () => {
     let [offerListDA, setOfferListDA] = useState()
     let [walkinList, setWalkInList] = useState()
     let [walkinListDA, setWalkInListDA] = useState()
-
+    let [filteredList, setFilteredList] = useState()
 
 
     let [selectedName, setSelectedName] = useState()
@@ -98,14 +98,13 @@ const Reporting_team = () => {
 
     useEffect(() => {
         fetchdata()
-
     }, [])
 
     const fetchdata = () => {
         axios.get(`${port}/root/ems/ReportingTeam/${Empid}/`).then((res) => {
             console.log("ReportingTeam_res", res.data);
             setAllEmployeelist(res.data)
-
+            setFilteredList(res.data)
         }).catch((err) => {
             console.log("ReportingTeam_err", err.data);
         })
@@ -217,25 +216,20 @@ const Reporting_team = () => {
     const [searchValue, setSearchValue] = useState("");
 
     const handlesearchvalue = (value) => {
-
         console.log(value);
         setSearchValue(value)
-
         if (value.length > 0) {
+            let filterValue = AllEmployeelist.filter((obj) =>
+                obj.full_name.toLowerCase().indexOf(value.toLowerCase()) !== -1
+            );
+            console.log(filterValue, 'filter', filteredList);
 
-            axios.get(`${port}/root/ems/ReportingTeam/${Empid}/`).then((res) => {
-                console.log("search_res", res.data);
-                setAllEmployeelist(res.data)
-            }).catch((err) => {
-                console.log("search_res", err.data);
-            })
         }
         else {
             fetchdata()
         }
     }
     // SEARCH END
-
 
 
 
@@ -359,9 +353,7 @@ const Reporting_team = () => {
     const [Offeredget, setOfferedget] = useState([]);
     const [Offered_achives, setOffered_achives] = useState([]);
 
-    // const [Interview_Scheduled, setInterview_Scheduled] = useState([]);
-    // const [Walkins, setWalkins] = useState([]);
-    // const [Offered, setOffered] = useState([]);
+
 
 
     const [id, setid] = useState("");
@@ -380,35 +372,6 @@ const Reporting_team = () => {
 
 
     const formattedCurrentDate = formatDate(currentDate);
-
-
-    // Activity Res Start
-
-    // const Activity_get_res = () => {
-    //     axios.get(`${port}root/activity/${Empid}/`).then((res) => {
-    //         setgetActivities(res.data);
-    //         setgetActivities_daily_achives(res.data.map((x) => x.daily_achives));
-    //         console.log(res.data.map((x) => x.daily_achives));
-    //         console.log("activity_get_res", res.data);
-    //     }).catch((err) => {
-    //         console.log("activity_get_err", err.data);
-    //     });
-    // };
-
-    // useEffect(() => {
-    //     Activity_get_res();
-    // }, []);
-
-    // Activity res End
-
-    // const calculateTotal = (field) => {
-    //     return activitiesget.reduce((total, activity) => {
-    //         return total + (parseFloat(activity[field]) || 0);
-    //     }, 0);
-    // };
-
-    // const totalTarget = calculateTotal('targets');
-    // const totalAchieved = calculateTotal('achieved');
 
     let getActivities = (e) => {
         axios.get(`${port}root/ActivityList/Display/${e}/${Employee_ID}/`).then((res) => {
@@ -541,7 +504,7 @@ const Reporting_team = () => {
     return (
         <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
 
-            <div className=''>
+            <div className='flex'>
 
                 <Sidebar value={"dashboard"} ></Sidebar>
             </div>
@@ -557,22 +520,26 @@ const Reporting_team = () => {
 
                         <h6 className='mt-2 heading ms-0 ms-sm-3' style={{ color: 'rgb(76,53,117)' }}>Reporting Team List</h6>
 
-                        <div>
+                        {/* <div>
                             <button className='btn btn-sm bg-info-subtle'>Add New</button>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className='Reporting_Team_List_Btns  mt-2'>
                         <div className='ms-0 ms-sm-3 Reporting_Team_Btns'>
 
-                            <button className='btn btn-sm btn-success ms-2' data-bs-toggle="modal" data-bs-target="#exampleModal26">View</button>
-                            <button disabled={selectedCandidates.length == 0} className='btn btn-sm btn-warning ms-3' data-bs-toggle="modal" data-bs-target="#exampleModal23">Add Activity</button>
-                            <button 
-                            disabled={selectedCandidates.length == 0} 
-                            className='btn btn-sm btn-warning ms-4' data-bs-toggle="modal" data-bs-target="#exampleModal25">Add Interview</button>
+                            <button className='btn btn-sm btn-success ms-2'
+                                data-bs-toggle="modal" data-bs-target="#exampleModal26">View</button>
+                            <button disabled={selectedCandidates.length == 0}
+                                className='btn btn-sm btn-warning ms-3' data-bs-toggle="modal" data-bs-target="#exampleModal23">Add Activity</button>
+                            <button
+                                disabled={selectedCandidates.length == 0}
+                                className='btn btn-sm btn-warning ms-4' data-bs-toggle="modal"
+                                data-bs-target="#exampleModal25">Add Interview</button>
                         </div>
                         {/* Add Activity */}
-                        <div class="modal fade" id="exampleModal23" tabindex="-1" aria-labelledby="exampleModalLabel23" aria-hidden="true">
+                        <div class="modal fade" id="exampleModal23" tabindex="-1"
+                            aria-labelledby="exampleModalLabel23" aria-hidden="true">
                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -595,9 +562,6 @@ const Reporting_team = () => {
                                                         <input type="number" name="targets" value={qualification.targets} onChange={(e) => handleInputChange(index, e)} className="form-control  shadow-none" />
                                                     </div>
                                                 </div>
-
-
-
                                             </div>
                                         ))}
 
@@ -619,78 +583,7 @@ const Reporting_team = () => {
                             </div>
                         </div>
                         {/* View */}
-                        <div class="modal fade" id="exampleModal26" tabindex="-1" aria-labelledby="exampleModalLabel26" aria-hidden="true">
-                            <div class="modal-dialog modal-fullscreen">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel26">View </h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div className=' p-1 mt-3 tablebg table-responsive'>
-                                            <table class="w-full  " >
-                                                <thead >
-                                                    <tr>
-                                                        <th scope="col">#</th>
-                                                        <th scope="col">Name</th>
-                                                        <th scope="col">Email</th>
-                                                        <th scope="col">Employee ID</th>
-                                                        <th scope="col">Phone</th>
-                                                        <th scope="col">Join Date</th>
-                                                        <th scope="col">Role</th>
-                                                        <th scope="col">Department</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
 
-                                                    {AllEmployeelist != undefined && AllEmployeelist != undefined && AllEmployeelist.map((e, index) => {
-                                                        return (
-
-
-                                                            <tr>
-
-                                                                <td key={e.id}> {index + 1}</td>
-
-                                                                <td onClick={() => { sentparticularData1(e.employee_Id); setSelectedName(e.full_name) }}
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#exampleModal6" key={e.id} style={{ cursor: 'pointer' }}> {e.full_name}</td>
-                                                                <td key={e.id}> {e.email}</td>
-                                                                <td key={e.id}> {e.employee_Id}</td>
-                                                                <td key={e.id}> {e.mobile}</td>
-                                                                <td key={e.id}> {e.Date_of_Joining}</td>
-                                                                <td key={e.id}> {e.Designation}</td>
-                                                                <td key={e.id}> {e.Department}</td>
-
-
-
-                                                            </tr>
-
-
-                                                        )
-                                                    })}
-
-
-
-                                                </tbody>
-                                            </table>
-
-
-
-                                        </div>
-
-
-
-
-                                    </div>
-                                    <div class="modal-footer">
-                                        <div className='d-flex justify-content-end '>
-
-                                            {/* <button  type="button" data-bs-dismiss="modal" class="btn btn-primary">Assign</button> */}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         {/* Interview Scheduled */}
                         <div class="modal fade" id="exampleModal25" tabindex="-1" aria-labelledby="exampleModalLabel25" aria-hidden="true">
                             <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -748,16 +641,17 @@ const Reporting_team = () => {
                         </div>
                         <div className='Reporting_Team_search ms-2 ms-sm-0' >
 
-                            <input type="text" value={searchValue} onChange={(e) => handlesearchvalue(e.target.value)} className='form-control ' />
-                            <i class="fa-solid fa-magnifying-glass" style={{ position: 'relative', bottom: '30px', left: '10px', color: 'rgb(195,198,209)' }}></i>
+                            {/* <input type="text" value={searchValue}
+                                onChange={(e) => handlesearchvalue(e.target.value)}
+                                className='form-control' /> */}
                         </div>
 
                     </div>
 
-                    <div className=' p-1 mt-3 tablebg table-responsive'>
+                    <div className=' p-1 py-0 mt-3 h-[50vh] overflow-y-scroll tablebg table-responsive'>
                         <table class="w-full  " >
                             <thead >
-                                <tr>
+                                <tr className='sticky top-0 bgclr1 ' >
                                     <th scope="col">#</th>
                                     <th scope="col">Name</th>
                                     <th scope="col">Email</th>
@@ -769,59 +663,51 @@ const Reporting_team = () => {
                                     <th scope="col">Request</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className='h-[50vh] overflow-y-scroll ' >
 
-                                {AllEmployeelist != undefined && AllEmployeelist != undefined && AllEmployeelist.map((e, index) => {
-                                    return (
+                                {filteredList != undefined &&
+                                    filteredList.map((e, index) => {
+                                        return (
+                                            <tr key={index} >
+                                                <td scope="row"><input type="checkbox"
+                                                    value={e.employee_Id} onChange={handleCheckboxChange} /></td>
+                                                {/* <td key={e.id}> {index + 1}</td> */}
+                                                <td onClick={() => {
+                                                    sentparticularData(e.id);
+                                                    sentparticularData1(e.employee_Id);
+                                                    setSelectedName(e.full_name)
+                                                }} data-bs-toggle="modal" data-bs-target="#exampleModal6" key={e.id}
+                                                    style={{ cursor: 'pointer' }}> {e.full_name}</td>
+                                                <td key={e.id}> {e.email}</td>
+                                                <td key={e.id}> {e.employee_Id}</td>
+                                                <td key={e.id}> {e.mobile}</td>
+                                                <td key={e.id}> {e.hired_date}</td>
+                                                <td key={e.id}> {e.Designation}</td>
+                                                <td key={e.id}> {e.Department}</td>
+                                                <td>
+                                                    {/* <span className={`text-center ${e.Requests != undefined && e.Requests.LeaveRequests.length >= 0 ? 'd-none' : 'bg-warning'}`} style={{ position: 'relative', left: '33px', bottom: '10px', fontSize: '11px', color: 'red' }} > </span> */}
+                                                    <button className='btn '
+                                                        onClick={() => {
+                                                            if (e.Requests.ResignationRequest.length > 0) {
+                                                                setResignationRequest(e.Requests.ResignationRequest)
+                                                                setLeaveRequests(e.Requests.LeaveRequests)
+                                                                set_reform_id(e.Requests.ResignationRequest[0].id)
+                                                                set_HR_manager_name(e.Requests.ResignationRequest[0].reporting_manager_name)
+                                                                set_Re_manager_name(e.Requests.ResignationRequest[0].HR_manager_name)
+                                                                setAll_request_data(true)
+                                                                setReporting_Team_List(false)
 
+                                                            }
+                                                            else {
+                                                                alert('No Requests ')
+                                                            }
 
-                                        <tr>
-
-                                            <td scope="row"><input type="checkbox" value={e.employee_Id} onChange={handleCheckboxChange} /></td>
-                                            {/* <td key={e.id}> {index + 1}</td> */}
-
-                                            <td onClick={() => { sentparticularData(e.id); sentparticularData1(e.employee_Id); setSelectedName(e.full_name) }} data-bs-toggle="modal" data-bs-target="#exampleModal6" key={e.id} style={{ cursor: 'pointer' }}> {e.full_name}</td>
-                                            <td key={e.id}> {e.email}</td>
-                                            <td key={e.id}> {e.employee_Id}</td>
-                                            <td key={e.id}> {e.mobile}</td>
-                                            <td key={e.id}> {e.Date_of_Joining}</td>
-                                            <td key={e.id}> {e.Designation}</td>
-                                            <td key={e.id}> {e.Department}</td>
-                                            <td>
-                                                {/* <span className={`text-center ${e.Requests != undefined && e.Requests.LeaveRequests.length >= 0 ? 'd-none' : 'bg-warning'}`} style={{ position: 'relative', left: '33px', bottom: '10px', fontSize: '11px', color: 'red' }} > </span> */}
-                                                <button className='btn '
-
-
-                                                    onClick={() => {
-                                                        if (e.Requests.ResignationRequest.length > 0) {
-                                                            setResignationRequest(e.Requests.ResignationRequest)
-                                                            setLeaveRequests(e.Requests.LeaveRequests)
-                                                            set_reform_id(e.Requests.ResignationRequest[0].id)
-                                                            set_HR_manager_name(e.Requests.ResignationRequest[0].reporting_manager_name)
-                                                            set_Re_manager_name(e.Requests.ResignationRequest[0].HR_manager_name)
-                                                            setAll_request_data(true)
-                                                            setReporting_Team_List(false)
-
-                                                        }
-                                                        else {
-                                                            alert('No Requests ')
-                                                        }
-
-                                                    }}
-
-
-
-
-                                                > <i class={`fa-solid fa-person-circle-question ${e.Requests.ResignationRequest.length > 0 ? ' text-success' : 'text-danger'}`}></i></button>
-
-                                            </td>
-
-
-                                        </tr>
-
-
-                                    )
-                                })}
+                                                        }}
+                                                    > <i class={`fa-solid fa-person-circle-question ${e.Requests.ResignationRequest.length > 0 ? ' text-success' : 'text-danger'}`}></i></button>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
 
 
 

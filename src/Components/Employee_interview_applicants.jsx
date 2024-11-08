@@ -37,6 +37,8 @@ const Employee_interview_applicants = () => {
   let [interviewCompletedDetailsModal, setInterviewCompleteDetailsModal] = useState()
 
   let [interviewlist, setInterviewlist] = useState([])
+  let [interviewCompletedList, setInterviewCompletedList] = useState()
+  let [filteredInterviewList, setFilteredInterviewList] = useState()
 
   let [completedlist, setCompletedlist] = useState([])
 
@@ -309,17 +311,32 @@ const Employee_interview_applicants = () => {
 
   let getInterviewList = async () => {
     try {
-      let interviewAssinged = await axios.get(`${port}/root/New-Interview-assigned-list/${Empid}/${intervewAsssignedcompleted}/`)
-      let interviewAssigned2 = await axios.get(`${port}/root/New-Candidate-Interview-list/${Empid}/${intervewAsssignedcompleted}/`)
-      let uni2 = []
-      interviewAssigned2.data.forEach((obj) => {
-        if (!uni2.find((obj2) => obj2.Candidate == obj.Candidate)) {
-          uni2.push(obj)
+      const [interviewAssigned, interviewAssigned2, interviewCompleted1, interviewCompleted2] = await Promise.all([
+        axios.get(`${port}/root/New-Interview-assigned-list/${Empid}/Assigned/`),
+        axios.get(`${port}/root/New-Candidate-Interview-list/${Empid}/Assigned/`),
+        axios.get(`${port}/root/New-Interview-assigned-list/${Empid}/Completed/`),
+        axios.get(`${port}/root/New-Candidate-Interview-list/${Empid}/Completed/`)
+      ]);
+
+      const combinedData = [...(interviewAssigned.data || []), ...(interviewAssigned2.data || [])];
+      const uniqueCandidates = [];
+      const combinedData2 = [...(interviewCompleted1.data || []), ...(interviewCompleted2.data || [])]
+      const uniqueCandidatesCompleted = []
+
+      combinedData.reverse().forEach((obj) => {
+        if (!uniqueCandidates.find((candidate) => candidate.Candidate === obj.Candidate)) {
+          uniqueCandidates.push(obj);
         }
-      })
-      setInterviewlist([...interviewAssinged.data, ...uni2])
-      console.log("Interview_list", [...interviewAssinged.data, ...interviewAssigned2.data]);
-      console.log("Interview_list", [...uni2]);
+      });
+      combinedData2.reverse().forEach((obj) => {
+        if (!uniqueCandidatesCompleted.find((candidate) => candidate.Candidate === obj.Candidate)) {
+          uniqueCandidatesCompleted.push(obj);
+        }
+      });
+
+      setInterviewlist([...uniqueCandidates]);
+      setFilteredInterviewList([...uniqueCandidates])
+      setInterviewCompletedList([...uniqueCandidatesCompleted])
     } catch (error) {
       console.log("Interview_list", error);
     }
@@ -329,7 +346,7 @@ const Employee_interview_applicants = () => {
     if (intervewAsssignedcompleted) {
       getInterviewList()
     }
-  }, [intervewAsssignedcompleted])
+  }, [])
 
 
 
@@ -871,11 +888,25 @@ const Employee_interview_applicants = () => {
       <div className='flex-1 container mx-auto ' style={{ borderRadius: '10px' }}>
         <Topnav ></Topnav>
 
-        <div className='d-flex container justify-content-between mt-4'>
-          <li class=" text-primary d-flex" role="presentation">
-            <h6 class='mt-2 bg-violet-900 text-white p-2 rounded'  >
+        <div className='d-flex nav nav-pills mb-3 container justify-content-between mt-4'>
+          <li class="nav-item text-primary d-flex" role="presentation">
+            <section class='mt-2 d-flex align-items-center gap-2 heading nav-link' id="pills-home-tab" data-bs-toggle="pill"
+              data-bs-target="#pills-home" role="tab" aria-controls="pills-home"
+              aria-selected="true"
+              style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }}
+            >
+              <img className='w-14 ' src={require('../assets/Images/circle2.png')} alt="" />
+              <div className='text-sm'> Interview process
+                <div className='flex my-2 text-xs justify-between gap-2 flex-wrap'>
+
+                  <small className='bg-red-400 text-white px-3  block rounded'>{interviewlist != undefined && interviewlist.length} Assigned </small>
+                  <small className='bg-green-400 text-white px-3 block rounded'>{interviewCompletedList != undefined && interviewCompletedList.length} Completed </small>
+                </div>
+              </div>
+            </section>
+            {/* <h6 class='mt-2 bg-violet-900 text-white p-2 rounded'  >
               Interview  Applicants</h6>
-            <small className='text-danger ms-2   rounded-circle'> {interviewlist != undefined && interviewlist.length} </small>
+            <small className='text-danger ms-2   rounded-circle'> {interviewlist != undefined && interviewlist.length} </small> */}
           </li>
         </div>
 
@@ -909,15 +940,26 @@ const Employee_interview_applicants = () => {
               </li>
             </div>
           </ul>
-          <div className='rounded mx-3 bg-slate-400 w-fit'>
+          {/* <div className='rounded mx-3 bg-slate-400 w-fit'>
             <button onClick={() => { setInterViewAssignedCompleted('Assigned'); }}
               className={`${intervewAsssignedcompleted == 'Assigned' ? "bg-blue-600" : 'bg-slate-400'}
                      text-white p-2 duration-500 transition rounded `}>Assigned </button>
             <button onClick={() => { setInterViewAssignedCompleted('Completed'); }}
               className={`${intervewAsssignedcompleted == 'Completed' ? "bg-blue-600" : 'bg-slate-400'}
                      text-white p-2 duration-500 transition rounded `}>Completed </button>
-          </div>
-
+          </div> */}
+          <select name="" value={intervewAsssignedcompleted}
+            onChange={(e) => {
+              setInterViewAssignedCompleted(e.target.value)
+              if (e.target.value == 'Assigned')
+                setFilteredInterviewList(interviewlist)
+              if (e.target.value == 'Completed')
+                setFilteredInterviewList(interviewCompletedList)
+            }}
+            className='btngrd border-2 flex ms-auto bg-opacity-70 outline-none rounded border-violet-100 text-white text-xs p-2 ' id="">
+            <option value="Assigned" className='text-black'>Assigned</option>
+            <option value="Completed" className='text-black'>Completed</option>
+          </select>
           <div className='mt-1 rounded-xl my-2 tablebg table-responsive p-2 ' style={{ width: '100%' }}>
             <table class="w-full ">
               <thead >
@@ -961,7 +1003,7 @@ const Employee_interview_applicants = () => {
                         </td>
                       </tr> */}
               <tbody>
-                {interviewlist !== undefined && interviewlist.map((e, index) => (
+                {filteredInterviewList !== undefined && filteredInterviewList.map((e, index) => (
                   <tr key={e.id}>
                     <td> {index + 1}</td>
 

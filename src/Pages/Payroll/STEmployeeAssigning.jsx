@@ -122,7 +122,12 @@ const STEmployeeAssigning = () => {
                                 <td>{obj.employee_Id} </td>
                                 <td>{obj.Designation} </td>
                                 <td>{obj.email} </td>
-                                <td>{obj.salary ? obj.salary : <AddSalary id={obj.employee_Id} />} </td>
+                                <td>{obj.salary ? obj.salary :
+                                    //  <AddSalary id={obj.employee_Id} />
+                                    <div>
+                                        Salary not assigned
+                                    </div>
+                                } </td>
                                 <td>
                                     <select name="" onChange={(e) => particularchange(obj.employee_Id, e.target.value)}
                                         className='bg-transparent outline-none '

@@ -4,6 +4,7 @@ import '../assets/css/media.css'
 import { Link } from 'react-router-dom'
 import { HrmStore } from '../Context/HrmContext'
 import NavbarButton from './HomeComponent/NavbarButton'
+import { das } from '../App'
 
 
 const Recsidebar = () => {
@@ -28,10 +29,16 @@ const Recsidebar = () => {
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/dashboard/${logindata.Disgnation}`}
                             label='Dashboard' active='dashboard'
                             img='/assets/Images/dashboard.png' />
+                        <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Employee_request_form`}
+                            label='Request' active='request'
+                            img='/assets/Images/report.png' />
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Rec_applyed_list`}
                             label='Applyed List' active='applylist'
                             img='/assets/Images/report.png' />
-
+                        <NavbarButton openNavbar={openNavbar} setopen={setNavbar}
+                            href={`${das}/hrms?user=${JSON.parse(sessionStorage.getItem('dasid'))}&password=${JSON.parse(sessionStorage.getItem('user')).Password}`}
+                            label='Das' active='das'
+                            img='/assets/Images/DasIcon.webp' />
                         <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/Applicants`}
                             label='Applicants' active='Applicants'
                             img='/assets/Images/Paper.png' />

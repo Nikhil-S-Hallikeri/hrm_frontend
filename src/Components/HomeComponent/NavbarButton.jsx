@@ -5,7 +5,7 @@ import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import DownArrow from '../../SVG/DownArrow'
 
 const NavbarButton = (props) => {
-    const { openNavbar, setopen, path, drop, label, light, active, img } = props
+    const { openNavbar, setopen, path, drop, href, label, light, active, img } = props
     let { activePage, setActivePage } = useContext(HrmStore)
     let navigate = useNavigate()
     let [dropDown, setDropDown] = useState(false)
@@ -16,7 +16,9 @@ const NavbarButton = (props) => {
 
     let handleclick = () => {
         setActivePage(active)
-        if (!drop)
+        if (href)
+            window.open(href)
+        if (!drop && !href)
             navigate(path)
         if (drop) {
             setopen(true)

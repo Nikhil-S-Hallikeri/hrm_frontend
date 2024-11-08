@@ -172,11 +172,10 @@ const Acti_ = () => {
             setInterview_Scheduledget(res.data.interview);
             setInterview_Scheduled_achives(res.data.interview.map((x) => x.daily_achives));
 
-            // setWalkinsget(res.data.walkins);
-            // setWalkins_achives(res.data.walkins.map((x) => x.daily_achives));
-
-            // setOfferedget(res.data.offers);
-            // setOffered_achives(res.data.offers.map((x) => x.daily_achives));
+            setWalkinsget(res.data.walkins);
+            setWalkins_achives(res.data.walkins.map((x) => x.daily_achives));
+            setOfferedget(res.data.offers);
+            setOffered_achives(res.data.offers.map((x) => x.daily_achives));
 
         }).catch((err) => {
 
