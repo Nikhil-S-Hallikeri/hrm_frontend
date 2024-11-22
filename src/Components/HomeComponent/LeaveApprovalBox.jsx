@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import axios from 'axios'
 import { port } from '../../App'
 import WeekLeaveAprovedEmp from './WeekLeaveAprovedEmp'
+import ApprovalPage from '../../Pages/Approval/ApprovalPage'
 
 const LeaveApprovalBox = () => {
     let [activeSection, setActiveSection] = useState('request')
@@ -46,7 +47,7 @@ const LeaveApprovalBox = () => {
         getApprovedEmployee()
     }, [])
     return (
-        <div className=' bgclr rounded-xl p-3' >
+        <div className=' bg-white h-[40vh] overflow-y-auto rounded-xl p-3' >
             <section className='flex my-2 gap-3 justify-between flex-wrap items-center'>
                 <h6 className='poppins fw-semibold text-blue-900 text-center'>Reporting Team</h6>
                 <select name="" value={activeSection} onChange={(e) => setActiveSection(e.target.value)}
@@ -62,40 +63,42 @@ const LeaveApprovalBox = () => {
             {activeSection == 'request' &&
                 <main className='h-[25vh]'>
                     {leaveRequestsReporting && leaveRequestsReporting.length > 0 ?
-                        <article className='h-[85%] overflow-y-scroll table-responsive tablebg rounded '>
-                            <table className='w-full text-xs'>
-                                <tr className='sticky top-0 bgclr1' >
-                                    <th> SI NO </th>
-                                    <th>Employee</th>
-                                    <th>Leave Type </th>
-                                    <th> Reason</th>
-                                    <th>Days </th>
-                                    <th>Applied Date </th>
-                                    <th> Dates </th>
-                                    <th>Action</th>
-                                </tr>
-                                {leaveRequestsReporting && leaveRequestsReporting.map((obj, index) => {
-                                    return (
-                                        <tr key={index} className={` `} >
-                                            <td className=' '>{index + 1}</td>
-                                            <td>{obj.employee_name} </td>
-                                            <td> {obj.LeaveType} </td>
-                                            <td className='w-[200px] xl:w-[400px] text-wrap '>{obj.reason} </td>
-                                            <td>{obj.days} </td>
-                                            <td>{changeDateYear(obj.applied_date)} </td>
-                                            <td>{changeDateYear(obj.from_date)}{obj.days > 1 ? "-" + changeDateYear(obj.to_date) : ''} </td>
-                                            {/* <td>{obj.approved_status} </td> */}
-                                            <td className='flex gap-2'>
-                                                <button onClick={() => handleRequest(obj, "rejected", index)} className='p-1 px-2 text-sm shadow-sm rounded bg-red-600 text-white  '>
-                                                    {loading == `rejected${index}` ? 'Loading..' : "Decline"} </button>
-                                                <button onClick={() => handleRequest(obj, "approved", index)} className='p-1 px-2 text-sm shadow-sm rounded bg-green-600 text-white  '>
-                                                    {loading == `approved${index}` ? 'Loading' : "Accept"} </button>
-                                            </td>
-                                        </tr>
-                                    )
-                                })}
-                            </table>
-                        </article> : <div className='h-[85%] flex'>
+                        // <article className='h-[85%] overflow-y-scroll table-responsive tablebg rounded '>
+                        //     <table className='w-full text-xs'>
+                        //         <tr className='sticky top-0 bgclr1' >
+                        //             <th> SI NO </th>
+                        //             <th>Employee</th>
+                        //             <th>Leave Type </th>
+                        //             <th> Reason</th>
+                        //             <th>Days </th>
+                        //             <th>Applied Date </th>
+                        //             <th> Dates </th>
+                        //             <th>Action</th>
+                        //         </tr>
+                        //         {leaveRequestsReporting && leaveRequestsReporting.map((obj, index) => {
+                        //             return (
+                        //                 <tr key={index} className={` `} >
+                        //                     <td className=' '>{index + 1}</td>
+                        //                     <td>{obj.employee_name} </td>
+                        //                     <td> {obj.LeaveType} </td>
+                        //                     <td className='w-[200px] xl:w-[400px] text-wrap '>{obj.reason} </td>
+                        //                     <td>{obj.days} </td>
+                        //                     <td>{changeDateYear(obj.applied_date)} </td>
+                        //                     <td>{changeDateYear(obj.from_date)}{obj.days > 1 ? "-" + changeDateYear(obj.to_date) : ''} </td>
+                        //                     {/* <td>{obj.approved_status} </td> */}
+                        //                     <td className='flex gap-2'>
+                        //                         <button onClick={() => handleRequest(obj, "rejected", index)} className='p-1 px-2 text-sm shadow-sm rounded bg-red-600 text-white  '>
+                        //                             {loading == `rejected${index}` ? 'Loading..' : "Decline"} </button>
+                        //                         <button onClick={() => handleRequest(obj, "approved", index)} className='p-1 px-2 text-sm shadow-sm rounded bg-green-600 text-white  '>
+                        //                             {loading == `approved${index}` ? 'Loading' : "Accept"} </button>
+                        //                     </td>
+                        //                 </tr>
+                        //             )
+                        //         })}
+                        //     </table>
+                        // </article> 
+                        <ApprovalPage page='home' />
+                        : <div className='h-[85%] flex'>
                             <p className='m-auto'>No leave request are there!!! </p>
                         </div>}
                     <button onClick={() => navigate('/dash/approvals')}

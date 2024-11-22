@@ -9,12 +9,13 @@ import CreateDepartment from './Modals/CreateDepartment'
 import CreateDesignation from './Modals/CreateDesignation'
 import ThreeDot from '../SVG/ThreeDot'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 
 
-const Employeees = () => {
+const Employeees = ({ subpage }) => {
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
-
+    let navigate = useNavigate()
     const [AllDepartmentlist, setAllDepartmentlist] = useState([])
     const [AllDesignationlist, setAllDesignationlist] = useState([])
     const [AllEmployeelist, setAllEmployeelist] = useState([])
@@ -129,14 +130,17 @@ const Employeees = () => {
     const [EMPLOYEE_DATA_LIST, setEMPLOYEE_DATA_LIST] = useState(false)
     const [PERSONAL_EMP_DATA, setPERSONAL_EMP_DATA] = useState(false)
 
-
+    let { setTopNav } = useContext(HrmStore)
+    useEffect(() => {
+        setTopNav('overview')
+    }, [])
     return (
         <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
-            <div className='flex'>
+            {!subpage && <div className='flex'>
                 <Sidebar value={"dashboard"} ></Sidebar>
-            </div>
+            </div>}
             <div className=' m-0 m-sm-4  flex-1  mx-auto ' style={{ borderRadius: '10px' }}>
-                <Topnav></Topnav>
+                {!subpage && <Topnav></Topnav>}
 
                 {/* DEPARTMENT LIST START */}
 
@@ -147,11 +151,11 @@ const Employeees = () => {
                         <h6 className='mt-2 heading' style={{ color: 'rgb(76,53,117)' }}>Department List</h6>
                         <section className='flex gap-3'>
 
-                            <button onClick={() =>{ setdeptmodal(true);setDepartmentIndex(false)}} className='flex gap-2 items-center text-sm 
+                            <button onClick={() => { setdeptmodal(true); setDepartmentIndex(false) }} className='flex gap-2 items-center text-sm 
                         rounded p-2 px-3 shadow-sm btngrd text-white'>
                                 <PlusIcon />  Add Department
                             </button>
-                            <button onClick={() => {setDesignationmodal(true);setDepartmentIndex(false)}} className='flex gap-2 items-center text-sm 
+                            <button onClick={() => { setDesignationmodal(true); setDepartmentIndex(false) }} className='flex gap-2 items-center text-sm 
                         rounded p-2 px-3 shadow-sm btngrd text-white'>
                                 <PlusIcon />  Add Designation
                             </button>
@@ -160,12 +164,15 @@ const Employeees = () => {
 
                     </div>
                     {setdeptmodal && <CreateDepartment did={deptIndex} show={deptModal} setshow={setdeptmodal} getdept={getDept} />}
-                    {designationModal && <CreateDesignation setdid={setDepartmentIndex} deptid={deptIdforDesignation} getdesignation={Call_Designation_list}
+
+
+                    {designationModal && <CreateDesignation setdid={setDepartmentIndex}
+                        deptid={deptIdforDesignation} getdesignation={Call_Designation_list}
                         did={deptIndex} show={designationModal} setshow={setDesignationmodal} />}
 
                     <div className='row  m-0 p-1 mt-3'>
 
-                        {AllDepartmentlist != undefined && AllDepartmentlist != undefined &&
+                        {AllDepartmentlist != undefined && AllDepartmentlist &&
                             AllDepartmentlist.map((e, index) => {
                                 return (
 
@@ -260,7 +267,8 @@ const Employeees = () => {
                                                 <ThreeDot size={5} />
                                             </button>
                                             {deptIndex == e.id && <article className='absolute text-xs top-1 rounded p-2 right-5 bg-white shadow ' >
-                                                <button onClick={() => setDesignationmodal(true)} className='block hover:text-blue-400 '>
+                                                <button onClick={() => setDesignationmodal(true)}
+                                                    className='block hover:text-blue-400 '>
                                                     Edit
                                                 </button>
                                                 <button onClick={() => {
@@ -360,7 +368,8 @@ const Employeees = () => {
 
                                                         sentparticularData(e.Emp_profile_id)
                                                         setEMPLOYEE_DATA_LIST(false)
-                                                        setPERSONAL_EMP_DATA(true)
+                                                        navigate(`/dash/employee/${e.Emp_profile_id}`)
+                                                        // setPERSONAL_EMP_DATA(true)
 
                                                     }
                                                     }

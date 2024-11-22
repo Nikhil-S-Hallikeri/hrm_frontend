@@ -24,6 +24,7 @@ import ShiftTiming from './Others/ShiftTiming'
 import ClientTablePage from './Client/ClientTablePage'
 import ClientCreation from './Client/ClientCreation'
 import ParticularClientPage from './Client/ParticularClientPage'
+import NewSideBar from '../Components/MiniComponent/NewSideBar'
 
 const DasRouter = () => {
     let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
@@ -32,14 +33,11 @@ const DasRouter = () => {
 
     return (
         <div>
-            <main className='flex'>
-                <article className='d-none d-lg-flex'>
-                    {employeeStatus && employeeStatus == 'Employee' && <Empsidebar />}
-                    {employeeStatus && employeeStatus == 'Recruiter' && <Recsidebar />}
-                    {employeeStatus && employeeStatus == 'HR' && <Sidebar />}
-                    {employeeStatus && employeeStatus == 'Admin' && <Sidebar />}
+            <main className='flex flex-col lg:flex-row '>
+                <article className='sticky z-10 top-0'>
+                    <NewSideBar />
                 </article>
-                <article className='flex-1 container mx-auto'>
+                <article className='flex-1 container-fluid px-0  overflow-hidden mx-auto'>
                     <Routes>
                         <Route path='/leaveSetting/:id' element={<LeaveSetting />} />
                         <Route path='/leaveCreation' element={<LeavePage />} />
@@ -51,16 +49,20 @@ const DasRouter = () => {
                         <Route path='/offerApproval' element={<OfferApprovalPage />} />
                         <Route path='/appraisalform' element={<HRrequestPage />} />
                         <Route path='/employee/:id?' element={<EmployeeProfile />} />
+
                         <Route path='/salaryComponent/*' element={<SalaryComponent />} />
                         <Route path='/salary-templates/*' element={<SalaryTemplate />} />
                         <Route path='/salary-assigning' element={<STEmployeeAssigning />} />
+
                         <Route path='/payslip/:id' element={<PaySlip />} />
                         <Route path='/employeesPayslip' element={<PayslipTable />} />
+
+
                         <Route path='/shiftTimings' element={<ShiftTiming />} />
                         <Route path='/client/*' element={<ClientTablePage />} />
                         <Route path='/client/:id/*' element={<ParticularClientPage />} />
                         <Route path='/addClient' element={<ClientCreation />} />
-
+                        <Route path='/shift-timing' element={<ShiftTiming />} />
 
 
                     </Routes>

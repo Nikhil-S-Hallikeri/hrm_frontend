@@ -1,16 +1,18 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { port } from '../App'
 import { toast } from 'react-toastify';
 import Sidebar from './Sidebar';
 import Empsidebar from './Empsidebar';
 import Recsidebar from './Recsidebar';
 import ReactQuill from 'react-quill';
+import { HrmStore } from '../Context/HrmContext';
 
 
-const Mass_mail = () => {
+const Mass_mail = ({ subpage }) => {
     let [loading, setLoading] = useState(false)
     let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
+    let { setTopNav } = useContext(HrmStore)
     const [Employee_Id, setEmployee_Id] = useState("");
     const [Name, setName] = useState("");
     const [phone, setphone] = useState("");
@@ -141,8 +143,14 @@ const Mass_mail = () => {
 
     const sendSelectedDataToApi = (e) => {
         e.preventDefault()
-
+        if (selectedCandidates.length <= 0)
+            return toast.warning('Select the Employees')
+        if (Subject == '')
+            return toast.warning('Give the Subject for the Mail')
+        if (Message == '')
+            return toast.warning('Give the Subject for the Mail')
         const formData2 = new FormData();
+
         // formData2.append('Department', Department);
         formData2.append('subject', Subject);
         // formData2.append('subject', Date);
@@ -208,28 +216,29 @@ const Mass_mail = () => {
         })
 
     };
-
+    useEffect(() => {
+        setTopNav('mail')
+    }, [])
 
 
     return (
         <div className='flex '>
-            <div className='d-none d-lg-flex '>
+            {!subpage && <div className='d-none d-lg-flex '>
                 {employeeStatus && employeeStatus == 'Employee' && <Empsidebar />}
                 {employeeStatus && employeeStatus == 'Recruiter' && <Recsidebar />}
                 {employeeStatus && employeeStatus == 'HR' && <Sidebar />}
                 {employeeStatus && employeeStatus == 'Admin' && <Sidebar />}
-            </div>
-            <div className='flex-1 container mx-auto '>
+            </div>}
+            <div className='flex-1 container-fluid p-0 mx-auto poppins'>
                 <form>
                     {/* Form start */}
-                    <div className="row  justify-content-center m-0">
-                        <h3 className='mt-2 text-center p-3' style={{ color: 'rgb(76,53,117)' }}>Mass Mail</h3>
-                        <div className="col-lg-12 container mx-auto formbg p-4 mt-2 border rounded-lg">
+                    <div className="row justify-content-center p-0 m-0">
+                        <div className="col-lg-12 container-fluid mx-auto p-0 mt-2 rounded-lg">
                             <div className="row m-0 pb-2" style={{ lineHeight: '30px' }}>
                                 {/* Form fields */}
 
-                                <div className="col-md-6 col-lg-4 mb-3">
-                                    <label htmlFor="ageGroup" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Department* </label>
+                                <div className="col-md-6 col-lg-6 mb-3">
+                                    <label htmlFor="ageGroup" className="form-label text-lg fw-medium " >Department </label>
 
                                     <select className="form-select shadow-none" id="ageGroup" value={Department} onChange={handleDepartmentChange}>
                                         <option value="">Select</option>
@@ -242,8 +251,8 @@ const Mass_mail = () => {
                                     </select>
 
                                 </div>
-                                <div className="col-md-6 col-lg-4 mb-3">
-                                    <label htmlFor="ageGroup" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Designation* </label>
+                                <div className="col-md-6 col-lg-6 mb-3">
+                                    <label htmlFor="ageGroup" className="form-label text-lg fw-medium " >Designation </label>
                                     <select className="form-select shadow-none" id="ageGroup" value={_Designation} onChange={handleDesignationChange}  >
                                         {/* <option value="">Select</option> */}
 
@@ -256,7 +265,7 @@ const Mass_mail = () => {
                                     </select>
                                 </div>
                                 {/* <div class="col-md-6 col-lg-4 mb-3">
-                                    <label htmlFor="ageGroup" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Search* </label>
+                                    <label htmlFor="ageGroup" className="form-label text-lg fw-medium " >Search* </label>
 
                                     <div class="input-group ">
                                         <input type="text" value={employeeId} onChange={handleChange} class="form-control shadow-none" aria-label="Recipient's username" placeholder='Type Employee ID' aria-describedby="button-addon2" />
@@ -265,10 +274,10 @@ const Mass_mail = () => {
                                 </div> */}
 
                                 <div className="col-md-6 col-lg-12 mb-3">
-                                    <label htmlFor="lastName" className="form-label" style={{ color: 'rgb(76,53,117)' }}>EmployeeFilter*</label>
-                                    <div className='rounded tablebg border table-responsive  m-1'>
-                                        <table class="w-full ">
-                                            <thead >
+                                    <label htmlFor="lastName" className="form-label text-lg fw-medium " >EmployeeFilter <span className='text-red-600 ' >* </span> </label>
+                                    <div className='rounded-xl tablebg border h-[50vh] overflow-y-scroll table-responsive  m-1'>
+                                        <table class="w-full p-0 ">
+                                            <thead className='sticky top-0 bgclr  ' >
                                                 <tr >
                                                     {/* <th scope="col"></th> */}
                                                     <th scope="col"><span className='fw-medium'></span> Select  </th>
@@ -310,12 +319,12 @@ const Mass_mail = () => {
                                     </div>
                                 </div>
                                 <div className="col-md-6 col-lg-8 mb-3">
-                                    <label htmlFor="lastName" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Subject*</label>
+                                    <label htmlFor="lastName" className="form-label text-lg fw-medium " >Subject <span className='text-red-600 ' >* </span> </label>
                                     <input type="tel" className="form-control shadow-none" value={Subject} onChange={(e) => setSubject(e.target.value)} id="LastName" name="LastName" />
                                 </div>
 
                                 {/* <div className="col-md-6 col-lg-4 mb-3">
-                                    <label htmlFor="ageGroup" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Type*</label>
+                                    <label htmlFor="ageGroup" className="form-label text-lg fw-medium " >Type <span className='text-red-600 ' >* </span> </label>
                                     <select className="form-select" id="ageGroup" value={Type} onChange={(e) => setType(e.target.value)}>
                                         <option value="">Select</option>
                                         <option value="yes">Yes</option>
@@ -324,12 +333,12 @@ const Mass_mail = () => {
                                 </div> */}
 
                                 {/* <div className="col-md-6 col-lg-4 mb-3">
-                                    <label htmlFor="secondaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Date *</label>
+                                    <label htmlFor="secondaryContact" className="form-label text-lg fw-medium " >Date  <span className='text-red-600 ' >* </span> </label>
                                     <input type="date" className="form-control shadow-none" value={Date} onChange={(e) => setDate(e.target.value)} id="State" name="State" />
                                 </div> */}
 
                                 <div className="col-md-6 col-lg-12 mb-3">
-                                    <label htmlFor="ageGroup" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Message*</label>
+                                    <label htmlFor="ageGroup" className="form-label text-lg fw-medium " >Message <span className='text-red-600 ' >* </span> </label>
                                     <ReactQuill theme="snow" className='bg-white  ' value={Message} onChange={setMessage} />
                                     {/* <textarea type="text" className="form-control shadow-none" style={{ lineHeight: '50px' }}
                                         value={Message} onChange={(e) => setMessage(e.target.value)} id="State" name="State" /> */}

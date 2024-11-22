@@ -69,21 +69,21 @@ const EmployeeUpdate = ({ sid, id, setshowtab, showTab }) => {
     // console.log("datas",Edit_Data);
     let handleChangeEdit_data = (e) => {
         let { name, value } = e.target
-        if (name == 'Employeement_Type' && value == 'intern') {
-            set_Edit_Data((prev) => ({
-                ...prev,
-                probation_status: '',
-                probation_Duration_From: '',
-                probation_Duration_To: ''
-            }))
-        }
-        if (name == 'Employeement_Type' && value == 'permanent') {
-            set_Edit_Data((prev) => ({
-                ...prev,
-                internship_Duration_From: '',
-                internship_Duration_To: '',
-            }))
-        }
+        // if (name == 'Employeement_Type' && value == 'intern') {
+        //     set_Edit_Data((prev) => ({
+        //         ...prev,
+        //         probation_status: '',
+        //         probation_Duration_From: '',
+        //         probation_Duration_To: ''
+        //     }))
+        // }
+        // if (name == 'Employeement_Type' && value == 'permanent') {
+        //     set_Edit_Data((prev) => ({
+        //         ...prev,
+        //         internship_Duration_From: '',
+        //         internship_Duration_To: '',
+        //     }))
+        // }
         if (name == 'internship_Duration_From' && value > Edit_Data.internship_Duration_To
             && Edit_Data.internship_Duration_To != '') {
             set_Edit_Data((prev) => ({

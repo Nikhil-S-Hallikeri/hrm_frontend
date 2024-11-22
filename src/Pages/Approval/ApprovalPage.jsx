@@ -8,10 +8,10 @@ import { useNavigate } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import QuestionIcon from '../../SVG/QuestionIcon'
 
-const ApprovalPage = () => {
+const ApprovalPage = ({ page, subpage }) => {
     let { leaveRequestsReporting, openNavbar, setActivePage, getProperDate, changeDateYear,
         setLeaveRequestReporting, getLeaveRequestsReporting } = useContext(HrmStore)
-    let { leaveData, setLeaveData, getLeaveData } = useContext(HrmStore)
+    let { leaveData, setLeaveData, getLeaveData, setTopNav } = useContext(HrmStore)
     let [leaveResendModal, setLeaveResendModal] = useState()
     let id = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).id
     let [reason, setreason] = useState()
@@ -39,11 +39,13 @@ const ApprovalPage = () => {
         }))
     }
     useEffect(() => {
-        setActivePage('leave')
+        if (!page)
+            setActivePage('leave')
         getLeaveRequestsReporting()
         getLeaveData()
-    }, [])
+    }, [page])
     useEffect(() => {
+        setTopNav('approval')
         setFilteredRequest(leaveRequestsReporting)
     }, [leaveRequestsReporting])
 
@@ -84,7 +86,7 @@ const ApprovalPage = () => {
             }
             console.log(userStatus);
             console.log(formobj);
-            alert('hellow')
+            // alert('hellow')
             axios.patch(`${port}/root/lms/Approve_Employee_Leave_Request/`, formobj).then((response) => {
                 console.log(response.data);
                 setloading('')
@@ -135,9 +137,9 @@ const ApprovalPage = () => {
     }
     return (
         <div className=''>
-            <Topnav name="Leave Approval" />
-            <main className='flex flex-wrap items-center justify-between'>
-                <section className='my-3 flex flex-wrap gap-3'>
+            {!page && !subpage && <Topnav name="Leave Approval" />}
+            {!page && <main className='flex flex-wrap items-center justify-between'>
+                <section className='my-3 flex items-center flex-wrap gap-3'>
                     <div className='rounded p-2 bgclr w-fit '>
                         <input onKeyDown={(e) => {
                             if (e.key == 'Enter')
@@ -156,14 +158,16 @@ const ApprovalPage = () => {
                             </option>
                         ))}
                     </select>
-                    <button onClick={HandleFilterRequest} className='p-2 h-fit px-4 w-40 text-white savebtn rounded border-2 border-green-50 '>
+
+                    <button onClick={HandleFilterRequest} 
+                    className='p-2 h-fit px-4 w-40 text-white savebtn rounded '>
                         Search
                     </button>
                 </section>
-                <button className='p-1 px-3 btngrd text-white text-sm h-fit rounded border-2 ' onClick={() => navigate('/dash/history')}>
+                <button className='p-2 w-36 px-3 bluebtn  text-sm h-fit rounded ' onClick={() => navigate('/leave/history')}>
                     History
                 </button>
-            </main>
+            </main>}
             {
                 (leaveRequestsReporting && leaveRequestsReporting.length > 0) ?
                     <section className={`rounded-xl tablebg table-responsive `}>

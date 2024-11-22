@@ -4,9 +4,10 @@ import Topnav from '../../Components/Topnav'
 import axios from 'axios'
 import { port } from '../../App'
 import { useNavigate } from 'react-router-dom'
+import LoadingData from '../../Components/MiniComponent/LoadingData'
 
 const PayslipTable = () => {
-    let { setActivePage } = useContext(HrmStore)
+    let { setActivePage, setTopNav } = useContext(HrmStore)
     let navigate = useNavigate()
     let [loading, setLoading] = useState()
     let mon = new Date().getMonth() < 10 ? `0${new Date().getMonth()}` : new Date().getMonth()
@@ -17,14 +18,17 @@ const PayslipTable = () => {
         setActivePage('payroll')
     }, [])
     let getPayslip = () => {
+        setLoading('data')
         axios.get(`${port}/root/pms/EmployeesPaySlip/${monthdata.slice(5)}/${monthdata.slice(0, 4)}/`).then((response) => {
             console.log("pay", response.data);
             if (Array.isArray(response.data))
                 setPaySlip(response.data)
             else
                 setPaySlip([])
+            setLoading(false)
         }).catch((error) => {
             console.log("pay", error);
+            setLoading(false)
         })
     }
     let generatePayslip = () => {
@@ -41,28 +45,29 @@ const PayslipTable = () => {
     }
     useEffect(() => {
         getPayslip()
+        setTopNav('allpayslip')
     }, [monthdata])
 
     return (
         <div>
-            <Topnav name='Empoyees payslip' />
+            {/* <Topnav name='Empoyees payslip' /> */}
             {/* Table */}
-            <main className='flex justify-between ' >
+            <main className='flex justify-between items-center' >
                 <section className='my-3 ' >
                     <input type="month" value={monthdata} onChange={(e) => {
                         console.log(e.target.value);
                         setMonth(e.target.value)
 
                     }}
-                        className='p-1 bgclr1 outline-none rounded ' />
+                        className='p-1 bgclr1 px-2 bg-white outline-none rounded ' />
                 </section>
                 <button disabled={loading} onClick={generatePayslip} className='p-2 px-3 h-fit btngrd rounded text-white ' >
                     {loading ? 'Loading..' : "Generate Payslip"}
                 </button>
             </main>
-            <main className='rounded table-responsive tablebg ' >
+            <main className='rounded table-responsive h-[80vh] tablebg ' >
                 <table className='w-full ' >
-                    <tr>
+                    <tr className='sticky top-0 bg-white shadow-sm ' >
                         <th> SI No </th>
                         <th>Employee Name  </th>
                         <th>Designation </th>
@@ -76,7 +81,7 @@ const PayslipTable = () => {
                         <th>Action </th>
                     </tr>
                     {
-                        payslipData && payslipData.map((obj, index) => (
+                        loading != 'data' && payslipData && payslipData.map((obj, index) => (
                             <tr>
                                 <td>{index + 1} </td>
                                 <td>{obj.employee_name} </td>
@@ -89,7 +94,7 @@ const PayslipTable = () => {
                                 {/* <td>{obj.total_earnings} </td> */}
                                 <td>{obj.total_deductions} </td>
                                 <td>
-                                    <button onClick={() => navigate(`/dash/payslip/${obj.employee_id}`)} className='text-xs bg-blue-600 text-white p-1 rounded px-3 ' >
+                                    <button onClick={() => navigate(`/payroll/payslip/${obj.employee_id}`)} className='text-xs bg-blue-600 text-white p-1 rounded px-3 ' >
                                         view
                                     </button>
                                 </td>
@@ -98,7 +103,7 @@ const PayslipTable = () => {
                     }
 
                 </table>
-
+                {loading == 'data' && <LoadingData />}
             </main>
 
         </div>

@@ -59,7 +59,7 @@ const Canditatereg = () => {
     let [altApplyedDesignation, setAltApplyedDesignation] = useState('')
     const [showAlert, setShowAlert] = useState(false);
     const [alertType, setAlertType] = useState('success');
-    let [appliedFor, setAppliedFor] = useState('Job')
+    let [appliedFor, setAppliedFor] = useState('')
     let [otherJob, setOtherjob] = useState()
 
 
@@ -230,31 +230,31 @@ const Canditatereg = () => {
 
     return (
         <div>
-            <div className='animate_animated animate_slideInUp bg-light'>
+            <div className='animate_animated poppins animate_slideInUp inputbg'>
                 <div className='container-fluid row m-0 pb-4 pt-3'>
 
                     <div className='mb-2 p-3 d-flex'>
-                        <h3 className='text-primary Candidate_reg mx-auto'>CANDIDATE REGISTRATION FORM</h3>
+                        <h3 className='text-primary Candidate_reg fw-semibold mx-auto'>CANDIDATE REGISTRATION FORM</h3>
                     </div>
                     <div className="col-12 py-3 ">
                         <form onSubmit={handleSubmit}>
                             {/* ---------------------------------PERSONAL DETAILS--------------------------------------------------------- */}
-                            <div className="row m-0 formbg rounded pb-2">
+                            <div className="row m-0 bg-white rounded pb-2">
                                 <h5 className='text-primary pb-3 mt-2'>Personal Details</h5>
                                 <div className='row m-0 mt-2'>
 
                                     <div className="col-md-6 col-lg-3  mb-3">
                                         <label htmlFor="firstName" className="fw-medium my-1 text-slate-600 poppins ">First Name <span class='text-danger'>*</span> </label>
-                                        <input type="text" className="bgclr p-2 w-full outline-none rounded " id="FirstName" name="FirstName" value={firstname} onChange={(e) => setFirstname(e.target.value)} required />
+                                        <input type="text" className="inputbg p-2 w-full outline-none rounded " id="FirstName" name="FirstName" value={firstname} onChange={(e) => setFirstname(e.target.value)} required />
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="lastName" className="fw-medium my-1 text-slate-600 poppins ">Last Name</label>
-                                        <input type="text" className="bgclr p-2 w-full outline-none rounded " id=" LastName" name=" LastName" value={LastName} onChange={(e) => setLastName(e.target.value)} />
+                                        <input type="text" className="inputbg p-2 w-full outline-none rounded " id=" LastName" name=" LastName" value={LastName} onChange={(e) => setLastName(e.target.value)} />
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="gender" className="fw-medium my-1 text-slate-600 poppins ">Gender <span class='text-danger'>*</span> </label>
                                         <select
-                                            className="bgclr p-2 w-full outline-none rounded "
+                                            className="inputbg p-2 w-full outline-none rounded "
                                             id="gender"
                                             name="gender"
                                             value={gender} // Set the value of the select input to gender
@@ -268,36 +268,36 @@ const Canditatereg = () => {
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="email" className="fw-medium my-1 text-slate-600 poppins ">Email Id<span class='text-danger'>*</span> </label>
-                                        <input type="email" className="bgclr p-2 w-full outline-none rounded " id=" Email" name=" Email" value={Email} onChange={(e) => setEmail(e.target.value)} required />
+                                        <input type="email" className="inputbg p-2 w-full outline-none rounded " id=" Email" name=" Email" value={Email} onChange={(e) => setEmail(e.target.value)} required />
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="primaryContact" className="fw-medium my-1 text-slate-600 poppins ">Primary Mobile Number <span class='text-danger'>*</span> </label>
-                                        <input type="number" className="bgclr p-2 w-full outline-none rounded " id="PrimaryContact" name="PrimaryContact" value={PrimaryContact}
+                                        <input type="number" className="inputbg p-2 w-full outline-none rounded " id="PrimaryContact" name="PrimaryContact" value={PrimaryContact}
                                             onChange={(e) => { if (e.target.value >= 0 && e.target.value.length <= 10) { setPrimaryContact(e.target.value) } }} required />
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="secondaryContact" className="fw-medium my-1 text-slate-600 poppins ">Secondary Contact  </label>
-                                        <input type="number" className="bgclr p-2 w-full outline-none rounded " id="SecondaryContact" name="SecondaryContact"
+                                        <input type="number" className="inputbg p-2 w-full outline-none rounded " id="SecondaryContact" name="SecondaryContact"
                                             value={SecondaryContact} onChange={(e) => { if (e.target.value >= 0 && e.target.value.length <= 10) { setSecondaryContact(e.target.value) } }} />
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="secondaryContact" className="fw-medium my-1 text-slate-600 poppins ">State <span class='text-danger'>*</span> </label>
-                                        <input type="text" className="bgclr p-2 w-full outline-none rounded " id="State" name="State" value={State} onChange={(e) => setState(e.target.value)} required />
+                                        <input type="text" className="inputbg p-2 w-full outline-none rounded " id="State" name="State" value={State} onChange={(e) => setState(e.target.value)} required />
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="secondaryContact" className="fw-medium my-1 text-slate-600 poppins ">District <span class='text-danger'>*</span> </label>
-                                        <input type="text" className="bgclr p-2 w-full outline-none rounded " id=" District" name=" District" value={District} onChange={(e) => setDistrict(e.target.value)} required />
+                                        <input type="text" className="inputbg p-2 w-full outline-none rounded " id=" District" name=" District" value={District} onChange={(e) => setDistrict(e.target.value)} required />
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="secondaryContact" className="fw-medium my-1 text-slate-600 poppins ">Date of Birth <span class='text-danger'>*</span> </label>
-                                        <input type="date" className="bgclr p-2 w-full outline-none rounded " id=" District" name=" District" value={dateOfBrith} onChange={(e) => setDateOfBrith(e.target.value)} required />
+                                        <input type="date" className="inputbg p-2 w-full outline-none rounded " id=" District" name=" District" value={dateOfBrith} onChange={(e) => setDateOfBrith(e.target.value)} required />
                                     </div>
                                 </div>
 
                             </div>
 
                             {/* ----------------------------------EDUCATIONAL DETAILS----------------------------------------------------------- */}
-                            <div className="row m-0 formbg rounded my-3">
+                            <div className="row m-0 bg-white rounded my-3">
                                 <div className="col-md-12 col-lg-12 mb-3 mt-2">
 
 
@@ -348,28 +348,28 @@ const Canditatereg = () => {
 
 
                                     {(selectedOption == 'Fresher' || selectedOption == 'Student') && (
-                                        <div className="mt-4 formbg rounded p-3 row m-0">
+                                        <div className="mt-4 bg-white rounded p-3 row m-0">
                                             <div className="col-md-6 col-lg-4 mb-3">
                                                 <label htmlFor="highestQualification" className="fw-medium my-1 text-slate-600 poppins ">Highest Qualification <span class='text-danger'>*</span> </label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="HighestQualification" name="HighestQualification" value={highestQualification} onChange={(e) => setHighestQualification(e.target.value)} />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="HighestQualification" name="HighestQualification" value={highestQualification} onChange={(e) => setHighestQualification(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-4 mb-3">
                                                 <label htmlFor="university" className="fw-medium my-1 text-slate-600 poppins ">University  </label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="University" name="University" value={university} onChange={(e) => setUniversity(e.target.value)} />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="University" name="University" value={university} onChange={(e) => setUniversity(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-4 mb-3">
                                                 <label htmlFor="specialization" className="fw-medium my-1 text-slate-600 poppins ">Specialization </label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="Specialization" name="Specialization" value={specialization} onChange={(e) => setSpecialization(e.target.value)} />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="Specialization" name="Specialization" value={specialization} onChange={(e) => setSpecialization(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-4 mt-3 mb-3">
                                                 <label htmlFor="percentage" className="fw-medium my-1 text-slate-600 poppins ">Percentage <span class='text-danger'>*</span> </label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id=" Percentage" name=" Percentage" value={percentage} onChange={(e) => setPercentage(e.target.value)} />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id=" Percentage" name=" Percentage" value={percentage} onChange={(e) => setPercentage(e.target.value)} />
                                             </div>
 
                                             <div className="col-md-6 col-lg-4 mt-3">
                                                 <label htmlFor="yearOfPassOut" className="fw-medium my-1 text-slate-600 poppins ">Year of Pass Out <span class='text-danger'>*</span> </label>
                                                 <select
-                                                    className="bgclr p-2 w-full outline-none rounded "
+                                                    className="inputbg p-2 w-full outline-none rounded "
                                                     id="yearOfPassOut"
                                                     name="yearOfPassOut"
                                                     value={selectedYear} // Set the value of the select input to selectedYear
@@ -388,43 +388,43 @@ const Canditatereg = () => {
 
                                             <div className="col-md-6 col-lg-3 mt-3">
                                                 <label htmlFor="generalSkills" className="fw-medium my-1 text-slate-600 poppins ">General Skills </label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="generalSkills" name="generalSkills" value={generalSkills} onChange={(e) => setGeneralSkills(e.target.value)} required />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="generalSkills" name="generalSkills" value={generalSkills} onChange={(e) => setGeneralSkills(e.target.value)} required />
                                             </div>
                                             <div className="col-md-6 col-lg-3 mt-3">
                                                 <label htmlFor="softSkills" className="fw-medium my-1 text-slate-600 poppins ">Soft Skills </label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="softSkills" name="softSkills" value={softSkills} onChange={(e) => setsoftSkills(e.target.value)} required />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="softSkills" name="softSkills" value={softSkills} onChange={(e) => setsoftSkills(e.target.value)} required />
                                             </div>
                                             <div className="col-md-6 col-lg-3 mt-3">
                                                 <label htmlFor="technicalSkills" className="fw-medium my-1 text-slate-600 poppins ">Technical Skills </label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="technicalSkills" name="technicalSkills" value={technicalSkills} onChange={(e) => settTechnicalSkills(e.target.value)} required />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="technicalSkills" name="technicalSkills" value={technicalSkills} onChange={(e) => settTechnicalSkills(e.target.value)} required />
                                             </div>
                                         </div>
                                     )}
 
                                     {(selectedOption == 'Experience' || selectedOption == 'Consultant') && (
-                                        <div className="mt-4 formbg rounded p-3 row m-0">
+                                        <div className="mt-4 bg-white rounded p-3 row m-0">
                                             {/* Experience Fields */}
                                             <div className="col-md-6 col-lg-3 mb-3">
                                                 <label htmlFor="highestQualification" className="fw-medium my-1 text-slate-600 poppins ">Highest Qualification<span class='text-danger'>*</span></label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="HighestQualification" name="HighestQualification" value={highestQualification} onChange={(e) => setHighestQualification(e.target.value)} />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="HighestQualification" name="HighestQualification" value={highestQualification} onChange={(e) => setHighestQualification(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-3 mb-3">
                                                 <label htmlFor="university" className="fw-medium my-1 text-slate-600 poppins ">University <span class='text-danger'>*</span></label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="University" name="University" value={university} onChange={(e) => setUniversity(e.target.value)} />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="University" name="University" value={university} onChange={(e) => setUniversity(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-3 mb-3">
                                                 <label htmlFor="specialization" className="fw-medium my-1 text-slate-600 poppins ">Specialization <span class='text-danger'>*</span></label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="Specialization" name="Specialization" value={specialization} onChange={(e) => setSpecialization(e.target.value)} />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="Specialization" name="Specialization" value={specialization} onChange={(e) => setSpecialization(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-3 mb-3">
                                                 <label htmlFor="percentage" className="fw-medium my-1 text-slate-600 poppins ">Percentage <span class='text-danger'>*</span> </label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id=" Percentage" name=" Percentage" value={percentage} onChange={(e) => setPercentage(e.target.value)} />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id=" Percentage" name=" Percentage" value={percentage} onChange={(e) => setPercentage(e.target.value)} />
                                             </div>
 
                                             <div className="col-md-6 col-lg-3 mb-3 mt-3">
                                                 <label htmlFor="yearOfPassOut" className="fw-medium my-1 text-slate-600 poppins ">Year of Pass Out <span class='text-danger'>*</span> </label>
                                                 <select
-                                                    className="bgclr p-2 w-full outline-none rounded "
+                                                    className="inputbg p-2 w-full outline-none rounded "
                                                     id="yearOfPassOut"
                                                     name="yearOfPassOut"
                                                     value={selectedYear} // Set the value of the select input to selectedYear
@@ -440,33 +440,33 @@ const Canditatereg = () => {
                                             </div>
                                             <div className="col-md-6 col-lg-3 mt-3">
                                                 <label htmlFor="generalSkills" className="fw-medium my-1 text-slate-600 poppins ">Current_Designation <span class='text-danger'>*</span></label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="Current_Designation" name="Current_Designation" value={currentDesignation} onChange={(e) => setCurrentDesignation(e.target.value)} />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="Current_Designation" name="Current_Designation" value={currentDesignation} onChange={(e) => setCurrentDesignation(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-3 mt-3">
                                                 <label htmlFor="softSkills" className="fw-medium my-1 text-slate-600 poppins ">Total  Experience <span class='text-danger'>*</span></label>
-                                                <input type="number" className="bgclr p-2 w-full outline-none rounded " id="noOfExperience" name="noOfExperience" value={noOfExperience} onChange={(e) => setNoOfExperience(e.target.value)} />
+                                                <input type="number" className="inputbg p-2 w-full outline-none rounded " id="noOfExperience" name="noOfExperience" value={noOfExperience} onChange={(e) => setNoOfExperience(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-3 mt-3">
                                                 <label htmlFor="technicalSkills" className="fw-medium my-1 text-slate-600 poppins ">Notice_period <span class='text-danger'>*</span></label>
-                                                <input type="number" className="bgclr p-2 w-full outline-none rounded " id="noticePeriod" name="noticePeriod" value={noticePeriod} onChange={(e) => setNoticePeriod(e.target.value)} />
+                                                <input type="number" className="inputbg p-2 w-full outline-none rounded " id="noticePeriod" name="noticePeriod" value={noticePeriod} onChange={(e) => setNoticePeriod(e.target.value)} />
                                             </div>
 
                                             <div className="col-md-6 col-lg-3 mt-5">
                                                 <label htmlFor="technicalSkills" className="fw-medium my-1 text-slate-600 poppins ">General Skills with experience <span class='text-danger'>*</span></label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="generalSkillsWithExp" name="generalSkillsWithExp" value={generalSkillsWithExp} onChange={(e) => setGeneralSkillsWithExp(e.target.value)} />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="generalSkillsWithExp" name="generalSkillsWithExp" value={generalSkillsWithExp} onChange={(e) => setGeneralSkillsWithExp(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-3 mt-5">
                                                 <label htmlFor="technicalSkills" className="fw-medium my-1 text-slate-600 poppins ">Soft Skills with experience<span class='text-danger'>*</span></label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="softSkillsWithExp" name="softSkillsWithExp" value={softSkillsWithExp} onChange={(e) => setSoftSkillsWithExp(e.target.value)} />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="softSkillsWithExp" name="softSkillsWithExp" value={softSkillsWithExp} onChange={(e) => setSoftSkillsWithExp(e.target.value)} />
                                             </div>
 
                                             <div className="col-md-6 col-lg-3 mt-5">
                                                 <label htmlFor="technicalSkills" className="fw-medium my-1 text-slate-600 poppins ">Technical Skills with experience<span class='text-danger'>*</span></label>
-                                                <input type="text" className="bgclr p-2 w-full outline-none rounded " id="technicalSkillsWithExp" name="technicalSkillsWithExp" value={technicalSkillsWithExp} onChange={(e) => setTechnicalSkillsWithExp(e.target.value)} />
+                                                <input type="text" className="inputbg p-2 w-full outline-none rounded " id="technicalSkillsWithExp" name="technicalSkillsWithExp" value={technicalSkillsWithExp} onChange={(e) => setTechnicalSkillsWithExp(e.target.value)} />
                                             </div>
                                             <div className="col-md-6 col-lg-3 mt-5">
                                                 <label htmlFor="technicalSkills" className="fw-medium my-1 text-slate-600 poppins ">Current CTC per Annum  <span class='text-danger'>*</span></label>
-                                                <input type="number" className="bgclr p-2 w-full outline-none rounded " id="currentCTC" name="currentCTC" value={currentCTC} onChange={(e) => setCurrentCTC(e.target.value)} />
+                                                <input type="number" className="inputbg p-2 w-full outline-none rounded " id="currentCTC" name="currentCTC" value={currentCTC} onChange={(e) => setCurrentCTC(e.target.value)} />
                                             </div>
 
 
@@ -478,7 +478,7 @@ const Canditatereg = () => {
                             </div>
 
                             {/* -----------------------------------OTHER DETAILS------------------------------------------------------------- */}
-                            <div className="row m-0 rounded formbg py-3">
+                            <div className="row m-0 rounded bg-white py-3">
                                 {/* <h6 className='text-primary pb-3'>Other Details</h6> */}
                                 <h5 className='text-primary  mt-4'>Other Details  </h5>
 
@@ -488,7 +488,7 @@ const Canditatereg = () => {
                                         <label htmlFor="expectedSalary" className="fw-medium my-1 text-slate-600 poppins "> Applying for<span class='text-danger'>*</span></label>
                                         <select name="" value={Applyed_Designation} onChange={(e) => {
                                             setApplyed_Designation(e.target.value)
-                                        }} className='outline-none p-2 bgclr w-full rounded ' id="">
+                                        }} className='outline-none p-2 inputbg w-full rounded ' id="">
                                             <option value="">Select</option>
                                             {
                                                 designation && designation.map((x) => (
@@ -501,7 +501,7 @@ const Canditatereg = () => {
                                         </select>
                                         {designation && console.log(designation.find((obj) => obj.Name == Applyed_Designation) == undefined, Applyed_Designation, "hellow")}
                                         {Applyed_Designation == 'other' &&
-                                            <input type="text" placeholder='Other Designation type here... ' className="bgclr my-2 p-2 w-full outline-none rounded " id="expectedSalary" name="expectedSalary"
+                                            <input type="text" placeholder='Other Designation type here... ' className="inputbg my-2 p-2 w-full outline-none rounded " id="expectedSalary" name="expectedSalary"
                                                 value={altApplyedDesignation} onChange={(e) => setAltApplyedDesignation(e.target.value)} required />
                                         }
                                     </div>
@@ -509,7 +509,7 @@ const Canditatereg = () => {
                                         <label htmlFor="expectedSalary" className="fw-medium my-1 text-slate-600 poppins "> Willing to work <span class='text-danger'>*</span></label>
                                         <select name="" value={appliedFor} onChange={(e) => {
                                             setAppliedFor(e.target.value)
-                                        }} className='outline-none p-2 bgclr w-full rounded ' id="">
+                                        }} className='outline-none p-2 inputbg w-full rounded ' id="">
                                             <option value="">Select</option>
                                             <option value="Intern">Intern</option>
                                             <option value="Employeement">Employeement</option>
@@ -517,19 +517,19 @@ const Canditatereg = () => {
                                     </div>
                                     <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="expectedSalary" className="fw-medium my-1 text-slate-600 poppins ">Expected CTC per annum </label>
-                                        <input type="number" className="bgclr p-2 w-full outline-none rounded " id="expectedSalary" name="expectedSalary" value={expectedSalary} onChange={(e) => { if (e.target.value >= 0) { setexpectedSalary(e.target.value) } }} required />
+                                        <input type="number" className="inputbg p-2 w-full outline-none rounded " id="expectedSalary" name="expectedSalary" value={expectedSalary} onChange={(e) => { if (e.target.value >= 0) { setexpectedSalary(e.target.value) } }} required />
                                     </div>
 
                                     <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="expectedSalary" className="fw-medium my-1 text-slate-600 poppins ">Contacted By  </label>
-                                        <input type="text" className="bgclr p-2 w-full outline-none rounded " id="expectedSalary" name="expectedSalary" value={Contacted_by} onChange={(e) => setContactedBy(e.target.value)} required />
+                                        <input type="text" className="inputbg p-2 w-full outline-none rounded " id="expectedSalary" name="expectedSalary" value={Contacted_by} onChange={(e) => setContactedBy(e.target.value)} required />
                                     </div>
 
 
                                     <div className="col-md-6 col-lg-3 mb-3 ">
                                         <label htmlFor="yearOfPassOut" className="fw-medium my-1 text-slate-600 poppins ">Job Portal Source  </label>
                                         <select
-                                            className="bgclr p-2 w-full outline-none rounded "
+                                            className="inputbg p-2 w-full outline-none rounded "
                                             id="yearOfPassOut"
                                             name="yearOfPassOut"
                                             disabled={desig}
@@ -546,7 +546,7 @@ const Canditatereg = () => {
                                     </div>
                                     {JobPortal == 'others' && <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="expectedSalary" className="fw-medium my-1 text-slate-600 poppins ">Other Source <span class='text-danger'>*</span></label>
-                                        <input type="text" disabled={desig} className="bgclr p-2 w-full outline-none rounded " id="expectedSalary"
+                                        <input type="text" disabled={desig} className="inputbg p-2 w-full outline-none rounded " id="expectedSalary"
                                             name="expectedSalary" value={otherJob} onChange={(e) => setOtherjob(e.target.value)} required />
                                     </div>}
 

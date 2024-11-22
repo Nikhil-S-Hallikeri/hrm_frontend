@@ -11,40 +11,42 @@ import PlusIcon from '../../SVG/PlusIcon'
 import PostTaxDeduction from './PostTaxDeduction'
 
 const SalaryComponent = () => {
-    let { setActivePage, activeSetting, setActiveSetting } = useContext(HrmStore)
+    let { setActivePage, activeSetting, setActiveSetting, setTopNav } = useContext(HrmStore)
     let navigate = useNavigate()
     let [showDrop, setShowDrop] = useState(false)
     useEffect(() => {
         setActivePage('payroll')
+        setTopNav('salarycom')
     }, [])
+    
     return (
         <div  >
-            <Topnav name='Salary Components' />
+           <h5 className='poppins txtclr ' >Salary Component </h5>
             <section
                 className=' relative w-fit flex items-center text-sm ms-auto my-3'>
 
                 <button onClick={() => setShowDrop(!showDrop)} className='btngrd items-center px-4 text-white p-2 flex rounded '>
                     <PlusIcon size={14} /> Add Component
                 </button>
-                {showDrop && 
-                <div onMouseLeave={() => setShowDrop(false)}
-                 className='min-h-[100px] z-10 text-sm shadow p-2 min-w-[100px] w-full top-10 bg-white rounded absolute '>
-                    <button onClick={() => navigate('/dash/salaryComponent/earning')}
-                        className=' block hover:shadow hover:border-l-4 my-1 w-full p-2 text-start border-violet-800 '>
-                        Earnings
-                    </button>
-                    <button onClick={() => navigate(`/dash/salaryComponent/pre-tax-deduction`)} className='block hover:shadow hover:border-l-4 my-1 w-full p-2 text-start border-violet-800 '  >
-                        Pre-Tax Deduction
-                    </button>
-                    <button  onClick={() => navigate(`/dash/salaryComponent/post-tax-deduction`)} className='block hover:shadow hover:border-l-4 my-1 w-full p-2 text-start border-violet-800'  >
-                        Post-Tax Deduction
-                    </button>
-                </div>}
+                {showDrop &&
+                    <div onMouseLeave={() => setShowDrop(false)}
+                        className='min-h-[100px] z-10 text-sm shadow p-2 min-w-[100px] w-full top-10 bg-white rounded absolute '>
+                        <button onClick={() => navigate('/payroll/salaryComponent/earning')}
+                            className=' block hover:shadow hover:border-l-4 my-1 w-full p-2 text-start border-violet-800 '>
+                            Earnings
+                        </button>
+                        <button onClick={() => navigate(`/payroll/salaryComponent/pre-tax-deduction`)} className='block hover:shadow hover:border-l-4 my-1 w-full p-2 text-start border-violet-800 '  >
+                            Pre-Tax Deduction
+                        </button>
+                        <button onClick={() => navigate(`/payroll/salaryComponent/post-tax-deduction`)} className='block hover:shadow hover:border-l-4 my-1 w-full p-2 text-start border-violet-800'  >
+                            Post-Tax Deduction
+                        </button>
+                    </div>}
             </section>
             <main className='flex gap-3 my-3 scrollmade overflow-x-scroll'>
 
-                <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Earnings' path='/dash/salaryComponent/' active='earning' />
-                <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Deductions' path='/dash/salaryComponent/deduction' active='deduction' />
+                <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Earnings' path='/payroll/salaryComponent/' active='earning' />
+                <ScrollButton activeSetting={activeSetting} setActiveSetting={setActiveSetting} name='Deductions' path='/payroll/salaryComponent/deduction' active='deduction' />
 
 
 

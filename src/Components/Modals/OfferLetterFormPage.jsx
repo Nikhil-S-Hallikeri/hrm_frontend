@@ -113,7 +113,7 @@ const OfferLetterFormPage = () => {
             console.log(response.data);
             if (response.data.offer_instance) {
                 setshow(true)
-                console.log(response.data.offer_instance);
+                console.log(response.data.offer_instance,'offer');
                 setformobj(response.data.offer_instance)
                 setformobj((prev) => ({
                     ...prev,

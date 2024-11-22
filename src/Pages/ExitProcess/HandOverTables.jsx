@@ -45,8 +45,8 @@ const HandOverTables = ({ setActiveSection }) => {
     }, [])
     return (
         <div className=' ' >
-            HandOver table
-            <main className='table-responsive my-3 rounded tablebg p-2 '>
+           <h6 className='text-xl fw-semibold ' > HandOver table </h6>
+            <main className='table-responsive my-3 rounded tablebg  h-[70vh] '>
                 <table className='w-full ' >
                     <tr>
                         <th>SI No </th>

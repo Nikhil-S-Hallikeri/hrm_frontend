@@ -12,7 +12,7 @@ import GeneratePDF from '../../Components/ApplyList/GeneratePDF'
 
 const PaySlip = () => {
     let { id } = useParams()
-    let { getMonthYear, setActivePage, numberToWords } = useContext(HrmStore)
+    let { getMonthYear, setActivePage, numberToWords, setTopNav } = useContext(HrmStore)
     let slipRef = useRef()
     let [payslip, setPayslip] = useState()
     let [loading, setLoading] = useState(false)
@@ -51,6 +51,7 @@ const PaySlip = () => {
         if (id && monthdata)
             getParticularPayslip()
         setActivePage('payroll')
+        setTopNav('allpayslip')
     }, [id, monthdata])
     useEffect(() => {
         if (salaryTemplate && payslip)
@@ -90,14 +91,14 @@ const PaySlip = () => {
     }
     return (
         <div>
-            <Topnav name='Payslip' />
+            {/* <Topnav name='Payslip' /> */}
             <section className='my-3 ' >
                 <input type="month" value={monthdata} onChange={(e) => {
                     console.log(e.target.value);
                     setMonth(e.target.value)
 
                 }}
-                    className='p-1 bgclr1 outline-none rounded ' />
+                    className='p-1 flex ms-auto bg-white px-2 bgclr1 outline-none rounded ' />
             </section>
             {!loading ? payslip ?
                 <main ref={slipRef} className='bg-white my-3 poppins w-full p-4 ' >

@@ -32,7 +32,7 @@ const MyAttendance = () => {
     return (
         <div className='poppins ' >
 
-            <main className='w-full p-3 rounded-xl h-full bgclr ' >
+            <main className='w-full p-3 rounded-xl h-[40vh] overflow-y-auto bg-white     ' >
                 <section className='flex justify-between items-center ' >
 
                     <h5>Attendance Logs </h5>
@@ -63,10 +63,10 @@ const MyAttendance = () => {
                                                 <tr>
                                                     <td>{index + 1} </td>
                                                     <td>{obj.Emp_Id && obj.Emp_Id.Name} </td>
-                                                    <td> {obj.InTime ? formatISODate(obj.InTime) : '--'} </td>
-                                                    <td> {obj.Late_Arrivals ? formatTime(obj.Late_Arrivals) : '--'} </td>
+                                                    <td>{obj.InTime ? formatISODate(obj.InTime) : '--'} </td>
+                                                    <td>{obj.Late_Arrivals ? formatTime(obj.Late_Arrivals) : '--'} </td>
                                                     <td>{obj.OutTime ? formatISODate(obj.OutTime) : '--'} </td>
-                                                    <td>    {obj.Early_Depature ? formatTime(obj.Early_Depature) : '--'} </td>
+                                                    <td>{obj.Early_Depature ? formatTime(obj.Early_Depature) : '--'} </td>
                                                 </tr>
                                             ))
                                         }

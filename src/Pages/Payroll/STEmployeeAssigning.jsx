@@ -5,17 +5,22 @@ import { port } from '../../App'
 import { toast } from 'react-toastify'
 import { HrmStore } from '../../Context/HrmContext'
 import AddSalary from '../../Components/PayrollComponent/AddSalary'
+import LoadingData from '../../Components/MiniComponent/LoadingData'
 
-const STEmployeeAssigning = () => {
-    let { setActivePage } = useContext(HrmStore)
+const STEmployeeAssigning = ({ subpage }) => {
+    let { setActivePage, setTopNav } = useContext(HrmStore)
     let [employeeList, setEmployees] = useState()
+    let [loading, setLoading] = useState()
     let user = JSON.parse(sessionStorage.getItem('user'))
     let getEmployees = () => {
+        setLoading(true)
         axios.get(`${port}/root/ems/AllEmployeesList/${user.EmployeeId}/`).then((response) => {
             console.log(response.data);
             setEmployees(response.data)
+            setLoading(false)
         }).catch((error) => {
             console.log(error);
+            setLoading(false)
         })
     }
     let [selectedEmployee, setSelectedEmployee] = useState([])
@@ -34,6 +39,7 @@ const STEmployeeAssigning = () => {
         }
         getTemplate()
         setActivePage('payroll')
+        setTopNav('assiging')
     }, [])
     let assignTemplate = (e) => {
         axios.post(`${port}/root/pms/EmployeeSalaryBreakUps`, {
@@ -61,8 +67,7 @@ const STEmployeeAssigning = () => {
     }
     return (
         <div>
-            <Topnav name='Template Assigning' />
-
+            {!subpage && <Topnav name='Template Assigning' />}
             <div className='flex items-center bgclr rounded p-1 w-fit px-2 '>
                 Select Template :
                 <select onChange={assignTemplate} disabled={selectedEmployee.length == 0} name=""
@@ -77,9 +82,9 @@ const STEmployeeAssigning = () => {
 
             </div>
             {/* Table of employeee */}
-            <main className='tablebg table-responsive rounded my-3 ' >
+            <main className='tablebg table-responsive h-[80vh] rounded my-3 ' >
                 <table className='w-full' >
-                    <tr className='border-b-2 border-slate-300 '>
+                    <tr className=' sticky top-0 bg-white shadow-sm border-slate-300 '>
                         <th className='flex border-0 items-center gap-1 '>
                             <input type="checkbox" id='selectall'
                                 onClick={() => {
@@ -101,8 +106,10 @@ const STEmployeeAssigning = () => {
                         <th className=''>Salary </th>
                         <th className='border-0 ' >Template </th>
                     </tr>
+                    {/* <tbody> */}
+
                     {
-                        employeeList && employeeList.map((obj, index) => (
+                        !loading && employeeList && employeeList.map((obj, index) => (
                             <tr>
                                 <td className='w-10 '>
                                     <input
@@ -145,8 +152,10 @@ const STEmployeeAssigning = () => {
                             </tr>
                         ))
                     }
+                    {/* </tbody> */}
 
                 </table>
+                {loading && <LoadingData />}
             </main>
 
         </div>

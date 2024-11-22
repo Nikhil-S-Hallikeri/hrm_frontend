@@ -188,7 +188,7 @@ const Reporting_team_recuter = () => {
                 <Recsidebar></Recsidebar>
 
             </div>
-            <div className=' m-0 m-sm-4 flex-1 container mx-auto ' style={{ borderRadius: '10px' }}>
+            <div className=' m-0 m-sm-4 flex-1 container-fluid mx-auto ' style={{ borderRadius: '10px' }}>
                 <div style={{ marginLeft: '10px' }}>
 
                     <Topnav></Topnav>

@@ -1,14 +1,15 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap'
 import { port } from '../../App'
 import { toast } from 'react-toastify'
 import CreateDepartment from './CreateDepartment'
 import CreateDesignation from './CreateDesignation'
 import EmployeeSalaryAdding from './EmployeeSalaryAdding'
+import { HrmStore } from '../../Context/HrmContext'
 
 const EmployeeCreation = (props) => {
-    let { id, show, setshow, getEmp } = props
+    let { id, show, setshow, getEmp ,religion,setShowReligion} = props
 
     let [loading, setloading] = useState(false)
     let [page, setPage] = useState('Info')
@@ -18,19 +19,21 @@ const EmployeeCreation = (props) => {
         date_of_birth: null,
         gender: null,
         email: null,
+        secondary_email: '',
         mobile: null,
+        secondary_mobile_number: '',
         weight: null,
-        secondary_mobile_number:'',
+        EmployeeShifts: '',
+        Designation: '',
         height: null,
         employee_attendance_id: null,
+        hired_date: null,
         permanent_address: null,
         present_address: null,
-        secondary_email: '',
-        hired_date: null,
-        Dashboard: null,
+        Dasboard_Dig: null,
         Department_id: null,
         religion: null,
-        Position_id: null,
+        Designation: null,
         Reporting_To: null,
         'Employeement_Type': null,
         'internship_Duration_From': null,
@@ -43,6 +46,63 @@ const EmployeeCreation = (props) => {
         final_status_access: null,
         applied_list_access: null
     })
+    let [errors, setErrors] = useState({})
+    let requiredFields = ['full_name', 'date_of_birth', 'permanent_address', 'hired_date', 'Department_id', 'Employeement_Type', 'Reporting_To',
+        'mobile', 'gender', 'email', 'employee_attendance_id', 'Designation', 'Dasboard_Dig']
+    let fieldStyles = {
+        full_name: { name: 'Full Name', css: '', type: '', show: true, inputcss: '', },
+        date_of_birth: { name: 'DOB', css: '', type: 'date', show: true, inputcss: '', },
+        gender: { name: 'Gender', css: '', type: '', show: true, inputcss: '', options: [{ name: 'Male', value: 'male' }, { name: 'Other', value: 'other' }, { value: 'female', name: 'Female' }] },
+        email: { name: 'Primary mail', css: '', type: '', show: true, inputcss: '', },
+        mobile: { name: 'Primary mobile', css: '', type: 'number', show: true, inputcss: '', },
+        weight: { name: 'Wieght', css: '', type: '', show: false, inputcss: '', },
+        EmployeeShifts: { name: '', css: '', type: '', show: false, inputcss: '', },
+        secondary_mobile_number: { name: 'Secondary mobile', css: '', type: '', show: true, inputcss: '', },
+        height: { name: 'Height', css: '', type: '', show: false, inputcss: '', },
+        employee_attendance_id: { name: 'Attendance ID', css: '', type: '', show: true, inputcss: '', },
+        permanent_address: { name: 'Permanent address', css: 'col-12', type: 'textarea', show: true, inputcss: '', },
+        present_address: { name: 'Present address', css: 'col-12', type: 'textarea', show: true, inputcss: '', },
+        secondary_email: { name: 'Secondary mail', css: '', type: '', show: true, inputcss: '', },
+        hired_date: { name: 'Joining Date', css: '', type: 'date', show: true, inputcss: '', },
+        Dasboard_Dig: {
+            name: 'Position', css: '', type: '', show: true, inputcss: '', options: [{ value: "HR", name: "HR head" },
+            { value: "Admin", name: "Admin" },
+            { value: "Employee", name: "Employee" },
+            { value: "Recruiter", name: "Recruiter" },]
+        },
+        Department_id: { name: '', css: '', type: '', show: false, inputcss: '', },
+        religion: { name: '', css: '', type: '', show: false, inputcss: '', },
+        Designation: { name: '', css: '', type: '', show: false, inputcss: '', },
+        Reporting_To: { name: '', css: '', type: '', show: false, inputcss: '', },
+        'Employeement_Type': {
+            name: 'Employeement Type', css: '', type: '',
+            options: [{ value: "intern", name: "Intern" },
+            { value: "permanent", name: "Permanent" },], show: true, inputcss: '',
+        },
+        'internship_Duration_From': { name: '', css: '', type: '', show: false, inputcss: '', },
+        'internship_Duration_To': { name: '', css: '', type: '', show: false, inputcss: '', },
+        'probation_status': { name: '', css: '', type: '', show: false, inputcss: '', },
+        'probation_Duration_From': { name: '', css: '', type: '', show: false, inputcss: '', },
+        'probation_Duration_To': { name: '', css: '', type: '', show: false, inputcss: '', },
+        interview_shedule_access: { name: '', css: '', type: '', show: false, inputcss: '', },
+        screening_shedule_access: { name: '', css: '', type: '', show: false, inputcss: '', },
+        final_status_access: { name: '', css: '', type: '', show: false, inputcss: '', },
+        applied_list_access: { name: '', css: '', type: '', show: false, inputcss: '', }
+    }
+    let validateForm = () => {
+
+        const newErrors = {}
+        requiredFields.forEach((field) => {
+            if (!obj[field]?.trim()) {
+                newErrors[field] = `*This field Required`
+            }
+        });
+        console.log(newErrors);
+
+        setErrors(newErrors)
+        return Object.keys(newErrors).length == 0
+    }
+    let { allShiftTiming, convertTo12Hour, getAllShiftTiming } = useContext(HrmStore)
     let [createDepartmentModal, setCreateDepartmentModal] = useState(false)
     let handleChange = (e) => {
         let { name, value } = e.target
@@ -95,6 +155,9 @@ const EmployeeCreation = (props) => {
             ...prev,
             [name]: value
         }))
+        if (errors[name]) {
+            setErrors({ ...errors, [name]: undefined });
+        }
     }
     let reset = () => {
         setobj({
@@ -111,10 +174,11 @@ const EmployeeCreation = (props) => {
             'hired_date': null,
             'Dasboard_Dig': null,
             'Designation': null,
-            'reporting_to': null,
+            'Reporting_To': null,
             'Department': null,
             secondary_email: '',
-            secondary_mobile_number:'',
+            secondary_mobile_number: '',
+            EmployeeShifts: '',
             'Employeement_Type': null,
             'internship_Duration_From': null,
             'internship_Duration_To': null,
@@ -129,7 +193,7 @@ const EmployeeCreation = (props) => {
     }
     const [Department_List, set_Department_List] = useState([]);
     const [Desgination_List, set_Desgination_List] = useState([]);
-    let Add_Employee = (e) => {
+    let Add_Employee = async (e) => {
         console.log({
             applied_list_access: obj.applied_list_access ? "true" : 'false',
             screening_shedule_access: obj.screening_shedule_access ? "true" : 'false',
@@ -139,26 +203,31 @@ const EmployeeCreation = (props) => {
         if (id)
             Update_Employee()
         setloading(true)
-
-        axios.post(`${port}root/ems/NewEmployeesAdding/`, {
-            ...obj,
-            applied_list_access: obj.applied_list_access ? "true" : 'false',
-            screening_shedule_access: obj.screening_shedule_access ? "true" : 'false',
-            interview_shedule_access: obj.interview_schedule_access ? "true" : 'false',
-            final_status_access: obj.final_status_access ? "true" : 'false',
-        }).then((r) => {
-            toast.success('Employee Added')
-            console.log("NewEmployeesAdding_res.", r.data)
-            getEmp()
-            setshow(false)
-            reset()
-            setloading(false)
-        })
-            .catch((err) => {
-                toast.error('Employee Adding Failed.')
-                console.log("NewEmployeesAdding_err", err)
+        if (validateForm())
+            await axios.post(`${port}root/ems/NewEmployeesAdding/`, {
+                ...obj,
+                applied_list_access: obj.applied_list_access ? "true" : 'false',
+                screening_shedule_access: obj.screening_shedule_access ? "true" : 'false',
+                interview_shedule_access: obj.interview_schedule_access ? "true" : 'false',
+                final_status_access: obj.final_status_access ? "true" : 'false',
+            }).then((r) => {
+                toast.success('Employee Added')
+                console.log("NewEmployeesAdding_res.", r.data)
+                getEmp()
+                reset()
                 setloading(false)
+                setPage('sal')
+                setshow(false)
             })
+                .catch((err) => {
+                    if (err.response?.data?.error)
+                        toast.warning(err.response?.data?.error)
+                    else
+                        toast.error('Employee Adding Failed.')
+                    console.log("NewEmployeesAdding_err", err)
+                    setloading(false)
+                })
+        setloading(false)
     }
 
     let getDesignation = () => {
@@ -189,10 +258,11 @@ const EmployeeCreation = (props) => {
             setInterviewers(e.data)
         })
         // sentparticularData()
-    }, [])
+        getAllShiftTiming()
+    }, [show])
     useEffect(() => {
         getDesignation()
-    }, [])
+    }, [show])
     let getEmployeeData = (ide) => {
         axios.get(`${port}/root/ems/Get-Employee/${ide}/`).then((e) => {
             setobj(e.data)
@@ -216,12 +286,12 @@ const EmployeeCreation = (props) => {
             Update_Data: {
                 ...obj,
                 "Department": obj.Department_id,
-                "Position": obj.Position_id
+                "Position": obj.Designation
             }
         }).then((r) => {
             console.log("Update_Data", r.data)
             toast.success('User Updated successfully')
-
+            setPage('sal')
         }).catch((err) => {
             console.log("Update_Data", err)
             setloading(null)
@@ -237,325 +307,297 @@ const EmployeeCreation = (props) => {
                     <form>
                         <h3 className='mt-2 text-center p-3' style={{ color: 'rgb(76,53,117)' }}>Enter Employee Information</h3>
                         {/* Form start */}
-                        {page == 'Info' && <div className="row justify-content-center m-0">
+                        {page == 'Info' &&
+                            <div className="row justify-content-center m-0">
 
-                            <div className="col-lg-12 p-4 mt-2 border rounded-lg">
-                                <form >
-                                    {/* ---------------------------------PERSONAL DETAILS--------------------------------------------------------- */}
-                                    <div className="row m-0  pb-2">
-                                        <div className='row m-0 mt-2'>
+                                <div className="col-lg-12 p-4 mt-2 h-[60vh] overflow-y-scroll table-responsive border rounded-lg">
+                                    <form >
+                                        {/* ---------------------------------PERSONAL DETAILS--------------------------------------------------------- */}
+                                        <div className="row m-0  pb-2">
+                                            <div className='row m-0 mt-2'>
+                                                {/* New Fields */}
+                                                {
+                                                    Object.keys(obj).map((field) => {
+                                                        let inputobj = fieldStyles[field]
+                                                        return (
+                                                            inputobj && inputobj.show &&
+                                                            <div className={` ${inputobj.css ? inputobj.css : 'col-lg-6'}  my-2 `} >
+                                                                <div className={``} >
 
-                                            <div className="col-md-6 col-lg-4  mb-3">
-                                                <label htmlFor="firstName" className="form-label">Name <span class='text-danger'>*</span> </label>
-                                                <input type="text" className="form-control shadow-none bg-light" id="FirstName"
-                                                    name="full_name"
-                                                    value={obj.full_name}
-                                                    onChange={handleChange} required />
-                                            </div>
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="lastName" className="form-label">DOB <span class='text-danger'>*</span> </label>
-                                                <input type="date" className="form-control shadow-none bg-light" id=" LastName"
-                                                    name="date_of_birth"
-                                                    value={obj.date_of_birth} onChange={handleChange} required />
-                                            </div>
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="gender" className="form-label bg-light"> Gender
-                                                    <span class='text-danger'>*</span> </label>
-                                                <select
-                                                    className="form-control shadow-none bg-light"
-                                                    id="gender"
-                                                    name="gender"
-                                                    value={obj.gender} // Set the value of the select input to gender
-                                                    onChange={handleChange} // Update gender state when the select input changes
-                                                    required>
-                                                    <option value="">Select Gender <span class='text-danger'>*</span>
-                                                    </option> {/* Empty value for the default option */}
-                                                    <option value="male">Male</option>
-                                                    <option value="female">Female</option>
-                                                    <option value="others">Others</option>
-                                                </select>
-                                            </div>
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="email" className="form-label"> Primary Email <span class='text-danger'>*</span> </label>
-                                                <input type="email" className="form-control shadow-none bg-light" id=" Email"
-                                                    name="email"
-                                                    value={obj.email} onChange={handleChange} required />
-                                            </div>
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="email" className="form-label"> Secondary Email <span class='text-danger'></span> </label>
-                                                <input type="email" className="form-control shadow-none bg-light" id=" Email"
-                                                    name="secondary_email"
-                                                    value={obj.secondary_email} onChange={handleChange} required />
-                                            </div>
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="email" className="form-label">Attendance Id <span class='text-danger'>*</span> </label>
-                                                <input type="text" className="form-control shadow-none bg-light" id=" Email"
-                                                    name="employee_attendance_id"
-                                                    value={obj.employee_attendance_id} onChange={handleChange} required />
-                                            </div>
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="primaryContact" className="form-label">Primary Phone <span class='text-danger'>*</span> </label>
-                                                <input type="number" className="form-control shadow-none bg-light" id="PrimaryContact" name="mobile"
-                                                    value={obj.mobile} onChange={(e) => {
-                                                        if (e.target.value <= 0) {
-                                                            setobj((prev) => ({
-                                                                ...prev,
-                                                                mobile: null
-                                                            }))
-                                                        }
-                                                        else if (e.target.value.length > 10) {
-                                                            setobj((prev) => ({
-                                                                ...prev,
-                                                                mobile: prev.mobile
-                                                            }))
-                                                        }
-                                                        else {
-                                                            handleChange(e)
-                                                        }
-                                                    }} required />
-                                            </div>
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="primaryContact" className="form-label">Secondary Phone <span class='text-danger'></span> </label>
-                                                <input type="number" className="form-control shadow-none bg-light" id="PrimaryContact" name="secondary_mobile_number"
-                                                    value={obj.secondary_mobile_number} onChange={(e) => {
-                                                        if (e.target.value <= 0) {
-                                                            setobj((prev) => ({
-                                                                ...prev,
-                                                                secondary_mobile_number: null
-                                                            }))
-                                                        }
-                                                        else if (e.target.value.length > 10) {
-                                                            setobj((prev) => ({
-                                                                ...prev,
-                                                                secondary_mobile_number: prev.secondary_mobile_number
-                                                            }))
-                                                        }
-                                                        else {
-                                                            handleChange(e)
-                                                        }
-                                                    }} required />
-                                            </div>
-                                            <div className="col-md-6 col-lg-2 mb-3">
-                                                <label htmlFor="secondaryContact" className="form-label">Weight  </label>
-                                                <input type="number" className="form-control shadow-none bg-light" id="SecondaryContact" name="weight"
-                                                    value={obj.weight} onChange={handleChange} />
-                                            </div>
-                                            <div className="col-md-6 col-lg-2 mb-3">
-                                                <label htmlFor="secondaryContact" className="form-label">Height <span class='text-danger'>*</span> </label>
-                                                <input type="number" className="form-control shadow-none bg-light" id="State" name="height"
-                                                    value={obj.height} onChange={handleChange} required />
-                                            </div>
-                                            <div className="col-md-6 col-lg-12 mb-3">
-                                                <label htmlFor="secondaryContact" className="form-label">Permanent Address <span class='text-danger'>*</span> </label>
-                                                <textarea type="text" className="form-control shadow-none bg-light" id=" District" name="permanent_address"
-                                                    value={obj.permanent_address} onChange={handleChange} required />
-                                            </div>
-                                            <div className="col-md-6 col-lg-12 mb-3">
-                                                <label htmlFor="secondaryContact" className="form-label">Present Address  <span class='text-danger'>*</span> </label>
-                                                <textarea type="text" className="form-control shadow-none bg-light" id=" District" name="present_address"
-                                                    value={obj.present_address} onChange={handleChange} required />
-                                            </div>
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="secondaryContact" className="form-label">Hired Date <span class='text-danger'>*</span> </label>
-                                                <input type="date" className="form-control shadow-none bg-light" id="State" name="hired_date"
-                                                    value={obj.hired_date} onChange={handleChange} required />
-                                            </div>
+                                                                    <label htmlFor="" className={`text-slate-500 `} >
+                                                                        {inputobj.name}
+                                                                        {requiredFields.find((val) => val == field) &&
+                                                                            <span className='text-red-600 text-xs mx-2 ' > {errors[field] ? errors[field] : "*"} </span>}
+                                                                    </label>
 
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="gender" className="form-label">Position <span class='text-danger'>*</span> </label>
-                                                <select
-                                                    className="form-control shadow-none bg-light"
-                                                    id="gender"
-                                                    name="Dasboard_Dig"
-                                                    value={obj.Dasboard_Dig} // Set the value of the select input to gender
-                                                    onChange={handleChange} // Update gender state when the select input changes
-                                                    required>
-                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
-                                                    <option value="HR">HR head</option>
-                                                    <option value="Admin">Admin</option>
-                                                    <option value="Employee">Employee</option>
-                                                    <option value="Recruiter">Recruiter</option>
-                                                </select>
-                                            </div>
-                                            {createDepartmentModal && <CreateDepartment getdept={getDesignation} setshow={setCreateDepartmentModal} show={createDepartmentModal} />}
+                                                                    {inputobj.type == 'textarea' ?
+                                                                        <textarea name={field} value={obj[field]} onChange={handleChange}
+                                                                            className={` ${inputobj.inputcss ? inputobj.inputcss : ''}
+                                                                             outline-none block w-full my-1 inputbg p-2 rounded `}
+                                                                            id=""></textarea>
+                                                                        : inputobj.options ?
+                                                                            <select name={field} value={obj[field]}
+                                                                                className={` ${inputobj.inputcss ? inputobj.inputcss : ''}
+                                                                             outline-none block w-full my-1 inputbg p-2 rounded `}
+                                                                                onChange={handleChange} id="">
+                                                                                <option value="">Select</option>
+                                                                                {inputobj.options.map((inoption) => (
+                                                                                    <option value={inoption.value}> {inoption.name} </option>
+                                                                                ))}
+                                                                            </select> :
+                                                                            <input type={inputobj.type ? inputobj.type : "text"}
+                                                                                className={` ${inputobj.inputcss ? inputobj.inputcss : ''}
+                                                                        outline-none block w-full my-1 inputbg p-2 rounded `}
+                                                                                value={obj[field]} name={field} onChange={handleChange} />
+                                                                    }
 
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <div className='flex justify-between items-center'>
-                                                    <label htmlFor="gender" className="form-label ">Department <span class='text-danger'>*</span> </label>
-                                                    <button type='button' onClick={() => setCreateDepartmentModal(true)} className='text-xs'>Create Department </button>
-                                                </div> <select
-                                                    className="form-control shadow-none bg-light"
-                                                    id="gender"
-                                                    name="Department"
-                                                    value={obj.Department} // Set the value of the select input to gender
-                                                    onChange={(e) => {
-                                                        handleChange(e);
-                                                        Call_Department(e.target.value)
-                                                    }} // Update gender state when the select input changes
-                                                    required>
-                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
 
 
-                                                    {Department_List.map(interviewer => (
-                                                        <option key={interviewer.id} value={interviewer.id}>
-                                                            {`${interviewer.Dep_Name}`}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            {createDesignation && <CreateDesignation show={createDesignation} setshow={setCreatedesignation} />}
 
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <div className='flex justify-between'>
-                                                    <label htmlFor="gender" className="form-label ">Designation <span class='text-danger'>*</span>
+                                                {createDepartmentModal && <CreateDepartment getdept={getDesignation} setshow={setCreateDepartmentModal} show={createDepartmentModal} />}
+                                                {obj.Employeement_Type == 'intern' && <section className="col-md-6 mb-3">
+                                                    <label htmlFor="gender" className="text-slate-500 my-1">Intern Duration
+                                                        <span class='text-danger'>{'*'} </span> </label>
+                                                    <div className='flex items-center justify-between ' >
+                                                        <input type="date" value={obj.internship_Duration_From} name='internship_Duration_From'
+                                                            onChange={handleChange} className='outline-none p-2 inputbg rounded border-1 ' /> -
+                                                        <input type="date" value={obj.internship_Duration_To} name='internship_Duration_To'
+                                                            onChange={handleChange} className='outline-none p-2 inputbg rounded border-1 ' />
+                                                    </div>
+                                                </section>}
+                                                <div className="col-md-6 mb-3">
+                                                    <div className='flex justify-between items-center'>
+                                                        <label htmlFor="gender" className="text-slate-500 ">Department
+                                                            <span class='text-danger text-sm mx-2 '>
+                                                                {errors.Department_id ? errors.Department_id : '*'}
+                                                            </span> </label>
+                                                        <button type='button' onClick={() => setCreateDepartmentModal(true)} className='text-xs'>Create Department </button>
+                                                    </div>
+                                                    <select
+                                                        className="outline-none block w-full my-1 inputbg p-2 rounded "
+                                                        id="gender"
+                                                        name="Department_id"
+                                                        value={obj.Department_id} // Set the value of the select input to gender
+                                                        onChange={(e) => {
+                                                            handleChange(e);
+                                                            Call_Department(e.target.value)
+                                                        }} // Update gender state when the select input changes
+                                                        required>
+                                                        <option value="">Select  </option> {/* Empty value for the default option */}
+
+
+                                                        {Department_List.map(interviewer => (
+                                                            <option key={interviewer.id} value={interviewer.id}>
+                                                                {`${interviewer.Dep_Name}`}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                {createDesignation && <CreateDesignation show={createDesignation} setshow={setCreatedesignation} />}
+                                                <div className="col-md-6 mb-3">
+                                                    <label
+                                                        htmlFor="gender"
+                                                        className="flex justify-between text-slate-500">
+
+                                                        Religion
+                                                        <button
+                                                            className="text-xs "
+                                                            onClick={() => setShowReligion(true)} >
+                                                            create Religion
+                                                        </button>
                                                     </label>
-                                                    <button onClick={() => setCreatedesignation(true)} className='text-xs '>create Designation </button>
-
+                                                    <select
+                                                        className="inputbg w-full outline-none p-2 rounded "
+                                                        id="gender"
+                                                        name="religion"
+                                                        value={obj.religion}
+                                                        onChange={handleChange}>
+                                                        <option value="">
+                                                            Select <span class="text-danger">*</span>{' '}
+                                                        </option>{' '}
+                                                        {/* Empty value for the default option */}
+                                                        {religion &&
+                                                            religion.map(interviewer => (
+                                                                <option
+                                                                    key={interviewer.id}
+                                                                    value={interviewer.id}
+                                                                >
+                                                                    {`${interviewer.religion_name}`}
+                                                                </option>
+                                                            ))}
+                                                    </select>
                                                 </div>
-                                                <select
-                                                    className="form-control shadow-none bg-light"
-                                                    id="gender"
-                                                    name="Designation"
-                                                    value={obj.Designation} // Set the value of the select input to gender
-                                                    onChange={handleChange} // Update gender state when the select input changes
-                                                    required>
-                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
-                                                    {Desgination_List.map(interviewer => (
-                                                        <option key={interviewer.id} value={interviewer.id}>
-                                                            {`${interviewer.Name}`}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
+                                                <div className="col-md-6 mb-3">
+                                                    <div className='flex justify-between'>
+                                                        <label htmlFor="gender" className=" text-slate-500 ">Designation
+                                                            <span class='text-danger text-sm mx-2 ' >
+                                                                {errors.Designation ? errors.Designation : '*'} </span>
+                                                        </label>
+                                                        <button onClick={() => setCreatedesignation(true)} className='text-xs '>create Designation </button>
 
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="gender" className="form-label">Reporting To <span class='text-danger'>*</span> </label>
-                                                <select
-                                                    className="form-control shadow-none bg-light"
-                                                    id="gender"
-                                                    name="reporting_to"
-                                                    value={obj.reporting_to} // Set the value of the select input to gender
-                                                    onChange={handleChange} // Update gender state when the select input changes
-                                                    required>
-                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
-                                                    {interviewers.map(interviewer => (
-                                                        <option key={interviewer.EmployeeId} value={interviewer.EmployeeId}>
-                                                            {`${interviewer.EmployeeId},${interviewer.Name}`}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-
-                                            <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="gender" className="form-label">Employeement type <span class='text-danger'>*</span> </label>
-                                                <select value={obj.Employeement_Type} onChange={handleChange}
-                                                    className="form-control shadow-none bg-light"
-                                                    id="gender"
-                                                    name="Employeement_Type" // Update gender state when the select input changes
-                                                    required>
-                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
-                                                    <option value="intern">Intern </option>
-                                                    <option value="permanent">Permanent </option>
-                                                </select>
-                                            </div>
-                                            {obj.Employeement_Type == 'intern' && <section className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="gender" className="form-label">Intern Duration <span class='text-danger'>*</span> </label>
-                                                <div>
-                                                    <input type="date" value={obj.internship_Duration_From} name='internship_Duration_From'
-                                                        onChange={handleChange} className='outline-none p-2 bg-light rounded border-1 ' /> -
-                                                    <input type="date" value={obj.internship_Duration_To} name='internship_Duration_To'
-                                                        onChange={handleChange} className='outline-none p-2 bg-light rounded border-1 ' />
+                                                    </div>
+                                                    <select
+                                                        className="outline-none block w-full my-1 inputbg p-2 rounded "
+                                                        id="gender"
+                                                        name="Designation"
+                                                        value={obj.Designation} // Set the value of the select input to gender
+                                                        onChange={handleChange} // Update gender state when the select input changes
+                                                        required>
+                                                        <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                        {Desgination_List.map(interviewer => (
+                                                            <option key={interviewer.id} value={interviewer.id}>
+                                                                {`${interviewer.Name}`}
+                                                            </option>
+                                                        ))}
+                                                    </select>
                                                 </div>
-                                            </section>}
-                                            {obj.Employeement_Type == 'permanent' && <div className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="gender" className="form-label">Probation type <span class='text-danger'>*</span> </label>
-                                                <select value={obj.probation_status} onChange={handleChange}
-                                                    className="form-control shadow-none bg-light"
-                                                    id="gender"
-                                                    name="probation_status"
+                                                <div className="col-md-6 mb-3">
+                                                    <label
+                                                        htmlFor="gender"
+                                                        className=" text-slate-500  "
+                                                    >
+                                                        Shift Timing
+                                                    </label>
+                                                    <select
+                                                        className="outline-none block w-full my-1 inputbg p-2 rounded "
+                                                        id="EmployeeShifts"
+                                                        name="EmployeeShifts"
+                                                        value={obj.EmployeeShifts}
+                                                        onChange={handleChange} // Set the value of the select input to gender
                                                     // Update gender state when the select input changes
-                                                    required>
-                                                    <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
-                                                    <option value="probationer">Probationer </option>
-                                                    {/* <option value="confirmed"> Confirmed </option> */}
-                                                </select>
-                                            </div>}
-                                            {obj.probation_status == 'probationer' && <section className="col-md-6 col-lg-4 mb-3">
-                                                <label htmlFor="gender" className="form-label">Probation Duration <span class='text-danger'>*</span> </label>
-                                                <div>
-                                                    <input type="date" value={obj.probation_Duration_From} name='probation_Duration_From'
-                                                        onChange={handleChange} className='outline-none p-2 bg-light rounded border-1 ' /> -
-                                                    <input type="date" value={obj.probation_Duration_To} name='probation_Duration_To'
-                                                        onChange={handleChange} className='outline-none p-2 bg-light rounded border-1 ' />
+                                                    >
+                                                        <option value="">
+                                                            Select {' '}
+                                                        </option>{' '}
+                                                        {/* Empty value for the default option */}
+                                                        {allShiftTiming && allShiftTiming.map(interviewer => (
+                                                            <option
+                                                                key={interviewer.id}
+                                                                value={interviewer.id}
+                                                            >
+                                                                {`${interviewer.Shift_Name}
+                                                         (${interviewer.start_shift && convertTo12Hour(interviewer.start_shift)}-
+                                                         ${interviewer.end_shift && convertTo12Hour(interviewer.end_shift)}) `}
+                                                            </option>
+                                                        ))}
+                                                    </select>
                                                 </div>
-                                            </section>}
+                                                <div className="col-md-6 mb-3">
+                                                    <label htmlFor="gender" className=" text-slate-500  ">Reporting To
+                                                        <span class='text-danger text-sm '> {errors.Reporting_To ? errors.Reporting_To : '*'}</span> </label>
+                                                    <select
+                                                        className="outline-none block w-full my-1 inputbg p-2 rounded"
+                                                        id="gender"
+                                                        name="Reporting_To"
+                                                        value={obj.Reporting_To} // Set the value of the select input to gender
+                                                        onChange={handleChange} // Update gender state when the select input changes
+                                                        required>
+                                                        <option value="">Select </option> {/* Empty value for the default option */}
+                                                        {interviewers.map(interviewer => (
+                                                            <option key={interviewer.EmployeeId} value={interviewer.EmployeeId}>
+                                                                {`${interviewer.EmployeeId},${interviewer.Name}`}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+
+
+
+                                                {obj.Employeement_Type == 'permanent' &&
+                                                    <div className="col-md-6 mb-3">
+                                                        <label htmlFor="gender" className="text-slate-500 my-1">Probation type <span class='text-danger'>*</span> </label>
+                                                        <select value={obj.probation_status} onChange={handleChange}
+                                                            className="outline-none block w-full my-1 inputbg p-2 rounded"
+                                                            id="gender"
+                                                            name="probation_status"
+                                                            // Update gender state when the select input changes
+                                                            required>
+                                                            <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                            <option value="probationer">Probationer </option>
+                                                            {/* <option value="confirmed"> Confirmed </option> */}
+                                                        </select>
+                                                    </div>}
+                                                {obj.probation_status == 'probationer' && <section className="col-md-6 mb-3">
+                                                    <label htmlFor="gender" className="text-slate-500 my-1">Probation Duration <span class='text-danger'>*</span> </label>
+                                                    <div>
+                                                        <input type="date" value={obj.probation_Duration_From} name='probation_Duration_From'
+                                                            onChange={handleChange} className='outline-none p-2 inputbg rounded border-1 ' /> -
+                                                        <input type="date" value={obj.probation_Duration_To} name='probation_Duration_To'
+                                                            onChange={handleChange} className='outline-none p-2 inputbg rounded border-1 ' />
+                                                    </div>
+                                                </section>}
+                                            </div>
                                         </div>
-                                    </div>
-                                    {obj.Dasboard_Dig != 'Admin' && obj.Dasboard_Dig != 'HR' && <section>
-                                        <h4>Permissions </h4>
-                                        <article className='flex flex-wrap'>
-                                            <div className='w-fit cursor-pointer col-md-6 col-lg-4 mb-3 '>
-                                                <input onChange={() => {
-                                                    setobj((prev) => ({
-                                                        ...prev,
-                                                        interview_schedule_access: !prev.interview_schedule_access
-                                                    }))
-                                                }}
-                                                    value={obj.interview_schedule_access} checked={obj.interview_schedule_access}
-                                                    type="checkbox" id='AssignInterview' />
-                                                <label className='mx-2 cursor-pointer' htmlFor="AssignInterview"> Assign Interview </label>
-                                            </div>
-                                            <div className='w-fit cursor-pointer col-md-6 col-lg-4 mb-3 '>
-                                                <input onChange={() => {
-                                                    setobj((prev) => ({
-                                                        ...prev,
-                                                        screening_shedule_access: !prev.screening_shedule_access
-                                                    }))
-                                                }}
-                                                    value={obj.screening_shedule_access} checked={obj.screening_shedule_access} type="checkbox" id='AssignScreening' />
-                                                <label className='mx-2 cursor-pointer' htmlFor="AssignScreening"> Assign Screening </label>
-                                            </div>
-                                            <div className='w-fit cursor-pointer col-md-6 col-lg-4 mb-3 '>
-                                                <input onChange={() => {
-                                                    setobj((prev) => ({
-                                                        ...prev,
-                                                        applied_list_access: !prev.applied_list_access
-                                                    }))
-                                                }}
-                                                    value={obj.applied_list_access} checked={obj.applied_list_access} type="checkbox"
-                                                    id='applied' />
-                                                <label className='mx-2 cursor-pointer' htmlFor="applied">Applied list access  </label>
-                                            </div>
-                                            <div className='w-fit cursor-pointer col-md-6 col-lg-4 mb-3 '>
-                                                <input onChange={() => {
-                                                    setobj((prev) => ({
-                                                        ...prev,
-                                                        final_status_access: !prev.final_status_access
-                                                    }))
-                                                }}
-                                                    value={obj.final_status_access} checked={obj.final_status_access} type="checkbox" id='finalstatus' />
-                                                <label className='mx-2 cursor-pointer' htmlFor="finalstatus">Final status access </label>
-                                            </div>
-                                        </article>
+                                        {obj.Dasboard_Dig != 'Admin' && obj.Dasboard_Dig != 'HR' && <section>
+                                            <h4>Permissions </h4>
+                                            <article className='flex flex-wrap'>
+                                                <div className='w-fit cursor-pointer col-md-6 mb-3 '>
+                                                    <input onChange={() => {
+                                                        setobj((prev) => ({
+                                                            ...prev,
+                                                            interview_schedule_access: !prev.interview_schedule_access
+                                                        }))
+                                                    }}
+                                                        value={obj.interview_schedule_access} checked={obj.interview_schedule_access}
+                                                        type="checkbox" id='AssignInterview' />
+                                                    <label className='mx-2 cursor-pointer' htmlFor="AssignInterview"> Assign Interview </label>
+                                                </div>
+                                                <div className='w-fit cursor-pointer col-md-6 mb-3 '>
+                                                    <input onChange={() => {
+                                                        setobj((prev) => ({
+                                                            ...prev,
+                                                            screening_shedule_access: !prev.screening_shedule_access
+                                                        }))
+                                                    }}
+                                                        value={obj.screening_shedule_access} checked={obj.screening_shedule_access} type="checkbox" id='AssignScreening' />
+                                                    <label className='mx-2 cursor-pointer' htmlFor="AssignScreening"> Assign Screening </label>
+                                                </div>
+                                                <div className='w-fit cursor-pointer col-md-6 mb-3 '>
+                                                    <input onChange={() => {
+                                                        setobj((prev) => ({
+                                                            ...prev,
+                                                            applied_list_access: !prev.applied_list_access
+                                                        }))
+                                                    }}
+                                                        value={obj.applied_list_access} checked={obj.applied_list_access} type="checkbox"
+                                                        id='applied' />
+                                                    <label className='mx-2 cursor-pointer' htmlFor="applied">Applied list access  </label>
+                                                </div>
+                                                <div className='w-fit cursor-pointer col-md-6 mb-3 '>
+                                                    <input onChange={() => {
+                                                        setobj((prev) => ({
+                                                            ...prev,
+                                                            final_status_access: !prev.final_status_access
+                                                        }))
+                                                    }}
+                                                        value={obj.final_status_access} checked={obj.final_status_access} type="checkbox" id='finalstatus' />
+                                                    <label className='mx-2 cursor-pointer' htmlFor="finalstatus">Final status access </label>
+                                                </div>
+                                            </article>
 
-                                    </section>}
-
+                                        </section>}
 
 
 
-                                </form>
-                            </div>
-                            <div className="col-12 text-end mt-3">
-                                <button type="button" disabled={loading} onClick={() => {
-                                    Add_Employee()
-                                    setPage('sal')
-                                }}
-                                    //  data-bs-dismiss="modal"  
-                                    className="btn btn-primary text-white fw-medium px-2 px-lg-5">
-                                    {loading ? "Loading.." : "Next"}
-                                </button>
-                            </div>
-                        </div>}
+
+                                    </form>
+                                </div>
+                                <div className="col-12 text-end mt-3">
+                                    <button type="button" disabled={loading} onClick={() => {
+                                        Add_Employee()
+
+                                    }}
+                                        //  data-bs-dismiss="modal"  
+                                        className="btn btn-primary text-white fw-medium px-2 px-lg-5">
+                                        {loading ? "Loading.." : "Next"}
+                                    </button>
+                                </div>
+                            </div>}
                         {page == 'sal' && <EmployeeSalaryAdding setpage={setPage} />}
 
                         {/* form end */}

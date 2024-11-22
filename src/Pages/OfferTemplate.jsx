@@ -25,8 +25,10 @@ const OfferTemplate = () => {
     })
 
     // let pdfRef = useRef()
-    // const { toPDF, targetRef } = usePDF({ Offer_Letter: 'page.pdf' });
-    const targetRef = useRef()
+    const { toPDF, targetRef } = usePDF({ Offer_Letter: 'page.pdf' });
+    // const targetRef = useRef()
+    console.log(targetRef,'refer');
+    
     let [show, setshow] = useState(false)
     let user = JSON.parse(sessionStorage.getItem('user'))
     let [formobj, setformobj] = useState({
@@ -243,7 +245,6 @@ const OfferTemplate = () => {
     useEffect(() => {
         if (id) {
             getReportStatus()
-
         }
     }, [id])
     let navigate = useNavigate()
@@ -278,7 +279,8 @@ const OfferTemplate = () => {
                         show &&
                         <div className='d-flex container mx-auto justify-content-end p-3' id='buttons'>
                             {/* <button className='btn btn-success btn-sm me-3' onClick={() => toPDF()}>Download PDF</button> */}
-                            {(formobj.verification_status == 'Pending' || formobj.verification_status == 'Denied')
+                            {
+                            (formobj.verification_status == 'Pending' || formobj.verification_status == 'Denied')
                                 && !formobj.letter_verified_by && user && user.Disgnation != 'Admin' &&
                                 <section>
                                     <button onClick={() => navigate(`/offerletter/${id}`)} className=' p-2 px-4 mx-2 rounded bg-slate-600 text-white border-2
@@ -303,14 +305,14 @@ const OfferTemplate = () => {
                                     show: true
                                 }))} disabled={loading == 'submit'}
                                     className='btn btn-warning btn-sm'>
-                                    {loading == 'submit' ? 'Loading...' : "Submit"}
+                                    {loading == 'submit' ? 'Loading...' : "Send Offer"}
                                 </button>}
 
 
 
                             {
-                                formobj.verification_status == "Approved" && formobj.Accept_status == 'Pending' && !user &&
-                                <div>
+                                formobj.verification_status == "Approved" && formobj.Accept_status == 'Pending' && !user
+                                && <div>
                                     <button onClick={() => setOfferAcceptance('Accept')} className='savebtn p-2 border-2 border-green-100 rounded text-white ' >
                                         Accept
                                     </button>
@@ -320,10 +322,12 @@ const OfferTemplate = () => {
                                 </div>
                             }
                             {
-                                formobj && formobj.Accept_status == "Accept" &&
+                                formobj && 
+                                // formobj.Accept_status == "Accept" &&
                                 <div>
-                                    {/* <DownloadButton toPDF={toPDF} /> */}
-                                    <GeneratePDF divRef={targetRef} />
+                                    <DownloadButton toPDF={toPDF} divref={targetRef} />
+
+                                    {/* <GeneratePDF divRef={targetRef} /> */}
                                 </div>
                             }
 

@@ -11,7 +11,7 @@ import { port } from '../App'
 
 
 
-const Employees = () => {
+const Employees = ({ port }) => {
   const [Employee_Id, setEmployee_Id] = useState("");
   const [Name, setName] = useState("");
   const [phone, setphone] = useState("");
@@ -192,18 +192,18 @@ const Employees = () => {
 
 
   return (
-    <div className=' d-flex' style={{ width: '100%',minHeight : '100%', backgroundColor: "rgb(249,251,253)" }}>
+    <div className=' d-flex'>
 
-      <div className='side'>
+      {!port && <div className='side'>
 
         <Sidebar value={"dashboard"} ></Sidebar>
-      </div>
+      </div>}
       <div className=' m-0 m-sm-4  side-blog' style={{ borderRadius: '10px' }}>
-        <Topnav></Topnav>
+        {!port && <Topnav></Topnav>}
 
         <div className="row m-0 pb-2 mt-3" style={{ lineHeight: '30px' }}>
 
-          <div className='d-flex justify-content-end'>
+          <div className=' ad-flex justify-content-end '>
 
             <div class="col-md-6 col-lg-4 mb-3">
               <label htmlFor="ageGroup" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Search* </label>

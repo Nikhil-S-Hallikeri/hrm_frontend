@@ -11,9 +11,10 @@ import LeaveHistorySection from '../../Components/Leavecomponent/LeaveHistorySec
 import Sidebar from '../../Components/Sidebar'
 import RestrictedLeaveApply from './RestrictedLeaveApply'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import LeaveBalanceCard from '../../Components/Leavecomponent/LeaveBalanceCard'
 
-const LeaveApplying = () => {
-    let { activeSetting, setActiveSetting, getProperDate, getCurrentDate, timeValidate } = useContext(HrmStore)
+const LeaveApplying = ({ subpage }) => {
+    let { activeSetting, setTopNav, getProperDate, getCurrentDate, timeValidate } = useContext(HrmStore)
     let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let reportingTo = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).RepotringTo_Name
     let [allocatedLeave, setAllocatedLeave] = useState()
@@ -22,7 +23,7 @@ const LeaveApplying = () => {
     let navigate = useNavigate()
 
     useEffect(() => {
-        setActiveSetting('leave')
+        setTopNav('leave')
     }, [])
     let getAvailableLeaves = () => {
         axios.get(`${port}/root/lms/EmployeeLeaveEligibility/list/${empid}/`).then((response) => {
@@ -40,58 +41,43 @@ const LeaveApplying = () => {
     );
     return (
         <div className=' '>
-            <main className='overflow-x-scroll scrollmade my-3 flex gap-3 '>
-                {
-                    allocatedLeave && [...allocatedLeave].map((obj, index) => (
-                        <OverlayTrigger key={index}
-                            placement="top" delay={{ show: 150, hide: 200 }}
-                            overlay={renderTooltip(obj.leave_discription)} >
-                            <section className='bgclr rounded gap-3 p-2 min-w-[16rem]'>
-                                {console.log(obj, "leave")
-                                }
-                                <article className='flex justify-between gap-2 ' >
-                                    <p className='break-words text-xs mb-0 fw-bold'>{obj.LeaveType}</p>
-                                    <p className='text-xs mb-0 fw-semibold ' >Granted : {obj.no_of_leaves}</p>
-                                </article>
-                                <div className='text-center mx-auto '>
-                                    <h4 className='fw-semibold mb-0 text-2xl'>{obj.Available_leaves ? obj.Available_leaves : 0} </h4>
-                                    <p className='break-words text-xs m-0 fw-semibold'>Balance </p>
-                                </div>
-                                {/* <img className='w-14 h-fit' src={require('../../assets/Images/leavepage.png')} alt="Leave Image" /> */}
-                                <p className='mb-0 text-xs fw-semibold '  > {obj.utilised_leaves} of {obj.no_of_leaves} Consumed </p>
-                            </section>
-                        </OverlayTrigger>
-                    ))
-                }
-            </main>
 
             {/* <section className='flex flex-wrap bgclr rounded-full my-3 mx-auto w-fit'>
                 <button>
 
                 </button>
-                <ScrollButton css="noBorder" activeSetting={activeSection} setActiveSetting={setActiveSection}
+                <ScrollButton css="noBorder" activeSetting={activeSection} setTopNav={setActiveSection}
                     name='Apply' path='/leave' active='apply' />
-                <ScrollButton css="noBorder" activeSetting={activeSection} setActiveSetting={setActiveSection}
+                <ScrollButton css="noBorder" activeSetting={activeSection} setTopNav={setActiveSection}
                     name='Pending' path='/leave/pending' active='pending' />
-                <ScrollButton css="noBorder" activeSetting={activeSection} setActiveSetting={setActiveSection}
+                <ScrollButton css="noBorder" activeSetting={activeSection} setTopNav={setActiveSection}
                     name='History' path='/leave/history' active='history' />
 
             </section> */}
-            <section className='my-3 fw-medium '>
-                <button onClick={() => { navigate('/settings/leave') }}
-                    className={` ${activeSection == 'apply' && 'bgclr border-0 shadow-sm '} rounded-xl duration-500 fw-medium  w-32 p-2 px-2 `} >
-                    Apply
+            {!subpage &&
+                <main className='overflow-x-scroll scrollmade my-2 flex items-stretch gap-3 '>
+                    {
+                        allocatedLeave && [...allocatedLeave].map((obj, index) => (
+                            <LeaveBalanceCard obj={obj} index={index} />
+                        ))
+                    }
+                </main>
+            }
+            <section className='my-3 fw-medium poppins flex flex-wrap gap-3 items-center '>
+                <button onClick={() => { navigate('/leave/apply/') }}
+                    className={` ${activeSection == 'apply' && 'text-blue-600 fw-bold '} rounded-xl duration-500 fw-medium  w-fit p-2 px-2 `} >
+                    Apply Leave
                 </button>
-                <button onClick={() => { navigate('/settings/leave/restrictedHoliday') }}
-                    className={` ${activeSection == 'rh' && 'bgclr border-0  shadow-sm '} rounded-xl duration-300 w-32 p-2 px-2 `} >
-                    RH Apply
+                <button onClick={() => { navigate('/leave/apply/restrictedHoliday') }}
+                    className={` ${activeSection == 'rh' && 'text-blue-600 fw-bold '} rounded-xl duration-300 w-fit p-2 px-2 `} >
+                    Restricted Leave
                 </button>
-                <button onClick={() => { navigate('/settings/leave/pending') }}
-                    className={` ${activeSection == 'pending' && 'bgclr border-0  shadow-sm '} rounded-xl duration-500 w-32 p-2 px-2 `} >
+                <button onClick={() => { navigate('/leave/apply/pending') }}
+                    className={` ${activeSection == 'pending' && 'text-blue-600 fw-bold '} rounded-xl duration-500 w-fit p-2 px-2 `} >
                     Pending
                 </button>
-                <button onClick={() => { navigate('/settings/leave/history') }}
-                    className={` ${activeSection == 'history' && 'bgclr border-0  shadow-sm '} rounded-xl duration-300 w-32 p-2 px-2 `} >
+                <button onClick={() => { navigate('/leave/apply/history') }}
+                    className={` ${activeSection == 'history' && 'text-blue-600 fw-bold '} rounded-xl duration-300 w-fit p-2 px-2 `} >
                     History
                 </button>
 

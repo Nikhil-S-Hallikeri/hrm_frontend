@@ -43,7 +43,7 @@ const FinalResultCompleted = (props) => {
                 <Modal.Header  closeButton>
                     Final result of the {show.FirstName}
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className='inputbg ' >
                     <section className='ms-auto flex items-center justify-end'>
                         Data  :
                         <select name="" id="" value={selectedOption} onChange={(e) => {
@@ -58,7 +58,7 @@ const FinalResultCompleted = (props) => {
                     </section>
                     <main>
                         {
-                            dataShowing && <article className='my-3 rounded p-3 formbg ' >
+                            dataShowing && <article className='my-3 rounded p-3 bg-white shadow-sm ' >
                                 <h6 className='uppercase '>{selectedOption && selectedOption.replace(/_/g, " ")} </h6>
                                 {
                                     dataShowing.map((obj, index) => (

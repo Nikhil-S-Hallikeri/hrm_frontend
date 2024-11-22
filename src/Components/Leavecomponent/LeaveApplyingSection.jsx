@@ -8,7 +8,7 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
     let { leaveData, setLeaveData, getLeaveData } = useContext(HrmStore)
     let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let [loading, setloading] = useState(false)
-    let { activeSetting, setActiveSetting, getProperDate, getPendingLeave, timeValidate } = useContext(HrmStore)
+    let { activeSetting, setActiveSetting, getProperDate, getPendingLeave, timeValidate, timeLastMonthValidate } = useContext(HrmStore)
     let reportingTo = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).RepotringTo_Name
     let [obj, setobj] = useState({
         from_date: null,
@@ -36,8 +36,8 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
                 toast.warning(`The applicable days for this leave criterion is ${eligibledays}`)
             value = obj.days > eligibledays ? '' : value
         }
-        if (name == 'from_date' && value < timeValidate()) {
-            value = timeValidate()
+        if (name == 'from_date' && value < timeLastMonthValidate()) {
+            value = timeLastMonthValidate()
         }
         if ((name == 'from_date' && obj.days != null)) {
             addFinalDaate(obj.days - 1, value)
@@ -119,57 +119,57 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
     return (
         <div>
             <main className='bgclr min-h-[10vh] rounded-xl p-4 shadow-sm'>
-                <h4>Leave applying </h4>
+                <h4 className='my-3 ' >Leave applying </h4>
                 <section className='flex flex-wrap justify-between items-start'>
-                    <div className='my-2 p-2  col-sm-4'>
-                        No of days Leave :
-                        <input type="number" value={obj.days}
-                            onChange={(e) => { if (e.target.value >= 0 && e.target.value < 367) handleChange(e) }}
-                            name='days' className='p-2 block w-full shadow-sm outline-none rounded ' />
-                    </div>
-                    <div className='my-2 p-2 col-sm-4'>
-                        <label htmlFor="">Date : </label>
-                        <input type="date" value={obj.from_date}
-                            onChange={handleChange} name='from_date'
-                            className='p-2 block w-full shadow-sm rounded outline-none' />
-                    </div>
-                    <div className='my-2 p-2 col-sm-4'>
-                        <label htmlFor="">Final Date : </label>
-                        <input type="date" value={obj.to_date} disabled
-                            onChange={handleChange} name='to_date'
-                            className='p-2 block w-full shadow-sm bg-white rounded outline-none' />
-                    </div>
-                    <div className='my-2 p-2 col-sm-4'>
-                        <label htmlFor="">Applicable Leave Type : </label>
+                    <div className='my-1 p-2 col-12 flex gap-2 items-start '>
+                        <label htmlFor="" className='w-32 text-slate-500 fw-semibold  ' >Leave Type : </label>
                         <select value={obj.LeaveType}
-                            className='p-2 block w-full shadow-sm bg-white rounded outline-none'
+                            className='p-2 w-full inputbg rounded outline-none'
                             onChange={handleChange} name='LeaveType' id="">
                             <option value="">Select</option>
-                            {console.log(allocatedLeave)}
                             {eligibleLeave && eligibleLeave.length > 0 &&
                                 eligibleLeave.map((x) => (
                                     < option value={x.id} >{x.leave_name} </option>
                                 ))}
                         </select>
                     </div>
+                    <div className='my-1 p-2 col-12 flex gap-2 items-start'>
+                        <label htmlFor="" className='w-32 text-slate-500 fw-semibold  ' > No of days Leave : </label>
+                        <input type="number" value={obj.days}
+                            onChange={(e) => { if (e.target.value >= 0 && e.target.value < 367) handleChange(e) }}
+                            name='days' className='p-2 w-full inputbg rounded outline-none   ' />
+                    </div>
+                    <div className='my-1 p-2 col-12 flex gap-2 items-start'>
+                        <label htmlFor="" className='w-28 text-slate-500  fw-semibold  ' >Date : </label>
+                        <div className='flex-1 flex gap-2 ' >
+                            <input type="date" value={obj.from_date}
+                                onChange={handleChange} name='from_date'
+                                className='p-2 w-full inputbg rounded outline-none' />
+                            <input type="date" value={obj.to_date} disabled
+                                onChange={handleChange} name='to_date'
+                                className='p-2 w-full inputbg rounded outline-none' />
+                        </div>
+                    </div>
 
-                    <div className='my-2 p-2 col-sm-4'>
-                        <label htmlFor="">Document : </label>
+
+
+                    <div className='my-1 p-2 col-12 flex gap-2 items-start'>
+                        <label htmlFor="" className='w-32 text-slate-500 fw-semibold  '>Document : </label>
                         <input type="file"
                             onChange={(e) => setobj((prev) => ({
                                 ...prev,
                                 Document: e.target.files[0]
                             }))} name='Document'
-                            className='p-2 block w-full bg-white shadow-sm rounded outline-none' />
+                            className='p-2 w-full inputbg rounded outline-none' />
                     </div>
-                    <div className='p-2 my-2 col-sm-4 '>
-                        <label htmlFor="" className=''>  Reason:</label>
+                    <div className='my-1 p-2 col-12 flex gap-2 items-start'>
+                        <label htmlFor="" className='w-32 text-slate-500 fw-semibold '>  Reason:</label>
                         <textarea name="reason" onChange={handleChange} rows={5}
-                            className='bg-white rounded p-2 block w-full shadow-sm outline-none' value={obj.reason} id=""></textarea>
+                            className='p-2 w-full inputbg rounded outline-none' value={obj.reason} id=""></textarea>
                     </div>
                 </section>
                 <button onClick={postLeave} className='savebtn text-white ms-auto flex p-2 px-3 border-2 border-green-50 rounded'>
-                    {loading ? "Loading..." : "Submit"}
+                    {loading ? "Loading..." : "Apply"}
                 </button>
             </main>
 

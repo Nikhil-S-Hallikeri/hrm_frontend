@@ -18,6 +18,9 @@ import BackgroundDocumentshow from './HomeComponent/BackgroundDocumentshow';
 import FinalResultCompleted from './Modals/FinalResultCompleted';
 import WishesCom from './WishesCom';
 import MyAttendance from './Employee/MyAttendance';
+import EmployeeDiversity from './HomeComponent/EmployeeDiversity';
+import HROverviewReport from './HomeComponent/HROverviewReport';
+import NewSideBar from './MiniComponent/NewSideBar';
 
 
 
@@ -25,7 +28,7 @@ import MyAttendance from './Employee/MyAttendance';
 
 
 
-const Hrdashpage = () => {
+const Hrdashpage = ({ subpage }) => {
     let [showBGV, setshowBGV] = useState()
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let empStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
@@ -38,14 +41,14 @@ const Hrdashpage = () => {
         arrows: false,
         infinite: true,
         speed: 900,
-        slidesToShow: 4,
+        slidesToShow: 6,
         autoplay: true,
         speed: 1000,
         responsive: [
             {
                 breakpoint: 1220,
                 settings: {
-                    slidesToShow: 3,
+                    slidesToShow: 5,
                     slidesToScroll: 1,
                     infinite: true,
                     dots: true
@@ -54,7 +57,7 @@ const Hrdashpage = () => {
             {
                 breakpoint: 800,
                 settings: {
-                    slidesToShow: 2,
+                    slidesToShow: 4,
                     slidesToScroll: 1,
                     infinite: true,
                     dots: true
@@ -192,11 +195,9 @@ const Hrdashpage = () => {
 
 
     const HandleDocupload = async (e) => {
-
         updocData.CandidateId = Candidateid
         e.preventDefault();
         console.log(updocData);
-
     };
 
     const [AllDesignations, setAllDesignations] = useState([]);
@@ -521,65 +522,72 @@ MERIDA HR`)
         setActivePage('dashboard')
     }, [])
     return (
-        <div className=' flex ' style={{ width: '100%', minHeight: '100%', }}>
-
-            <div className='d-none d-lg-flex'>
-                <Sidebar value={"dashboard"} ></Sidebar>
-            </div>
-            <section className='flex-1 container pt-4 min-h-[100vh] transition duration-700 w-full  '>
-                <Topnav> </Topnav>
+        <div className=' '>
+            <section className='w-full flex-grow-1 
+            overflow-hidden pt-2 min-h-[100vh] px-2 m-0 container-fluid'>
                 {/* Sliders */}
                 <WishesCom />
-                <div className={` mx-auto ${openNavbar ? 'max-w-[650px] xl:max-w-[900px] ' : "lg:max-w-[900px]  xl:max-w-full "}  `}>
+                {/* ${openNavbar ? 'max-w-[650px] xl:max-w-[900px] ' : "lg:max-w-[900px]  xl:max-w-full "}  */}
+                <div className={` mx-auto 
+                   py-3 my-2 `}>
                     <h5 className='text-3xl my-3 '>Overview </h5>
 
-                    <Slider {...settings1} slidesToShow={openNavbar ? 3 : 4} >
+                    <Slider {...settings1} className='py-3 ' >
                         <div onClick={() => setHiredCanditates("Internal_Hiring")}
-                            data-bs-toggle="modal" data-bs-target="#exampleModal10">
+                            data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full   ' >
                             <ShortcutCard img={'../assets/Images/circle1.png'}
                                 count={Hiredcounts.internal_hiring} label='Internal Hiring' />
                         </div>
 
                         <div onClick={() => setOfferdCandidates("offered")}
-                            data-bs-toggle="modal" data-bs-target="#exampleModal10">
+                            data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full ' >
                             <ShortcutCard img={'../assets/Images/circle2.png'}
                                 count={Hiredcounts.offered_candidates} label='Offered candidate' />
                         </div>
                         <div
                             onClick={() => setRejectedCandidates("Reject")}
-                            data-bs-toggle="modal" data-bs-target="#exampleModal10">
+                            data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full ' >
                             <ShortcutCard img={'../assets/Images/circle3.png'}
                                 count={Hiredcounts.Reject} label='Rejected candidate' />
                         </div>
                         <div
                             onClick={() => setShartlistCanditates("All Applicants")}
-                            data-bs-toggle="modal" data-bs-target="#exampleModal10">
+                            data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full ' >
                             <ShortcutCard img={'../assets/Images/circle4.png'}
                                 count={Hiredcounts.AppliedCandidates} label='All Applicants' />
 
                         </div>
                         <div onClick={() => setConsiderToClient("consider_to_client")}
-                            data-bs-toggle="modal" data-bs-target="#exampleModal10">
+                            data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full ' >
                             <ShortcutCard img={'../assets/Images/circle5.png'}
-                                count={Hiredcounts.consider_to_client} label='Consider to client for Merida' />
+                                count={Hiredcounts.consider_to_client} label='Consider to client' />
                         </div>
                         <div onClick={() => setConsiderToClient("On_Hold")}
-                            data-bs-toggle="modal" data-bs-target="#exampleModal10">
+                            data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full ' >
                             <ShortcutCard img={'../assets/Images/circle3.png'}
                                 count={Hiredcounts.On_Hold} label='On Hold Candidates' />
                         </div>
 
                     </Slider>
                 </div>
-                <main className='my-5 row '>
-                    <section className='col-md-6 ' >
+                <HROverviewReport />
+                <main className='row '>
+                    <section className='col-md-6 my-2 ' >
                         <LeaveApprovalBox />
-
                     </section>
-                    <section className='col-md-6 ' >
+                    <section className='col-md-6 my-2 ' >
                         <MyAttendance />
-
                     </section>
+                    {/* <section className='col-md-6 my-2 ' >
+                        <EmployeeDiversity type='candidate' />
+                    </section>
+                    <section className='col-md-6 my-2 ' >
+                        <EmployeeDiversity />
+                    </section>
+                    <section className='col-md-6 my-2 ' >
+                        <EmployeeDiversity type='portal' />
+                    </section> */}
+
                 </main>
             </section>
 

@@ -10,9 +10,10 @@ import Recsidebar from './Recsidebar';
 import ReactSpeedometer from "react-d3-speedometer";
 import HrmContext, { HrmStore } from '../Context/HrmContext';
 import WishesCom from './WishesCom';
+import NewSideBar from './MiniComponent/NewSideBar';
 
 
-const Recruiterdashpage = () => {
+const Recruiterdashpage = ({ subpage }) => {
 
     const [value, setValue] = useState(50);
 
@@ -124,15 +125,11 @@ const Recruiterdashpage = () => {
     }, [])
 
     return (
-        <div className=' d-flex'
-            style={{ width: '100%', minHeight: '100%', }}>
+        <div>
 
-            <div className='d-none d-lg-flex' >
-
-                <Recsidebar value={"dashboard"}></Recsidebar>
-            </div>
-            <div className=' m-0 p-sm-3 flex-1 container mx-auto ' style={{ borderRadius: '10px' }}>
-                <Topnav></Topnav>
+          
+            <div className=' m-0 p-sm-3 flex-1 container-fluid mx-auto ' style={{ borderRadius: '10px' }}>
+              
                 <WishesCom />
                 <div className="  d-flex mt-4 inner_sections" >
 

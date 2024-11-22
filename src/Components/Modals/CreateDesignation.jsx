@@ -54,7 +54,9 @@ const CreateDesignation = (props) => {
             console.log("hellow", response.data);
             setshow(false)
             toast.success('Designation updated successfully')
+            
             getdesignation(deptid)
+            
         }).catch((error) => {
             console.log("hellow", error);
         })
@@ -62,6 +64,8 @@ const CreateDesignation = (props) => {
 
     useEffect(() => {
         getdepartments()
+        console.log(did,'did');
+
         if (did && did != -1) {
             getParticularDesignation()
         }

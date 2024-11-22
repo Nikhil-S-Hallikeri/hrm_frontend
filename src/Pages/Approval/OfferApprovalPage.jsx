@@ -5,8 +5,8 @@ import { port } from '../../App'
 import { useNavigate } from 'react-router-dom'
 import { HrmStore } from '../../Context/HrmContext'
 
-const OfferApprovalPage = () => {
-  let { setActivePage } = useContext(HrmStore)
+const OfferApprovalPage = ({ subpage }) => {
+  let { setActivePage, setTopNav } = useContext(HrmStore)
   let [approvalPending, setApprovalPending] = useState()
   let { convertToReadableDateTime } = useContext(HrmStore)
   let navigate = useNavigate()
@@ -22,13 +22,14 @@ const OfferApprovalPage = () => {
   useEffect(() => {
     getApprovalRequest()
     setActivePage('Employee')
+    setTopNav('offer')
   }, [])
   return (
     <div className=''>
-      <Topnav name='Offer letter approval' />
+      {!subpage && <Topnav name='Offer letter approval' />}
       {
         approvalPending && approvalPending.length > 0 ? <main>
-          <div className='tablebg table-responsive rounded '>
+          <div className='tablebg table-responsive h-[80vh] rounded '>
             <table className='w-full  '>
               <tr>
                 <th>SI NO </th>

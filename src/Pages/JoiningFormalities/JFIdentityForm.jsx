@@ -35,13 +35,13 @@ const JFIdentityForm = ({ id, page, data }) => {
             const formData = new FormData()
             formData.append('EMP_Information', formObj.EMP_Information)
             formData.append('aadhar_no', formObj.aadhar_no)
-            formData.append('aadher_proof', formObj.aadher_proof)
+            { formObj.aadher_proof && formData.append('aadher_proof', formObj.aadher_proof) }
             formData.append('name_as_per_aadhar', formObj.name_as_per_aadhar)
             formData.append('pan_no', formObj.pan_no)
-            formData.append('pan_proof', formObj.pan_proof)
-            formData.append('passport_proof',formObj.passport_proof)
-            formData.append('passport_num',formObj.passport_num)
-            formData.append('validate',formObj.validate)
+            { formObj.pan_proof && formData.append('pan_proof', formObj.pan_proof) }
+            { formObj.passport_proof && formData.append('passport_proof', formObj.passport_proof) }
+            formData.append('passport_num', formObj.passport_num)
+            formData.append('validate', formObj.validate)
 
             console.log(formObj);
             axios.post(`${port}/root/ems/employee-identity/${data.id}/`, formData).then((response) => {
@@ -60,9 +60,9 @@ const JFIdentityForm = ({ id, page, data }) => {
         formData.append('name_as_per_aadhar', formObj.name_as_per_aadhar)
         formData.append('pan_no', formObj.pan_no)
         formData.append('pan_proof', formObj.pan_proof)
-        formData.append('passport_proof',formObj.passport_proof)
-        formData.append('passport_num',formObj.passport_num)
-        formData.append('validate',formObj.validate)
+        formData.append('passport_proof', formObj.passport_proof)
+        formData.append('passport_num', formObj.passport_num)
+        formData.append('validate', formObj.validate)
 
         axios.patch(`${port}/root/ems/update-employee-identity/${formObj.id}/`, formData).then((response) => {
             console.log(response.data);
@@ -88,7 +88,7 @@ const JFIdentityForm = ({ id, page, data }) => {
         <div className='p-3 bg-white rounded '>
             <h5 className='mt-2 uppercase heading' style={{ color: 'rgb(76,53,117)' }}> Employee Identity Form</h5>
             <main className='p-3 formbg rounded row '>
-            <h5 className=' text-xl ' >Aadhar details </h5>
+                <h5 className=' text-xl ' >Aadhar details </h5>
 
                 <InputFieldform disabled={page} label='Aadhar Number' limit={999999999999} placeholder='724578963452' value={formObj.aadhar_no} name='aadhar_no'
                     handleChange={handleChange} type='text' />
@@ -96,18 +96,18 @@ const JFIdentityForm = ({ id, page, data }) => {
                     handleChange={handleChange} type='text' />
                 <InputFieldform disabled={page} label='Aadhar Proof' name='aadher_proof' link={formObj.aadher_proof}
                     handleChange={handleChange} type='file' />
-                    <h5 className=' text-xl ' >Pan Details </h5>
+                <h5 className=' text-xl ' >Pan Details </h5>
 
                 <InputFieldform disabled={page} label='Pan Number' placeholder='BTX1Z4353' value={formObj.pan_no} name='pan_no'
                     handleChange={handleChange} type='text' />
                 <InputFieldform disabled={page} label='Pan Proof' name='pan_proof' link={formObj.pan_proof}
                     handleChange={handleChange} type='file' />
-                    <h5 className=' text-xl ' >Passport Details </h5>
+                <h5 className=' text-xl ' >Passport Details </h5>
                 <InputFieldform disabled={page} label='Passport No' value={formObj.passport_num} name='passport_num'
                     handleChange={handleChange} type='text' />
                 <InputFieldform disabled={page} label='Passport Valid upto date' value={formObj.validate} name='validate'
                     handleChange={handleChange} type='date' />
-                    <InputFieldform disabled={page} label='Passport Proof' name='passport_proof' link={formObj.passport_proof}
+                <InputFieldform disabled={page} label='Passport Proof' name='passport_proof' link={formObj.passport_proof}
                     handleChange={handleChange} type='file' />
             </main>
             {!page && <section className='flex justify-between my-2'>

@@ -9,7 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 const JobPosting = () => {
     let { id } = useParams()
-    let { setActiveSetting, getProperDate } = useContext(HrmStore)
+    let { setTopNav, getProperDate } = useContext(HrmStore)
     let [otherDesignation, setOtherDesignation] = useState()
     let navigate = useNavigate()
     let [allDepartment, setallDepartment] = useState()
@@ -53,7 +53,7 @@ const JobPosting = () => {
         }))
     }
     useEffect(() => {
-        setActiveSetting('jobposting')
+        setTopNav('jobposting')
         getDepartment()
         if (id)
             getParticularJob()

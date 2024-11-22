@@ -9,11 +9,13 @@
 .slick-slide>div {
     transition: 1s linear;
 }
+
 #reader {
     position: relative;
     width: 250px;
     height: 250px;
-    border: 2px solid #000; /* Optional: for visual reference */
+    border: 2px solid #000;
+    /* Optional: for visual reference */
 }
 
 .scanner-line {
@@ -27,13 +29,19 @@
 }
 
 @keyframes scan {
-    0% { top: 0; }
-    100% { top: 100%; }
+    0% {
+        top: 0;
+    }
+
+    100% {
+        top: 100%;
+    }
 }
+
 .overflowbar {
     height: 80dvh;
     overflow-y: scroll;
-   
+
 }
 
 .overflowbar::-webkit-scrollbar {
@@ -66,30 +74,40 @@
 }
 
 .btngrd {
-    background: rgb(87, 48, 156);
-    background: linear-gradient(90deg, rgba(87, 48, 156, 1) 0%, rgba(37, 15, 60, 1) 100%);
+    background-color: #1D4AE8;
+    color: white;
 }
 
 .bgclr {
-    background-color: rgb(244, 244, 244);
+    background-color: white;
     border: 2px solid white;
+}
 
+.inputbg {
+    background-color: #F1F2F6;
 }
 
 .bgclr1 {
-    background-color: rgb(244, 244, 244);
+    background-color: white;
 }
 
 .tablebg {
-    background-color: rgba(244, 244, 244, 0.9);
+    background-color: white;
     border: 2px solid white;
-    padding: 10px;
+    padding: 0px;
     padding-top: 0px;
+    border-radius: 10px;
+    font-family: "Poppins", sans-serif;
 }
 
-.tablebg th {
-    border-bottom: 2px solid rgb(216, 215, 215);
+.tablebg tr:first-child {
+    /* Styles for the first row in the table header */
+    background-color: white;
+    font-weight: 400;
+    box-shadow: 1px 1px 5px rgb(219, 217, 217);
+    color: #41496D;
 }
+
 
 /* .tablebg input{
     background-color: transparent;
@@ -99,15 +117,29 @@
 } */
 .tablebg th,
 td {
-    padding: 10px;
+    padding: 13px;
     text-align: center;
     vertical-align: top;
-
 }
 
+.tablebg td {
+    border-bottom: 1px solid rgba(159, 159, 159, 0.2);
+    font-weight: 400;
+    box-shadow: 0px;
+    height: fit-content;
+    color: #878787;
+    max-width: 400px;
+    text-overflow: ellipsis;
+}
+
+
 .savebtn {
-    background: rgb(18, 222, 38);
-    background: linear-gradient(90deg, rgba(18, 222, 38, 1) 0%, rgba(53, 187, 5, 1) 100%);
+    background-color: #069C30;
+}
+
+.bluebtn {
+    background-color: #1D4AE8;
+    color: white;
 }
 
 .backbtn {
@@ -136,12 +168,16 @@ input[type=number] {
     left: 0;
     top: 0;
 }
-.sticky-right{
+
+.sticky-right {
     position: sticky;
     right: 0;
 }
+
 .border-bottom {
     border-bottom: 2px solid rgb(55, 54, 54);
+}
 
-
+.sidebarbg {
+    background-color: rgb(30, 74, 232);
 }

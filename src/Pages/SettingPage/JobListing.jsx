@@ -5,11 +5,11 @@ import { meridahrport, port } from '../../App'
 import { useNavigate } from 'react-router-dom'
 
 const JobListing = () => {
-    let { setActiveSetting, getProperDate } = useContext(HrmStore)
+    let { setTopNav, getProperDate } = useContext(HrmStore)
     let navigate = useNavigate()
     let [allJobs, setAllJobs] = useState()
     useEffect(() => {
-        setActiveSetting('jobposting')
+        setTopNav('jobposting')
         getAllJobs()
     }, [])
     let getAllJobs = () => {
@@ -24,8 +24,8 @@ const JobListing = () => {
         <div>
             <section className='flex items-center justify-between ' >
                 <h6> All Jobs Listed in our Website </h6>
-                <button onClick={()=>navigate('/settings/jobpost')} className='bg-blue-600 text-white p-2 rounded ' >
-                    Post Job 
+                <button onClick={() => navigate('/settings/jobpost')} className='bg-blue-600 text-white p-2 rounded ' >
+                    Post Job
                 </button>
             </section>
             <main className='tablebg table-responsive rounded my-3 ' >

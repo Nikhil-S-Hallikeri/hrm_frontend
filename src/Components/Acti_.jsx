@@ -7,6 +7,7 @@ import Recsidebar from './Recsidebar';
 import { HrmStore } from '../Context/HrmContext';
 import InfoButton from './SettingComponent/InfoButton';
 import Empsidebar from './Empsidebar';
+import NewSideBar from './MiniComponent/NewSideBar';
 
 const generateDates = (month, year) => {
     const dates = [];
@@ -284,28 +285,31 @@ const Acti_ = () => {
     let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
 
     return (
-        <div className='d-flex' style={{ width: '100%', minHeight: '100%', }}>
-            <div className='d-none d-lg-flex'>
-                {employeeStatus && employeeStatus == 'Employee' && <Empsidebar />}
-                {employeeStatus && employeeStatus == 'Recruiter' && <Recsidebar />}
-                {employeeStatus && employeeStatus == 'HR' && <Sidebar />}
-                {employeeStatus && employeeStatus == 'Admin' && <Sidebar />}
+        <div className='flex flex-col lg:flex-row ' style={{ width: '100%', minHeight: '100%', }}>
+
+            <div className='sticky z-10 top-0'>
+
+                <NewSideBar />
             </div>
-            <div className='m-0 m-sm-4 flex-1 container mx-auto' style={{ borderRadius: '10px' }}>
+            <div className='m-0 flex-1 container-fluid overflow-hidden  mx-auto' style={{ borderRadius: '10px' }}>
 
                 <Topnav></Topnav>
                 <div className='mt-3'>
                     <div className='d-flex justify-content-between'>
                         <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
                             <li className="nav-item text-primary d-flex" role="presentation">
-                                <h6 className='mt-2 heading nav-link active' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Activities</h6>
+                                <h6 className='mt-2 heading nav-link active' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }}
+                                    id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Activities</h6>
                             </li>
                             <li class="nav-item text-primary d-flex " role="presentation">
-                                <h6 class='mt-2 heading nav-link ' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Interview Scheduled</h6>
+                                <h6 class='mt-2 heading nav-link ' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }}
+                                    id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Interview Scheduled</h6>
                             </li>
 
                             <li class="nav-item text-primary d-flex " role="presentation">
-                                <h6 class='mt-2 heading nav-link ' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Walkins</h6>
+                                <h6 class='mt-2 heading nav-link '
+                                    style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }}
+                                    id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Walkins</h6>
                             </li>
 
                             <li class="nav-item text-primary d-flex " role="presentation">
@@ -342,61 +346,80 @@ const Acti_ = () => {
                                             </tr>
                                         </thead>
                                         <tbody className=' '>
-                                            {activitiesget.map((activity, mainindex) => (
-                                                <tr key={mainindex}>
-                                                    <td className='break-words text-break sticky-left bgclr1 ' style={{ width: '150px' }} >
-                                                        <input type="text" disabled
-                                                            value={activity.Activity_Name}
-                                                            className="p-2 rounded border-0  shadow-none" style={{ width: '150px' }} />
-                                                    </td>
-                                                    <td className='break-words text-break sticky-left1 bgclr1 ' style={{ width: '150px' }} >
-                                                        <input type="text" disabled style={{ width: '150px' }}
-                                                            value={`${activity.targets} `}
-                                                            className="p-2 rounded  border-0  shadow-none text-center" />
-                                                    </td>
-                                                    <td className='break-words text-break sticky-left2 bgclr1 ' style={{ width: '150px' }} >
-                                                        <p style={{ width: '150px' }}
-                                                            className={`p-2 text-black mb-0 rounded 
-                                                                        ${Number(activity.Total_Achived) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 50 ? 'bg-red-300' :
-                                                                    activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 70 ? 'bg-yellow-300' :
-                                                                        activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 90 ? 'bg-blue-300 ' :
-                                                                            'bg-green-300'}  
+                                            {activitiesget.map((activity, mainindex) => {
+                                                let wholeTargetclr = ''
+                                                if (activity.day_or_month_wise) {
+                                                    // monthwise
+                                                    wholeTargetclr = (Number(activity.Total_Achived) / activity.targets) * 100 <= 50 ? 'bg-red-300' :
+                                                        (Number(activity.Total_Achived) / activity.targets) * 100 <= 70 ? 'bg-yellow-300' :
+                                                            (activity.Total_Achived / activity.targets) * 100 <= 90 ? 'bg-blue-300 ' :
+                                                                'bg-green-300'
+                                                }
+                                                else {
+                                                    //daywise
+                                                    wholeTargetclr = Number(activity.Total_Achived) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 50 ? 'bg-red-300' :
+                                                        activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 70 ? 'bg-yellow-300' :
+                                                            activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 90 ? 'bg-blue-300 ' :
+                                                                'bg-green-300'
+                                                }
+                                                return (
+                                                    <tr key={mainindex}>
+                                                        <td className='break-words text-break sticky-left bgclr1 ' style={{ width: '150px' }} >
+                                                            <input type="text" disabled
+                                                                value={activity.Activity_Name}
+                                                                className="p-2 rounded border-0  shadow-none" style={{ width: '150px' }} />
+                                                        </td>
+                                                        <td className='sticky-left1 bgclr1' style={{ width: '150px' }}>
+                                                            <span className='absolute top-3 right-3' >
+                                                                <InfoButton size={11} content={`Target for ${activity.day_or_month_wise ? 'a month' : 'a day'} `} />
+                                                            </span>
+                                                            <input disabled type="number"
+                                                                value={`${activity.targets}`}
+                                                                name='targets'
+                                                                className="form-control border-0 shadow-none text-center" />
+                                                        </td>
+                                                        <td className='break-words text-break sticky-left2 bgclr1 ' style={{ width: '150px' }} >
+                                                            <p style={{ width: '150px' }}
+                                                                className={`p-2 text-black mb-0 rounded 
+                                                                        ${wholeTargetclr}
                                                                         text-xs w-32 relative border-0 shadow-none text-center`} >
-                                                            {activity.Total_Achived} out of  {Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets)}
+                                                                {activity.Total_Achived} out of  {Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets)}
 
-                                                            <span className='absolute top-1 right-1 '> <InfoButton size={10}
-                                                                content={`Days filled = ${activity.daily_achives.filter((obj) => obj.achieved > 0).length} ,
+                                                                <span className='absolute top-1 right-1 '> <InfoButton size={10}
+                                                                    content={`Days filled = ${activity.daily_achives.filter((obj) => obj.achieved > 0).length} ,
                                                                     Target = ${activity.targets} `} />  </span>
-                                                        </p>
-                                                    </td>
-                                                    {dates.map((date) => {
-                                                        let obj = activitiesgetdaily_achives[mainindex].find((obj) => obj.Date === date);
-                                                        if (obj) { console.log("sksjbljkb", obj.status); }
+                                                            </p>
+                                                        </td>
+                                                        {dates.map((date) => {
+                                                            let obj = activitiesgetdaily_achives[mainindex].find((obj) => obj.Date === date);
+                                                            if (obj) { console.log("sksjbljkb", obj.status); }
 
-                                                        return (
-                                                            <td key={date}>
-                                                                <input type="number" disabled={formattedCurrentDate !== date}
-                                                                    value={obj ? obj.achieved : ''}
-                                                                    onChange={(e) => {
-                                                                        if (e.target.value > 0) {
-                                                                            if (obj) {
-                                                                                handleInputChange(date, obj.achieved, obj.id, Number(e.target.value));
+                                                            return (
+                                                                <td key={date}>
+                                                                    <input type="number" disabled={formattedCurrentDate !== date}
+                                                                        value={obj ? obj.achieved : ''}
+                                                                        onChange={(e) => {
+                                                                            if (e.target.value > 0) {
+                                                                                if (obj) {
+                                                                                    handleInputChange(date, obj.achieved, obj.id, Number(e.target.value));
+                                                                                }
                                                                             }
-                                                                        }
-                                                                        if (e.target.value <= 0) {
-                                                                            if (obj) {
-                                                                                handleInputChange(date, obj.achieved, obj.id, 0);
+                                                                            if (e.target.value <= 0) {
+                                                                                if (obj) {
+                                                                                    handleInputChange(date, obj.achieved, obj.id, 0);
+                                                                                }
                                                                             }
-                                                                        }
-                                                                    }}
-                                                                    className={`p-2 ${obj ? obj.status == 0 ? 'bg-red-300' : obj.status == 2 ? 'bg-yellow-300' : obj.status == 3 ?
-                                                                        'bg-green-300' : obj.status == 1 ? 'bg-orange-300' : '' : ''}
+                                                                        }}
+                                                                        className={`p-2 ${obj ? obj.status == 0 ? 'bg-red-300' : obj.status == 2 ? 'bg-yellow-300' : obj.status == 3 ?
+                                                                            'bg-green-300' : obj.status == 1 ? 'bg-orange-300' : '' : ''}
                                                                      ${formattedCurrentDate === date && ' border-2 border-black'} rounded w-24 ourline-none shadow-none text-center `} />
-                                                            </td>
-                                                        );
-                                                    })}
-                                                </tr>
-                                            ))}
+                                                                </td>
+                                                            );
+                                                        })}
+                                                    </tr>
+                                                )
+                                            }
+                                            )}
                                             {/* <tr>
                                                 <td className='ps-3'>Total</td>
                                                 <td className='text-center'>{totalTarget}</td>

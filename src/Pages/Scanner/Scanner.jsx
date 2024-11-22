@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import BarcodeScannered from './BarScanner';
 import { Html5QrcodeScanner } from 'html5-qrcode';
+import axios from 'axios';
+import { port } from '../../App';
+import { toast } from 'react-toastify';
+import { Modal } from 'react-bootstrap';
 
 const Scanner = () => {
     let [result, setresult] = useState()
-
+    let [show, setShow] = useState(false)
     let scanValue = () => {
         const scanner = new Html5QrcodeScanner(
             "scannreader", {
@@ -16,7 +20,6 @@ const Scanner = () => {
         );
         function onScanSuccess(result) {
             console.log(result);
-
             setTimeout(() => {
                 setresult(result)
                 scanner.clear()
@@ -31,21 +34,38 @@ const Scanner = () => {
 
     }
     useEffect(() => {
-
+        scanValue()
     }, []);
+    let findEmployee = async () => {
+        if (result) {
+            axios.get(`${port}/root/ems/EmployeeProfile/${result}/`).then((response) => {
+                toast.success('Employee Found')
+                console.log(response.data);
+                setShow(true)
+                setTimeout(() => {
+                    setShow(false)
+                    scanValue()
+                }, 3000);
+            }).catch((error) => {
+                console.log(error);
+                scanValue()
 
+
+            })
+        }
+    }
+    useEffect(() => {
+        if (result) {
+            findEmployee()
+        }
+    }, [result])
     return (
         <div className='container mx-auto'>
             <div id='scannreader' className=' w-[400px]  mx-auto '  >
             </div>
-            <p className='mx-auto text-center flex w-fit '>{result} </p>
-
-            <div className='flex mx-auto flex-wrap w-fit gap-3'>
-                enther the Machine code :
-                <input type="text" className='bgclr rounded p-2 '
-                    value={result} />
-                <button onClick={scanValue}>Scan </button>
-            </div>
+            {show && <Modal className=' ' centered show={show} onHide={() => setShow(false)}>
+                Welcome to Office
+            </Modal>}
         </div>
     );
 }

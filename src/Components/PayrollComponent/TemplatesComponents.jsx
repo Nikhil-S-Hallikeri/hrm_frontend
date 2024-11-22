@@ -19,11 +19,11 @@ const TemplatesComponents = ({ data, selectedComponent, setSelectedComponent, se
 
     return (
         <section className='col-md-3 pb-3 ' >
-            <main className='w-full h-full p-3 formbg rounded ' >
+            <main className='w-full h-full p-3 rounded bg-white' >
                 <p className='fw-semibold mb-1 ' >Build your template </p>
                 <p className='text-sm  '> Include active salary components </p>
                 {/* Earning */}
-                <section className='bg-white rounded p-2 text-sm '>
+                <section className='inputbg rounded p-2 text-sm '>
                     <button onClick={() => {
                         if (openDrop != 'earning')
                             setOpenDrop('earning')
@@ -49,7 +49,7 @@ const TemplatesComponents = ({ data, selectedComponent, setSelectedComponent, se
                         </article>}
                 </section>
                 {/* Pre tax */}
-                <section className='bg-white my-2 rounded p-2 text-sm ' >
+                <section className='inputbg my-2 rounded p-2 text-sm ' >
                     <button onClick={() => {
                         if (openDrop != 'pre')
                             setOpenDrop('pre')
@@ -77,7 +77,7 @@ const TemplatesComponents = ({ data, selectedComponent, setSelectedComponent, se
                 </section>
 
                 {/* Post Tax */}
-                <section className='bg-white my-2 rounded p-2 text-sm ' >
+                <section className='inputbg my-2 rounded p-2 text-sm ' >
                     <button onClick={() => {
                         if (openDrop != 'post')
                             setOpenDrop('post')

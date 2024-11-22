@@ -19,6 +19,18 @@ const HrmContext = (props) => {
     let [preTaxDeduction, setPreTaxDeduction] = useState()
     let [postTaxDeduction, setPostDeduction] = useState()
     let [templates, setTemplates] = useState()
+    let [allShiftTiming, setAllShiftTiming] = useState()
+
+
+    let [topnav, setTopNav] = useState()
+    let getAllShiftTiming = () => {
+        axios.get(`${port}/root/lms/shifts/`).then((response) => {
+            setAllShiftTiming(response.data)
+            console.log(response.data, 'shift');
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
     let getTemplate = () => {
         axios.get(`${port}/root/pms/SalaryTemplates`).then((response) => {
             setTemplates(response.data)
@@ -207,6 +219,13 @@ const HrmContext = (props) => {
         const day = String(now.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+    function timeLastMonthValidate() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        return `${year}-${month - 1}-${day}`;
+    }
     function getProperDate(date) {
         const now = new Date(date);
         const year = now.getFullYear();
@@ -346,13 +365,22 @@ Merida Tech Minds (OPC) Pvt. Ltd.`
 
         return convertToWords(num);
     }
+    function convertTo12Hour(time24) {
+        let [hours, minutes] = time24.split(':');
+        hours = parseInt(hours);
+
+        const period = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12; // Converts '0' hour to '12' for AM, and '12' hour for PM
+
+        return `${hours}:${minutes} ${period}`;
+    }
     let valueShare = {
-        formatTime,
+        formatTime, timeLastMonthValidate, convertTo12Hour, allShiftTiming, getAllShiftTiming, setAllShiftTiming,
         deleteSalaryComponent, getEarningData, data, getMonthYear, getTemplate, templates, numberToWords,
         religion, getReligion, count, formatDate, preTaxDeduction, postTaxDeduction, getPreTaxDeduction, getPostTaxDeduction,
         getPendingLeave, pendingLeave, setPendingLeave, leaveRequestsReporting, setLeaveRequestReporting, getLeaveRequestsReporting,
         changeDateYear, activeSetting, setActiveSetting, mailContent, openNavbar, setNavbar, convertToNormalTime, activePage, setActivePage,
-        leaveData, setLeaveData, getLeaveData, getDesignations, designation, setDesignation,
+        leaveData, setLeaveData, getLeaveData, getDesignations, designation, setDesignation,topnav, setTopNav,
         timeValidate, getProperDate, getCurrentDate, convertToReadableDateTime, testing, convertTimeTo12HourFormat, formatISODate
     }
     return (

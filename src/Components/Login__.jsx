@@ -1,20 +1,21 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import '../assets/css/Login_.css'
 import { useState } from 'react'
 import '../assets/css/login.css'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { port } from '../App'
+import RouterContext, { RouterStore } from '../Context/RouterContext';
 
 const Login__ = () => {
-
+    let { setLoginStatus } = useContext(RouterStore)
     console.log(port);
     let [searchValue] = useSearchParams()
     let uservalue = searchValue.get('user')
     let passwordValue = searchValue.get('password') &&
         encodeURIComponent(searchValue.get('password'))
     console.log(uservalue, passwordValue);
-
+    let [loading, setloading] = useState(false)
 
     const [employeeId1, setEmployeeId1] = useState("");
     const [password1, setPassword1] = useState("");
@@ -33,6 +34,7 @@ const Login__ = () => {
     const handleSubmit1 = async (e) => {
         // e.preventDefault();
         // Check if employeeId1 and password1 are not empty
+        setloading(true)
         if (!employeeId1.trim() && !uservalue) {
             alert("Please enter the Employee ID");
             return;
@@ -58,7 +60,7 @@ const Login__ = () => {
                 sessionStorage.setItem('email', JSON.stringify(r.data.email))
                 sessionStorage.setItem('status', JSON.stringify(r.data.Dash_Status))
                 navigate(`/dashboard/${r.data.Disgnation}`)
-
+                setLoginStatus(true)
             })
             .catch((err) => {
                 alert(err.response.data)
@@ -142,7 +144,7 @@ const Login__ = () => {
 
 
     return (
-        <div style={{ width: '100%', minHeight: '100vh', backgroundColor: 'rgb(249,230,223)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div className='bg-white ' >
             {/* <AnimatedCursor
                 innerSize={7}
                 outerSize={25}
@@ -168,68 +170,65 @@ const Login__ = () => {
             /> */}
 
 
-            <div className="container p-4 ">
-                <div className="row m-0">
+            <div className="container flex min-h-[100vh] ">
+                <div className="row w-full justify-evenly poppins my-auto min-h-[70vh] m-0">
 
-                    <div className="col-md-6 col-lg-6 p-4  ">
-
-                        <div className=' mt-lg-5'>
-
-
-                            <p style={{ color: 'rgb(147,147,191)' }} className='welcome text-md-start text-center  d-md-flex'> <span style={{ fontSize: '30px' }} class='d-none d-md-block '>_____</span> <span style={{ color: '#F5558D', fontSize: '17px' }} className='mt-3 ms-1 text-md-start text-center' > Welcome To,</span></p>
-                            <h1 className='head1 text-md-start text-center ' style={{}}>Merida Tech </h1>
-                            <h1 className='styled-text  text-md-start text-center minds' style={{}}>Minds </h1>
-                            <div className='visit_site w-100 mt-4'>
-                                <button className=' visit head '> <a href="https://meridatechminds.com/" style={{ textDecoration: 'none', color: 'black' }}>Visit Our Site</a> </button>
-                            </div>
+                    <div className="col-md-6 col-lg-5  p-4 d-none d-lg-flex  flex overflow-hidden relative bg-black rounded-xl ">
+                        {/*  */}
+                        <div>
+                            <img src={require('../assets/Images/signinSoundWave.gif')} alt="SoundWave"
+                                className=' absolute w-full -top-[10%] right-0  ' />
+                            <img src={require('../assets/Images/signinSoundWave.gif')} alt="SoundWave"
+                                className=' absolute -bottom-[10%] right-0  ' />
                         </div>
+                        <img src={require('../assets/Images/meridawebsitelogowhite.png')} alt="Merida_White_Logo"
+                            className='relative w-[13rem] m-auto h-fit ' />
                     </div>
-                    <div className="col-md-6 col-lg-6 p-4  ">
+                    <section className="col-md-6 flex col-lg-4 pe-sm-4 ">
 
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <div class="p-4" style={{ width: '350px', height: '400px', backgroundColor: 'white', borderRadius: '25px' }}>
-                                <h4 className='text-center' style={{ color: '#F5558D' }} >Login</h4>
+                        <article className='my-auto mx-auto flex flex-col pe-sm-3 justify-between h-full w-full ' >
+                            <img src={require('../assets/Images/meridatechmindsbluelogo.png')} alt="Merida_White_Logo"
+                                className='relative w-[13rem] m-auto h-fit d-lg-none my-3 ' />
+                            <div>
+                                <h5 className='text-3xl poppins fw-semibold ' >Welcome Back 👋</h5>
+                                <p className='text-slate-500 text-lg my-3 ' >
+                                    welcome back ! please login <br /> to your account
+                                </p>
+                            </div>
+                            <section className='  ' >
 
-                                <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                                    <div class="inputGroup">
-                                        <input type="text" placeholder='Employee ID' value={employeeId1} onChange={(e) => setEmployeeId1(e.target.value)} />
+                                <div className="my-3">
+                                    <p className=' mb-1' >Email / Employee Id  </p>
+                                    <input type="text" className='block bg-blue-50 text-sm rounded p-[13px]  border-2 outline-none w-full  '
+                                        placeholder='Employee ID' value={employeeId1}
+                                        onChange={(e) => setEmployeeId1(e.target.value)} />
 
-                                    </div>
                                 </div>
+                                <div className="my-3">
+                                    <p className=' mb-1' >Password </p>
+                                    <div className=' bg-blue-50 rounded p-[13px] text-sm border-2 flex gap-1  ' >
 
-                                <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                                    <div class="inputGroup">
                                         <input onKeyDown={(e) => {
                                             if (e.key == 'Enter') {
                                                 handleSubmit1()
                                             }
-                                        }} type={showPassword ? "text" : "password"} autocomplete="off" placeholder='Password' value={password1} onChange={(e) => setPassword1(e.target.value)} />
-                                        <span icon={showPassword ? true : false} onClick={togglePasswordVisibility}><i class="fa-regular fa-eye text-body-tertiary" style={{ position: 'relative', bottom: '36px', left: '250px' }}></i></span>
+                                        }} type={showPassword ? "text" : "password"} autocomplete="off"
+                                            className='bg-transparent outline-none w-full  '
+                                            placeholder='Password' value={password1} onChange={(e) => setPassword1(e.target.value)} />
+                                        <span icon={showPassword ? true : false} onClick={togglePasswordVisibility}>
+                                            <i class="fa-regular fa-eye text-body-tertiary">
 
+                                            </i>
+                                        </span>
                                     </div>
+
                                 </div>
 
-                                <div className='mt-3 ms-3' style={{ display: 'flex' }}>
-                                    <button className='Login' style={{ fontSize: '10px' }}>
-                                        <p style={{ fontSize: '18px' }} onClick={handleSubmit1}>Login Now</p>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="h-6 w-6"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                            stroke-width="4"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M14 5l7 7m0 0l-7 7m7-7H3"
-                                            ></path>
-                                        </svg>
-                                    </button>
-                                    <Link to="/Forgot_password" className='nav-link '>
+                                <div className='mt-3 flex ms-3'>
 
-                                        <span className='ms-4 ' style={{ cursor: 'pointer', fontSize: '13px', position: 'relative', top: '4px', left: '25px' }} >Forgot Password ?</span>
+                                    <Link to="/Forgot_password" className='nav-link ms-auto text-blue-600 '>
+                                        <span className=' text-blue-600 '>
+                                            Forgot Password ?</span>
                                     </Link>
 
                                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -253,7 +252,6 @@ const Login__ = () => {
 
                                                 </div>
                                                 <div class="modal-footer">
-
                                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#otpModal" onClick={HandleForgotsendMail}>Send</button>
                                                 </div>
 
@@ -290,22 +288,20 @@ const Login__ = () => {
                                         </div>
                                     </div>
                                 </div>
+                                <button onClick={handleSubmit1}
+                                    className='my-5 w-full bg-slate-950 border-slate-950 rounded-2 p-3 hover:bg-blue-600
+                             text-slate-50 duration-500 ' >
+                                    Login Now
+                                </button>
+                            </section>
+                            <p className='h-[30px] ' ></p>
 
-                                <div className='mt-4 d-flex'>
-                                    <span className='mt-1  ms-5' style={{ fontSize: '13px' }}>Don't have an account?</span>
-                                    <Link to="/Signup_" className='nav-link '>
-                                        <span className='mt-4  ms-3 ' style={{ fontSize: '13px', color: '#F5558D' }}>Sign Up</span>
-                                    </Link>
-
-                                </div>
-
-
-                            </div>
-                        </div>
-                    </div>
-
+                            <button className=' border-2 rounded mt-4 p-2 w-full text-blue-600 border-blue-600 text-lg hover:bg-blue-600 hover:text-slate-50 duration-500 ' >
+                                Visit Our Site
+                            </button>
+                        </article>
+                    </section>
                 </div>
-
             </div>
         </div>
     )

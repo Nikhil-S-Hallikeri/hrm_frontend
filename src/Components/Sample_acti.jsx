@@ -4,6 +4,7 @@ import { port } from '../App';
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { HrmStore } from '../Context/HrmContext';
+import NewSideBar from './MiniComponent/NewSideBar';
 
 const generateDates = (month, year) => {
     const dates = [];
@@ -207,9 +208,10 @@ const Sample_acti = () => {
     return (
         <div className='d-flex' style={{ width: '100%', minHeight: '100%', }}>
             <div className=''>
-                <Sidebar value={"dashboard"}></Sidebar>
+                {/* <Sidebar value={"dashboard"}></Sidebar> */}
+                <NewSideBar />
             </div>
-            <div className='m-0 p-sm-2 flex-1 container ' style={{ borderRadius: '10px' }}>
+            <div className='m-0 p-sm-2 flex-1 container-fluid overflow-hidden ' style={{ borderRadius: '10px' }}>
                 <div className='Sample_acti_Topnav' >
                     <Topnav></Topnav>
                 </div>

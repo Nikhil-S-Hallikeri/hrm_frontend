@@ -6,8 +6,8 @@ import { HrmStore } from '../../Context/HrmContext'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-const LeaveAllHistory = () => {
-    let { getLeaveData, leaveData, setActivePage, changeDateYear } = useContext(HrmStore)
+const LeaveAllHistory = ({ subpage }) => {
+    let { getLeaveData, leaveData, setActivePage, changeDateYear, setTopNav } = useContext(HrmStore)
     let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let empstatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
     let empNormalId = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).id
@@ -61,7 +61,8 @@ const LeaveAllHistory = () => {
     useEffect(() => {
         getAllLeaveHistory()
         getLeaveData()
-        setActivePage('Employee')
+        setActivePage('leave')
+        setTopNav('history')
     }, [])
 
     let changeLeaveStatus = (obj, status) => {
@@ -79,10 +80,10 @@ const LeaveAllHistory = () => {
 
     return (
         <div>
-            <Topnav name="Total Leaves History" />
+            {!subpage && <Topnav name="Total Leaves History" />}
 
             <main className='flex flex-wrap items-center justify-between'>
-                <section className='my-3 flex flex-wrap gap-3'>
+                <section className='my-3 flex items-center flex-wrap gap-3'>
                     <div className='rounded p-2 bgclr w-fit '>
                         <input onKeyDown={(e) => {
                             if (e.key == 'Enter')
@@ -110,12 +111,12 @@ const LeaveAllHistory = () => {
                             </option>
                         ))}
                     </select>
-                    <button onClick={HandleFilterRequest} className='p-2 h-fit px-4 w-40 text-white savebtn rounded border-2 border-green-50 '>
+                    <button onClick={HandleFilterRequest} className='p-2 h-fit px-4 w-40 text-white savebtn rounded '>
                         Search
                     </button>
                 </section>
-                <button className='p-1 px-3 btngrd text-white text-sm h-fit rounded border-2 '
-                    onClick={() => navigate('/dash/approvals')}>
+                <button className='p-2 px-3 bluebtn w-36 text-white text-sm h-fit rounded '
+                    onClick={() => navigate('/leave/approvals')}>
                     Request
                 </button>
             </main>
@@ -132,6 +133,7 @@ const LeaveAllHistory = () => {
                             <th className=''>Reason </th>
                             <th>No of days </th>
                             <th>Applied Date </th>
+                            {/* <th>Decision Date</th> */}
                             <th>From Date </th>
                             <th>To Date </th>
                             <th>Status </th>
@@ -143,14 +145,15 @@ const LeaveAllHistory = () => {
 
                                 <tr className='' key={index}>
                                     <td>{index + 1} </td>
-                                    <td className='text-start'>{obj.employee_name} ({obj.employee}) </td>
+                                    <td className='text-start  '>{obj.employee_name} ({obj.employee}) </td>
                                     <td>{obj.LeaveType} </td>
-                                    <td className='max-w-[400px] text-wrap '>{obj.reason} </td>
+                                    <td style={{width:'500px'}} className=' text-wrap '>{obj.reason} </td>
                                     <td>{obj.days} </td>
                                     <td> {obj.applied_date && changeDateYear(obj.applied_date)} </td>
+                                    {/* <td> {obj.approved_date && changeDateYear(obj.approved_date.slice(0, 10))} </td> */}
                                     <td>{obj.from_date && changeDateYear(obj.from_date)} </td>
                                     <td>{obj.to_date && changeDateYear(obj.to_date)} </td>
-                                    {(empstatus != 'Admin' || obj.approved_status!='approved' )&& <td>{obj.approved_status} </td>}
+                                    {(empstatus != 'Admin' || obj.approved_status != 'approved') && <td>{obj.approved_status} </td>}
                                     {empstatus == 'Admin' && obj.approved_status == 'approved' && <td>
                                         <select onChange={(e) => changeLeaveStatus(obj, e.target.value)} value={obj.approved_status} className={`bg-transparent outline-none text-blue-600`} name="" id="">
                                             {allStatus && allStatus.filter((x) => x != 'canceled').map((x) => (

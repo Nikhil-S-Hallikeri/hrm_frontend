@@ -6,13 +6,14 @@ import STcreation from './STcreation'
 import { HrmStore } from '../../Context/HrmContext'
 
 const SalaryTemplate = () => {
-  let {setActivePage}=useContext(HrmStore)
+  let {setActivePage,setTopNav}=useContext(HrmStore)
   useEffect(() => {
     setActivePage('payroll')
+    setTopNav('template')
   }, [])
   return (
-    <div>
-      <Topnav name='Salary Templates' />
+    <div className='p-2 ' >
+      {/* <Topnav name='Salary Templates' /> */}
       <Routes>
         <Route path='/*' element={<STtable />} />
         <Route path='/template/:id?' element={<STcreation />} />

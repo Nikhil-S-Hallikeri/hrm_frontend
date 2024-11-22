@@ -885,7 +885,7 @@ const Employee_interview_applicants = () => {
         <Empsidebar value={"dashboard"}></Empsidebar>
 
       </div>
-      <div className='flex-1 container mx-auto ' style={{ borderRadius: '10px' }}>
+      <div className='flex-1 container-fluid  mx-auto ' style={{ borderRadius: '10px' }}>
         <Topnav ></Topnav>
 
         <div className='d-flex nav nav-pills mb-3 container justify-content-between mt-4'>

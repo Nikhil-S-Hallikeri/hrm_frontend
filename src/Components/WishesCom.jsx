@@ -22,6 +22,7 @@ const WishesCom = () => {
     }, [])
     return (
         <div>
+
             {show && show.map((obj, index) => (
 
                 <Modal centered show={obj.id} onHide={() =>

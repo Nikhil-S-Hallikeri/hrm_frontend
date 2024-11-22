@@ -12,16 +12,25 @@ import ViewBtn from '../SVG/ViewBtn';
 import EditPen from '../SVG/EditPen';
 import CreateReligion from './Employee/CreateReligion';
 import CreateDepartment from './Modals/CreateDepartment';
-import { Modal } from 'react-bootstrap';
+import { Modal, Spinner } from 'react-bootstrap';
 import EmployeeSalaryAdding from './Modals/EmployeeSalaryAdding';
 import SortByTag from './SortingData/SortByTag';
+import EmployeeFilter from './SortingData/EmployeeFilter';
+import BlockedEmpToggle from './Employee/BlockedEmpToggle';
+import EditEmployeeModal from './Modals/EditEmployeeModal';
+import NewSideBar from './MiniComponent/NewSideBar';
+import ActionIcon from './Icons/ActionIcon';
+import ThreeDot from '../SVG/ThreeDot';
+import HighLevelEncoder from '@zxing/library/esm/core/datamatrix/encoder/HighLevelEncoder';
 
-const Allemp = () => {
-  let { religion } = useContext(HrmStore);
+const Allemp = ({ subpage }) => {
+  let [empActiveStatus, setActiveEmpStatus] = useState('active')
+  let { religion, setTopNav } = useContext(HrmStore);
   let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId;
   let empStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation;
   let [addEmpModal, setAddEmpModal] = useState(false);
   let [editModal, setEditModal] = useState(false);
+  let [selectedEmployeeindex, setSelectedEmployeeindex] = useState()
   let [editModalPage, setEditModalPage] = useState('Info');
   const [selectedFile, setSelectedFile] = useState(null);
   let [showreligion, setShowReligion] = useState(false);
@@ -46,7 +55,57 @@ const Allemp = () => {
   const [DECLARATION, setDECLARATION] = useState([]);
 
   // "EmployeesSort/${emp_user}"
+  const [Edit_Data, set_Edit_Data] = useState({
+    full_name: '',
+    employee_attendance_id: '',
+    date_of_birth: '',
+    gender: '',
+    email: '',
+    mobile: '',
+    weight: '',
+    secondary_email: '',
+    secondary_mobile_number: '',
+    height: '',
+    permanent_address: '',
+    present_address: '',
+    hired_date: '',
+    Dashboard: '',
+    Department_id: '',
+    religion: '',
+    Position_id: '',
+    Reporting_To: '',
+    Employeement_Type: '',
+    internship_Duration_From: '',
+    internship_Duration_To: '',
+    probation_status: '',
+    probation_Duration_From: '',
+    probation_Duration_To: '',
 
+    EmployeeShifts: '',
+    interview_shedule_access: '',
+    screening_shedule_access: '',
+    final_status_access: '',
+    applied_list_access: '',
+    employee_status: '',
+    // new permissions
+    all_employees_edit: '',
+    all_employees_view: '',
+    assign_leave_apply: '',
+    assign_offerletter_prepare: '',
+    assign_resignation_apply: '',
+    attendance_upload: '',
+    employee_personal_details_view: '',
+    holiday_calender_creation: '',
+    job_post: '',
+    leave_create: "",
+    leave_edit: '',
+    massmail_communication: "",
+    salary_component_creation: '',
+    salary_template_creation: '',
+    self_activity_add: ''
+
+
+  });
   useEffect(() => {
     fetchdata();
   }, []);
@@ -122,15 +181,18 @@ const Allemp = () => {
       [name]: value,
     }));
   };
-  const fetchdata = () => {
+  const fetchdata = (val) => {
+    setloading('allemp')
     axios
-      .get(`${port}/root/ems/AllEmployeesList/${Empid}/?emp_status=active`)
+      .get(`${port}/root/ems/AllEmployeesList/${Empid}/?emp_status=${val ? val : "active"}`)
       .then(res => {
-        console.log('AllEmployee_res', res.data, Empid);
+        console.log('AllEmployee_res', res.data, `${port}/root/ems/AllEmployeesList/${Empid}/?emp_status=${val ? val : "active"}`);
         setAllEmployeelist(res.data);
+        setloading(false)
       })
       .catch(err => {
         console.log('AllEmployee_err', err);
+        setloading(false)
       });
   };
 
@@ -295,6 +357,7 @@ const Allemp = () => {
 
   const [_fullname, set_edit_fullname] = useState('');
 
+
   let Add_Employee = e => {
     e.preventDefault();
 
@@ -387,37 +450,6 @@ const Allemp = () => {
     // sentparticularData()
   }, []);
 
-  const [Edit_Data, set_Edit_Data] = useState({
-    full_name: '',
-    employee_attendance_id: '',
-    date_of_birth: '',
-    gender: '',
-    email: '',
-    mobile: '',
-    weight: '',
-    secondary_email: '',
-    secondary_mobile_number: '',
-    height: '',
-    permanent_address: '',
-    present_address: '',
-    hired_date: '',
-    Dashboard: '',
-    Department_id: '',
-    religion: '',
-    Position_id: '',
-    Reporting_To: '',
-    Employeement_Type: '',
-    internship_Duration_From: '',
-    internship_Duration_To: '',
-    probation_status: '',
-    probation_Duration_From: '',
-    probation_Duration_To: '',
-    interview_shedule_access: '',
-    screening_shedule_access: '',
-    final_status_access: '',
-    applied_list_access: '',
-    employee_status: '',
-  });
 
   // console.log("datas",Edit_Data);
   let handleChangeEdit_data = e => {
@@ -554,7 +586,7 @@ const Allemp = () => {
       .then(e => {
         set_Edit_Data(e.data);
         // console.log('Update_Data', e.data.Department_id);
-        console.log('Update_Data', e.data);
+        console.log('Update_Data_emp', e.data);
 
         Call_Department(e.data.Department_id);
         console.log('Employee_Data', e.data);
@@ -585,94 +617,122 @@ const Allemp = () => {
   }, []);
   let navigate = useNavigate();
 
-  const columns = [
+  const employeeColumn_Obj = [
     {
       name: 'Name',
       tag_id: 'full_name',
+      type: 'text'
     },
     {
       name: 'Employee ID',
       tag_id: 'employee_Id',
+      type: 'text'
     },
     {
       name: 'Email',
       tag_id: 'email',
+      type: 'text'
+    },
+    {
+      tag_id: 'Reporting_To_Name',
+      name: 'Reporting To',
+      type: 'text'
     },
     {
       name: 'Employment Type',
       tag_id: 'Employeement_Type',
+      type: 'text'
     },
     {
       name: 'Position',
       tag_id: 'Dashboard',
+      type: 'text'
     },
     {
       name: 'Phone',
       tag_id: 'mobile',
+      type: 'text'
     },
     {
       name: 'Join Date',
       tag_id: 'hired_date',
+      type: 'date'
     },
     {
       name: 'Department',
       tag_id: 'Department',
+      type: 'text'
     },
     {
       name: 'Role',
       tag_id: 'Designation',
+      type: 'text'
     },
     {
       name: 'Qualification',
       tag_id: 'Qualification',
+      type: 'text'
     },
     {
       name: 'Blood Group',
       tag_id: 'blood_group',
+      type: 'text'
     },
     {
       name: 'Emergency Contact',
       tag_id: 'phone',
+      type: 'text'
     },
     {
       name: 'Marital Status',
       tag_id: 'marital_status',
+      type: 'text'
     },
     {
       name: 'AadharCard Number',
       tag_id: 'aadhar_no',
+      type: 'text'
     },
     {
       name: 'PanCard Number',
       tag_id: 'pan_no',
+      type: 'text'
     },
     {
       name: 'Current Experience',
       tag_id: 'Currrent_Experience',
+      rm_sort: true,
+      type: 'text'
     },
     {
       name: 'Total Experience',
       tag_id: 'Total_Experience',
+      rm_sort: true,
+      type: 'text'
     },
     {
       name: 'Current CTC',
       tag_id: 'CTC_per_annum',
+      type: 'text'
     },
   ];
-
+  useEffect(() => {
+    setTopNav('all')
+  }, [])
   return (
     <div
       className=" d-flex"
       style={{ width: '100%', minHeight: '100%' }}
     >
-      <div className="d-none d-lg-flex">
-        <Sidebar value={'dashboard'}></Sidebar>
-      </div>
+      {!subpage && <div className="d-none d-lg-flex">
+        {/* <Sidebar value={'dashboard'}></Sidebar> */}
+        <NewSideBar />
+      </div>}
       <div
-        className=" m-0 m-sm-4 flex-1 container mx-auto  "
+        className=" m-0 flex-1  container-fluid overflow-hidden mx-auto  "
         style={{ borderRadius: '10px' }}
       >
-        <Topnav></Topnav>
+        {!subpage && <Topnav></Topnav>}
 
         <div className="mt-3 All_emp_Top_btns">
           <div>
@@ -688,7 +748,7 @@ const Allemp = () => {
               className=""
               style={{ display: 'flex', justifyContent: 'end' }}
             >
-              <div class="input-group mb-3 me-3">
+              {/* <div class="input-group mb-3 me-3">
                 <span
                   class="input-group-text"
                   id="basic-addon1"
@@ -718,28 +778,27 @@ const Allemp = () => {
                   aria-label="Username"
                   aria-describedby="basic-addon1"
                 />
-              </div>
+              </div> */}
+              <EmployeeFilter filterOptions={employeeColumn_Obj} setloading={setloading}
+               empActiveStatus={empActiveStatus} setemp={setAllEmployeelist} />
               <EmployeeCreation
                 show={addEmpModal}
                 id={Edit_id}
                 setid={set_Edit_id}
                 setshow={setAddEmpModal}
                 getEmp={fetchdata}
+                setShowReligion={setShowReligion} 
+                religion={religion}
               />
 
               <div className="">
                 <button
-                  className="btn bg-primary-subtle"
+                  className="sidebarbg text-slate-50 p-2 px-3 rounded  "
                   onClick={() => {
                     setAddEmpModal(true);
                   }}
-                  style={{
-                    width: '120px',
-                    height: '32px',
-                    outline: 'none',
-                    fontSize: '14px',
-                  }}
-                  // data-bs-toggle="modal" data-bs-target="#exampleModal232"
+
+                // data-bs-toggle="modal" data-bs-target="#exampleModal232"
                 >
                   Add Employee
                 </button>
@@ -769,7 +828,7 @@ const Allemp = () => {
                               className="mt-2 text-center p-3"
                               style={{ color: 'rgb(76,53,117)' }}
                             >
-                              Enter Employee Information
+                              Enter Employee
                             </h3>
                             <div className="col-lg-12 p-4 mt-2 border rounded-lg">
                               <form>
@@ -1130,41 +1189,81 @@ const Allemp = () => {
         </div>
 
         {/* <button type="submit" onClick={Click} className="btn btn-primary text-white fw-medium px-2 px-lg-5">CLICK</button> */}
-
+        {/* toggle button */}
+        <BlockedEmpToggle setemployee={setAllEmployeelist} activeEmployeeStatus={empActiveStatus}
+          setActiveEmployeeStatus={setActiveEmpStatus} getEmployeee={fetchdata} />
         <div
-          className="row tablebg table-responsive max-h-[60vh] 
+          className="row tablebg table-responsive h-[60vh] 
                 overflow-y-scroll rounded-xl my-3 mt-3 p-0"
           style={{ width: '100%' }}
         >
+
           <table class="w-full p-0 ">
             <thead>
-              <tr className="sticky top-0 bgclr1 ">
+              <tr className="sticky top-0 z-10  ">
+                <th className='' >
+                  <ActionIcon />
+                </th>
                 {/* <th scope="col"><span className='fw-medium'>All</span></th> */}
 
-                {columns.map((eachTag, idx) => {
+                {employeeColumn_Obj.map((eachTag, idx) => {
                   return (
                     <SortByTag
                       key={idx}
+                      setloading={setloading}
                       setAllEmployeelist={setAllEmployeelist}
                       tag={eachTag.name}
+                      allEmp={AllEmployeelist}
                       Empid={Empid}
+                      empActiveStatus={empActiveStatus}
+                      obj={eachTag}
                       tagID={eachTag.tag_id}
                     />
                   );
                 })}
-                <th className="col sticky right-0 bgclr1 ">Action</th>
+                {/* <th className=" ">Action</th> */}
               </tr>
             </thead>
             <tbody>
-              {AllEmployeelist &&
+              {AllEmployeelist && loading != 'allemp' &&
                 AllEmployeelist.map((e, index) => {
                   console.log(e, 'empdetails');
 
                   return (
                     <tr
                       key={e.id}
-                      className={`   `}
+                      className={`duration-800 ${selectedEmployeeindex == e.id ? 'bg-blue-50 ' : 'bg-white'} `}
+
                     >
+                      <td className=' ' >
+                        <section className='relative ' >
+
+                          <button onClick={() => {
+                            setSelectedEmployeeindex((prev) => prev == e.id ? -1 : e.id)
+                          }} className='rotate-90 p-2' >
+
+                            <ThreeDot size={4} />
+                          </button>
+                          {selectedEmployeeindex == e.id &&
+                            <div className={` absolute top-4  min-w-32 left-10  rounded shadow p-2 bg-white `} >
+                              <button onClick={() => {
+                                Edit_Employee(e.id);
+                                setEditModal(true);
+                                setSelectedEmployeeindex(-1)
+                              }} className=' block border-b-[1px] w-full py-1 text-start ' >
+                                Edit
+                              </button>
+                              <button onClick={() => {
+                                sentparticularData(e.id, e.employeeProfile);
+                                navigate(`/employees/profile/${e.employee_Id}`);
+                                setSelectedEmployeeindex(-1)
+                              }} className='block my-1 w-full border-b-[1px] py-1 text-start ' >
+                                View
+                              </button>
+                            </div>}
+
+                        </section>
+                      </td>
                       {/* <td scope="row"><input type="checkbox" value={e.employee_Id}
                                             onChange={handleCheckboxChange} /></td> */}
                       <td className=" ">
@@ -1172,7 +1271,7 @@ const Allemp = () => {
                           className=" "
                           onClick={() => {
                             sentparticularData(e.id, e.employeeProfile);
-                            navigate(`/dash/employee/${e.employee_Id}`);
+                            navigate(`/employees/profile/${e.employee_Id}`);
                           }}
                         >
                           {e.full_name}
@@ -1180,6 +1279,7 @@ const Allemp = () => {
                       </td>
                       <td> {e.employee_Id}</td>
                       <td> {e.email}</td>
+                      <td>{e.Reporting_To_Name} </td>
                       <td>{e.Employeement_Type} </td>
                       <td> {e.Dashboard}</td>
 
@@ -1226,15 +1326,12 @@ const Allemp = () => {
                       <td>
                         {e.salary_Template && e.salary_Template.CTC_per_annum}{' '}
                       </td>
-                      <td className="flex sticky-right bgclr1 items-center gap-3 ">
+                      {/* <td className="flex sticky-right bgclr1 items-center gap-3 ">
                         <button
                           onClick={() => {
                             Edit_Employee(e.id);
-                            // set_Edit_id(e.id)
-                            // setAddEmpModal(true)
                             setEditModal(true);
                           }}
-                          //  data-bs-toggle="modal" data-bs-target="#exampleModal_Edit"
                         >
                           <EditPen />
                         </button>
@@ -1248,18 +1345,22 @@ const Allemp = () => {
                         {empStatus == 'Admin' && (
                           <button
                             onClick={() =>
-                              navigate(`/dash/employee/${e.employee_Id}`)
+                              navigate(`/employees/profile/${e.employee_Id}`)
                             }
                           >
                             <ViewBtn />
                           </button>
                         )}
-                      </td>
+                      </td> */}
                     </tr>
                   );
                 })}
             </tbody>
           </table>
+          {loading == 'allemp' &&
+            <div className='min-h-[50vh] w-full flex items-center justify-center ' >
+              <Spinner className='m-auto  ' />
+            </div>}
           {showreligion && (
             <CreateReligion
               show={showreligion}
@@ -1273,662 +1374,14 @@ const Allemp = () => {
               getdept={getDepart}
             />
           )}
-          <Modal
-            show={editModal}
-            centered
-            size="xl"
-            onHide={() => {
-              resetEditModal();
-            }}
-          >
-            <Modal.Header closeButton>
-              <h3
-                className="poppins"
-                style={{ color: 'rgb(76,53,117)' }}
-              >
-                Update Employee2 Information{' '}
-              </h3>
-            </Modal.Header>
-            <Modal.Body>
-              <div className="row justify-content-center m-0">
-                {editModalPage == 'Info' && (
-                  <div className="col-lg-12 p-4 mt-2 border rounded-lg">
-                    {/* ---------------------------------PERSONAL DETAILS--------------------------------------------------------- */}
-                    <div className="row m-0  pb-2">
-                      <div className="row m-0 mt-2">
-                        <div className="col-md-6 col-lg-4  mb-3">
-                          <label
-                            htmlFor="firstName"
-                            className="form-label"
-                          >
-                            Name <span class="text-danger">*</span>{' '}
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control shadow-none bg-light"
-                            id="FirstName"
-                            name="full_name"
-                            value={Edit_Data.full_name}
-                            onChange={handleChangeEdit_data}
-                          />
-                        </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="lastName"
-                            className="form-label"
-                          >
-                            DOB <span class="text-danger">*</span>{' '}
-                          </label>
-                          <input
-                            type="date"
-                            className="form-control shadow-none bg-light"
-                            id=" LastName"
-                            name="date_of_birth"
-                            value={Edit_Data.date_of_birth}
-                            onChange={handleChangeEdit_data}
-                          />
-                        </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="gender"
-                            className="form-label bg-light"
-                          >
-                            Gender <span class="text-danger">*</span>{' '}
-                          </label>
-                          <select
-                            className="form-control shadow-none bg-light"
-                            id="gender"
-                            name="gender"
-                            onChange={handleChangeEdit_data}
-                            value={Edit_Data.gender} // Set the value of the select input to gender
-                            // Update gender state when the select input changes
-                          >
-                            <option value="">
-                              Select Gender <span class="text-danger">*</span>{' '}
-                            </option>{' '}
-                            {/* Empty value for the default option */}
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="others">Others</option>
-                          </select>
-                        </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="email"
-                            className="form-label"
-                          >
-                            Primary Email <span class="text-danger">*</span>{' '}
-                          </label>
-                          <input
-                            type="email"
-                            className="form-control shadow-none bg-light"
-                            id=" Email"
-                            name="email"
-                            value={Edit_Data.email}
-                            onChange={handleChangeEdit_data}
-                          />
-                        </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="email"
-                            className="form-label"
-                          >
-                            Secondary Email <span class="text-danger"></span>{' '}
-                          </label>
-                          <input
-                            type="email"
-                            className="form-control shadow-none bg-light"
-                            id=" Email"
-                            name="secondary_email"
-                            value={Edit_Data.secondary_email}
-                            onChange={handleChangeEdit_data}
-                          />
-                        </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="email"
-                            className="form-label"
-                          >
-                            Attendence Id <span class="text-danger">*</span>{' '}
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control shadow-none bg-light"
-                            id=" Email"
-                            name="employee_attendance_id"
-                            value={Edit_Data.employee_attendance_id}
-                            onChange={handleChangeEdit_data}
-                          />
-                        </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="primaryContact"
-                            className="form-label"
-                          >
-                            Primary Phone <span class="text-danger">*</span>{' '}
-                          </label>
-                          <input
-                            type="tel"
-                            className="form-control shadow-none bg-light"
-                            id="PrimaryContact"
-                            name="mobile"
-                            value={Edit_Data.mobile}
-                            onChange={handleChangeEdit_data}
-                          />
-                        </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="primaryContact"
-                            className="form-label"
-                          >
-                            Secondary Phone <span class="text-danger">*</span>{' '}
-                          </label>
-                          <input
-                            type="tel"
-                            className="form-control shadow-none bg-light"
-                            id="PrimaryContact"
-                            name="secondary_mobile_number"
-                            value={Edit_Data.secondary_mobile_number}
-                            onChange={handleChangeEdit_data}
-                          />
-                        </div>
-                        <div className="col-md-6 col-lg-2 mb-3">
-                          <label
-                            htmlFor="secondaryContact"
-                            className="form-label"
-                          >
-                            Weight{' '}
-                          </label>
-                          <input
-                            type="number"
-                            className="form-control shadow-none bg-light"
-                            id="SecondaryContact"
-                            name="weight"
-                            value={Edit_Data.weight}
-                            onChange={handleChangeEdit_data}
-                          />
-                        </div>
-                        <div className="col-md-6 col-lg-2 mb-3">
-                          <label
-                            htmlFor="secondaryContact"
-                            className="form-label"
-                          >
-                            Height <span class="text-danger">*</span>{' '}
-                          </label>
-                          <input
-                            type="number"
-                            className="form-control shadow-none bg-light"
-                            id="State"
-                            name="height"
-                            value={Edit_Data.height}
-                            onChange={handleChangeEdit_data}
-                          />
-                        </div>
-                        <div className="col-md-6 col-lg-12 mb-3">
-                          <label
-                            htmlFor="secondaryContact"
-                            className="form-label"
-                          >
-                            Permanent Address <span class="text-danger">*</span>{' '}
-                          </label>
-                          <textarea
-                            type="text"
-                            className="form-control shadow-none bg-light"
-                            id=" District"
-                            name="permanent_address"
-                            value={Edit_Data.permanent_address}
-                            onChange={handleChangeEdit_data}
-                          />
-                        </div>
-                        <div className="col-md-6 col-lg-12 mb-3">
-                          <label
-                            htmlFor="secondaryContact"
-                            className="form-label"
-                          >
-                            Present Address <span class="text-danger">*</span>{' '}
-                          </label>
-                          <textarea
-                            type="text"
-                            className="form-control shadow-none bg-light"
-                            id=" District"
-                            name="present_address"
-                            value={Edit_Data.present_address}
-                            onChange={handleChangeEdit_data}
-                          />
-                        </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="secondaryContact"
-                            className="form-label"
-                          >
-                            Hired Date <span class="text-danger">*</span>{' '}
-                          </label>
-                          <input
-                            type="date"
-                            className="form-control shadow-none bg-light"
-                            id="State"
-                            name="hired_date"
-                            value={Edit_Data.hired_date}
-                            onChange={handleChangeEdit_data}
-                          />
-                        </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="gender"
-                            className="flex justify-between form-label"
-                          >
-                            {' '}
-                            Religion
-                            <button
-                              className="text-xs "
-                              onClick={() => setShowReligion(true)}
-                            >
-                              create Religion{' '}
-                            </button>
-                          </label>
-                          <select
-                            className="form-control shadow-none bg-light"
-                            id="gender"
-                            name="religion"
-                            value={Edit_Data.religion}
-                            onChange={e => {
-                              handleChangeEdit_data(e);
-                            }}
-                          >
-                            <option value="">
-                              Select <span class="text-danger">*</span>{' '}
-                            </option>{' '}
-                            {/* Empty value for the default option */}
-                            {religion &&
-                              religion.map(interviewer => (
-                                <option
-                                  key={interviewer.id}
-                                  value={interviewer.id}
-                                >
-                                  {`${interviewer.religion_name}`}
-                                </option>
-                              ))}
-                          </select>
-                        </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="gender"
-                            className="form-label "
-                          >
-                            Position <span class="text-danger">*</span>{' '}
-                          </label>
-                          <select
-                            className="form-control shadow-none bg-light"
-                            id="gender"
-                            name="Dashboard"
-                            value={Edit_Data.Dashboard}
-                            onChange={handleChangeEdit_data} // Set the value of the select input to gender
-                            // Update gender state when the select input changes
-                          >
-                            <option value="">
-                              Select <span class="text-danger">*</span>{' '}
-                            </option>{' '}
-                            {/* Empty value for the default option */}
-                            <option value="HR">HR head</option>
-                            <option value="Admin">Admin</option>
-                            <option value="Employee">Employee</option>
-                            <option value="Recruiter">Recruiter</option>
-                          </select>
-                        </div>
 
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="gender"
-                            className="form-label flex justify-between "
-                          >
-                            Department
-                            <button
-                              className="text-xs "
-                              onClick={() => setShowDepartment(true)}
-                            >
-                              Create Department{' '}
-                            </button>{' '}
-                          </label>
-                          <select
-                            className="form-control shadow-none bg-light"
-                            id="gender"
-                            name="Department_id"
-                            value={Edit_Data.Department_id}
-                            onChange={e => {
-                              Call_Department(e.target.value);
-                              handleChangeEdit_data(e);
-                            }}
-                            // Set the value of the select input to gender
-                            // Update gender state when the select input changes
-                          >
-                            <option value="">
-                              Select <span class="text-danger">*</span>{' '}
-                            </option>{' '}
-                            {/* Empty value for the default option */}
-                            {Department_List.map((interviewer, index) => {
-                              console.log('Update_Data', interviewer);
-                              return (
-                                <option
-                                  key={interviewer.id}
-                                  value={interviewer.id}
-                                >
-                                  {`${interviewer.Dep_Name}`}
-                                </option>
-                              );
-                            })}
-                          </select>
-                        </div>
-                        {console.log(Edit_Data)}
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="gender"
-                            className="form-label"
-                          >
-                            Designation <span class="text-danger">*</span>{' '}
-                          </label>
-                          <select
-                            className="form-control shadow-none bg-light"
-                            id="gender"
-                            name="Position_id"
-                            value={Edit_Data.Position_id}
-                            onChange={e => {
-                              handleChangeEdit_data(e);
-                            }}
-                          >
-                            <option value="">
-                              Select <span class="text-danger">*</span>{' '}
-                            </option>{' '}
-                            {/* Empty value for the default option */}
-                            {Desgination_List.map(interviewer => (
-                              <option
-                                key={interviewer.id}
-                                value={interviewer.id}
-                              >
-                                {`${interviewer.Name}`}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
 
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="gender"
-                            className="form-label "
-                          >
-                            Reporting To <span class="text-danger">*</span>{' '}
-                          </label>
-                          <select
-                            className="form-control shadow-none bg-light"
-                            id="gender"
-                            name="Reporting_To"
-                            value={Edit_Data.Reporting_To}
-                            onChange={handleChangeEdit_data} // Set the value of the select input to gender
-                            // Update gender state when the select input changes
-                          >
-                            <option value="">
-                              Select <span class="text-danger">*</span>{' '}
-                            </option>{' '}
-                            {/* Empty value for the default option */}
-                            {interviewers.map(interviewer => (
-                              <option
-                                key={interviewer.EmployeeId}
-                                value={interviewer.EmployeeId}
-                              >
-                                {`${interviewer.EmployeeId},${interviewer.Name}`}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="col-md-6 col-lg-4 mb-3">
-                          <label
-                            htmlFor="gender"
-                            className="form-label"
-                          >
-                            Employeement type <span class="text-danger">*</span>{' '}
-                          </label>
-                          <select
-                            value={Edit_Data.Employeement_Type}
-                            onChange={handleChangeEdit_data}
-                            className="form-control shadow-none bg-light"
-                            id="gender"
-                            name="Employeement_Type" // Update gender state when the select input changes
-                            required
-                          >
-                            <option value="">
-                              Select <span class="text-danger">*</span>{' '}
-                            </option>{' '}
-                            {/* Empty value for the default option */}
-                            <option value="intern">Intern </option>
-                            <option value="permanent">Permanent </option>
-                          </select>
-                        </div>
-                        {Edit_Data.Employeement_Type == 'intern' && (
-                          <section className="col-md-6 col-lg-4 mb-3">
-                            <label
-                              htmlFor="gender"
-                              className="form-label"
-                            >
-                              Intern Duration <span class="text-danger">*</span>{' '}
-                            </label>
-                            <div>
-                              <input
-                                type="date"
-                                value={Edit_Data.internship_Duration_From}
-                                name="internship_Duration_From"
-                                onChange={handleChangeEdit_data}
-                                className="outline-none p-2 bg-light rounded border-1 "
-                              />{' '}
-                              -
-                              <input
-                                type="date"
-                                value={Edit_Data.internship_Duration_To}
-                                name="internship_Duration_To"
-                                onChange={handleChangeEdit_data}
-                                className="outline-none p-2 bg-light rounded border-1 "
-                              />
-                            </div>
-                          </section>
-                        )}
-                        {Edit_Data.Employeement_Type == 'permanent' && (
-                          <div className="col-md-6 col-lg-4 mb-3">
-                            <label
-                              htmlFor="gender"
-                              className="form-label"
-                            >
-                              Probation type <span class="text-danger">*</span>{' '}
-                            </label>
-                            <select
-                              value={Edit_Data.probation_status}
-                              onChange={handleChangeEdit_data}
-                              className="form-control shadow-none bg-light"
-                              id="gender"
-                              name="probation_status"
-                              // Update gender state when the select input changes
-                              required
-                            >
-                              <option value="">
-                                Select <span class="text-danger">*</span>{' '}
-                              </option>{' '}
-                              {/* Empty value for the default option */}
-                              <option value="probationer">Probationer </option>
-                              {/* <option value="confirmed"> Confirmed </option> */}
-                            </select>
-                          </div>
-                        )}
-                        {Edit_Data.probation_status == 'probationer' && (
-                          <section className="col-md-6 col-lg-4 mb-3">
-                            <label
-                              htmlFor="gender"
-                              className="form-label"
-                            >
-                              Probation Duration
-                              <span class="text-danger">*</span>
-                            </label>
-                            <div>
-                              <input
-                                type="date"
-                                value={Edit_Data.probation_Duration_From}
-                                name="probation_Duration_From"
-                                onChange={handleChangeEdit_data}
-                                className="outline-none p-2 bg-light rounded border-1 "
-                              />{' '}
-                              -
-                              <input
-                                type="date"
-                                value={Edit_Data.probation_Duration_To}
-                                name="probation_Duration_To"
-                                onChange={handleChangeEdit_data}
-                                className="outline-none p-2 bg-light rounded border-1 "
-                              />
-                            </div>
-                          </section>
-                        )}
-
-                        <section>
-                          <label
-                            htmlFor="activestatus"
-                            className="form-label"
-                          >
-                            {' '}
-                            Active status
-                          </label>
-                          <article
-                            onClick={() =>
-                              set_Edit_Data(prev => ({
-                                ...prev,
-                                employee_status:
-                                  Edit_Data.employee_status == 'active'
-                                    ? 'in_active'
-                                    : 'active',
-                              }))
-                            }
-                            className="flex gap-1 items-center "
-                          >
-                            Block
-                            <div
-                              className={`  ${
-                                Edit_Data.employee_status == 'active'
-                                  ? 'bg-green-100'
-                                  : 'bg-red-100'
-                              } relative w-10 h-5 rounded-full duration-500 border-2 `}
-                            >
-                              <button
-                                className={`  h-4 w-4 absolute ${
-                                  Edit_Data.employee_status == 'active' &&
-                                  'translate-x-5'
-                                } duration-500 rounded-full bg-white `}
-                              ></button>
-                            </div>
-                            Active
-                          </article>
-                        </section>
-                      </div>
-
-                      <section>
-                        <h4>Permissions </h4>
-                        <article className="flex flex-wrap  ">
-                          <div className="col-md-6 col-lg-4 mb-3">
-                            <input
-                              type="checkbox"
-                              className=""
-                              checked={Edit_Data.interview_shedule_access}
-                              id="interview_shedule_access"
-                              value={Edit_Data.interview_shedule_access}
-                              onChange={() =>
-                                set_Edit_Data(prev => ({
-                                  ...prev,
-                                  interview_shedule_access:
-                                    !prev.interview_shedule_access,
-                                }))
-                              }
-                            />
-                            <label htmlFor="interview_shedule_access">
-                              Interview shedule access
-                            </label>
-                          </div>
-                          <div className="col-md-6 col-lg-4 mb-3">
-                            <input
-                              type="checkbox"
-                              className=""
-                              checked={Edit_Data.applied_list_access}
-                              id="applied_list_access"
-                              value={Edit_Data.applied_list_access}
-                              onChange={() =>
-                                set_Edit_Data(prev => ({
-                                  ...prev,
-                                  applied_list_access:
-                                    !prev.applied_list_access,
-                                }))
-                              }
-                            />
-                            <label htmlFor="applied_list_access">
-                              Applied list access
-                            </label>
-                          </div>
-                          <div className="col-md-6 col-lg-4 mb-3">
-                            <input
-                              type="checkbox"
-                              className=""
-                              checked={Edit_Data.final_status_access}
-                              id="final_status_access"
-                              value={Edit_Data.final_status_access}
-                              onChange={() =>
-                                set_Edit_Data(prev => ({
-                                  ...prev,
-                                  final_status_access:
-                                    !prev.final_status_access,
-                                }))
-                              }
-                            />
-                            <label htmlFor="final_status_access">
-                              Final status access
-                            </label>
-                          </div>
-                          <div className="col-md-6 col-lg-4 mb-3">
-                            <input
-                              type="checkbox"
-                              className=""
-                              checked={Edit_Data.screening_shedule_access}
-                              id="screening_shedule_access"
-                              value={Edit_Data.screening_shedule_access}
-                              onChange={() =>
-                                set_Edit_Data(prev => ({
-                                  ...prev,
-                                  screening_shedule_access:
-                                    !prev.screening_shedule_access,
-                                }))
-                              }
-                            />
-                            <label htmlFor="screening_shedule_access">
-                              Screening shedule access
-                            </label>
-                          </div>
-                        </article>
-                      </section>
-                    </div>
-                    <div className="col-12 text-end mt-3">
-                      <button
-                        type="submit"
-                        disabled={loading == 'edit'}
-                        onClick={Update_Employee}
-                        // data-bs-dismiss="modal"
-                        className="btn btn-primary text-white fw-medium px-2 px-lg-5"
-                      >
-                        {loading == 'edit' ? 'loading...' : 'Next'}{' '}
-                      </button>
-                    </div>
-                  </div>
-                )}
-                {editModalPage == 'sal' && (
-                  <EmployeeSalaryAdding
-                    id={Edit_Data.id}
-                    emp={Edit_Data}
-                    setpage={setEditModalPage}
-                  />
-                )}
-              </div>
-            </Modal.Body>
-          </Modal>
+          {/* Editing Model */}
+          <EditEmployeeModal editModal={editModal} handleChangeEdit_data={handleChangeEdit_data} Desgination_List={Desgination_List}
+            editModalPage={editModalPage} Call_Department={Call_Department} Department_List={Department_List}
+            setShowDepartment={setShowDepartment} set_Edit_Data={set_Edit_Data} Update_Employee={Update_Employee}
+            setShowReligion={setShowReligion} religion={religion} interviewers={interviewers} setEditModalPage={setEditModalPage}
+            resetEditModal={resetEditModal} Edit_Data={Edit_Data} loading={loading} EmployeeSalaryAdding={EmployeeSalaryAdding} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'end' }}>
           <div className="me-3">

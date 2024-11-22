@@ -18,7 +18,7 @@ const InputFieldform = ({ size, name, accept, optionObj, required, link, disable
 
             {type != 'textarea' && !options && !optionObj &&
                 <input placeholder={placeholder} accept={accept} type={type} disabled={disabled ? disabled : false}
-                    className="p-2 block rounded bgclr w-full outline-none shadow-none" value={ value}
+                    className="p-2 block rounded inputbg w-full outline-none shadow-none" value={ value}
                     onChange={(e) => {
                         if (limit) {
                             if (e.target.value >= 0 && e.target.value <= limit) {
@@ -30,11 +30,11 @@ const InputFieldform = ({ size, name, accept, optionObj, required, link, disable
                             index || index == 0 ? handleChange(e, index) : handleChange(e);
                         }
                     }} id="LastName" name={name} />}
-            {type == 'textarea' && !options && !optionObj && <textarea placeholder={placeholder} disabled={disabled ? disabled : false} name={name} value={value} onChange={handleChange} rows={5} className='p-2 bgclr rounded block w-full outline-none ' id=""></textarea>}
+            {type == 'textarea' && !options && !optionObj && <textarea placeholder={placeholder} disabled={disabled ? disabled : false} name={name} value={value} onChange={handleChange} rows={5} className='p-2 inputbg rounded block w-full outline-none ' id=""></textarea>}
 
             {(options || optionObj) &&
                 <select value={value} onChange={(e) => index || index == 0 ? handleChange(e, index) : handleChange(e)} name={name} disabled={disabled}
-                    className='p-2 block rounded bgclr w-full outline-none shadow-none'>
+                    className='p-2 block rounded inputbg w-full outline-none shadow-none'>
                     <option value="">Select  </option>
                     {options && options.map((val) => (
                         <option value={val}>{val} </option>

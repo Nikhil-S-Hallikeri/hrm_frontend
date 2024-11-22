@@ -44,6 +44,10 @@ const NavbarButton = (props) => {
                         ${activePage == active && 'shadow'} 
                         ${dropDown && 'absolute left-4  '} `}  >
                         <img className={`w-6 h-6 `} src={`${process.env.PUBLIC_URL}${img}`} alt="DashBoard" />
+                        {/* <span className='text-slate-100 ' >
+                            {label}
+                        </span> */}
+
                     </button>
                 </OverlayTrigger>
                 <button onClick={handleclick}

@@ -6,7 +6,7 @@ import { port } from '../../App'
 import AttendenceShowingadminTable from '../../Components/Tables/AttendenceShowingadminTable'
 
 const AttendenceInfo = () => {
-    let { setActiveSetting, getProperDate } = useContext(HrmStore)
+    let { setTopNav, getProperDate } = useContext(HrmStore)
     let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let [attendanceList, setAttendanceList] = useState([])
     let [show, setshow] = useState('')
@@ -36,19 +36,20 @@ const AttendenceInfo = () => {
     }
 
     let getAttendanceList = (stdate, endate) => {
-        if (empid) {
+        if (empid && stdate && endate) {
             axios.get(`${port}/root/lms/employee-attendance/${empid}/${stdate}/${endate}/`).then((response) => {
                 setAttendanceList(response.data.attendance_data)
-                console.log("arry", response.data.attendance_data);
+                console.log(`${port}/root/lms/employee-attendance/${empid}/${stdate}/${endate}/`,'api');
+                
+                console.log("apiarry", response.data);
             }).catch((error) => {
                 console.log("arry", error);
             })
         }
     }
     useEffect(() => {
-        setActiveSetting('attendence')
+        setTopNav('attendence')
         currentMonthDates()
-        getAttendanceList()
     }, [empid])
     return (
         <div>

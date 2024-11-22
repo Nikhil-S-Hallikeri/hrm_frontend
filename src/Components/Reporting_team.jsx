@@ -6,6 +6,8 @@ import { port } from '../App'
 import { useNavigate } from 'react-router-dom'
 import { HrmStore } from '../Context/HrmContext'
 import InfoButton from './SettingComponent/InfoButton'
+import { toast } from 'react-toastify'
+import NewSideBar from './MiniComponent/NewSideBar'
 
 
 const Reporting_team = () => {
@@ -46,22 +48,22 @@ const Reporting_team = () => {
 
     // ADD MORE START
 
-    const [Activity_data, setQualifications] = useState([
+    const [Activity_data, setActivityData] = useState([
 
-        { Activity_Name: '', targets: '' }
+        { Activity_Name: '', targets: '', day_or_month_wise: false }
     ]);
 
     const handleAddRow = (e) => {
         e.preventDefault();
 
-        setQualifications([...Activity_data, { Activity_Name: '', targets: '' }]);
+        setActivityData([...Activity_data, { Activity_Name: '', targets: '', day_or_month_wise: false }]);
     };
 
     const handleInputChange = (index, event) => {
         const { name, value } = event.target;
         const updatedQualifications = [...Activity_data];
         updatedQualifications[index][name] = value;
-        setQualifications(updatedQualifications);
+        setActivityData(updatedQualifications);
     };
     // ADD MORE END
 
@@ -178,11 +180,14 @@ const Reporting_team = () => {
         axios.post(`${port}/root/add_activity/`, { Activity_data, EmployeeId: selectedCandidates, login_user: Empid })
             .then(response => {
                 console.log('add_activit_res', response.data);
-                window.location.reload()
+                toast.success('Activity added')
+                setActivityData([{ Activity_Name: '', targets: '', day_or_month_wise: false }]);
+                // window.location.reload()
 
             })
             .catch(error => {
                 console.error('add_activity_res', error);
+                toast.error('Error occured')
 
             });
     };
@@ -502,13 +507,13 @@ const Reporting_team = () => {
         }
     }, [dates, Employee_ID])
     return (
-        <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
+        <div className='flex flex-col lg:flex-row ' style={{ width: '100%', minHeight: '100%', }}>
 
-            <div className='flex'>
+            <div className='sticky z-10 top-0'>
 
-                <Sidebar value={"dashboard"} ></Sidebar>
+               <NewSideBar/>
             </div>
-            <div className=' m-0 p-sm-2 flex-1 mx-auto container ' style={{ borderRadius: '10px' }}>
+            <div className=' m-0 p-sm-2 flex-1 mx-auto container-fluid overflow-hidden ' style={{ borderRadius: '10px' }}>
                 <div style={{ marginLeft: '10px' }}>
                     <Topnav></Topnav>
                 </div>
@@ -528,10 +533,11 @@ const Reporting_team = () => {
                     <div className='Reporting_Team_List_Btns  mt-2'>
                         <div className='ms-0 ms-sm-3 Reporting_Team_Btns'>
 
-                            <button className='btn btn-sm btn-success ms-2'
-                                data-bs-toggle="modal" data-bs-target="#exampleModal26">View</button>
+                            {/* <button className='btn btn-sm btn-success ms-2'
+                                data-bs-toggle="modal" data-bs-target="#exampleModal26">View</button> */}
                             <button disabled={selectedCandidates.length == 0}
-                                className='btn btn-sm btn-warning ms-3' data-bs-toggle="modal" data-bs-target="#exampleModal23">Add Activity</button>
+                                className='btn btn-sm btn-warning ms-3' data-bs-toggle="modal"
+                                data-bs-target="#exampleModal23">Add Activity</button>
                             <button
                                 disabled={selectedCandidates.length == 0}
                                 className='btn btn-sm btn-warning ms-4' data-bs-toggle="modal"
@@ -558,8 +564,28 @@ const Reporting_team = () => {
                                                         <input type="text" name="Activity_Name" value={qualification.Activity_Name} onChange={(e) => handleInputChange(index, e)} className="form-control  shadow-none" />
                                                     </div>
                                                     <div className="col-md-6 col-lg-6 mb-3">
-                                                        <label htmlFor="primaryContact" className="form-label" style={{ color: 'rgb(76,53,117)' }}>Targets*</label>
-                                                        <input type="number" name="targets" value={qualification.targets} onChange={(e) => handleInputChange(index, e)} className="form-control  shadow-none" />
+                                                        <div htmlFor="primaryContact"
+                                                            className="form-label flex justify-between " style={{ color: 'rgb(76,53,117)' }}>
+                                                            Targets *
+                                                            <div className='text-sm flex items-center gap-2 ' >
+                                                                Day wise
+                                                                <button onClick={() => {
+                                                                    const updatedQualifications = [...Activity_data];
+                                                                    updatedQualifications[index].day_or_month_wise = !updatedQualifications[index].day_or_month_wise;
+                                                                    setActivityData(updatedQualifications);
+                                                                }} className={` w-8 h-4 rounded-full bg-slate-100 p-1  `} >
+                                                                    <div className={` w-3 ${qualification.day_or_month_wise ? 'translate-x-3' : "translate-x-0"} duration-300
+                                                                     -translate-y-[2px] bg-slate-500 rounded-full h-3 `} >
+
+                                                                    </div>
+
+                                                                </button>
+                                                                Month wise
+                                                            </div>
+
+                                                        </div>
+                                                        <input type="number" name="targets" value={qualification.targets}
+                                                            onChange={(e) => handleInputChange(index, e)} className="form-control  shadow-none" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -576,7 +602,8 @@ const Reporting_team = () => {
 
                                             <button onClick={handleAddRow} className='btn me-3  btn-success'>Add More</button>
 
-                                            <button onClick={sendSelectedDataToApi} type="button" data-bs-dismiss="modal" class="btn btn-primary">Assign</button>
+                                            <button onClick={sendSelectedDataToApi} type="button" data-bs-dismiss="modal"
+                                                class="btn btn-primary">Assign</button>
                                         </div>
                                     </div>
                                 </div>
@@ -656,6 +683,7 @@ const Reporting_team = () => {
                                     <th scope="col">Name</th>
                                     <th scope="col">Email</th>
                                     <th scope="col">Employee ID</th>
+                                    <th>Reporting To </th>
                                     <th scope="col">Phone</th>
                                     <th scope="col">Join Date</th>
                                     <th scope="col">Role</th>
@@ -680,6 +708,7 @@ const Reporting_team = () => {
                                                     style={{ cursor: 'pointer' }}> {e.full_name}</td>
                                                 <td key={e.id}> {e.email}</td>
                                                 <td key={e.id}> {e.employee_Id}</td>
+                                                <td>{e.Reporting_To} </td>
                                                 <td key={e.id}> {e.mobile}</td>
                                                 <td key={e.id}> {e.hired_date}</td>
                                                 <td key={e.id}> {e.Designation}</td>
@@ -1364,71 +1393,87 @@ const Reporting_team = () => {
                                                     <tr className=' '>
                                                         <th scope="col" className='ms-3 sticky-left bgclr1 ' style={{ width: '150px' }}>Activity Name</th>
                                                         <th scope="col" className='text-center sticky-left1  bgclr1 ' style={{ minWidth: '150px' }}>Target
-                                                            <span className='text-xs '>(Each Day) </span> </th>
+                                                        </th>
                                                         <th scope="col" className='text-center sticky-left2 bgclr1 ' style={{ minWidth: '150px' }}>Achieved</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {activitiesget.map((activity, mainindex) => (
+                                                    {activitiesget.map((activity, mainindex) => {
+                                                        let wholeTargetclr = ''
+                                                        if (activity.day_or_month_wise) {
+                                                            // monthwise
+                                                            wholeTargetclr = (Number(activity.Total_Achived) / activity.targets) * 100 <= 50 ? 'bg-red-300' :
+                                                                (Number(activity.Total_Achived) / activity.targets) * 100 <= 70 ? 'bg-yellow-300' :
+                                                                    (activity.Total_Achived / activity.targets) * 100 <= 90 ? 'bg-blue-300 ' :
+                                                                        'bg-green-300'
+                                                        }
+                                                        else {
+                                                            //daywise
+                                                            wholeTargetclr = Number(activity.Total_Achived) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 50 ? 'bg-red-300' :
+                                                                activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 70 ? 'bg-yellow-300' :
+                                                                    activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 90 ? 'bg-blue-300 ' :
+                                                                        'bg-green-300'
+                                                        }
+                                                        return (
+                                                            <tr key={mainindex}>
+                                                                {console.log(activity)}
+                                                                <td className='sticky-left bgclr1 ' style={{ width: '150px' }} >
+                                                                    <input type="text"
+                                                                        value={activity.Activity_Name}
+                                                                        name='Activity_Name'
+                                                                        onChange={(e) => {
+                                                                            handle_Activity_Name_Change(e, activity.id);
+                                                                            handleActivitiesGet(e, activity.id)
+                                                                        }}
+                                                                        className={` form-control border-0 shadow-none  `} />
+                                                                </td>
+                                                                <td className='sticky-left1 bgclr1' style={{ width: '150px' }}>
+                                                                    <span className='absolute top-3 right-3' >
+                                                                        <InfoButton size={11} content={`Target for ${activity.day_or_month_wise ? 'a month' : 'a day'} `} />
+                                                                    </span>
+                                                                    <input type="number"
+                                                                        value={`${activity.targets}`}
+                                                                        name='targets'
+                                                                        onChange={(e) => {
+                                                                            handle_Activity_Name_Change(e, activity.id);
+                                                                            handleActivitiesGet(e, activity.id)
+                                                                        }}
 
-                                                        <tr key={mainindex}>
-                                                            {console.log(activity)}
-                                                            <td className='sticky-left bgclr1 ' style={{ width: '150px' }} >
-                                                                <input type="text"
-                                                                    value={activity.Activity_Name}
-                                                                    name='Activity_Name'
-                                                                    onChange={(e) => {
-                                                                        handle_Activity_Name_Change(e, activity.id);
-                                                                        handleActivitiesGet(e, activity.id)
-                                                                    }}
-                                                                    className={` form-control border-0 shadow-none  `} />
-                                                            </td>
-                                                            <td className='sticky-left1 bgclr1 ' style={{ width: '150px' }}>
-                                                                <input type="number"
-                                                                    value={`${activity.targets}`}
-                                                                    name='targets'
-                                                                    onChange={(e) => {
-                                                                        handle_Activity_Name_Change(e, activity.id);
-                                                                        handleActivitiesGet(e, activity.id)
-                                                                    }}
-
-                                                                    className="form-control border-0 shadow-none text-center" />
-                                                            </td>
-                                                            <td className='sticky-left2 bgclr1 ' style={{ width: '150px' }} >
-                                                                <p
-                                                                    className={`p-2 text-black mb-0 rounded 
-                                                                        ${Number(activity.Total_Achived) / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 50 ? 'bg-red-300' :
-                                                                            activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 70 ? 'bg-yellow-300' :
-                                                                                activity.Total_Achived / Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets) * 100 <= 90 ? 'bg-blue-300 ' :
-                                                                                    'bg-green-300'}  
+                                                                        className="form-control border-0 shadow-none text-center" />
+                                                                </td>
+                                                                <td className='sticky-left2 bgclr1 ' style={{ width: '150px' }} >
+                                                                    <p
+                                                                        className={`p-2 text-black mb-0 rounded ${wholeTargetclr}  
                                                                         text-xs w-32 relative border-0 shadow-none text-center`} >
-                                                                    {activity.Total_Achived} out of  {Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets)}
+                                                                        {activity.Total_Achived} out of  {Number(activity.daily_achives.filter((obj) => obj.achieved > 0).length * activity.targets)}
 
-                                                                    <span className='absolute top-1 right-1 '> <InfoButton size={10}
-                                                                        content={`Days filled = ${activity.daily_achives.filter((obj) => obj.achieved > 0).length} ,
+                                                                        <span className='absolute top-1 right-1 '> <InfoButton size={10}
+                                                                            content={`Days filled = ${activity.daily_achives.filter((obj) => obj.achieved > 0).length} ,
                                                                     Target = ${activity.targets} `} />  </span>
-                                                                </p>
-                                                            </td>
-                                                            {dates.map((date) => {
-                                                                let obj = activitiesgetdaily_achives[mainindex].find((obj) => obj.Date == date)
-                                                                // console.log("sxdasdad", obj);
-                                                                // console.log(formattedCurrentDate);
-                                                                // console.log("----", activitiesgetdaily_achives[mainindex].find((obj) => obj.Date == date));
-                                                                return (
-                                                                    <td key={date}>
+                                                                    </p>
+                                                                </td>
+                                                                {dates.map((date) => {
+                                                                    let obj = activitiesgetdaily_achives[mainindex].find((obj) => obj.Date == date)
+                                                                    // console.log("sxdasdad", obj);
+                                                                    // console.log(formattedCurrentDate);
+                                                                    // console.log("----", activitiesgetdaily_achives[mainindex].find((obj) => obj.Date == date));
+                                                                    return (
+                                                                        <td key={date}>
 
-                                                                        <input type="number"
-                                                                            value={obj && obj.achieved} disabled
-                                                                            className={`p-2 w-24 rounded  border-0 shadow-none text-center 
+                                                                            <input type="number"
+                                                                                value={obj && obj.achieved} disabled
+                                                                                className={`p-2 w-24 rounded  border-0 shadow-none text-center 
                                                                                 ${obj ? obj.status == '0' ? 'bg-red-300' : obj.status == '2' ? 'bg-yellow-300' : obj.status == '3' ?
-                                                                                    'bg-green-300' : obj.status == '1' ? 'bg-orange-300' : '' : ''} `} />
+                                                                                        'bg-green-300' : obj.status == '1' ? 'bg-orange-300' : '' : ''} `} />
 
-                                                                    </td>
-                                                                )
-                                                            }
-                                                            )}
-                                                        </tr>
-                                                    ))}
+                                                                        </td>
+                                                                    )
+                                                                }
+                                                                )}
+                                                            </tr>
+                                                        )
+                                                    }
+                                                    )}
 
 
                                                 </tbody>

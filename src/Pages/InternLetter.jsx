@@ -1,151 +1,131 @@
 import React, { useContext } from 'react'
 import { HrmStore } from '../Context/HrmContext'
+import ReactQuill from 'react-quill';
+import { Helmet } from 'react-helmet';
+import HeaderLetterPad from '../Components/LetterPad/HeaderLetterPad';
+import LetterPadFooter from '../Components/LetterPad/LetterPadFooter';
 
 const InternLetter = ({ data, pdfRef }) => {
-    let { getCurrentDate } = useContext(HrmStore)
-    console.log(data);
+    let { getCurrentDate, changeDateYear } = useContext(HrmStore)
+    console.log(pdfRef, 'refer');
 
     return (
-        <div ref={pdfRef} className='container bg-white  p-5'>
-            <h6> Date : {getCurrentDate()} </h6>
+        <div  >
+            <Helmet >
+                <meta name="viewport" content="width=1200" />
 
-            <h4 className='text-center'>Internship Letter Offer </h4>
-            <div className="container">
-                <p>Dear <strong>{data.Name}</strong>,</p>
+            </Helmet>
 
-                <p>We are excited to offer you an internship position with <strong> Merida </strong>! Congratulations on being selected for this opportunity.</p>
+            <main ref={pdfRef} className="w-[1200px] text-gray-900 mx-auto ">
+                {/* Page 1 */}
+                <section className='rounded h-[1680px] flex flex-col justify-between shadow-lg ' >
 
-                <h4>Internship Details:</h4>
-                <ul>
-                    <li><strong>Position:</strong> {data.position_name} </li>
-                    {/* <li><strong>Department:</strong> Department Name</li> */}
-                    <li><strong>Start Date :</strong> {data.internship_Duration_From} </li>
-                    <li><strong>End Date :</strong> {data.internship_Duration_To} </li>
-                    <li><strong>Location:</strong> {data.WorkLocation} </li>
-                </ul>
+                    <HeaderLetterPad />
 
-                <h4>Stipend Information:</h4>
-                <ul>
-                    <li><strong>Monthly Stipend:</strong> {data.CTC} </li>
-                    <li><strong>Payment Schedule:</strong> 7th of month </li>
-                </ul>
+                    <div className='mb-auto p-5 py-3 ' >
+                        <p>Date : {getCurrentDate()}</p>
 
-                <h4>What to Expect:</h4>
-                <ul>
-                    <li><strong>Orientation:</strong> You will receive details about your orientation and on-boarding process, including introductions to your team and an overview of your responsibilities.</li>
-                    <li><strong>Mentorship:</strong> A dedicated mentor will be assigned to support you throughout your internship, helping you gain valuable experience and knowledge.</li>
-                    <li><strong>Projects:</strong> You will have the opportunity to work on key projects or tasks.</li>
-                </ul>
+                        <p>
+                            <strong>To,</strong> <br />
+                            {data && data.Name},<br />
+                            {/* S/O {fathersName},<br />
+                    {address1},<br />
+                    {address2},<br />
+                    {city} - {pincode}. */}
+                        </p>
 
-                <h4>Next Steps:</h4>
-                <ol>
-                    <li><strong>Offer Confirmation:</strong> Please confirm your acceptance of this internship offer by <strong> {data.offer_expire} </strong>. You can do this by replying to this email or contacting
-                        <strong>{data.contact_info} </strong>.</li>
-                    <li><strong>Documentation:</strong> We will send you further details regarding any required documentation, on-boarding procedures, and any preparatory information needed before your start date.</li>
-                </ol>
+                        <h2 className='text-center text-decoration-underline ' >Letter of Offer</h2>
 
-                <p>If you have any questions or require additional information, please do not hesitate to reach out to us.</p>
+                        <p className='my-2 fw-semibold text-black ' >Dear {data.Name},</p>
 
-                <p>We look forward to having you on board and are excited about the contributions you will make to our team. Thank you for choosing <strong> Merida </strong> for your internship.</p>
+                        <p>
+                            Further to the interviews you had with us and upon agreeing to the Terms and Conditions, Leave Policy,
+                            Separation Policy, Working Policy, etc., we are pleased to welcome you as an
+                            intern at <span className='fw-semibold text-black ' >
+                                Merida Tech Minds</span> as “{data.position_name}”.
+                            Your initial place of posting will be at our office in
+                            <span className='fw-semibold text-black ' >
+                                {data.WorkLocation}, </span>  till the Company intimates you otherwise.
+                        </p>
 
-                <p>Best regards,</p>
-                <p><strong>HR TEAM</strong></p>
-            </div>
+                        <p>Your total stipend will be   <span className='fw-semibold text-black ' >
+                            Rs.{data.CTC && Math.round(data.CTC)}/- per month.  </span> The same is subject to all statutory deductions.</p>
 
-            {/* <p>Dear {data.Name},</p>
-            <p>
-                Further to the interviews you had with us and upon agreeing to the Terms and Conditions, Leave Policy,
-                Separation Policy, Working Policy, etc., we are pleased to welcome you as an intern at Merida Tech Minds as
-                <span className='fw-semibold '>  “{data.position_name}” </span>. Your place of posting for the present will be at <span className='fw-semibold'>{data.WorkLocation}</span> .
-            </p>
-            <p>
-                Your total stipend will be <span className='fw-semibold '>  Rs.{data.CTC}/- per month </span>. The same is subject to all statutory deductions.
-            </p>
-            <p>
-                Merida Tech Minds is a professionally managed organization in Bangalore. We set forth our customers first
-                and value our customers living by our Motto -Customer is God. The same is what has helped us grow to this
-                level in a short span of 8 plus years. At Merida Tech Minds, we place strong emphasis on our customer,
-                employee, and stakeholder satisfaction.
-            </p>
-            <p>
-                Merida Tech Minds can offer you the right blend of career growth, international exposure, extensive project
-                exposure, a professional working environment, leadership opportunities and financial gains over the long term.
-            </p>
-            <p>
-                You will also have the unique satisfaction of being part of growing this organization to the next level and
-                growing along with the organization. We completely believe in a performance-based model and incentivizing
-                our people to the fullest. We believe in equal employment opportunity and also in recognizing talent and
-                potential at the right time. We respect and value our employees and completely believe in offering both
-                personal and professional growth. We believe that your skills and knowledge are a valuable asset to our
-                organization and will contribute immensely towards achieving our goals. We offer a win-win environment where
-                both the organization and you are immensely benefited and we see success together.
-            </p>
-            <h4>Working Hours</h4>
-            <ul>
-                <li>
-                    Your shift timings and regular working hours will be as per the policy of the company depending on the
-                    department and the same can be chosen after discussing with your reporting managers.
-                </li>
-                <li>
-                    You will be abide by the working hours, weekly offs and paid holidays of the department, Centers, office or
-                    establishment where you are posted. In case of unforeseen events and/or workload you may be required to work
-                    beyond the working hours or on weekly off days/holidays.
-                </li>
-            </ul>
-            <h4>Training & Development</h4>
-            <ul>
-                <li>
-                    You will go through an extensive training with the trainers both internally / externally and Merida Tech Minds
-                    has strict policies and practices in terms of the training policy. You will abide by and will be governed by
-                    the Training Policy as long as you are in your training period.
-                </li>
-            </ul>
-            <h4>Code of Conduct</h4>
-            <ul>
-                <li>
-                    During your employment with Merida Tech Minds, you will exhibit professional behavior at all times be it with
-                    customers and/or your reporting managers and/or your peers or anybody you come in contact with.
-                </li>
-                <li>
-                    You will follow ethical practices in all your work and will remain honest and loyal towards your employer and
-                    your profession. Dishonesty and partiality at work or towards any of your team members or anyone else is
-                    strictly unacceptable. In the event of any such issues, the company would choose to make the decision based
-                    on the severity of the case.
-                </li>
-                <li>
-                    Socializing in terms of dating and/or a relationship with another Merida Tech Minds employee who is currently
-                    working or an ex-employee of Merida Tech Minds against the Company policy and if any found will lead to
-                    termination of services for both the employees.
-                </li>
-                <li>
-                    You will follow the company's dress code during all working days and will be presentable at all times.
-                </li>
-            </ul>
-            <h4>Notice Period</h4>
-            <p>
-                Should you desire to leave the services of Merida Tech Minds, either during your training or immediately after
-                your training or during your Probationary Period or after confirmation of your services, you are required to
-                furnish/serve at least <span className='fw-semibold '> {data.notice_period} </span>days’ notice period, failing to which 2 months gross compensation to be paid against
-                notice period buyout in lieu thereof, before you can be relieved from the services of Merida Tech Minds. Based
-                on the business necessity and the designation the company holds the right to revisit the notice period.
-            </p>
-            <p>
-                This letter of Offer is from <span className='fw-semibold '>{data.internship_Duration_From} till {data.internship_Duration_To}</span> .
-            </p>
-            <p>
-                We shall be obliged if you could kindly confirm your acceptance of the above by returning the duplicate of this
-                letter duly signed by you, to the HR Department. We would be glad to assist you with any queries you may have
-                about joining Merida Tech Minds as we embark on an exciting journey of growth together, we look forward to
-                having you on board.
-            </p>
-            <p>For Merida Tech Minds (OPC) Pvt. Ltd.</p>
-            <p>Authorized Signatory</p>
-            <p>
-                I accept the offer and my Date of Joining will be on <span className='fw-semibold '> {data.Date_of_Joining}</span>
-            </p>
-            <p>Name: {data.Name}</p>
-            <p>Signature:</p>
-            <p>Date:</p> */}
+                        <p>
+                            <span className='fw-semibold text-black ' >
+                                Merida Tech Minds</span> is a professionally managed organization in Bangalore. We set forth our customers first and value our customers living by our Motto -
+                            <span className='fw-semibold text-black ' >
+                                Customer is God.</span>  The same is what has helped us grow to this level in a short span of 8 plus years.
+                            At <span className='fw-semibold text-black ' > Merida Tech Minds</span> , we place strong emphasis on our customer, employee, and stakeholder satisfaction.
+                        </p>
+
+                        <p>
+                            <span className='fw-semibold text-black ' >
+                                Merida Tech Minds</span> can offer you the right blend of career growth, international exposure, extensive project exposure, a professional working environment, leadership opportunities, and financial gains over the long term.
+                        </p>
+
+                        <p>
+                            You will also have the unique satisfaction of being part of growing this organization to the next level and growing along with the organization. We completely believe in a performance-based model and incentivizing our people to the fullest. We believe in equal employment opportunity and also in recognizing talent and potential at the right time. We respect and value our employees and completely believe in offering both personal and professional growth. We believe that your skills and knowledge are a valuable asset to our organization and will contribute immensely towards achieving our goals. We offer a win-win environment
+                            where both the organization and you are immensely benefited and we see success together.
+                        </p>
+
+                        <h3 className='text-xl ' >Working Hours</h3>
+                        <p>
+                            Your shift timings and regular working hours will be as per the policy of the company depending on the department and the same can be chosen after discussing with your reporting managers. You will abide by the working hours, weekly offs, and paid holidays of the department, centers, office, or establishment where you are posted. In case of unforeseen events and/or workload, you may be required to work beyond the working hours or on weekly off days/holidays.
+                        </p>
+
+                        <h3 className='text-xl ' >Training & Development</h3>
+                        <p>
+                            You will go through an extensive training with the trainers both internally/externally, and Merida Tech Minds has strict policies and practices in terms of the training policy. You will abide by and will be governed by the Training Policy as long as you are in your training period.
+                        </p>
+
+                        <h3 className='text-xl ' >Code of Conduct</h3>
+                        <p>
+                            During your employment with Merida Tech Minds, you will exhibit professional behavior at all times be it with customers and/or your reporting managers and/or your peers or anybody you come in contact with. You will follow ethical practices in all your work and will remain honest and loyal towards your employer and your profession. Dishonesty and partiality at work or towards any of your team members or anyone else is strictly unacceptable. In the event of any such issues, the company would choose to make the decision based on the severity of the case.
+                        </p>
+
+                        <p>
+                            Socializing in terms of dating and/or a relationship with another Merida Tech Minds employee who is currently working or an ex-employee of Merida Tech Minds against the Company policy and if any found will lead to termination of services for both the employees. You will follow the company's dress code during all working days and will be presentable at all times.
+                        </p>
+
+
+                    </div>
+                    <LetterPadFooter />
+                </section>
+                {/* Page 2 */}
+                <section className='rounded h-[1680px] flex flex-col justify-between shadow-lg my-3' >
+                    <HeaderLetterPad />
+                    <article className='mb-auto p-5 py-3 ' >
+                        <h3 className='text-xl ' >Notice Period</h3>
+                        <p>
+                            Should you desire to leave the services of Merida Tech Minds, either during your training or immediately after your training or during your Probationary Period or after confirmation of your services, you are required to furnish/serve at
+                            least <span className='fw-semibold text-black text-decoration-underline' >
+                                30 days’ notice period, failing to which 2 months gross compensation to be paid against notice period buyout </span>
+                            in lieu thereof, before you can be relieved from the services of Merida Tech Minds. Based on the business necessity and the designation the company holds the right to revisit the notice period.
+                        </p>
+
+                        <p className='fw-semibold text-semibold ' >This letter of Offer is from {data.internship_Duration_From && changeDateYear(data.internship_Duration_From)} till {data.internship_Duration_To && changeDateYear(data.internship_Duration_To)}.</p>
+
+                        <p>
+                            We shall be obliged if you could kindly confirm your acceptance of the above by returning the duplicate of this letter duly signed by you, to the HR Department. We would be glad to assist you with any queries you may have about joining Merida Tech Minds as we embark on an exciting journey of growth together. We look forward to having you on board.
+                        </p>
+
+                        <p>For <span className=' fw-semibold text-semibold ' > Merida Tech Minds (OPC) Pvt. Ltd. </span> </p>
+                        <p>Authorized Signatory</p>
+
+                        <p>
+                            I accept the offer and my Date of Joining will be on {data.internship_Duration_From && changeDateYear(data.internship_Duration_From)} .
+                        </p>
+
+                        <p>
+                            Name: {data.Name} <br />
+                        </p>
+                    </article>
+                    <LetterPadFooter />
+
+                </section>
+
+            </main>
         </div>
     )
 }

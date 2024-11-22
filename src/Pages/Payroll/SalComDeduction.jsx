@@ -27,13 +27,18 @@ const SalComDeduction = () => {
                         <th>Status  </th>
                     </tr>
                     {/* Pre tax */}
-                    <tr>
-                        <td className=' flex gap-1' >
-                            Pre-Tax Deductions
-                            <InfoButton size={12} content={`A pre-tax deduction is money taken out of an employee's pay before
+                    {preTaxDeduction && preTaxDeduction.length > 0 &&
+                        < tr >
+                            <td className=' fw-semibold flex gap-1' >
+                                Pre-Tax Deductions
+                                <InfoButton size={12} content={`A pre-tax deduction is money taken out of an employee's pay before
                                 income tax is calculated.This helps reduce the taxable income. `} />
-                        </td>
-                    </tr>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>}
                     {preTaxDeduction && preTaxDeduction.map((obj, index) => (
                         < tr >
                             {console.log(obj)}
@@ -47,13 +52,17 @@ const SalComDeduction = () => {
                         </tr>
                     ))}
                     {/* Post Tax */}
-                    <tr>
-                        <td className=' flex gap-1'>
+                    {postTaxDeduction && postTaxDeduction.length > 0 && <tr>
+                        <td className='fw-semibold flex gap-1'>
                             Post-Tax Deductions
                             <InfoButton size={12} content={`A post-tax deduction is money taken out of an employee's pay 
                                 after the income tax is calculated and withheld. This has no effect on the taxable income. `} />
                         </td>
-                    </tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>}
                     {postTaxDeduction && postTaxDeduction.map((obj, index) => (
 
                         <tr>

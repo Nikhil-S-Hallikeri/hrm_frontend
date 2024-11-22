@@ -97,7 +97,7 @@ const STcreation = () => {
                 console.log(response.data);
                 toast.success('Salary template created')
                 setTimeout(() => {
-                    navigate('/dash/salary-templates')
+                    navigate('/payroll/salary-templates')
                 }, 2000);
             }).catch((error) => {
                 console.log(error);
@@ -160,7 +160,7 @@ const STcreation = () => {
         }
     }, [selectedComponent])
     return (
-        <div className='poppins '>
+        <div className='poppins  '>
             {id ?
                 <div>
                     Template name
@@ -168,18 +168,18 @@ const STcreation = () => {
                 : <h5>New Salary Template </h5>}
             <article className='flex row  '>
                 <section className='col-md-9 ' >
-                    <main className=' formbg rounded p-4 row ' >
+                    <main className=' bg-white rounded p-4 row ' >
                         <InputFieldform value={salaryTemplate.template_name} name='template_name'
                             handleChange={handleChangeTemplate} type='text' label='Template Name' />
                         <InputFieldform label='Description' value={salaryTemplate.description} name='description'
                             handleChange={handleChangeTemplate} type='text' placeholder='' />
                     </main>
-                    <main className='formbg rounded my-3 p-4 row ' >
+                    <main className='bg-white rounded my-3 p-4 row ' >
                         <div className='flex gap-1 items-center '>
                             Annual CTC <InfoButton content='This is feild is for checking purpose , you can check it with various CTC for your designed template. ' size={10} />
                             <input type="number" value={annualSalary}
                                 onChange={(e) => setAnnualSalary(e.target.value)}
-                                placeholder='' className='bgclr mx-3 p-2 rounded outline-none ' />
+                                placeholder='' className='inputbg mx-3 p-2 rounded outline-none ' />
                             per year
                         </div>
                         <section className='table-responsive tablebg my-3 rounded ' >
@@ -316,7 +316,7 @@ const STcreation = () => {
                             {id && <button onClick={() => updateData()} className='savebtn text-white rounded p-2 px-3 text-sm '>
                                 Update
                             </button>}
-                            <button onClick={() => navigate('/dash/salary-templates/')} className='mx-2 p-2 px-3 bg-slate-500 text-white rounded text-sm ' >
+                            <button onClick={() => navigate('/payroll/salary-templates/')} className='mx-2 p-2 px-3 bg-slate-500 text-white rounded text-sm ' >
                                 Cancel
                             </button>
 

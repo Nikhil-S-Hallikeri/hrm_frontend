@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { port } from '../App'
 import '../assets/css/media.css'
 import { HrmStore } from '../Context/HrmContext';
+import ReactQuill from 'react-quill';
 
 const Final_status_comment = ({ selectedName, selectstatus, fetchdata3,
     candidateid, final_status_value, setselectstatus, setfinalvalue }) => {
@@ -155,7 +156,8 @@ HR TEAM
 
                         {/* Mail cotent */}
                         {(final_status_value == 'Reject' ||
-                            final_status_value == 'On_Hold')
+                            final_status_value == 'On_Hold' ||
+                            final_status_value == 'Internal_Hiring')
                             && <main >
                                 <div>
                                     Wanna send a mail ?
@@ -181,7 +183,14 @@ HR TEAM
                                             <span className='text-blue-600 text-xs '> ( Use \n to insert the Line in the mail )
                                             </span>
                                         </label>
-                                        <textarea name="" value={mailContentwritten} className='outline-none border-2 rounded p-2 block w-full ' rows={5} onChange={(e) => setMailContentwritten(e.target.value)} id="">  </textarea>
+                                        <div className='h-[40vh] overflow-y-scroll ' >
+
+                                            <ReactQuill className=' ' value={mailContentwritten} onChange={setMailContentwritten} />
+                                        </div>
+                                        {/* <textarea name=""
+                                         value={mailContentwritten} 
+                                         className='outline-none border-2 rounded p-2 block w-full ' 
+                                         rows={5} onChange={(e) => setMailContentwritten(e.target.value)} id="">  </textarea> */}
                                     </div>
                                 </section>}
 

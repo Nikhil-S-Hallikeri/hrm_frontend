@@ -19,7 +19,8 @@ const STtable = () => {
     }, [])
     return (
         <div>
-            <button onClick={() => navigate('/dash/salary-templates/template')} className='btngrd text-white p-2 rounded text-sm ms-auto flex my-3 '>
+            <button onClick={() => navigate('/payroll/salary-templates/template')}
+             className='bluebtn w-36 text-center justify-center text-white p-2 rounded text-sm ms-auto flex my-3 '>
                 Create New
             </button>
             <main className='table-responsive tablebg rounded ' >
@@ -34,7 +35,7 @@ const STtable = () => {
                     {
                         templates && templates.map((obj) => (
                             <tr>
-                                <td onClick={() => navigate(`/dash/salary-templates/template/${obj.id}`)}
+                                <td onClick={() => navigate(`/payroll/salary-templates/template/${obj.id}`)}
                                     className='text-blue-600 cursor-pointer' > {obj.template_name} </td>
                                 <td> {obj.description} </td>
                                 {/* <td className={` text-green-600 `}> Active </td> */}

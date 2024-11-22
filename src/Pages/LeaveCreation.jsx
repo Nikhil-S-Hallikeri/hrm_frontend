@@ -68,11 +68,11 @@ const LeaveSetting = () => {
         }).then((response) => {
             console.log("asd", response.data);
             getParticular()
-            setSelectedYear(year.getFullYear()+1)
+            setSelectedYear(year.getFullYear() + 1)
             toast.success('Data has been added for the Next year')
         }).catch((error) => {
             console.log("asd", error);
-            if(error.response.data){
+            if (error.response.data) {
                 toast.error(error.response.data)
                 return;
             }
@@ -151,6 +151,26 @@ const LeaveSetting = () => {
                                 name='description' onChange={handleLeaveData} className='flex-1 outline-none ' />
                             <EditPen />
                         </div>
+                    </div>
+                    <div className='my-3'>
+                        <h4>Active Status need to work on this :</h4>
+                        {/* <div className='flex items-center gap-2'>
+                            <input value={leaveObj.carry_forward} onChange={(e) => {
+                                setLeaveObj((prev) => ({
+                                    ...prev,
+                                    carry_forward: true
+                                }))
+                            }} type="radio" checked={leaveObj.carry_forward} id='cfyes' name='a' />
+                            <label htmlFor="cfyes">Active </label>
+                            <input value={leaveObj.carry_forward} onChange={(e) => {
+                                setLeaveObj((prev) => ({
+                                    ...prev,
+                                    carry_forward: false,
+                                    max_carry_forward: null
+                                }))
+                            }} type="radio" id='cfno' name='a' />
+                            <label htmlFor="cfno">InActive </label>
+                        </div> */}
                     </div>
                 </section>
 

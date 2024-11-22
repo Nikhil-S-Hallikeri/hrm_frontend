@@ -1093,7 +1093,7 @@ const Applicants = () => {
       setFilteredApplicants([...screeningCompleted])
   }, [screeningAC])
   return (
-    <div className=' d-flex' style={{ width: '100%', }}>
+    <div className=' flex flex-col lg:flex-row' style={{ width: '100%', }}>
       {<SceeringCompletedCandiateModal show={screeningCompletedCandidateDetailModal}
         persondata={persondata}
         setshow={setscreeningCompletedCandidateDetailModal} setPersondata={setPersondata}
@@ -1108,7 +1108,7 @@ const Applicants = () => {
 
 
 
-      <div className='d-none d-lg-flex'>
+      <div className='sticky z-10 top-0'>
         {/* <Sidebar value={"dashboard"} ></Sidebar> */}
         <Recsidebar></Recsidebar>
       </div>

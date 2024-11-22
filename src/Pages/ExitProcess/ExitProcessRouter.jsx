@@ -11,39 +11,41 @@ import ExitInterviewForm from './ExitInterviewForm'
 import ExitInterviewTable from './ExitInterviewTable'
 import { HrmStore } from '../../Context/HrmContext'
 import HandOverTables from './HandOverTables'
+import NewSideBar from '../../Components/MiniComponent/NewSideBar'
 
-const ExitProcessRouter = () => {
+const ExitProcessRouter = ({ subpage }) => {
     let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
-    let { setActivePage } = useContext(HrmStore)
+    let { setActivePage, setTopNav } = useContext(HrmStore)
     let status = JSON.parse(sessionStorage.getItem('status'))
     let [activeSection, setActiveSection] = useState('')
     let navigate = useNavigate()
     useEffect(() => {
         setActivePage('Employee')
+        setTopNav('exit')
     }, [])
     return (
-        <main className='flex'>
-            <article className='d-none d-lg-flex  '>
-                {employeeStatus && employeeStatus == 'Employee' && <Empsidebar />}
-                {employeeStatus && employeeStatus == 'Recruiter' && <Recsidebar />}
-                {employeeStatus && employeeStatus == 'HR' && <Sidebar />}
-                {employeeStatus && employeeStatus == 'Admin' && <Sidebar />}
-            </article>
-            <article className='flex-1 container mx-auto '>
-                <Topnav />
+        <main className='flex flex-col lg:flex-row '>
+            {!subpage && <article className='sticky z-10 top-0'>
+                <NewSideBar />
+            </article>}
+            <article className='flex-1 container-fluid px-0  overflow-hidden mx-auto'>
+                {!subpage && <Topnav />}
                 {/* Navigation */}
                 <section className='my-3 ' >
-                    <button onClick={() => navigate('/Employee_request_form')} className={`duration-500  ${activeSection == 'request' ? "bgclr1" : ''}
-                     px-3 fw-semibold text-slate-800  p-2 rounded `} >
+                    <button onClick={() => navigate('/employees/Employee_request_form')}
+                        className={`duration-500  ${activeSection == 'request' ? " text-blue-600 fw-semibold " : 'text-slate-800'} poppins
+                     px-3  p-2 rounded `} >
                         Requests
                     </button>
                     {employeeStatus && (employeeStatus == 'HR' || employeeStatus == 'Admin') &&
-                        <button onClick={() => navigate('/Employee_request_form/interview')} className={` duration-500 ${activeSection == 'interview' ? "bgclr1" : ''}
-                     px-3 fw-semibold text-slate-800  p-2 rounded `} >
+                        <button onClick={() => navigate('/employees/Employee_request_form/interview')}
+                            className={` duration-500 ${activeSection == 'interview' ? " text-blue-600 fw-semibold " : 'text-slate-800'} poppins
+                     px-3  p-2 rounded `} >
                             Exit Interview
                         </button>}
-                    <button onClick={() => navigate('/Employee_request_form/handover')} className={` duration-500 ${activeSection == 'handover' ? "bgclr1" : ''}
-                     px-3 fw-semibold text-slate-800  p-2 rounded `} >
+                    <button onClick={() => navigate('/employees/Employee_request_form/handover')}
+                        className={` duration-500 ${activeSection == 'handover' ? " text-blue-600 fw-semibold " : 'text-slate-800'} poppins
+                     px-3  p-2 rounded `} >
                         Handovers
                     </button>
                 </section>

@@ -85,7 +85,7 @@ const Employee_request_form = ({ setActiveSection }) => {
     // EMPLOYEE RESIGNATION FORM  START
     let { setActivePage } = useContext(HrmStore)
     useEffect(() => {
-        setActivePage('request')
+        setActivePage('Employee')
     }, [])
 
     let handleFormObj = (e) => {
@@ -199,7 +199,7 @@ const Employee_request_form = ({ setActiveSection }) => {
     return (
         <div>
             <article className='flex justify-between ' >
-                <button onClick={() => navigate('/Employee_request_form')} className='rounded bg-black text-white p-2 text-sm px-3 ' >
+                <button onClick={() => navigate('/employees/Employee_request_form')} className='rounded bg-black text-white p-2 text-sm px-3 ' >
                     Back
                 </button>
                 {!id && <a href='../assets/Images/exit_interview.pdf' download={"interview.pdf"} className='rounded bg-blue-700 text-white p-2 text-sm px-3 ' >

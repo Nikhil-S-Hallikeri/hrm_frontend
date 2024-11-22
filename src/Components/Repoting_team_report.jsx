@@ -190,7 +190,7 @@ const Repoting_team_report = () => {
 
                 <Empsidebar></Empsidebar>
             </div>
-            <div className=' container mx-auto flex-1 ' style={{ borderRadius: '10px' }}>
+            <div className=' container-fluid mx-auto flex-1 ' style={{ borderRadius: '10px' }}>
                     <Topnav></Topnav>
 
                 {/* Reporting Team List Start */}

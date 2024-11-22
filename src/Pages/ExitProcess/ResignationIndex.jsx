@@ -104,12 +104,12 @@ const ResignationIndex = ({ setActiveSection }) => {
         <div>
             <section className='flex justify-between items-center ' >
                 <h5>Resignation applications</h5>
-                <button onClick={() => navigate('/Employee_request_form/apply')} className='p-2 rounded bg-blue-800 text-white ' >
+                <button onClick={() => navigate('/employees/Employee_request_form/apply')} className='p-2 rounded bg-blue-800 text-white ' >
                     Apply Regisnation
                 </button>
             </section>
             {/* tables */}
-            <main className='tablebg table-responsive rounded my-3 max-h-[60vh]  ' >
+            <main className='tablebg table-responsive rounded my-3 h-[60vh]  ' >
                 <table className='w-full ' >
                     <tr>
                         <th> SI No </th>
@@ -131,8 +131,12 @@ const ResignationIndex = ({ setActiveSection }) => {
                                 <td>{obj.name} </td>
                                 <td>{obj.employee_id} </td>
                                 <td>{obj.position} </td>
-                                <td>{obj.reason_for_leaving} </td>
-                                <td>{obj.reason} </td>
+                                <td className=' ' >
+                                    {obj.reason_for_leaving}
+                                </td>
+                                <td className=' ' > 
+                                   <textarea name="" className='w-[300px]  ' rows={3} value={obj.reason} id="">
+                                    </textarea>   </td>
                                 <td> <a href={obj.resigned_letter_file} target='_blank' > click here </a> </td>
                                 <td> {obj.is_rm_verified ? <span>Verified </span> :
                                     obj.reporting_manager_name == empid ?
@@ -152,9 +156,9 @@ const ResignationIndex = ({ setActiveSection }) => {
                                             }))} className='bg-blue-700 text-white text-sm p-1 rounded ' > Verify </button>
                                         </span> : 'Not Verified'} </td>
                                 <td>{obj.resignation_verification} </td>
-                                <td><button onClick={() => navigate(`/Employee_request_form/request/${obj.id}`)}
+                                <td><button onClick={() => navigate(`/employees/Employee_request_form/request/${obj.id}`)}
                                     className='bg-blue-700 text-white rounded text-sm p-1 ' >View </button>
-                                    <button className='bg-slate-700 text-white rounded text-sm p-1 mx-2 ' onClick={() => navigate(`/Employee_request_form/interview/${obj.id}`)} >
+                                    <button className='bg-slate-700 text-white rounded text-sm p-1 mx-2 ' onClick={() => navigate(`/employees/Employee_request_form/interview/${obj.id}`)} >
                                         Exit Interview
                                     </button>
                                 </td>

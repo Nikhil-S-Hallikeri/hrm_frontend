@@ -1393,12 +1393,11 @@ const Applylist = () => {
 
   return (
 
-    <div className='flex ' style={{ width: '100%', minHeight: '100%', }}>
-      <div className='d-none d-lg-flex '>
-
+    <div className='flex flex-col lg:flex-row ' style={{ width: '100%', minHeight: '100%', }}>
+      <div className='sticky z-10 top-0 '>
         <Sidebar value={"dashboard"} ></Sidebar>
       </div>
-      <div className='flex-1 container ' style={{ borderRadius: '10px' }}>
+      <div className='flex-1 container-fluid overflow-hidden ' style={{ borderRadius: '10px' }}>
         <Topnav ></Topnav>
 
         <div className='d-flex justify-content-between mt-4' >
@@ -1594,7 +1593,7 @@ const Applylist = () => {
                               <td >{e.PrimaryContact}</td>
                               <td >{e.AppliedDate} {convertTimeTo12HourFormat(e.AppliedTime)}</td>
 
-                              <td> </td>
+                              <td>{e.JobPortalSource == 'others' ? e.Other_jps : e.JobPortalSource} </td>
                               <td >{e.AppliedDesignation}</td>
                               <td onClick={() => sentparticularData(e.CandidateId)} className='text-center'><button type="button" style={{ backgroundColor: 'rgb(160,217,180)' }} class="btn  btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal23">
                                 open
@@ -1953,10 +1952,6 @@ const Applylist = () => {
                             }} placeholder='Search...'
                             class="outline-none bg-transparent shadow-none p-1 " />
                         </div>
-
-
-
-
                       </div>
                       {/* Range filter */}
                       <section className='bgclr px-1 shadow flex items-center rounded text-sm'>
@@ -1969,7 +1964,7 @@ const Applylist = () => {
                         <input value={interviewFilterObject.to} name='to' onChange={handleInterviewFilterObject}
                           type="date" className='outline-none bg-transparent mx-1 ' />
                       </section>
-                      <button onClick={handlefinlterinterviewFunction} className='savebtn shadow text-white w-40 rounded border-green-100 border-2 '>
+                      <button onClick={handlefinlterinterviewFunction} className='savebtn shadow text-white w-40 rounded border-green-100 '>
                         Search
                       </button>
                       <div className='flex rounded  px-1 bgclr shadow justify-end items-center text-sm '>
@@ -4258,9 +4253,10 @@ const Applylist = () => {
         </Modal>
         {/* INTERVIEW FORM End */}
       </div >
-      {finalStatus && <FinalStatus show={finalStatus} getfunction={fetchdata}
-        name={finalStatusName}
-        setshow={setFinalStatus} />}
+      {finalStatus &&
+        <FinalStatus show={finalStatus} getfunction={fetchdata}
+          name={finalStatusName}
+          setshow={setFinalStatus} />}
       <Final_status_comment setselectstatus={setselectstatus} selectedName={selectedFinalResultName}
         final_status_value={final_status_value} fetchdata3={fetchdata3}
         selectstatus={selectstatus} candidateid={seleceted_candidateid} setfinalvalue={setfinal_status_value}></Final_status_comment>

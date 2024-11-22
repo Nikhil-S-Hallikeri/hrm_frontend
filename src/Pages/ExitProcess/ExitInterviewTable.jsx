@@ -23,7 +23,7 @@ const ExitInterviewTable = ({ setActiveSection }) => {
     return (
         <div>
             <section>
-                <p className='fw-semibold  ' > Exit Interviews </p>
+                <p className='fw-semibold text-xl ' > Exit Interviews </p>
             </section>
             <main className='tablebg table-responsive w-full h-[60vh] overflow-y-scroll rounded ' >
                 <table className='w-full ' >
@@ -46,7 +46,7 @@ const ExitInterviewTable = ({ setActiveSection }) => {
                                 <td> {obj.resignation && obj.resignation.reason_for_leaving} </td>
                                 <td>{obj.resignation && obj.resignation.resignation_verification} </td>
                                 <td>  <button className='bg-blue-700 text-white rounded text-sm p-1 mx-2 '
-                                    onClick={() => navigate(`/Employee_request_form/interview/${obj.resignation && obj.resignation.id}`)} >
+                                    onClick={() => navigate(`/employees/Employee_request_form/interview/${obj.resignation && obj.resignation.id}`)} >
                                     View
                                 </button>
                                 </td>

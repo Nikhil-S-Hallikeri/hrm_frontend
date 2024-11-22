@@ -11,8 +11,8 @@ import { toast } from 'react-toastify'
 import SwipingDetails from '../Components/Modals/SwipingDetails'
 import DownloadContent from '../Components/AuthPermissions/DownloadContent'
 
-const AttendenceAdmin = () => {
-  let { activePage, setActivePage } = useContext(HrmStore)
+const AttendenceAdmin = ({ subpage }) => {
+  let { activePage, setActivePage ,setTopNav} = useContext(HrmStore)
   let [Department_List, set_Department_List] = useState()
   let [trigger, settrigger] = useState(false)
   let dateNow = new Date()
@@ -87,14 +87,15 @@ const AttendenceAdmin = () => {
   useEffect(() => {
     getDepartment()
     setActivePage('leave')
+    setTopNav('list')
   }, [])
   return (
     <div className=''>
-      <Topnav name='Attendence List' />
+      {!subpage && <Topnav name='Attendence List' />}
       {trigger && <DownloadContent trigger={trigger} settrigger={settrigger}
         data={filteredAttendanceList} name={`Attendence${filterDetails.name && `_${filterDetails.name}`}_${filterDetails.year}_${months[filterDetails.month - 1]}`} />}
       <section className='flex gap-3 flex-wrap'>
-        <div className='shadow  flex gap-1 items-center text-slate-500 text-sm bgclr w-48 p-1 rounded-xl '>
+        <div className='shadow  flex gap-1 items-center text-slate-500 text-sm bgclr w-48 p-1 rounded '>
           <div>
             <SearchIcon size={20} />
           </div>
@@ -106,7 +107,7 @@ const AttendenceAdmin = () => {
             name='name' onChange={handleChangeFilterDetails}
             className='outline-none p-1 bg-transparent ' placeholder='Search by Name..' />
         </div>
-        {/* <div className='shadow bgclr w-48 p-1 py-0 rounded-xl '>
+        {/* <div className='shadow bgclr w-48 p-1 py-0 rounded '>
           <label htmlFor="" className='text-xs fw-medium'> Department </label>
           <select className='block text-sm outline-none w-full bg-transparent ' name="" id="">
             <option value="">Select</option>
@@ -118,7 +119,7 @@ const AttendenceAdmin = () => {
           </select>
         </div> */}
         {/* Year */}
-        <div className='shadow bgclr w-48 p-1 py-0 rounded-xl '>
+        <div className='shadow bgclr w-48 p-1 py-0 rounded '>
           <label htmlFor="" className='text-xs fw-medium'> Year </label>
           <select value={filterDetails.year} onChange={handleChangeFilterDetails}
             className='block text-sm outline-none w-full bg-transparent fw-semibold' name="year" id="">
@@ -129,7 +130,7 @@ const AttendenceAdmin = () => {
           </select>
         </div>
         {/* Month */}
-        <div className='shadow bgclr w-48 p-1 py-0 rounded-xl '>
+        <div className='shadow bgclr w-48 p-1 py-0 rounded '>
           <label htmlFor="" className='text-xs fw-medium'> Month </label>
           <select value={filterDetails.month} onChange={handleChangeFilterDetails}
             className='block text-sm outline-none w-full bg-transparent fw-semibold' name="month" id="">
@@ -139,18 +140,20 @@ const AttendenceAdmin = () => {
             ))}
           </select>
         </div>
-        <button onClick={filterlist} className='savebtn border-2 shadow border-green-50 text-white w-48 rounded-xl'>
+        <button onClick={filterlist} className='savebtn shadow text-white w-48 rounded'>
           Search
         </button>
 
-        {/* <button disabled={loading} className=' bg-slate-50 ms-auto hover:bg-slate-100 rounded-xl  shadow'>
-          <a href='' download="attendanceFormat" className='items-center text-decoration-none text-slate-800 gap-2 text-sm p-1 px-2
+
+        <button disabled={loading} className=' bg-slate-50 ms-auto hover:bg-slate-100 rounded  shadow'>
+          <a href={`../assets/Images/attendance_data.xlsx`}
+            download className='items-center text-decoration-none text-slate-800 gap-2 text-sm p-1 px-2
           flex cursor-pointer w-full h-full'>
             {loading ? "Loading..." : "DownLoad Format"}
             <ExportIcon size={20} />
           </a>
-        </button> */}
-        <button disabled={loading} className=' bg-slate-50 ms-auto hover:bg-slate-100 rounded-xl  shadow'>
+        </button>
+        <button disabled={loading} className=' bg-slate-50 ms-auto hover:bg-slate-100 rounded  shadow'>
           <label htmlFor="importattendence" className='items-center gap-2  p-1 px-2
           flex cursor-pointer w-full h-full'>
             {loading ? "Loading..." : "Import"}
@@ -165,7 +168,7 @@ const AttendenceAdmin = () => {
             settrigger(true)
           else
             toast.warning(`Empty File can't be downloaded.`)
-        }} className='bg-slate-50 hover:bg-slate-100  items-center gap-2 flex rounded-xl  p-2 px-2 shadow'>
+        }} className='bg-slate-50 hover:bg-slate-100  items-center gap-2 flex rounded  p-2 px-2 shadow'>
           Export
           <ExportIcon size={20} />
         </button>

@@ -10,8 +10,9 @@ import { HrmStore } from '../Context/HrmContext';
 import LeaveApprovalBox from './HomeComponent/LeaveApprovalBox';
 import WishesCom from './WishesCom';
 import MyAttendance from './Employee/MyAttendance';
+import NewSideBar from './MiniComponent/NewSideBar';
 
-const Empdashpage = () => {
+const Empdashpage = ({ subpage }) => {
 
     let { setActivePage } = useContext(HrmStore)
     useEffect(() => {
@@ -100,15 +101,11 @@ const Empdashpage = () => {
         ],
     }
     return (
-        <div className='d-flex' style={{ width: '100%', minHeight: '100%', }}>
-
-            <div className='d-none d-lg-flex '>
-                <Empsidebar value={"dashboard"}></Empsidebar>
-            </div>
-            <div className='flex-1 container-fluid mx-auto ' >
-                <Topnav></Topnav>
+        <div>
+            <div className=' px-2 container-fluid mx-auto ' >
+              
                 <WishesCom />
-                <div className="chart-section p-3 bg-inf mt-4" >
+                <div className="chart-section p-2 bg-inf mt-4" >
 
                     <div class="row justify-between m-0">
                         <div className="col col-sm-6">
