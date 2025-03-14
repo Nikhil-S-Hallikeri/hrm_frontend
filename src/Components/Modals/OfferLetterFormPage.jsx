@@ -153,13 +153,14 @@ const OfferLetterFormPage = () => {
                             <form className=' '>
                                 <div className="row poppins m-0 border-bottom pb-2 mt-2" style={{ lineHeight: '50px' }}>
                                     <div class=" col-md-6 col-lg-4 mb-3">
-                                        <label for="Name">Name :</label>
+                                        <label for="Name">Full Name :</label>
                                         <input type="text" id="Name" name="Name"
-                                            onChange={handleFormobj} className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                            onChange={handleFormobj}  placeholder={`Enter the candidate's full name`}
+                                            className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
                                             required value={formobj.Name} />
                                     </div>
                                     <div class=" col-md-6 col-lg-4 mb-3">
-                                        <label for="Email">Email :</label>
+                                        <label for="Email">Email ID:</label>
                                         <input type="email" id="Email" name="Email" onChange={handleFormobj} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
                                             value={formobj.Email} />
                                     </div>
@@ -170,12 +171,13 @@ const OfferLetterFormPage = () => {
                                             </div> 
                                     */}
                                     <div class="col-md-6 col-lg-4 mb-3">
-                                        <label for="Offerddate">Position Applaying For</label>
-                                        <input type="text" id="Offerddate" name="position" onChange={handleFormobj} required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
+                                        <label for="Offerddate">Position Applied For</label>
+                                        <input type="text" id="Offerddate" name="position" onChange={handleFormobj} required
+                                         className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
                                             value={formobj.Designation} />
                                     </div>
                                     <div class="col-md-6 col-lg-4 mb-3">
-                                        <label for="Offerddate">Position allocation </label>
+                                        <label for="Offerddate">Assigned Position </label>
                                         <select type="text" id="Offerddate" name="position" onChange={handleFormobj} required
                                             className='bgclr     p-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
                                             value={formobj.position} >
@@ -190,7 +192,7 @@ const OfferLetterFormPage = () => {
                                         </select>
                                     </div>
                                     <div class=" col-md-6 col-lg-4 mb-3">
-                                        <label for="DOB">DOB :</label>
+                                        <label for="DOB">Date of Birth (DOB) :</label>
                                         <input type="date" id="DOB" name="DOB" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
                                             value={formobj.DOB} onChange={handleFormobj} />
                                     </div>
@@ -200,7 +202,7 @@ const OfferLetterFormPage = () => {
                                             <input type="text" id="Designation" name="Designation" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none ' value={designation} onChange={(e) => setDesignation(e.target.value)} />
                                         </div> */}
                                     <div class=" col-md-6 col-lg-4 mb-3">
-                                        <label for="Ctc">CTC :</label>
+                                        <label for="Ctc">Salary (CTC) :</label>
                                         <input type="number" id="Ctc" placeholder='CTC in LPA , stippend in month basis' name="CTC" required
                                             className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
                                             value={formobj.CTC} onChange={handleFormobj} />
@@ -214,19 +216,19 @@ const OfferLetterFormPage = () => {
                                     </div>
 
                                     <div class="col-md-6 col-lg-4 mb-3">
-                                        <label for="Offerddate">Date Of Joning :</label>
+                                        <label for="Offerddate">Joining Date :</label>
                                         <input type="date" id="Offerddate" name="Date_of_Joining" required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
                                             value={formobj.Date_of_Joining} onChange={handleFormobj} />
                                     </div>
                                     <div class="col-md-6 col-lg-4 mb-3">
-                                        <label for="Offerddate"> Deadline for offer acceptance :</label>
+                                        <label for="Offerddate"> Offer Acceptance Deadline :</label>
                                         <input type="date" id="" name="offer_expire"
                                             required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
                                             value={formobj.offer_expire} onChange={handleFormobj} />
                                     </div>
                                     <div class="col-md-6 col-lg-4 mb-3">
-                                        <label for="Offerddate">HR Contact info :</label>
-                                        <input type="text" id="" name="contact_info" placeholder='email or phone content for the candidate '
+                                        <label for="Offerddate">HR Contact Information :</label>
+                                        <input type="text" id="" name="contact_info" placeholder={`Add HR's phone or alternate email for queries `}
                                             required className='bgclr px-2 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none '
                                             value={formobj.contact_info} onChange={handleFormobj} />
                                     </div>
@@ -240,7 +242,7 @@ const OfferLetterFormPage = () => {
 
 
                                     <div className="col-md-6 col-lg-4 ">
-                                        <label htmlFor="Name" className="">Employeement Type*</label>
+                                        <label htmlFor="Name" className="">Employment Type*</label>
                                         <select
                                             className="bgclr px-2 py-3 focus-within:shadow-sm duration-500 focus-within:shadow-violet-500 rounded block w-full outline-none  "
                                             id="ageGroup"

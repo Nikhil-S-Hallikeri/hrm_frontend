@@ -10,13 +10,14 @@ import SearchIcon from '../SVG/SearchIcon';
 import { HrmStore } from '../Context/HrmContext';
 import TopNavScrollBar from './MiniComponent/TopNavScrollBar';
 import TopSearchBar from './MiniComponent/TopSearchBar';
+import GetGeoLocation from './MiniComponent/GetGeoLocation';
 
 
 const Topnav = ({ name, navbar }) => {
     const user = JSON.parse(sessionStorage.getItem('user'))
     let [showNotification, setShowNotification] = useState()
     let logindata = JSON.parse(sessionStorage.getItem('user'))
-    let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
+    let Empid = JSON.parse(sessionStorage.getItem('user'))?.EmployeeId
     let { topnav, setTopNav } = useContext(HrmStore)
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     let [profileDropdown, setProfileDropdown] = useState()
@@ -173,20 +174,22 @@ const Topnav = ({ name, navbar }) => {
 
 
     return (
-        <div>
+        <div className=' ' >
             {/* Desktop nav start */}
             <div className={`  ${navbar && "bg-white shadow-sm "}  py-2  mx-0 px-2`}>
-                <nav className='d-flex flex-wrap justify-between w-full items-center ' >
+                <nav className='d-flex  row flex-wrap justify-between w-full items-center ' >
                     {/* Content */}
-                    <section className='flex order-2 order-sm-1 flex-grow-1
+                    <section className='flex  col-md-5 my-2 my-lg-0 order-2 order-sm-1 
                     felx-wrap gap-3 ' >
                         {
                             navbar ? <TopNavScrollBar navbar={navbar} /> :
                                 <div className='w-full ' >
-                                    <h5 className='poppins fw-semibold mb-3 ' >  Dashboard </h5>
+                                    {!name && <h5 className='poppins fw-semibold mb-3 ' >  Dashboard </h5>}
                                     {!name && <section className='poppins  '>
-                                        <h5 className='text-2xl poppins fw-semibold ' >Hellow  {user.UserName}</h5>
-                                        <p className='text-xs  '>Measure How Fast You’re Growing Monthly <br /> Recurring performance management. </p>
+                                        <h5 className='text-2xl poppins fw-semibold ' >Hello  {user?.UserName}</h5>
+                                        <p className='text-xs  '>Track Your Monthly Growth and Performance with<br />
+                                            Ongoing Performance Management.
+                                        </p>
                                     </section>}
                                     {name && <section className='poppins '>
                                         <h5 className='text-2xl poppins fw-semibold ' > {name}</h5>
@@ -195,19 +198,23 @@ const Topnav = ({ name, navbar }) => {
                         }
                     </section>
 
-                    <main className='flex order-1 mb-3 my-sm-0 order-sm-2 gap-4 items-center ' >
+                    <main className='flex col-md-7  my-2 my-lg-0 order-1 justify-end flex-wrap flex-lg-nowrap mb-3 my-sm-0 order-sm-2 gap-4 items-center ' >
                         {/* search */}
                         <TopSearchBar navbar={navbar} />
 
 
                         {/* search end */}
+                        {/* Attendance tracking */}
+                        <div>
+                            <GetGeoLocation/>
+                        </div>
                         <div className="  d-flex justify-content-evenly align-items-center" style={{ width: '18%' }}>
                             {/* notification */}
                             <div onClick={() => setShowNotification(true)} className='p-1 relative rounded bg-slate-200 w-7 h-7 '>
                                 <img className='w-5'
                                     src={require('../assets/Images/Notification.png')} alt="Notification" />
                                 {noti != undefined && noti.length > 0 &&
-                                    <p className='bg-red-500 m-0 rounded-full w-2 h-2 absolute -top-1 right-0 '>
+                                    <p className=' m-0 rounded-full w-2 h-2 absolute -top-1 right-0 '>
                                     </p>}
                             </div>
 
@@ -289,7 +296,8 @@ const Topnav = ({ name, navbar }) => {
                                 </p>
                                 <DropDownIcon />
                             </button>
-                            {profileDropdown && <article onMouseLeave={() => setProfileDropdown(false)} className='absolute p-2 bg-white rounded top-16 w-full ' >
+                            {profileDropdown && 
+                            <article onMouseLeave={() => setProfileDropdown(false)} className='absolute z-10 shadow p-2 bg-white rounded top-16 w-full ' >
                                 <button onClick={() => { navigate(`/dash/employee/${Empid}`); setProfileDropdown(false) }}
                                     className=' my-2  ' >
                                     My Profile

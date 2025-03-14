@@ -542,7 +542,7 @@ MERIDA HR`)
                         <div onClick={() => setOfferdCandidates("offered")}
                             data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full ' >
                             <ShortcutCard img={'../assets/Images/circle2.png'}
-                                count={Hiredcounts.offered_candidates} label='Offered candidate' />
+                                count={Hiredcounts.offered_candidates} label='Shortlisted Candidates' />
                         </div>
                         <div
                             onClick={() => setRejectedCandidates("Reject")}
@@ -610,7 +610,8 @@ MERIDA HR`)
                             <div class="modal-dialog modal-fullscreen modal-dialog-centered">
                                 <div class="modal-content bgclr1">
                                     <div class="bgclr1 flex items-center justify-between  p-3 ">
-                                        <h1 class=" fs-5" id="exampleModalLabel10"> {status}  </h1>
+                                        <h1 class=" fs-5" id="exampleModalLabel10"> {status == 'offered' ? 'Shortlisted Candidates (offered) ' :
+                                            status == 'Reject' ? 'Rejected Candidates' : status == 'On_Hold' ? 'On Hold Candidates' : status}  </h1>
                                         <button type="button" onClick={() => {
                                             setstatus('')
                                         }} class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -623,26 +624,26 @@ MERIDA HR`)
                                             <table class="w-full ">
                                                 <thead >
                                                     <tr className='sticky top-0 bgclr1' >
-                                                        <th scope="col"><span className='fw-medium'>Canditate Id</span></th>
-                                                        <th scope="col"><span className='fw-medium'>Name</span></th>
-                                                        <th scope="col"><span className='fw-medium'>Email</span></th>
-                                                        {status != 'offered' && <th scope="col"><span className='fw-medium'>Phone</span></th>}
-                                                        {status != 'offered' && <th scope="col"><span className='fw-medium'>Applied Designation</span></th>}
-                                                        {status != 'offered' && <th scope="col"><span className='fw-medium'>Status</span></th>}
+                                                        <th scope="col"><span className='fw-medium'>Candidate ID</span></th>
+                                                        <th scope="col"><span className='fw-medium'>Full Name</span></th>
+                                                        <th scope="col"><span className='fw-medium'>Email ID</span></th>
+                                                        {status != 'offered' && <th scope="col"><span className='fw-medium'>Contact Number</span></th>}
+                                                        {status != 'offered' && <th scope="col"><span className='fw-medium'>Applied Position</span></th>}
+                                                        {status != 'offered' && <th scope="col"><span className='fw-medium'>Application Status</span></th>}
                                                         {status == 'offered' &&
-                                                            <th scope="col"><span className='fw-medium'>Offer acceptance Status</span>
+                                                            <th scope="col"><span className='fw-medium'>Offer Status</span>
                                                             </th>}
                                                         {status == 'offered' &&
                                                             <th scope="col"><span className='fw-medium'>Offer acceptance remarks </span>
                                                             </th>}
                                                         {status == 'offered' &&
-                                                            <th scope="col"><span className='fw-medium'>Designation </span>
+                                                            <th scope="col"><span className='fw-medium'>Designation Offered </span>
                                                             </th>}
                                                         {status == 'offered' &&
-                                                            <th scope="col"><span className='fw-medium'>Employeement Type</span>
+                                                            <th scope="col"><span className='fw-medium'>Employment Type</span>
                                                             </th>}
                                                         {status == 'offered' &&
-                                                            <th scope="col"><span className='fw-medium'>Offered Date </span>
+                                                            <th scope="col"><span className='fw-medium'>Date of Offer Issuance</span>
                                                             </th>}
                                                         {status == 'offered' &&
                                                             <th scope="col"><span className='fw-medium'>Date of joining</span>
@@ -650,12 +651,12 @@ MERIDA HR`)
 
 
 
-                                                        {status != 'Reject' && <th scope="col"><span className='fw-medium'>Fresher/Experience </span></th>}
+                                                        {status != 'Reject' && <th scope="col"><span className='fw-medium'>Experience (Fresher/Experience) </span></th>}
 
-                                                        {(status == 'Internal_Hiring' || status == 'consider_to_client') && <th scope="col"><span className='fw-medium'>BGV Document Upload</span></th>}
+                                                        {(status == 'Internal_Hiring' || status == 'consider_to_client') && <th scope="col"><span className='fw-medium'>BGV Document</span></th>}
                                                         {status != 'ShartlistCanditates' && status != 'Reject' && status != 'All Applicants' &&
                                                             <th scope="col"><span className='fw-medium'>Offer Letter</span></th>}
-                                                        <th scope="col"><span className='fw-medium'>Action</span></th>
+                                                        <th scope="col"><span className='fw-medium'>Report</span></th>
 
                                                     </tr>
                                                 </thead>
@@ -678,13 +679,13 @@ MERIDA HR`)
                                                                 {status != 'offered' && <td >{e.Final_Results == 'Reject' ? 'Rejected' : e.Final_Results}</td>}
                                                                 {status == 'offered' && <td className={`  `} >
                                                                     {e.Accept_status == 'Accept' ? 'Accepted' :
-                                                                        e.Accept_status == 'Reject' ? 'Rejected' : ''} </td>}
+                                                                        e.Accept_status == 'Reject' ? 'Declined' : 'Pending'} </td>}
                                                                 {status == 'offered' && <td> {e.remarks} </td>}
 
 
                                                                 {status == 'offered' && <td> {e.position_name} </td>}
 
-                                                                {status == 'offered' && <td> {e.Employeement_Type} </td>}
+                                                                {status == 'offered' && <td> {e.Employeement_Type == 'intern' ? 'Intern' : 'Full-Time'} </td>}
                                                                 {status == 'offered' && <td> {e.OfferedDate && e.OfferedDate.slice(0, 10)} </td>}
 
                                                                 {status == 'offered' && <td> {e.Date_of_Joining} </td>}
@@ -694,12 +695,12 @@ MERIDA HR`)
                                                                         {e.Experience ? e.Documents_Upload_Status === "Uploaded" ?
                                                                             (<button className='btn btn-success btn-sm' data-bs-dismiss="modal"
                                                                                 onClick={() => { navigate(`/dash/BackgroundVerification/${e.CandidateId}`) }} >
-                                                                                BG Document Updated . . .
+                                                                                BGV File Uploaded
                                                                             </button>)
                                                                             :
                                                                             (<button className='btn btn-danger btn-sm' data-bs-dismiss="modal"
                                                                                 onClick={() => { sentid(e.CandidateId, e.Email); setmailModal(true); setMailObj(e) }} >
-                                                                                Upload Your BG Document
+                                                                                Upload BGV File
                                                                             </button>)
                                                                             : <p className='mb-0 text-center w-full '> Not Required </p>}
                                                                     </td>}
@@ -713,11 +714,13 @@ MERIDA HR`)
                                                                                     navigate(`/offerletter/${e.CandidateId}`)
                                                                                 }}
                                                                             > Offer Letter
-                                                                            </button> : <p> BGV has to complete </p>}
+                                                                            </button> : <p> BGV In Progress </p>}
                                                                     </td>
                                                                 }
                                                                 <td>
-                                                                    <button onClick={() => setFinalResultObj(e)} className='p-2 rounded bg-blue-600 text-sm text-white '>
+                                                                    <button onClick={() =>
+                                                                        setFinalResultObj(e)}
+                                                                        className='p-2 rounded bg-blue-600 text-sm text-white '>
                                                                         view
                                                                     </button>
                                                                 </td>

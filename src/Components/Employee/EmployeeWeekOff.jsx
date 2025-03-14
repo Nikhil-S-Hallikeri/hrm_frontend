@@ -3,8 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { port } from '../../App'
 import CloseIcon from '../Icons/CloseIcon'
 import { toast } from 'react-toastify'
+import { Modal } from 'react-bootstrap'
 
 const EmployeeWeekOff = ({ page, id }) => {
+    console.log(id, 'employee data');
+
     let [data, setData] = useState({
         weekoff_days: [],
         employee_id: id ? id : JSON.parse(sessionStorage.getItem('dasid')),
@@ -14,6 +17,7 @@ const EmployeeWeekOff = ({ page, id }) => {
         year: new Date().getFullYear(),
         month: new Date().getMonth() + 1
     })
+
     let [loading, setLoading] = useState()
     const monthDropDown = [
         { mon: 'January', val: 1 }, { mon: 'February', val: 2 }, { mon: 'March', val: 3 }, { mon: 'April', val: 4 }, { mon: 'May', val: 5 }, { mon: 'June', val: 6 },
@@ -21,55 +25,92 @@ const EmployeeWeekOff = ({ page, id }) => {
     ];
     let [weekOffDays, setWeekOffDays] = useState()
     let getWeekOffDaysDropDown = () => {
-
         axios.get(`${port}/root/lms/Weekoffs`).then((response) => {
             setWeekOffDays(response.data)
-            console.log(response.data);
+            console.log(response.data, 'weekoff');
             setLoading(false)
         }).catch((error) => {
-            console.log(error);
+            console.log(error, 'weekoff remove');
+
             setLoading(false)
         })
     }
-    let postWeekOff = () => {
+    let postWeekOff = async () => {
         setLoading(true)
-        axios.post(`${port}/root/lms/Weekoffs`, data).then((response) => {
-            toast.success('Uploaded successful')
-            setLoading(false)
-            console.log(response.data);
+        data = {
+            ...data,
+            weekoff_days: data.weekoff_days.map((obj) => obj.id)
+        }
+        console.log(data, 'employee data');
 
-        }).catch((error) => {
-            console.log(error);
-            toast.error('Error occured')
-            setLoading(false)
-        })
+        if (data.id) {
+            delete data.employee_id
+            await axios.patch(`${port}/root/lms/Weekoffs?weekoff_id=${data.id}`, data).then((response) => {
+                console.log(response.data);
+                setLoading(false)
+                toast.success('Updated Successfully')
+            }).catch((error) => {
+                console.log(error, 'weekoff update');
+                setLoading(false)
+                toast.error('Error occured')
+            })
+        }
+        else
+            await axios.post(`${port}/root/lms/Weekoffs`, data).then((response) => {
+                toast.success('Added successful')
+                setLoading(false)
+                console.log(response.data,'Adding Data');
+                window.location.reload()
+            }).catch((error) => {
+                console.log(error, 'Error adding');
+                if (error?.response?.data)
+                    toast.error(error.response.data)
+                else
+                    toast.error('Error occured')
+                setLoading(false)
+            })
     }
     let handleChange = (e) => {
         let { value, name } = e.target
         if (name === 'weekoff_days' && data.weekoff_days.find((val) => val === value)) {
-            value = data.weekoff_days.filter((obj) => obj !== value);
-        } else if (name === 'weekoff_days' && data.weekoff_days.findIndex((val) => val === value) === -1) {
-            value = [...data.weekoff_days, value];
+            value = data.weekoff_days.filter((obj) => obj.id !== value);
+        } else if (name === 'weekoff_days' && data.weekoff_days.findIndex((val) => val.id === value) === -1) {
+            value = [...data.weekoff_days, weekOffDays.find((obj) => obj.id == value)];
         }
         setData((prev) => ({
             ...prev,
             [name]: value
         }))
     }
-    let allAvailableweekOff = () => {
+    let getParticularEmpWeekOff = () => {
+        console.log(`${port}/root/lms/Weekoffs?weekoff_emp=${id ? id :
+            JSON.parse(sessionStorage.getItem('dasid'))}&month=${data.month}&year=${data.year}`);
+
         axios.get(`${port}/root/lms/Weekoffs?weekoff_emp=${id ? id :
-            JSON.parse(sessionStorage.getItem('dasid'))}`).then((response) => {
-                console.log(response.data, 'weekoff');
-
+            JSON.parse(sessionStorage.getItem('dasid'))}&month=${data.month}&year=${data.year}`).then((response) => {
+                console.log(response.data, 'weekoff trigger');
+                
+                setData((prev) => ({
+                    ...response.data[0],
+                    employee_id: id ? id : JSON.parse(sessionStorage.getItem('dasid'))
+                }))
             }).catch((error) => {
-                console.log(error);
-
+                console.log(error, 'weekoff trigger');
+                setData((prev) => ({
+                    ...prev,
+                    weekoff_days: [],
+                    id: null,
+                }))
             })
     }
     useEffect(() => {
         getWeekOffDaysDropDown()
-        allAvailableweekOff()
     }, [])
+    useEffect(() => {
+        console.log("weekoff triggered with:", data, data.year, data.month);
+        if (data.year && data.month)
+            getParticularEmpWeekOff()
+    }, [data.year, data.month])
     return (
         <div className={` ${page == 'inner' && 'h-[40vh] '} p-3 rounded-xl bgclr w-full  `} >
             <h4 className=' '>Week Off Information </h4>
@@ -125,15 +166,15 @@ const EmployeeWeekOff = ({ page, id }) => {
                                     className='p-1 text-red-600 rounded-full  ' >
                                     <CloseIcon size={13} />
                                 </button>
-                                {weekOffDays.find((obj) => obj.id == val)?.day}
+                                {weekOffDays.find((obj) => obj.id == val.id)?.day}
                             </div>
                         ))
                     }
                 </div>
             </div>
             <button disabled={loading} onClick={postWeekOff}
-                className={` ms-auto flex my-3 text-center savebtn text-green-50 p-1 px-2 w-20 rounded `} >
-                {loading ? 'Loading...' : "Save"}
+                className={` ms-auto flex my-3 text-center savebtn text-green-50 p-1 px-2 rounded `} >
+                {loading ? 'Loading...' : "Submit"}
             </button>
         </div>
     )

@@ -15,7 +15,9 @@ const JFIdentityForm = ({ id, page, data }) => {
         pan_proof: '',
         passport_num: '',
         passport_proof: '',
-        validate: ''
+        validate: '',
+        driving_license: '',
+        voter_id: ''
     })
     let handleChange = (e) => {
         let { name, value, files } = e.target
@@ -42,6 +44,9 @@ const JFIdentityForm = ({ id, page, data }) => {
             { formObj.passport_proof && formData.append('passport_proof', formObj.passport_proof) }
             formData.append('passport_num', formObj.passport_num)
             formData.append('validate', formObj.validate)
+            formData.append('voter_id', formObj.voter_id)
+            formData.append('driving_license', formObj.driving_license)
+
 
             console.log(formObj);
             axios.post(`${port}/root/ems/employee-identity/${data.id}/`, formData).then((response) => {
@@ -63,6 +68,8 @@ const JFIdentityForm = ({ id, page, data }) => {
         formData.append('passport_proof', formObj.passport_proof)
         formData.append('passport_num', formObj.passport_num)
         formData.append('validate', formObj.validate)
+        formData.append('voter_id', formObj.voter_id)
+        formData.append('driving_license', formObj.driving_license)
 
         axios.patch(`${port}/root/ems/update-employee-identity/${formObj.id}/`, formData).then((response) => {
             console.log(response.data);
@@ -85,11 +92,14 @@ const JFIdentityForm = ({ id, page, data }) => {
         getData()
     }, [data])
     return (
-        <div className='p-3 bg-white rounded '>
+        <div className='p-3 inputbg rounded '>
             <h5 className='mt-2 uppercase heading' style={{ color: 'rgb(76,53,117)' }}> Employee Identity Form</h5>
-            <main className='p-3 formbg rounded row '>
+            <main className='p-3 bg-white rounded row '>
                 <h5 className=' text-xl ' >Aadhar details </h5>
-
+                <InputFieldform disabled={page} label='Driving License' placeholder='' value={formObj.driving_license} name='driving_license'
+                    handleChange={handleChange} type='text' />
+                <InputFieldform disabled={page} label='Voter ID' placeholder='' value={formObj.voter_id} name='voter_id'
+                    handleChange={handleChange} type='text' />
                 <InputFieldform disabled={page} label='Aadhar Number' limit={999999999999} placeholder='724578963452' value={formObj.aadhar_no} name='aadhar_no'
                     handleChange={handleChange} type='text' />
                 <InputFieldform disabled={page} label='Name As Per Aadhar' placeholder='David' value={formObj.name_as_per_aadhar} name='name_as_per_aadhar'

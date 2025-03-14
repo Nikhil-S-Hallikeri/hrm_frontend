@@ -10,9 +10,9 @@ import { port } from '../App'
 import { toast } from 'react-toastify'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
-const LeaveSetting = () => {
+const LeaveSetting = ({ subpage }) => {
     let { id } = useParams()
-    let { setActivePage } = useContext(HrmStore)
+    let { setActivePage, setTopNav } = useContext(HrmStore)
     let navigate = useNavigate()
     let [leaveData, setleaveData] = useState({
         description: null,
@@ -38,6 +38,7 @@ const LeaveSetting = () => {
         earned_leave: null,
         applicable_year: new Date(),
         applicable_to: null,
+        is_active: false,
         id: null
     })
     let [leaveObjArry, setLeaveObjArry] = useState([])
@@ -109,6 +110,7 @@ const LeaveSetting = () => {
     }
     useEffect(() => {
         setActivePage("leave")
+        setTopNav('creation')
         if (id) {
             getParticular()
         }
@@ -119,12 +121,13 @@ const LeaveSetting = () => {
     );
     return (
         <div>
-            <Topnav name='Leaves Setting' />
+            {!subpage && <Topnav name='Leaves Setting' />}
             {/* Sections */}
             {/* <button className='flex hover:scale-[1.02] duration-300 items-center p-2 rounded-lg btngrd text-white px-3 gap-2 ms-auto '>
                 <PlusIcon />  Add leave
             </button> */}
-            <select name="" value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className='bgclr text-xs outline-none ms-auto flex rounded p-1' id="">
+            <select name="" value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}
+                className='inputbg text-xs outline-none bg-transparent ms-auto flex rounded p-1' id="">
                 <option value="">Select</option>
                 {
                     yearArry && yearArry.map((val, index) => (
@@ -134,55 +137,54 @@ const LeaveSetting = () => {
 
             </select>
             <main className='row my-4 justify-between mx-auto gap-3 raleway'>
-                <section className='col-md-5 p-3 rounded bg-slate-50 border-2 border-white min-h-[10vh]  '>
+                <section className='col-md-5 p-3 rounded bg-white border-2 border-white min-h-[10vh]  '>
                     <div className=''>
-                        <h4>Leave Name :</h4>
-                        <div className='flex p-[10px] rounded-xl shadow-md bg-white w-full gap-2 '>
+                        <h4>Leave type :</h4>
+                        <div className='flex p-[10px] rounded-xl shadow-md inputbg w-full gap-2 '>
                             <input type="text" value={leaveData.leave_name}
                                 name='leave_name' onChange={handleLeaveData}
-                                className='outline-none flex-1  ' />
+                                className='outline-none bg-transparent flex-1  ' />
                             <EditPen />
                         </div>
                     </div>
                     <div className='my-3'>
                         <h4>Description :</h4>
-                        <div className='flex gap-2 w-full p-[10px] rounded-xl shadow-md bg-white  '>
+                        <div className='flex gap-2 w-full p-[10px] rounded-xl shadow-md inputbg  '>
                             <textarea type="text" rows={5} value={leaveData.description}
-                                name='description' onChange={handleLeaveData} className='flex-1 outline-none ' />
+                                name='description' onChange={handleLeaveData} className='flex-1 outline-none bg-transparent ' />
                             <EditPen />
                         </div>
                     </div>
                     <div className='my-3'>
-                        <h4>Active Status need to work on this :</h4>
-                        {/* <div className='flex items-center gap-2'>
-                            <input value={leaveObj.carry_forward} onChange={(e) => {
+                        <h4>Active Status :</h4>
+                        {leaveObj && <div className='flex items-center gap-2'>
+                            <input value={leaveObj.is_active} onChange={(e) => {
                                 setLeaveObj((prev) => ({
                                     ...prev,
-                                    carry_forward: true
+                                    is_active: true
                                 }))
-                            }} type="radio" checked={leaveObj.carry_forward} id='cfyes' name='a' />
-                            <label htmlFor="cfyes">Active </label>
-                            <input value={leaveObj.carry_forward} onChange={(e) => {
+                            }} type="radio" checked={leaveObj.is_active} id='ayes' name='a' />
+                            <label htmlFor="ayes">Active </label>
+                            <input value={leaveObj.is_active} onChange={(e) => {
                                 setLeaveObj((prev) => ({
                                     ...prev,
-                                    carry_forward: false,
-                                    max_carry_forward: null
+                                    is_active: false
                                 }))
-                            }} type="radio" id='cfno' name='a' />
-                            <label htmlFor="cfno">InActive </label>
-                        </div> */}
+                            }} type="radio" id='ino' name='a' checked={!leaveObj.is_active} />
+                            <label htmlFor="ino">InActive </label>
+                        </div>}
                     </div>
                 </section>
 
-                {leaveObj && <section className='col-md-5 p-3 rounded bg-slate-50 border-2 border-white min-h-[10vh] '>
+                {leaveObj && <section className='col-md-5 p-3 rounded bg-white border-2 border-white min-h-[10vh] '>
                     <h4 className='break-words'>{leaveData && leaveData.leave_name + " "}
                         {leaveData && leaveObj.applicable_year ? (leaveObj.applicable_year + '').slice(0, 4) : ''}
                     </h4>
-                    <p className='fw-semibold text-sm '>No of Days </p>
-                    <div className='flex p-[10px] rounded-xl shadow-md bg-white w-fit '>
+                    <p className='fw-semibold text-sm '>Number of Days </p>
+                    <div className='flex p-[10px] rounded-xl shadow-md inputbg w-fit '>
                         <input type="number" value={leaveObj.No_Of_leaves}
                             onChange={(e) => { if (e.target.value >= 0 && e.target.value <= 365) handleLeaveObj(e) }}
-                            name='No_Of_leaves' className='outline-none ' />
+                            name='No_Of_leaves' className='outline-none bg-transparent ' />
                         <EditPen />
                     </div>
                     <article className='my-2'>
@@ -206,11 +208,11 @@ const LeaveSetting = () => {
                                 <label htmlFor="cfno">No </label>
                             </div>
                             {leaveObj.carry_forward &&
-                                <div className='bg-white gap-2 items-center rounded-xl flex p-2 shadow-md '>
+                                <div className='inputbg gap-2 items-center rounded-xl flex p-2 shadow-md '>
                                     <button className='rounded bg-slate-400 bg-opacity-60 shadow-sm p-1 px-2'>
                                         MAX </button>
                                     <input type="text" value={leaveObj.max_carry_forward} name='max_carry_forward'
-                                        onChange={(e) => { if (e.target.value >= 0 && e.target.value < 366) handleLeaveObj(e) }} className='outline-none w-28' />
+                                        onChange={(e) => { if (e.target.value >= 0 && e.target.value < 366) handleLeaveObj(e) }} className='outline-none bg-transparent w-28' />
                                     <EditPen />
                                 </div>}
                         </section>
@@ -238,7 +240,7 @@ const LeaveSetting = () => {
                             <p className='fw-semibold m-0 '>Applicable to </p>
 
                             <select name="applicable_to" id="" value={leaveObj.applicable_to} onChange={handleLeaveObj}
-                                className='outline-none shadow p-2 rounded mx-2 '>
+                                className='outline-none inputbg p-2 rounded mx-2 '>
                                 <option value="">Select</option>
                                 <option value="probationer">Probation Period </option>
                                 <option value="confirmed">Confirmed Employee </option>
@@ -260,13 +262,13 @@ const LeaveSetting = () => {
 
             </main>
             <div className='flex gap-3 justify-end'>
-                <button onClick={() => navigate('/dash/leaveCreation')} className='backbtn w-40 p-2 px-3 rounded-xl hover:scale-[1.02] duration-300 border-2 text-white  '>
+                <button onClick={() => navigate('/dash/leaveCreation')}
+                    className=' bg-slate-700  w-40 p-2 px-3 rounded-xl hover:scale-[1.02] duration-300 text-white  '>
                     Cancel
                 </button>
                 <button
                     onClick={updateLeaveObj}
-                    className='savebtn w-40 p-2 px-3 rounded-xl hover:scale-[1.02] duration-300 border-2
-                 text-white border-green-500 '>
+                    className='savebtn w-40 p-2 px-3 rounded-xl hover:scale-[1.02] duration-300 text-white border-green-500 '>
                     Save
                 </button>
             </div>

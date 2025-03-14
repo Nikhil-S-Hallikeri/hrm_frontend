@@ -6,11 +6,13 @@ import Recruiterdashpage from '../Recruiterdashpage'
 import Empdashpage from '../Empdashpage'
 import NewSideBar from '../MiniComponent/NewSideBar'
 import Topnav from '../Topnav'
+import NdaReport from '../MiniComponent/NdaReport'
 
 const DashboardRouter = () => {
 
     return (
         <div>
+            <NdaReport />
             <main className='flex flex-col lg:flex-row '>
                 <article className='sticky z-10 top-0'>
                     <NewSideBar />
@@ -21,7 +23,7 @@ const DashboardRouter = () => {
                         <Routes>
                             <Route element={<Protect prop Child={Hrdashpage} />} path='/HR'></Route>
                             <Route element={<Protect prop Child={Hrdashpage} />} path='/Admin'></Route>
-                            <Route element={<Protect prop Child={Recruiterdashpage} />} path='/Recruiter'></Route>
+                            <Route element={<Protect prop Child={Empdashpage} />} path='/Recruiter'></Route>
                             <Route element={<Protect prop Child={Empdashpage} />} path='/Employee'></Route>
                         </Routes>
                     </div>

@@ -33,7 +33,7 @@ const Forgot_password = () => {
         setForgot_pass_otp_verification__Component(true)
       }
       else {
-      alert('ERROR')
+        alert('ERROR')
       }
 
     }).catch((err) => {
@@ -75,7 +75,8 @@ const Forgot_password = () => {
             </div>
             <div class="modal-footer p-3">
 
-              <button type="button" class="btn btn-primary" onClick={HandleForgotsendMail}>Send</button>
+              <button type="button" class="btn btn-primary"
+                onClick={HandleForgotsendMail}>Send</button>
             </div>
 
           </div>
@@ -83,7 +84,7 @@ const Forgot_password = () => {
 
       </div>
 
-      <Forgot_pass_otp_verification  Set_Component_forgot={setForgot_pass_otp_verification__Component} Component_forgot={Forgot_pass_otp_verification_Component} backendotp={backendotp} EmployeeID={EmployeeID} ></Forgot_pass_otp_verification>
+      <Forgot_pass_otp_verification Set_Component_forgot={setForgot_pass_otp_verification__Component} Component_forgot={Forgot_pass_otp_verification_Component} backendotp={backendotp} EmployeeID={EmployeeID} ></Forgot_pass_otp_verification>
 
 
     </div>

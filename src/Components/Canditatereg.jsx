@@ -17,6 +17,7 @@ const Canditatereg = () => {
     let queryParams = new URLSearchParams(location.search)
     let source = queryParams.get('source')
     let desig = queryParams.get('desig')
+    let hrWebId=queryParams.get('jobpk')
     console.log(source, desig, 'name');
 
 
@@ -61,7 +62,7 @@ const Canditatereg = () => {
     const [alertType, setAlertType] = useState('success');
     let [appliedFor, setAppliedFor] = useState('')
     let [otherJob, setOtherjob] = useState()
-
+    let [refferalEmp, setReffaralEmp] = useState('')
 
     useEffect(() => {
         if (desig && designation) {
@@ -86,7 +87,8 @@ const Canditatereg = () => {
 
     let handleSubmit = (e) => {
         e.preventDefault();
-
+        if (JobPortal == 'referral' && refferalEmp == '')
+            return toast.warning('Fill the Referred by field')
         const formdata = new FormData()
         formdata.append('FirstName', firstname);
         formdata.append('LastName', LastName);
@@ -116,6 +118,11 @@ const Canditatereg = () => {
         formdata.append('Gender', gender);
         formdata.append('Position', selectedOption);
         formdata.append('Appling_for', appliedFor);
+        if(hrWebId){
+            formdata.append('JPS_Id',hrWebId)
+        }
+        if (refferalEmp && JobPortal=='referral' )
+            formdata.append('Referred_by', refferalEmp);
         if (otherJob && JobPortal == 'others')
             formdata.append('JobPortalSource', otherJob);
         else
@@ -541,9 +548,17 @@ const Canditatereg = () => {
                                             <option value="naukri">Naukri</option>
                                             <option value="foundit">Foundit</option>
                                             <option value="indeed">Indeed </option>
+                                            <option value="direct">Direct </option>
+                                            <option value="referral">Referral </option>
+
                                             <option value="others">Others</option>
                                         </select>
                                     </div>
+                                    {JobPortal == 'referral' && <div className="col-md-6 col-lg-3 mb-3">
+                                        <label htmlFor="expectedSalary" className="fw-medium my-1 text-slate-600 poppins ">Referred By (Employee Id)  </label>
+                                        <input type="text" className="inputbg p-2 w-full outline-none rounded " id="expectedSalary" name="expectedSalary"
+                                            value={refferalEmp} onChange={(e) => setReffaralEmp(e.target.value)} required />
+                                    </div>}
                                     {JobPortal == 'others' && <div className="col-md-6 col-lg-3 mb-3">
                                         <label htmlFor="expectedSalary" className="fw-medium my-1 text-slate-600 poppins ">Other Source <span class='text-danger'>*</span></label>
                                         <input type="text" disabled={desig} className="inputbg p-2 w-full outline-none rounded " id="expectedSalary"

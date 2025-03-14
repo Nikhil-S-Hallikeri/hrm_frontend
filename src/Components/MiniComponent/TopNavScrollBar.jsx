@@ -18,7 +18,7 @@ const TopNavScrollBar = ({ navbar }) => {
     };
     let navigate = useNavigate()
     return (
-        <div className="flex items-center  ">
+        <div className="flex items-center w-[90%]   ">
             {navbar && navbar.length > 4 && <button
                 className="bg-gray-300 text-slate-50 px-2 py-1 rounded"
                 onClick={scrollLeft}
@@ -26,7 +26,7 @@ const TopNavScrollBar = ({ navbar }) => {
                 ◄
             </button>}
             <div
-                className="topnavscroll flex overflow-x-auto w-[70vw] sm:w-[40vw] items-center 
+                className="topnavscroll flex overflow-x-auto items-center 
                  transition-all duration-800 mx-2 mt-1 space-x-2"
                 ref={scrollRef}>
                 {

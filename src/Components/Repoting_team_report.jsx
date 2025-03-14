@@ -277,18 +277,9 @@ const Repoting_team_report = () => {
                                                             alert('No Requests ')
                                                         }
                                                     }}
-
-
-
-
                                                 >  <i class={`fa-solid fa-person-circle-question ${e.Requests.ResignationRequest.length > 0 ? ' text-success' : 'text-danger'}`}></i></button>
-
                                             </td>
-
-
                                         </tr>
-
-
                                     )
                                 })}
 
@@ -296,9 +287,6 @@ const Repoting_team_report = () => {
 
                             </tbody>
                         </table>
-
-
-
                     </div>
 
                 </div>

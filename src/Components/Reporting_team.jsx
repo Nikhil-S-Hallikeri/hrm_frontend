@@ -10,7 +10,7 @@ import { toast } from 'react-toastify'
 import NewSideBar from './MiniComponent/NewSideBar'
 
 
-const Reporting_team = () => {
+const Reporting_team = ({ subpage }) => {
 
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let UserName = JSON.parse(sessionStorage.getItem('user')).UserName
@@ -509,14 +509,14 @@ const Reporting_team = () => {
     return (
         <div className='flex flex-col lg:flex-row ' style={{ width: '100%', minHeight: '100%', }}>
 
-            <div className='sticky z-10 top-0'>
+            {!subpage && <div className='sticky z-10 top-0'>
 
-               <NewSideBar/>
-            </div>
+                <NewSideBar />
+            </div>}
             <div className=' m-0 p-sm-2 flex-1 mx-auto container-fluid overflow-hidden ' style={{ borderRadius: '10px' }}>
-                <div style={{ marginLeft: '10px' }}>
+                {!subpage && < div style={{ marginLeft: '10px' }}>
                     <Topnav></Topnav>
-                </div>
+                </div>}
                 {/* Reporting Team List Start */}
                 <div className={`p-3 ${Reporting_Team_List ? '' : 'd-none'}`}>
 
@@ -691,62 +691,53 @@ const Reporting_team = () => {
                                     <th scope="col">Request</th>
                                 </tr>
                             </thead>
-                            <tbody className='h-[50vh] overflow-y-scroll ' >
 
-                                {filteredList != undefined &&
-                                    filteredList.map((e, index) => {
-                                        return (
-                                            <tr key={index} >
-                                                <td scope="row"><input type="checkbox"
-                                                    value={e.employee_Id} onChange={handleCheckboxChange} /></td>
-                                                {/* <td key={e.id}> {index + 1}</td> */}
-                                                <td onClick={() => {
-                                                    sentparticularData(e.id);
-                                                    sentparticularData1(e.employee_Id);
-                                                    setSelectedName(e.full_name)
-                                                }} data-bs-toggle="modal" data-bs-target="#exampleModal6" key={e.id}
-                                                    style={{ cursor: 'pointer' }}> {e.full_name}</td>
-                                                <td key={e.id}> {e.email}</td>
-                                                <td key={e.id}> {e.employee_Id}</td>
-                                                <td>{e.Reporting_To} </td>
-                                                <td key={e.id}> {e.mobile}</td>
-                                                <td key={e.id}> {e.hired_date}</td>
-                                                <td key={e.id}> {e.Designation}</td>
-                                                <td key={e.id}> {e.Department}</td>
-                                                <td>
-                                                    {/* <span className={`text-center ${e.Requests != undefined && e.Requests.LeaveRequests.length >= 0 ? 'd-none' : 'bg-warning'}`} style={{ position: 'relative', left: '33px', bottom: '10px', fontSize: '11px', color: 'red' }} > </span> */}
-                                                    <button className='btn '
-                                                        onClick={() => {
-                                                            if (e.Requests.ResignationRequest.length > 0) {
-                                                                setResignationRequest(e.Requests.ResignationRequest)
-                                                                setLeaveRequests(e.Requests.LeaveRequests)
-                                                                set_reform_id(e.Requests.ResignationRequest[0].id)
-                                                                set_HR_manager_name(e.Requests.ResignationRequest[0].reporting_manager_name)
-                                                                set_Re_manager_name(e.Requests.ResignationRequest[0].HR_manager_name)
-                                                                setAll_request_data(true)
-                                                                setReporting_Team_List(false)
+                            {filteredList != undefined &&
+                                filteredList.map((e, index) => {
+                                    return (
+                                        <tr key={index} >
+                                            <td scope="row"><input type="checkbox"
+                                                value={e.employee_Id} onChange={handleCheckboxChange} /></td>
+                                            {/* <td key={e.id}> {index + 1}</td> */}
+                                            <td onClick={() => {
+                                                sentparticularData(e.id);
+                                                sentparticularData1(e.employee_Id);
+                                                setSelectedName(e.full_name)
+                                            }} data-bs-toggle="modal" data-bs-target="#exampleModal6" key={e.id}
+                                                style={{ cursor: 'pointer' }}> {e.full_name}</td>
+                                            <td key={e.id}> {e.email}</td>
+                                            <td key={e.id}> {e.employee_Id}</td>
+                                            <td>{e.Reporting_To} </td>
+                                            <td key={e.id}> {e.mobile}</td>
+                                            <td key={e.id}> {e.hired_date}</td>
+                                            <td key={e.id}> {e.Designation}</td>
+                                            <td key={e.id}> {e.Department}</td>
+                                            <td>
+                                                {/* <span className={`text-center ${e.Requests != undefined && e.Requests.LeaveRequests.length >= 0 ? 'd-none' : 'bg-warning'}`} style={{ position: 'relative', left: '33px', bottom: '10px', fontSize: '11px', color: 'red' }} > </span> */}
+                                                <button className='btn '
+                                                    onClick={() => {
+                                                        if (e.Requests.ResignationRequest.length > 0) {
+                                                            setResignationRequest(e.Requests.ResignationRequest)
+                                                            setLeaveRequests(e.Requests.LeaveRequests)
+                                                            set_reform_id(e.Requests.ResignationRequest[0].id)
+                                                            set_HR_manager_name(e.Requests.ResignationRequest[0].reporting_manager_name)
+                                                            set_Re_manager_name(e.Requests.ResignationRequest[0].HR_manager_name)
+                                                            setAll_request_data(true)
+                                                            setReporting_Team_List(false)
 
-                                                            }
-                                                            else {
-                                                                alert('No Requests ')
-                                                            }
+                                                        }
+                                                        else {
+                                                            alert('No Requests ')
+                                                        }
 
-                                                        }}
-                                                    > <i class={`fa-solid fa-person-circle-question ${e.Requests.ResignationRequest.length > 0 ? ' text-success' : 'text-danger'}`}></i></button>
-                                                </td>
-                                            </tr>
-                                        )
-                                    })}
-
-
-
-                            </tbody>
+                                                    }}
+                                                > <i class={`fa-solid fa-person-circle-question ${e.Requests.ResignationRequest.length > 0 ? ' text-success' : 'text-danger'}`}></i></button>
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
                         </table>
-
-
-
                     </div>
-
                 </div>
                 {/* Reporting Team List End */}
 
@@ -1774,7 +1765,7 @@ const Reporting_team = () => {
 
 
 
-        </div>
+        </div >
 
 
 

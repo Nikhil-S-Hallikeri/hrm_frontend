@@ -51,7 +51,7 @@ const LeaveaddingModal = (props) => {
                     <input type=" text" placeholder='Enter Leave name *'
                         value={obj.leave_name} onChange={handleChange} name='leave_name' className='p-3 rounded-xl w-72 flex outline-none   mx-auto shadow
                          bg-slate-50 border-2 ' />
-                    <textarea type=" text" placeholder='Enter description ' value={obj.description} onChange={handleChange} name='description'
+                    <textarea type=" text" placeholder='Provide a brief description of this leave' value={obj.description} onChange={handleChange} name='description'
                         className='p-3 my-3 rounded-xl w-72 flex outline-none   mx-auto shadow
                          bg-slate-50 border-2 ' />
                     <button onClick={handleSave} disabled={loading == 'leave'} className='savebtn p-2 px-5 mx-auto rounded-lg text-white flex text-center '>

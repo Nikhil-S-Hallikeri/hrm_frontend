@@ -13,7 +13,7 @@ import RestrictedLeaveApply from './RestrictedLeaveApply'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import LeaveBalanceCard from '../../Components/Leavecomponent/LeaveBalanceCard'
 
-const LeaveApplying = ({ subpage }) => {
+const   LeaveApplying = ({ subpage }) => {
     let { activeSetting, setTopNav, getProperDate, getCurrentDate, timeValidate } = useContext(HrmStore)
     let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let reportingTo = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).RepotringTo_Name

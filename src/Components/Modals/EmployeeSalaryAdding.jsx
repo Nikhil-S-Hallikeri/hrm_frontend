@@ -94,7 +94,7 @@ const EmployeeSalaryAdding = ({ id, emp, setpage }) => {
 
             axios.post(`${port}/root/ems/bank-account-details/${id}/`, formData).then((response) => {
                 console.log(response.data);
-                particularchange(emp.employee_Id, templateObj.id)
+                particularchange(emp.employee_Id, templateObj.salary_template || templateObj.id)
                 toast.success('Employee Updated')
                 getData()
             }).catch((error) => {
@@ -148,11 +148,11 @@ const EmployeeSalaryAdding = ({ id, emp, setpage }) => {
             if (response.data.template)
                 settemplateObj(response.data.template)
         }).catch((error) => {
-            console.log(error);
+            console.log(error, 'hari');
         })
     }
     let postSalary = () => {
-        if (!salary_template.id)
+        if (!salary_template?.id)
             axios.post(`${port}/root/ems/EmployeeHistoryCreating/${id}/`, { assigned_salary: salary_changes }).then((response) => {
                 console.log(response.data);
             }).catch((error) => {
@@ -188,13 +188,13 @@ const EmployeeSalaryAdding = ({ id, emp, setpage }) => {
     return (
         <div>
 
-            <main className='formbg p-2 rounded row ' >
+            <main className='bg-white p-2 rounded row ' >
                 <InputFieldform label='Annual CTC' value={salary_changes} limit={99999999}
                     handleChange={(e) => setSalaryChanges(e.target.value)} />
                 <div className=' col-md-6 col-lg-4 ' >
                     <label className='my-1' htmlFor="">Salary template </label>
                     <select value={templateObj.salary_template} onChange={handleChangeTemplate} name="salary_template"
-                        className='p-2 outline-none w-full bgclr rounded ' id="">
+                        className='p-2 outline-none w-full inputbg rounded ' id="">
                         <option value="">Select</option>
                         {
                             templates && templates.map((obj, index) => (

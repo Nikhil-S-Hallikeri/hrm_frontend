@@ -18,6 +18,7 @@ import FinalResultCompleted from '../Modals/FinalResultCompleted';
 import InfoIcon from '../../SVG/InfoIcon';
 import InfoButton from '../SettingComponent/InfoButton';
 import FinalStatus from '../Modals/FinalStatus';
+import LoadingData from '../MiniComponent/LoadingData';
 
 
 const Applylist = () => {
@@ -86,6 +87,11 @@ const Applylist = () => {
   const [selectedCandidates1, setSelectedCandidates1] = useState([]);
   const [selectedCandidates2, setSelectedCandidates2] = useState([]);
   const [selectedCandidates3, setSelectedCandidates3] = useState([]);
+  let [filterApplicationObj, setFilterApplicationObj] = useState({
+    from: '',
+    to: '',
+    word: ''
+  })
 
 
 
@@ -126,6 +132,37 @@ const Applylist = () => {
 
   }, [])
 
+  let handleFilterApplicationChange = (e) => {
+    let { name, value } = e.target
+    setFilterApplicationObj((prev) => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+  const filterRangeWiseApplication = () => {
+    // if (filterApplicationObj.from && filterApplicationObj.to) {
+    //     let filteredData = filteredApplyList.filter(
+    //         (obj) =>
+    //             new Date(obj.AppliedDate) >= new Date(filterApplicationObj.from) &&
+    //             new Date(obj.AppliedDate) <= new Date(filterApplicationObj.to)
+    //     );
+    //     console.log(filteredData, 'filteredValue');
+    //     setFilteredApplyList(filteredData);
+    // } else if (filterApplicationObj.from) {
+    //     let filteredData = filteredApplyList.filter(
+    //         (obj) => new Date(obj.AppliedDate) >= new Date(filterApplicationObj.from)
+    //     );
+    //     console.log(filteredData, 'filteredValue');
+    //     setFilteredApplyList(filteredData);
+    // } else if (filterApplicationObj.to) {
+    //     let filteredData = filteredApplyList.filter(
+    //         (obj) => new Date(obj.AppliedDate) <= new Date(filterApplicationObj.to)
+    //     );
+    //     console.log(filteredData, 'filteredValue');
+    //     setFilteredApplyList(filteredData);
+    // }
+
+  };
 
   let fetchdata3 = () => {
     axios.get(`${port}/root/FinalList/${Empid}/`).then((res) => {
@@ -295,7 +332,6 @@ const Applylist = () => {
 
 
   }, [])
-
   // APPLY REC NAME END
 
 
@@ -462,19 +498,27 @@ const Applylist = () => {
   const [search_filter_applylist, setsearch_filter_applylist] = useState();
   console.log("searchValue", searchValue);
 
-  const handlesearchvalue = (value) => {
+  const handlesearchvalue = () => {
 
-    console.log('search_value', value);
-    setSearchValue(value)
 
-    if (value.length > 0) {
-      axios.post(`${port}/root/appliedcandidateslist`, { search_value: value }).then((res) => {
-        console.log("search_res", res.data);
-        setApplylist(res.data)
-        setFilteredApplyList(res.data)
-      }).catch((err) => {
-        console.log("search_res", err.data);
-      })
+    if (filterApplicationObj.word || filterApplicationObj.from || filterApplicationObj.to) {
+      setloading('applied')
+      // alert('here')
+      axios.post(`${port}/root/appliedcandidateslist`,
+        {
+          search_value: filterApplicationObj.word,
+          from_date: filterApplicationObj.from,
+          to_date: filterApplicationObj.to
+        }).then((res) => {
+          console.log("search_res", res.data);
+          setApplylist(res.data)
+          setloading(false)
+          setFilteredApplyList(res.data)
+        }).catch((err) => {
+          setloading(false)
+
+          console.log("search_res", err);
+        })
     }
     else {
       fetchdata()
@@ -1411,8 +1455,8 @@ const Applylist = () => {
                 aria-selected="true">
                 <img className='w-14 ' src={require('../../assets/Images/circle1.png')} alt="" />
                 <div className='text-sm'>
-                  Applyed Candidates List
-
+                  {/* Applyed Candidates List */}
+                  Total Applications
                   <small className='bg-green-400 my-2 text-white px-3 ms-2 w-fit text-xs block rounded' >
                     {filteredApplyList != undefined && filteredApplyList.length} Candidates </small>
                 </div>
@@ -1425,7 +1469,7 @@ const Applylist = () => {
                 id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" role="tab"
                 aria-controls="pills-profile" aria-selected="false">
                 <img className='w-14 ' src={require('../../assets/Images/circle4.png')} alt="" />
-                <div className='text-sm'>  Screening process
+                <div className='text-sm'>  Screening Status
                   <div className='flex my-2 text-xs justify-between gap-2 flex-wrap'>
 
                     <small className='bg-red-400 text-white px-3  block rounded'> {screeninglist != undefined && screeninglist.length} Assigned </small>
@@ -1439,7 +1483,7 @@ const Applylist = () => {
                 id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" role="tab"
                 aria-controls="pills-contact" aria-selected="false">
                 <img className='w-14 ' src={require('../../assets/Images/circle2.png')} alt="" />
-                <div className='text-sm'> Interview process
+                <div className='text-sm'> Interview Status
                   <div className='flex my-2 text-xs justify-between gap-2 flex-wrap'>
 
                     <small className='bg-red-400 text-white px-3  block rounded'>{interviewlist != undefined && interviewlist.length} Assigned </small>
@@ -1503,16 +1547,26 @@ const Applylist = () => {
 
 
                   <div className='flex justify-between items-center   mb-2 '>
-                    <div className=' '>
+                    <div className='flex gap-2 items-center  '>
                       <div className=" p-2  relative">
                         <button className='absolute -top-2 right-2 '>
-                          <InfoButton size={12} content="Search by Candidate name,Candidate id,Email, Applied designation " />
+                          <InfoButton size={12} content="Search by Candidate name,Candidate id,Email, Applied designation , Source " />
                         </button>
-                        <input type="text" value={searchValue} style={{ width: '200px', height: '30px', fontSize: '9px', outline: 'none' }}
-                          onChange={(e) => {
-                            handlesearchvalue(e.target.value)
-                          }} placeholder='Search..' className=" bgclr p-2 rounded  " aria-label="Username" aria-describedby="basic-addon1" />
+                        <input type="text" value={filterApplicationObj.word} name='word' style={{ width: '200px', height: '30px', fontSize: '9px', outline: 'none' }}
+                          onChange={handleFilterApplicationChange} placeholder='Search..' className=" bgclr p-2 rounded  " aria-label="Username" aria-describedby="basic-addon1" />
                       </div>
+                      {/* From video */}
+                      <div className='flex items-center gap-3 bg-white p-1 px-2 rounded  ' >
+                        From : <input type="date" value={filterApplicationObj.from} name='from' onChange={handleFilterApplicationChange}
+                          className=' outline-none p-1 bg-transparent ' />
+                      </div>
+                      <div className='flex items-center gap-3 bg-white p-1 px-2 rounded  ' >
+                        To : <input type="date" value={filterApplicationObj.to} name='to' onChange={handleFilterApplicationChange}
+                          className=' outline-none p-1 bg-transparent ' />
+                      </div>
+                      <button className=' bg-green-600 text-slate-50 p-2 px-3 rounded ' onClick={handlesearchvalue} >
+                        Search
+                      </button>
                     </div>
                     <div className='flex gap-3 flex-wrap '>
 
@@ -1537,30 +1591,24 @@ const Applylist = () => {
                     </div>
                   </div>
 
-
-
-                  <div className='rounded  h-[50vh] overflow-y-scroll w-full tablebg table-responsive mt-4'>
+                  <article>
+                    <p className='mb-0 ' > Total : {filteredApplyList ? filteredApplyList.length : 0} </p>
+                  </article>
+                  {/* Applied List table */}
+                  <div className='rounded  h-[45vh] overflow-y-scroll w-full tablebg table-responsive mt-4'>
                     <table className="w-full ">
-                      <thead className='sticky top-0  ' >
-                        <tr className='bgclr1 ' >
-                          {/* <th scope="col"></th> */}
-                          <th scope="col"><span className='fw-medium'></span>All</th>
-                          <th scope="col"><span className='fw-medium'>Name</span></th>
-                          <th scope="col"><span className='fw-medium'>Canditate Id</span></th>
-                          <th scope="col"><span className='fw-medium'>Email</span></th>
-                          <th scope="col"><span className='fw-medium'>Phone</span></th>
-                          <th scope="col"><span className='fw-medium'>Applied on  </span></th>
-                          <th scope="col"><span className='fw-medium'>Source  </span></th>
-                          <th scope="col"><span className='fw-medium'>Applied Designation</span></th>
-
-                          <th scope="col"><span className='fw-medium'>View</span></th>
-
-
-
-
-
-                        </tr>
-                      </thead>
+                      <tr className='bgclr1 sticky top-0 ' >
+                        {/* <th scope="col"></th> */}
+                        <th scope="col"><span className='fw-medium'></span>All</th>
+                        <th scope="col"><span className='fw-medium'>Full Name</span></th>
+                        <th scope="col"><span className='fw-medium'>Canditate Id</span></th>
+                        <th scope="col"><span className='fw-medium'>Email ID</span></th>
+                        <th scope="col"><span className='fw-medium'>Contact Number</span></th>
+                        <th scope="col"><span className='fw-medium'>Application Date</span></th>
+                        <th scope="col"><span className='fw-medium'>Source of Application</span></th>
+                        <th scope="col"><span className='fw-medium'>Position Applied For</span></th>
+                        <th scope="col"><span className='fw-medium'>Details</span></th>
+                      </tr>
 
                       {/* STATIC VALUE START */}
 
@@ -1577,34 +1625,29 @@ const Applylist = () => {
                         </td>
                       </tr> */}
 
-                      <tbody className=''>
-                        {filteredApplyList != undefined && filteredApplyList != undefined && filteredApplyList.map((e) => {
-                          console.log(e, 'appliedjob');
 
-                          return (
+                      {!loading && filteredApplyList != undefined && filteredApplyList != undefined && filteredApplyList.map((e) => {
+                        // console.log(e, 'appliedjob');
 
+                        return (
+                          <tr key={e.id}>
+                            <td scope="row"><input type="checkbox" value={e.CandidateId}
+                              onChange={handleCheckboxChange} /></td>
+                            <td >{e.FirstName}</td>
+                            <td > {e.CandidateId}</td>
+                            <td >{e.Email}</td>
+                            <td >{e.PrimaryContact}</td>
+                            <td >{e.AppliedDate} {convertTimeTo12HourFormat(e.AppliedTime)}</td>
 
-                            <tr key={e.id}>
-                              <td scope="row"><input type="checkbox" value={e.CandidateId}
-                                onChange={handleCheckboxChange} /></td>
-                              <td >{e.FirstName}</td>
-                              <td > {e.CandidateId}</td>
-                              <td >{e.Email}</td>
-                              <td >{e.PrimaryContact}</td>
-                              <td >{e.AppliedDate} {convertTimeTo12HourFormat(e.AppliedTime)}</td>
-
-                              <td>{e.JobPortalSource == 'others' ? e.Other_jps : e.JobPortalSource} </td>
-                              <td >{e.AppliedDesignation}</td>
-                              <td onClick={() => sentparticularData(e.CandidateId)} className='text-center'><button type="button" style={{ backgroundColor: 'rgb(160,217,180)' }} class="btn  btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal23">
-                                open
-                              </button>
-                              </td>
-                            </tr>
-
-                          )
-                        })}
-
-                      </tbody>
+                            <td>{e.JobPortalSource == 'others' ? e.Other_jps : e.JobPortalSource} </td>
+                            <td >{e.AppliedDesignation}</td>
+                            <td onClick={() => sentparticularData(e.CandidateId)} className='text-center'><button type="button" style={{ backgroundColor: 'rgb(160,217,180)' }} class="btn  btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal23">
+                              view
+                            </button>
+                            </td>
+                          </tr>
+                        )
+                      })}
 
                       {/* open Particular Data Start */}
 
@@ -1779,6 +1822,10 @@ const Applylist = () => {
 
 
                     </table>
+                    {/* Loading applied table */}
+                    {
+                      loading == 'applied' && <LoadingData />
+                    }
                   </div>
                   <div className='d-flex justify-content-between p-2'>
                     <button onClick={loadmorefunc} className='btn btn-sm btn-success'>Load More</button>
@@ -2013,8 +2060,8 @@ const Applylist = () => {
                         setFilteredInterviewList(interviewCompletedList)
                     }}
                     className='btngrd border-2 flex ms-auto bg-opacity-70 outline-none rounded border-violet-100 text-white text-xs p-2 ' id="">
-                    <option value="Assigned" className='text-black'>Assigned</option>
-                    <option value="Completed" className='text-black'>Completed</option>
+                    <option value="Assigned" className='text-black bg-slate-50'>Assigned</option>
+                    <option value="Completed" className='text-black bg-slate-50'>Completed</option>
                   </select>
                   {/* <div className='rounded bg-slate-400 w-fit'>
                     <button onClick={() => { setInterviewAssignedcompleted('Assigned'); setFilteredInterviewList(interviewlist) }} className={`${intervewAsssignedcompleted == 'Assigned' ? "bg-blue-600" : 'bg-slate-400'}
@@ -2029,13 +2076,13 @@ const Applylist = () => {
                       <thead >
                         <tr className='sticky top-0 bgclr1 '>
                           <th scope="col"><span className='fw-medium'>All</span></th>
-                          <th scope="col"><span className='fw-medium'>Name</span></th>
-                          <th scope="col"><span className='fw-medium'>Canditate Id</span></th>
-                          <th scope="col"><span className='fw-medium'>Applied Designation</span></th>
+                          <th scope="col"><span className='fw-medium'>Full Name</span></th>
+                          <th scope="col"><span className='fw-medium'>Canditate ID</span></th>
+                          <th scope="col"><span className='fw-medium'>Position Applied For</span></th>
 
                           {/* <th scope="col"><span className='fw-medium'>Interview Date</span></th> */}
                           <th scope="col"><span className='fw-medium'>Assigned To</span></th>
-                          <th scope="col"><span className='fw-medium'>Assigned ON</span></th>
+                          <th scope="col"><span className='fw-medium'>Date Assigned</span></th>
 
 
                           <th scope="col"><span className='fw-medium'>Assigned Status</span></th>
@@ -2074,107 +2121,104 @@ const Applylist = () => {
                         rountstatus={intervewAsssignedcompleted}
                         getfunction={fetchdata2} show={interviewCompletedDetailsModal}
                         setshow={setInterviewCompleteDetailsModal} />}
-                      <tbody className=' '>
-                        {filteredInterviewList != undefined && filteredInterviewList != undefined &&
-                          filteredInterviewList.map((e) => (
-                            <tr key={e.id}>
-                              {console.log("hi", e)}
-                              <td scope="row">
-                                <input type="checkbox" value={e.Candidate} onChange={handleCheckboxChange2} /></td>
 
-                              {intervewAsssignedcompleted == "Assigned"
-                                && <td
-                                  onClick={() => {
-                                    sentparticularData1(e.Candidate, e.id);
-                                    setInterviewRoundType(e.InterviewRoundName)
-                                    // setinterviewreviewModalShowing(true)
-                                    setInterviewCompleteDetailsModal(e.Candidate)
-                                  }}
-                                  style={{ cursor: 'pointer', color: 'blue' }}>
+                      {filteredInterviewList != undefined && filteredInterviewList != undefined &&
+                        filteredInterviewList.map((e) => (
+                          <tr key={e.id}>
+                            {console.log("hi", e)}
+                            <td scope="row">
+                              <input type="checkbox" value={e.Candidate} onChange={handleCheckboxChange2} /></td>
 
-                                  {e.Candidate_name}</td>}
-                              {intervewAsssignedcompleted == "Completed"
-                                && e.Assigned_Status == 'Completed' && <td onClick={() => {
-                                  // sentparticularData1(e.Candidate, e.id);
-                                  // setInterviewRoundType(e.InterviewRoundName)
+                            {intervewAsssignedcompleted == "Assigned"
+                              && <td
+                                onClick={() => {
+                                  sentparticularData1(e.Candidate, e.id);
+                                  setInterviewRoundType(e.InterviewRoundName)
+                                  // setinterviewreviewModalShowing(true)
                                   setInterviewCompleteDetailsModal(e.Candidate)
                                 }}
-                                  // data-bs-toggle="modal" data-bs-target="#exampleModal6"
-                                  style={{ color: 'green', cursor: 'pointer' }}>{e.Candidate_name}</td>}
-                              <td>{e.Candidate}</td>
-                              <td>{e.Applied_Designation}</td>
+                                style={{ cursor: 'pointer', color: 'blue' }}>
 
-                              {/* <td>{e.InterviewDate}</td> */}
-                              <td>
-                                {/* {e.interviewer_name} */}
-                                <select id="interviewer" disabled={intervewAsssignedcompleted == 'Completed'}
-                                  name="interviewer" value={e.interviewer}
-                                  onChange={(ev) => {
-                                    let obj = {
-                                      id: e.id,
-                                      ScheduledBy: user.EmployeeId,
-                                      interviewer: ev.target.value
-                                    }
-                                    console.log('hi', user.EmployeeId);
-                                    console.log('hi', e.id);
-                                    console.log('hi', obj);
-                                    console.log('hi', ev.target.value);
-                                    axios.patch(`${port}/root/interviewschedule`, obj).then((response) => {
-                                      console.log('hi', response.data);
-                                      fetchdata2()
-                                      toast.success('Interview rescheduled successfully')
-                                    }).catch((error) => {
-                                      console.log("hi", error);
-                                    })
+                                {e.Candidate_name}</td>}
+                            {intervewAsssignedcompleted == "Completed"
+                              && e.Assigned_Status == 'Completed' && <td onClick={() => {
+                                // sentparticularData1(e.Candidate, e.id);
+                                // setInterviewRoundType(e.InterviewRoundName)
+                                setInterviewCompleteDetailsModal(e.Candidate)
+                              }}
+                                // data-bs-toggle="modal" data-bs-target="#exampleModal6"
+                                style={{ color: 'green', cursor: 'pointer' }}>{e.Candidate_name}</td>}
+                            <td>{e.Candidate}</td>
+                            <td>{e.Applied_Designation}</td>
 
-
-                                  }}
-
-                                  className="p-2 rounded outline-none bgclr1 text-blue-600 w-40 ">
-                                  {/* <option value="" selected>Select Name</option> */}
-                                  {interviewers.map(interviewer => (
-                                    <option key={interviewer.EmployeeId}
-                                      value={interviewer.EmployeeId}>
-                                      {`${interviewer.Name},${interviewer.EmployeeId}`}
-                                    </option>
-                                  ))}
-                                </select>
-                              </td>
+                            {/* <td>{e.InterviewDate}</td> */}
+                            <td>
+                              {/* {e.interviewer_name} */}
+                              <select id="interviewer" disabled={intervewAsssignedcompleted == 'Completed'}
+                                name="interviewer" value={e.interviewer}
+                                onChange={(ev) => {
+                                  let obj = {
+                                    id: e.id,
+                                    ScheduledBy: user.EmployeeId,
+                                    interviewer: ev.target.value
+                                  }
+                                  console.log('hi', user.EmployeeId);
+                                  console.log('hi', e.id);
+                                  console.log('hi', obj);
+                                  console.log('hi', ev.target.value);
+                                  axios.patch(`${port}/root/interviewschedule`, obj).then((response) => {
+                                    console.log('hi', response.data);
+                                    fetchdata2()
+                                    toast.success('Interview rescheduled successfully')
+                                  }).catch((error) => {
+                                    console.log("hi", error);
+                                  })
 
 
+                                }}
+
+                                className="p-2 rounded outline-none bgclr1 text-blue-600 w-40 ">
+                                {/* <option value="" selected>Select Name</option> */}
+                                {interviewers.map(interviewer => (
+                                  <option key={interviewer.EmployeeId}
+                                    value={interviewer.EmployeeId}>
+                                    {`${interviewer.Name},${interviewer.EmployeeId}`}
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
 
 
-                              <td>{convertToReadableDateTime(e.ScheduledOn)}</td>
 
-                              <td>{e.Assigned_Status}</td>
-                              <td>{e.InterviewRoundName}</td>
 
-                              {/* <td>{e.InterviewType}</td> */}
-                              {intervewAsssignedcompleted == 'Completed' &&
-                                <td scope="col"><span className='fw-medium'>{e.Review && e.Review.interview_Status}  </span></td>}
+                            <td>{convertToReadableDateTime(e.ScheduledOn)}</td>
 
-                              {/* <td>{e.Review&&e.Review.interview_Status}</td>
+                            <td>{e.Assigned_Status}</td>
+                            <td>{e.InterviewRoundName}</td>
+
+                            {/* <td>{e.InterviewType}</td> */}
+                            {intervewAsssignedcompleted == 'Completed' &&
+                              <td scope="col"><span className='fw-medium'>{e.Review && e.Review.interview_Status}  </span></td>}
+
+                            {/* <td>{e.Review&&e.Review.interview_Status}</td>
                             <td>{e.Review&&e.Review.ReviewedOn}</td> */}
-                              <td className='break-words '> {e.ScheduledBy_name} </td>
-                              {intervewAsssignedcompleted == 'Completed' && <td >
-                                <button onClick={() => {
-                                  setInterviewModal(e)
-                                  setSelectedCandidate(e.Candidate)
-                                  // sentparticularData2(e.Candidate, e.id);
-                                }} className='p-1 text-xs rounded bg-blue-600 text-white'>Assign Interview </button>
-                              </td>}
-                              {/* <td>{e.ScheduledOn}</td> */}
-                              {/* <td onClick={() => interviewalldata(e.Candidate,e.id)} className='text-center'>
+                            <td className='break-words '> {e.ScheduledBy_name} </td>
+                            {intervewAsssignedcompleted == 'Completed' && <td >
+                              <button onClick={() => {
+                                setInterviewModal(e)
+                                setSelectedCandidate(e.Candidate)
+                                // sentparticularData2(e.Candidate, e.id);
+                              }} className='p-1 text-xs rounded bg-blue-600 text-white'>Assign Interview </button>
+                            </td>}
+                            {/* <td>{e.ScheduledOn}</td> */}
+                            {/* <td onClick={() => interviewalldata(e.Candidate,e.id)} className='text-center'>
                             <button type="button" style={{ backgroundColor: 'rgb(160,217,180)' }} className="btn btn-sm" >
                               Open
                             </button>
                           </td> */}
-                            </tr>
-                          ))}
+                          </tr>
+                        ))}
 
-
-
-                      </tbody>
                       {/* open Particular Data Start */}
 
                       <SchedulINterviewModalForm fetchdata={fetchdata} fetchdata1={fetchdata1} fetchdata2={fetchdata2}
@@ -2793,19 +2837,19 @@ const Applylist = () => {
                       <thead >
                         <tr className='sticky top-0 bgclr1 '>
 
-                          <th scope="col"><span className='fw-medium'>All</span></th>
-                          <th scope="col"><span className='fw-medium'>Name</span></th>
+                          <th scope="col"><span className='fw-medium'>Select</span></th>
+                          <th scope="col"><span className='fw-medium'>Full Name</span></th>
                           <th scope="col"><span className='fw-medium'>Canditate Id</span></th>
-                          <th scope="col"><span className='fw-medium'>Email</span></th>
-                          <th scope="col"><span className='fw-medium'>Phone</span></th>
-                          <th scope="col"><span className='fw-medium'>Applied Designation</span></th>
-                          <th scope="col"><span className='fw-medium'>Experience/Fresher</span></th>
+                          <th scope="col"><span className='fw-medium'>Email ID</span></th>
+                          <th scope="col"><span className='fw-medium'>Contact Number</span></th>
+                          <th scope="col"><span className='fw-medium'>Position Applied For</span></th>
+                          <th scope="col"><span className='fw-medium'>Experience </span></th>
 
-                          <th scope="col"><span className='fw-medium'>Final Result</span></th>
+                          <th scope="col"><span className='fw-medium'>Status Update</span></th>
                         </tr>
                       </thead>
                       {filterFinalData != undefined && filterFinalData != undefined && filterFinalData.map((e) => {
-                        console.log('final', e);
+                        // console.log('final', e);
                         return (
                           <tbody>
                             <tr key={e.id} className={` ${e.FinalResult == 'offered' && 'bg-blue-50'} ${e.FinalResult == 'Reject' && e.InterviewStatus != 'Completed' && 'bg-red-50'} `} >
@@ -2841,11 +2885,13 @@ const Applylist = () => {
                                       }}>
                                       <option value="">Select</option>
                                       {/* <option value="Pending">Pending</option> */}
-                                      <option value="consider_to_client">Consider to Client for Merida</option>
+                                      <option value="consider_to_client">Consider for Client</option>
                                       <option value="Internal_Hiring">Internal Hiring</option>
                                       <option value="Reject">Reject</option>
                                       <option value="On_Hold">On Hold</option>
-                                      <option value="Rejected_by_Candidate"> Rejected by Candidate </option>
+                                      <option value="Rejected_by_Candidate">
+                                        {/* Rejected by Candidate */} Candidate Withdrawal
+                                      </option>
 
                                     </select>}
                                 </div>

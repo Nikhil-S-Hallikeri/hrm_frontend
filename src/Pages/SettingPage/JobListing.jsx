@@ -14,8 +14,8 @@ const JobListing = () => {
     }, [])
     let getAllJobs = () => {
         axios.get(`${meridahrport}/api/job_description/`).then((response) => {
-            console.log(response.data, 'jobs');
-            setAllJobs(response.data)
+            
+            setAllJobs(response.data?.reverse())
         }).catch((error) => {
             console.log(error, 'jobs');
         })
@@ -23,21 +23,22 @@ const JobListing = () => {
     return (
         <div>
             <section className='flex items-center justify-between ' >
-                <h6> All Jobs Listed in our Website </h6>
+                <h6> Current Jobs Listed on Our Website </h6>
                 <button onClick={() => navigate('/settings/jobpost')} className='bg-blue-600 text-white p-2 rounded ' >
                     Post Job
                 </button>
             </section>
-            <main className='tablebg table-responsive rounded my-3 ' >
+            <main className='tablebg table-responsive max-h-[70vh] relative rounded my-3 ' >
                 <table className='w-full ' >
-                    <tr>
+                    <tr className=' sticky top-0  ' >
                         <th>SI No </th>
                         <th>Job Title </th>
                         <th>Qualification </th>
                         <th>Department </th>
                         <th> Experience </th>
-                        <th> Package  </th>
-                        <th> Office Location  </th>
+                        <th> Salary Range  </th>
+                        <th>Posted Date </th>
+                        <th> Location  </th>
                     </tr>
                     {
                         allJobs && allJobs.map((obj, index) => (
@@ -55,6 +56,7 @@ const JobListing = () => {
                                     {obj.min_salary && obj.max_salary && " - "}
                                     {obj.max_salary && (obj.max_salary) + obj.salary_type}
                                 </td>
+                                <td> {obj.posted_on} </td>
                                 <td> {obj.job_location} </td>
                             </tr>
                         ))

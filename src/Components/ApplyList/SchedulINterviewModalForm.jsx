@@ -7,9 +7,9 @@ import { HrmStore } from '../../Context/HrmContext';
 
 const SchedulINterviewModalForm = (props) => {
     let { show, fetchdata, setshow, fetchdata1, persondata,
-        setPersondata, candidateId, setcandidateId, data,
+        setPersondata, candidateId, setcandidateId, data, rid,
         fetchdata2 } = props
-    console.log(show,'interview');
+    console.log(show, 'interview');
     let [outsideMail, setOutSideMail] = useState()
     let [outsideINterview, setOutsideInterview] = useState(false)
     let [loading, setloading] = useState(false)
@@ -23,7 +23,9 @@ const SchedulINterviewModalForm = (props) => {
         InterviewTime: '',
         InterviewType: '',
         login_user: '',
-        zoomLink: ''
+        zoomLink: '',
+        for_whom: rid ? 'client' : 'ours',
+        assigned_requirement: rid,
     });
     let [sendStatus, setSendStatus] = useState(false)
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
@@ -77,19 +79,29 @@ const SchedulINterviewModalForm = (props) => {
         }
         console.log("schedule_Interview",
             "formData", formData,
-            "Login_user", Empid);
+            "login_user", Empid);
         setloading(true)
         formData.mail_status = sendStatus ? 'Yes' : 'No'
         console.log(formData);
+        if (!formData.assigned_requirement)
+            delete formData.assigned_requirement
+        console.log(formData, 'data');
+        // return
         axios.post(`${port}/root/interviewschedule`, {
             ...formData,
             Email_Message: mailContent.replace(/\\n/g, '\n')
         }).then((res) => {
             toast.success("Interview schedule Successfully..")
-            setshow(false)
-            fetchdata2()
-            fetchdata()
-            fetchdata1()
+            if (fetchdata) {
+                fetchdata()
+            }
+            else {
+                window.location.reload()
+            }
+            if (fetchdata2)
+                fetchdata2()
+            if (fetchdata1)
+                fetchdata1()
             setloading(false)
             setFormData({
                 Candidate: "",
@@ -100,11 +112,15 @@ const SchedulINterviewModalForm = (props) => {
                 InterviewTime: '',
                 InterviewType: '',
                 login_user: '',
-                zoomLink: ''
+                zoomLink: '',
+                for_whom: rid ? 'client' : 'ours',
+                assigned_requirement: rid,
             })
+            setshow(false)
             console.log("schedule_Interview_Data_res", res.data);
         }).catch((err) => {
             setloading(false)
+            toast.error('Error occured')
             console.log("schedule_Interview_Data_res_err", err);
         })
     };
@@ -156,6 +172,15 @@ const SchedulINterviewModalForm = (props) => {
         })
         // sentparticularData()
     }, [])
+    useEffect(() => {
+        if (rid)
+            setFormData((prev) => ({
+                ...prev,
+                InterviewRoundName: 'manager_round',
+                for_whom: rid ? 'client' : 'ours',
+                assigned_requirement: rid,
+            }))
+    }, [rid])
     return (
         <div>
             <Modal show={show} onHide={() => setshow(false)} >
@@ -172,11 +197,11 @@ const SchedulINterviewModalForm = (props) => {
                         <div class="form-group">
                             <label for="InterviewRoundName">Interview Round Name:
                             </label>
-                            <select id="InterviewRoundName" name="InterviewRoundName" value={formData.InterviewRoundName} onChange={handleInputChange} required class="form-control">
+                            <select id="InterviewRoundName" name="InterviewRoundName" disabled={rid} value={formData.InterviewRoundName} onChange={handleInputChange} required class="form-control">
                                 <option value="" selected>Select Round</option>
                                 <option value="ceo_round" >CEO Round</option>
                                 <option value="hr_round" >HR Round</option>
-                                <option value="manager_round" >Manager Round</option>
+                                <option value="manager_round" >{rid ? 'Client' : "Manager"} Round</option>
                                 <option value="technical_round" >Technical Round </option>
                             </select>
                         </div>

@@ -176,7 +176,7 @@ const STcreation = () => {
                     </main>
                     <main className='bg-white rounded my-3 p-4 row ' >
                         <div className='flex gap-1 items-center '>
-                            Annual CTC <InfoButton content='This is feild is for checking purpose , you can check it with various CTC for your designed template. ' size={10} />
+                            Annual CTC <InfoButton content='Use this field to calculate and validate different salary components for the selected CTC range.' size={10} />
                             <input type="number" value={annualSalary}
                                 onChange={(e) => setAnnualSalary(e.target.value)}
                                 placeholder='' className='inputbg mx-3 p-2 rounded outline-none ' />
@@ -185,7 +185,7 @@ const STcreation = () => {
                         <section className='table-responsive tablebg my-3 rounded ' >
                             <table className='w-full ' >
                                 <tr>
-                                    <th>Salary Components</th>
+                                    <th>Component Name</th>
                                     <th> Calculation type </th>
                                     <th>Monthly amount</th>
                                     <th>Annual amount </th>
@@ -243,7 +243,8 @@ const STcreation = () => {
                                      salary that is left after allocations are made for all other components.' />
                                         </span>
                                         <span className='text-sm '>
-                                            Monthly CTC - Sum of all other components
+                                            Monthly CTC - The sum of all <br />
+                                            salary components allocated for a month
                                         </span>
                                     </td>
                                     <td>Fixed </td>

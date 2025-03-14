@@ -3,7 +3,7 @@ import InputFieldform from '../SettingComponent/InputFieldform'
 import axios from 'axios'
 import { port } from '../../App'
 
-const AppraisalOffer = ({ sid,setshowtab, id, obj }) => {
+const AppraisalOffer = ({ sid, setshowtab, id, obj }) => {
     let [loading, setLoading] = useState(false)
     let [document, setDocument] = useState({
         assigned_salary: '',
@@ -35,7 +35,8 @@ const AppraisalOffer = ({ sid,setshowtab, id, obj }) => {
         else
             axios.post(`${port}/root/lms/EmployeementHistoryManagement`, {
                 ...document,
-                emp_info_id: id
+                emp_info_id: id,
+                self_app_id: sid
             }).then((response) => {
                 console.log("post", response.data);
                 setLoading(false)
@@ -79,7 +80,7 @@ const AppraisalOffer = ({ sid,setshowtab, id, obj }) => {
                     Previous
                 </button>
                 <button onClick={saveDocument} className='btngrd text-sm p-2 rounded text-white flex ms-auto ' >
-                    Generate Document
+                    Save
                 </button>
             </section>
         </div>

@@ -7,6 +7,7 @@ import { domain, port } from '../../App'
 import InfoButton from '../../Components/SettingComponent/InfoButton'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import ReactQuill from 'react-quill'
 
 const HRrequestPage = () => {
     let { setActivePage, getCurrentDate, convertToReadableDateTime } = useContext(HrmStore)
@@ -132,7 +133,7 @@ Merida HR Team. `)
     return (
         <div>
             <Topnav name='Performance Meeting' />
-            <main>
+            <main className='px-2 ' >
                 <button onClick={() => setRequestModal(true)} className='p-2 text-white text-xs px-3 my-3 flex ms-auto rounded btngrd '>
                     + Add New
                 </button>
@@ -143,10 +144,10 @@ Merida HR Team. `)
                             <th>Employee name </th>
                             <th>Department </th>
                             <th>Designation </th>
-                            <th>Invited Date </th>
+                            <th>Review Invitation Date </th>
                             <th>Self Evaluation </th>
-                            <th>Reporting Manager Review </th>
-                            <th>Meetting review </th>
+                            <th>Reporting Manager's Feedback </th>
+                            <th>Review Summary </th>
                         </tr>
                         {
                             invitationRequest && invitationRequest.map((obj, index) => (
@@ -189,7 +190,7 @@ Merida HR Team. `)
                     <Modal.Body>
                         <div className='flex items-start  '>
                             <label className='w-2/5 ' htmlFor=""> Mail Content </label>
-                            <textarea name="" className='w-3/5 bgclr rounded p-2 outline-none ' rows={5} value={meetingMailContent}
+                            <textarea name="" className='w-3/5 inputbg rounded p-2 outline-none ' rows={5} value={meetingMailContent}
                                 onChange={(e) => setMeetingMailContent(e.target.value)} id="">
                             </textarea>
 
@@ -209,14 +210,14 @@ Merida HR Team. `)
                     <Modal.Body>
                         <section className='row '>
                             <div className='flex col-sm-6 items-start my-3 '>
-                                <label htmlFor="" className='relative sm:w-2/5 ' > Choose an Employee
+                                <label htmlFor="" className='relative sm:w-2/5 ' > Select Employee
                                     <span className='absolute  ' >
-                                        <InfoButton size={10} content='If the name changes, again the mail content will be back to normal' />
+                                        <InfoButton size={10} content='If the employee’s name is updated, the review request email will be reset, and you will need to re-select the employee.' />
                                     </span> </label>
                                 <select name="Emp_id" value={employee.Emp_id} onChange={(e) => {
                                     handleChange(e)
                                 }}
-                                    id="" className='p-2 sm:w-3/5 rounded bgclr outline-none'>
+                                    id="" className='p-2 sm:w-3/5 rounded inputbg outline-none'>
                                     <option value="">Select </option>
                                     {
                                         employeeList && employeeList.map((obj) => (
@@ -226,25 +227,27 @@ Merida HR Team. `)
                                 </select>
                             </div>
                             <div className='flex my-2 col-sm-6 items-start gap-2'>
-                                <label htmlFor="" className=' sm:w-2/5 ' > Reason </label>
+                                <label htmlFor="" className=' sm:w-2/5 ' > Reason for Review </label>
                                 <textarea name="invitation_reason" onChange={handleChange} rows={5} placeholder='write a reason for the employee appraisal....'
-                                    className='sm:w-3/5 outline-none bgclr text-sm rounded p-2 '
+                                    className='sm:w-3/5 outline-none inputbg text-sm rounded p-2 '
                                     value={employee.invitation_reason} id=""></textarea>
 
                             </div>
-                            <div className='flex my-2 col-sm-6 items-start gap-2'>
-                                <label htmlFor="" className=' sm:w-2/5 ' > Mail content for employee </label>
-                                <textarea name="mail" onChange={handleChange} rows={6} placeholder='write a reason for the employee appraisal....'
-                                    className='sm:w-3/5 outline-none bgclr text-sm rounded p-2 '
-                                    value={employee.mail} id=""></textarea>
+                            <div className=' my-2 col-sm-12 items-start gap-2'>
+                                <label htmlFor="" className=' sm:w-2/5 ' > Email to Employee </label>
+                                <ReactQuill value={employee.mail} onChange={(con) => setEmployee((prev) => ({
+                                    ...prev,
+                                    mail: con
+                                }))} className='my-2 inputbg '/>
 
                             </div>
-                            <div className='flex my-2 col-sm-6 items-start gap-2'>
-                                <label htmlFor="" className=' sm:w-2/5 ' > Mail content for reporting Manager </label>
-                                <textarea name="reporting_mail_content" onChange={handleChange} rows={7} placeholder='write a reason for the employee appraisal....'
-                                    className='sm:w-3/5 outline-none bgclr text-sm rounded p-2 '
-                                    value={employee.reporting_mail_content} id=""></textarea>
-
+                            <div className=' my-2 col-sm-12 items-start gap-2'>
+                                <label htmlFor="" className=' sm:w-2/5 ' > Email to Reporting Manager </label>
+                                <ReactQuill value={employee.reporting_mail_content}
+                                    onChange={(content) => setEmployee((prev) => ({
+                                        ...prev,
+                                        reporting_mail_content: content
+                                    }))} className='my-2 inputbg' />
                             </div>
                         </section>
                         <button disabled={loading} onClick={sendRequest} className='bg-blue-600 text-white p-2 px-3 rounded flex ms-auto'>

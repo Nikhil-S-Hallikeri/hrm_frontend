@@ -33,14 +33,14 @@ const OfferApprovalPage = ({ subpage }) => {
             <table className='w-full  '>
               <tr>
                 <th>SI NO </th>
-                <th>Name</th>
-                <th>Candidate id </th>
+                <th>Candidate Name</th>
+                <th>Candidate ID </th>
                 <th>Prepared By </th>
-                <th>Prepared Date </th>
-                <th> Package</th>
+                <th>Preparation Date </th>
+                <th>Offered Package</th>
                 <th>Verification assigned to </th>
                 <th>Status </th>
-                <th> Action</th>
+                <th> Offer Letter</th>
               </tr>
               {
                 approvalPending.map((obj, index) => (

@@ -26,10 +26,10 @@ const HROverviewReport = () => {
             mx-auto min-h-[30vh] row rounded my-5 mb-2 px-0 poppins' >
                 <section className='my-2 col-lg-4  ' >
                     <article className='p-3 rounded bg-white h-full ' >
-                        <h5 className=' fw-semibold flex relative w-fit ' >Birthday
+                        <h5 className=' fw-semibold flex relative w-fit ' >Employee Birthdays
                             <span className='absolute -top-2 -right-3 ' >
                                 <InfoButton size={13}
-                                    content="Birthday date for the one week period." />
+                                    content="Upcoming employee birthdays for the next week." />
                             </span>
                         </h5>
                         {/* BirthdayTable */}
@@ -39,10 +39,10 @@ const HROverviewReport = () => {
                 </section>
                 <section className='my-2 col-lg-4 ' >
                     <article className='p-3 rounded bg-white h-full ' >
-                        <h5 className=' fw-semibold flex relative w-fit ' >Work anniversary
+                        <h5 className=' fw-semibold flex relative w-fit ' >Work Anniversaries
                             <span className='absolute -top-2 -right-3 ' >
                                 <InfoButton size={13}
-                                    content="Work anniversary for the one week period." />
+                                    content="Employees celebrating work anniversaries in the next week." />
                             </span>
 
                         </h5>
@@ -55,7 +55,7 @@ const HROverviewReport = () => {
                         <h5 className=' fw-semibold flex relative w-fit ' >Upcoming holidays
                             <span className='absolute -top-2 -right-3 ' >
                                 <InfoButton size={13}
-                                    content="Holiday date for the one week period." />
+                                    content="Official holidays scheduled for the upcoming week." />
                             </span>
                         </h5>
                         {data && <HolidayTable data={data.upcoming_holidays} />}
@@ -65,10 +65,10 @@ const HROverviewReport = () => {
                 {/* Today Hires */}
                 <section className='my-2 col-lg-4 ' >
                     <article className='p-3 rounded bg-white h-full ' >
-                        <h5 className=' fw-semibold flex relative w-fit ' >Today Hires
+                        <h5 className=' fw-semibold flex relative w-fit ' >New Hires Today
                             <span className='absolute -top-2 -right-3 ' >
                                 <InfoButton size={13}
-                                    content="Today hire of employees" />
+                                    content="Details of employees hired on the current date" />
                             </span>
                         </h5>
                         {data && <EmployeeTable data={data.new_hires} />}
@@ -78,10 +78,10 @@ const HROverviewReport = () => {
                 {/* Upcoming holiday */}
                 <section className='my-2 col-lg-3 ' >
                     <article className='p-3 rounded bg-white h-full ' >
-                        <h5 className=' fw-semibold flex relative w-fit ' >Quick Links
+                        <h5 className=' fw-semibold flex relative w-fit ' >Portal Shortcuts
                             <span className='absolute -top-2 -right-3 ' >
                                 <InfoButton size={13}
-                                    content="Quick Links for our portals" />
+                                    content="Direct links to frequently used employee portals" />
                             </span>
                         </h5>
                         <div className=' poppins flex flex-col ' >
@@ -95,10 +95,10 @@ const HROverviewReport = () => {
 
                 <section className='my-2 col-lg-5 ' >
                     <article className='p-3 rounded bg-white h-full ' >
-                        <h5 className=' fw-semibold flex relative w-fit ' >On Leave
+                        <h5 className=' fw-semibold flex relative w-fit ' >Employees on Leave
                             <span className='absolute -top-2 -right-3 ' >
                                 <InfoButton size={13}
-                                    content="On leave employee for the one week period." />
+                                    content="Details of employees currently on leave for the week." />
                             </span>
                         </h5>
                         {data && <EmployeeTable data={data.on_leaves} />}

@@ -43,7 +43,7 @@ const RestrictedLeaveApply = ({ setActiveSection }) => {
     return (
         <div>
             <main className='bgclr rounded-xl p-4 min-h-[40vh] '>
-                <h5>Restricted Holiday </h5>
+                <h5>Company Approved Holidays </h5>
                 {
                     restrictedholidays && restrictedholidays.length > 0 ?
                         <article className='flex flex-wrap justify-between gap-3 '>

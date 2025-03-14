@@ -62,9 +62,9 @@ const JFPfDetails = ({ id, page, data }) => {
         getData()
     }, [data])
     return (
-        <div className='bg-white p-3 rounded '>
+        <div className='input p-3 rounded '>
             <h5 className='mt-2 uppercase heading' style={{ color: 'rgb(76,53,117)' }}>PF Details</h5>
-            <main className='p-3 formbg rounded row'>
+            <main className='p-3 bg-white rounded row'>
                 <InputFieldform disabled={page} placeholder=' ' name='employee_is_covered_under_pf' label='Employee Is Covered Under PF' value={formObj.employee_is_covered_under_pf}
                     handleChange={handleChange} type='text' optionObj={[{ value: true, label: 'Yes' }, { value: false, label: 'No' }]} />
                 {(formObj.employee_is_covered_under_pf) &&

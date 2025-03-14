@@ -2,10 +2,12 @@ import React, { useContext, useEffect, useState } from 'react'
 import { HrmStore } from '../../Context/HrmContext'
 import InputFieldform from '../../Components/SettingComponent/InputFieldform'
 import axios from 'axios'
-import { meridahrport, port } from '../../App'
+import { meridahrport, meridahrsite, port } from '../../App'
 import PlusIcon from '../../SVG/PlusIcon'
 import { toast } from 'react-toastify'
 import { useNavigate, useParams } from 'react-router-dom'
+import CopyToClipboard from '../../Components/MiniComponent/CopyToClipboard'
+import ShareButtons from '../../Components/MiniComponent/ShareButtons'
 
 const JobPosting = () => {
     let { id } = useParams()
@@ -164,9 +166,9 @@ const JobPosting = () => {
         })
     }
     return (
-        <div>
+        <div className='px-2' >
             <h5> Job Posting </h5>
-            <main className='formbg rounded p-3 my-3 row' >
+            <main className='bg-white rounded p-3 my-3 row' >
                 {/* Department */}
                 <div className='"col-md-6 col-lg-4 ' >
                     <label htmlFor="">Department :  </label>
@@ -180,7 +182,7 @@ const JobPosting = () => {
                                 department_name: getName
                             }))
                         }}
-                        className='outline-none w-full my-2 p-2 rounded block bgclr ' >
+                        className='outline-none w-full my-2 p-2 rounded block inputbg ' >
                         <option value="">Select </option>
                         {allDepartment && allDepartment.map((obj, index) => (
                             <option value={obj.id}>{obj.Dep_Name} </option>
@@ -209,7 +211,7 @@ const JobPosting = () => {
                                 }))
                             }
                         }}
-                        className='outline-none w-full my-2 p-2 rounded block bgclr ' >
+                        className='outline-none w-full my-2 p-2 rounded block inputbg ' >
                         <option value="">Select </option>
                         {designation && designation.map((obj, index) => (
                             <option value={obj.id}>{obj.Name} </option>
@@ -236,16 +238,18 @@ const JobPosting = () => {
                     <label htmlFor=""> Experience </label>
                     <article className='flex flex-wrap justify-between items-center' >
                         <div className=' '>
-                            <label htmlFor="">max</label>
-                            <input type="number" className='outline-none p-1 block rounded bgclr w-20 ' value={formObj.Experience}
-                                onChange={handleFormObj} name='Experience' />
+                            <label htmlFor="">min</label>
+                            <input type="number" className='outline-none p-1 block rounded inputbg w-20 ' value={formObj.min_exp}
+                                onChange={handleFormObj} name='min_exp' />
                         </div>
                         <span> - </span>
                         <div className=' '>
-                            <label htmlFor="">min</label>
-                            <input type="number" className='outline-none p-1 block rounded bgclr w-20 ' value={formObj.min_exp}
-                                onChange={handleFormObj} name='min_exp' />
+                            <label htmlFor="">max</label>
+                            <input type="number" className='outline-none p-1 block rounded inputbg w-20 ' value={formObj.Experience}
+                                onChange={handleFormObj} name='Experience' />
                         </div>
+
+
                     </article>
                 </section>
                 {/* Package */}
@@ -253,18 +257,19 @@ const JobPosting = () => {
                     <label htmlFor=""> Package </label>
                     <article className='flex flex-wrap justify-between items-center' >
                         <div className=' '>
-                            <label htmlFor="">max</label>
-                            <input type="number" className='outline-none p-1 block rounded bgclr w-20 ' value={formObj.max_salary}
-                                onChange={handleFormObj} name='max_salary' />
-                        </div>
-                        <div className=' '>
                             <label htmlFor="">min</label>
-                            <input type="number" className='outline-none p-1 block rounded bgclr w-20 ' value={formObj.min_salary}
+                            <input type="number" className='outline-none p-1 block rounded inputbg w-20 ' value={formObj.min_salary}
                                 onChange={handleFormObj} name='min_salary' />
                         </div>
                         <div className=' '>
+                            <label htmlFor="">max</label>
+                            <input type="number" className='outline-none p-1 block rounded inputbg w-20 ' value={formObj.max_salary}
+                                onChange={handleFormObj} name='max_salary' />
+                        </div>
+
+                        <div className=' '>
                             <label htmlFor="">Type</label>
-                            <select type="number" className='outline-none p-1 block rounded bgclr w-20 ' value={formObj.salary_type}
+                            <select type="number" className='outline-none p-1 block rounded inputbg w-20 ' value={formObj.salary_type}
                                 onChange={handleFormObj} name='salary_type' >
                                 <option value="LPA">LPA</option>
                                 <option value="K">K</option>
@@ -298,7 +303,7 @@ const JobPosting = () => {
                                             ...prev,
                                             points: arry
                                         }))
-                                    }} className='p-2 bgclr w-full rounded my-2 outline-none ' />
+                                    }} className='p-2 inputbg w-full rounded my-2 outline-none ' />
                                     {index > 0 && <button onClick={() => {
                                         let arry = [...formObj.points].filter((val, index2) => index != index2)
                                         setFormObj((prev) => ({
@@ -339,7 +344,7 @@ const JobPosting = () => {
                                             ...prev,
                                             expertise_points: arry
                                         }))
-                                    }} className='p-2 bgclr w-full rounded my-2 outline-none ' />
+                                    }} className='p-2 inputbg w-full rounded my-2 outline-none ' />
                                     {index > 0 && <button onClick={() => {
                                         let arry = [...formObj.expertise_points].filter((val, index2) => index != index2)
                                         setFormObj((prev) => ({
@@ -374,7 +379,7 @@ const JobPosting = () => {
                             formObj && formObj.key_skills && formObj.key_skills.map((obj, index) => (
                                 <div className='flex gap-2 justify-between items-center ' >
 
-                                    <div className='p-2 bgclr w-full rounded my-2 flex items-center' >
+                                    <div className='p-2 inputbg w-full rounded my-2 flex items-center' >
 
                                         <input type="text" value={obj.skill} onChange={(e) => {
                                             let arry = [...formObj.key_skills]
@@ -413,20 +418,26 @@ const JobPosting = () => {
                 {/* Description */}
                 <InputFieldform label='Job Description' type='textarea' handleChange={handleFormObj}
                     name='Job_Discription' value={formObj.Job_Discription} />
+                {/* ClipBorad */}
+                {id && formObj.slug && <section className='col-md-6 col-lg-4 ' >
+                    Share Link
+                    <CopyToClipboard text={`${meridahrsite}/jobs/${formObj.slug}`} />
+                    <ShareButtons text={`${meridahrsite}/jobs/${formObj.slug}`} />
+                </section>
+                }
                 <div className='col-12 flex ' >
 
                     {!id && <button onClick={postJob} disabled={loading} className='ms-auto p-2 bg-green-500 text-white rounded ' >
-                        {loading ? 'Loading...' : "Post Job"}
+                        {loading ? 'Loading...' : "Post a Job"}
                     </button>}
                     {id && <>
-
                         <button onClick={updateJobPosting} disabled={loading == 'update'} className='ms-auto p-2 bg-blue-500 text-white rounded ' >
                             {loading == 'update' ? 'Loading...' : "Update Posted Job"}
                         </button>
-                        <button disabled={loading == 'delete'} className='p-2 bg-red-500 text-white  rounded mx-2 '
+                        {/* <button disabled={loading == 'delete'} className='p-2 bg-red-500 text-white  rounded mx-2 '
                             onClick={deleteJobPosting} >
                             {loading == 'delete' ? "Loading..." : "Delete"}
-                        </button>
+                        </button> */}
 
                     </>
                     }

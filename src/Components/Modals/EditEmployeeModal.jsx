@@ -2,8 +2,10 @@ import React, { useContext, useEffect } from 'react'
 import { Modal } from 'react-bootstrap';
 import PermissionCheckBox from '../MiniComponent/PermissionCheckBox';
 import { HrmStore } from '../../Context/HrmContext';
+import CreateEmployeeShift from './CreateEmployeeShift';
 
-const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, setShowDepartment, Department_List,
+const EditEmployeeModal = ({ resetEditModal, setAddresschecked,
+    handleChangeEdit_data, editModal, setShowDepartment, Department_List,
     interviewers, Update_Employee, loading, EmployeeSalaryAdding, setEditModalPage,
     editModalPage, set_Edit_Data, setShowReligion, Call_Department, Desgination_List, religion, Edit_Data }) => {
     let { allShiftTiming, convertTo12Hour, getAllShiftTiming } = useContext(HrmStore)
@@ -16,6 +18,8 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
     }
     useEffect(() => {
         getAllShiftTiming()
+        console.log(Edit_Data, 'editobj');
+
     }, [])
     return (
         <div>
@@ -25,8 +29,7 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
                 size="xl"
                 onHide={() => {
                     resetEditModal();
-                }}
-            >
+                }}>
                 <Modal.Header closeButton>
                     <h3
                         className="poppins"
@@ -44,26 +47,50 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
                                     <div className="row m-0 mt-2">
                                         <div className="col-md-6 mb-3">
                                             <label
-                                                htmlFor="firstName"
-                                                className="text-slate-500 "
+                                                htmlFor="salutation"
+                                                className="text-slate-500"
                                             >
-                                                Name <span class="text-danger">*</span>{' '}
+                                                Salutation
                                             </label>
-                                            <input
-                                                type="text"
+                                            <select
                                                 className="inputbg w-full outline-none p-2 rounded "
-                                                id="FirstName"
-                                                name="full_name"
-                                                value={Edit_Data.full_name}
+                                                id="salutation"
+                                                name="salutation"
                                                 onChange={handleChangeEdit_data}
-                                            />
+                                                value={Edit_Data.salutation} // Set the value of the select input to gender
+                                            // Update gender state when the select input changes
+                                            >
+                                                <option value="">
+                                                    Select
+                                                </option>
+                                                {/* Empty value for the default option */}
+                                                <option value="Mr.">Mr</option>
+                                                <option value="Mrs.">Mrs</option>
+                                                <option value="Miss.">Miss</option>
+                                            </select>
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label htmlFor="firstName" className="text-slate-500 "  >
+                                                First Name <span class="text-danger">*</span>{' '}
+                                            </label>
+                                            <input type="text" className="inputbg w-full outline-none p-2 rounded "
+                                                id="FirstName" name="full_name" value={Edit_Data.full_name}
+                                                onChange={handleChangeEdit_data} />
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label htmlFor="firstName" className="text-slate-500 "  >
+                                                Last Name <span class="text-danger">*</span>{' '}
+                                            </label>
+                                            <input type="text" className="inputbg w-full outline-none p-2 rounded "
+                                                id="LastName" name="last_name" value={Edit_Data.last_name}
+                                                onChange={handleChangeEdit_data} />
                                         </div>
                                         <div className="col-md-6 mb-3">
                                             <label
                                                 htmlFor="lastName"
                                                 className="text-slate-500"
                                             >
-                                                DOB <span class="text-danger">*</span>{' '}
+                                                Date of Birth <span class="text-danger">*</span>{' '}
                                             </label>
                                             <input
                                                 type="date"
@@ -71,6 +98,23 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
                                                 id=" LastName"
                                                 name="date_of_birth"
                                                 value={Edit_Data.date_of_birth}
+                                                onChange={handleChangeEdit_data}
+                                            />
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label
+                                                htmlFor="firstName"
+                                                className="text-slate-500 ">
+
+                                                Age <span class="text-danger">*</span>{' '}
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="inputbg w-full outline-none p-2 rounded "
+                                                id="age"
+                                                name="age"
+                                                disabled
+                                                value={Edit_Data.age}
                                                 onChange={handleChangeEdit_data}
                                             />
                                         </div>
@@ -103,7 +147,7 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
                                                 htmlFor="email"
                                                 className="text-slate-500"
                                             >
-                                                Primary Email <span class="text-danger">*</span>{' '}
+                                                Personal Email ID<span class="text-danger">*</span>{' '}
                                             </label>
                                             <input
                                                 type="email"
@@ -119,7 +163,7 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
                                                 htmlFor="email"
                                                 className="text-slate-500"
                                             >
-                                                Secondary Email <span class="text-danger"></span>{' '}
+                                                Official Email ID<span class="text-danger"></span>{' '}
                                             </label>
                                             <input
                                                 type="email"
@@ -127,6 +171,39 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
                                                 id=" Email"
                                                 name="secondary_email"
                                                 value={Edit_Data.secondary_email}
+                                                onChange={handleChangeEdit_data}
+                                            />
+                                        </div>
+
+                                        <div className="col-md-6 mb-3">
+                                            <label
+                                                htmlFor="primaryContact"
+                                                className="text-slate-500"
+                                            >
+                                                Personal Mobile Number <span class="text-danger">*</span>{' '}
+                                            </label>
+                                            <input
+                                                type="tel"
+                                                className="inputbg w-full outline-none p-2 rounded "
+                                                id="PrimaryContact"
+                                                name="mobile"
+                                                value={Edit_Data.mobile}
+                                                onChange={handleChangeEdit_data}
+                                            />
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label
+                                                htmlFor="primaryContact"
+                                                className="text-slate-500"
+                                            >
+                                                Alternative Contact Number <span class="text-danger">*</span>{' '}
+                                            </label>
+                                            <input
+                                                type="tel"
+                                                className="inputbg w-full outline-none p-2 rounded "
+                                                id="PrimaryContact"
+                                                name="secondary_mobile_number"
+                                                value={Edit_Data.secondary_mobile_number}
                                                 onChange={handleChangeEdit_data}
                                             />
                                         </div>
@@ -146,39 +223,24 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
                                                 onChange={handleChangeEdit_data}
                                             />
                                         </div>
+                                        {/* Date of joining */}
                                         <div className="col-md-6 mb-3">
                                             <label
-                                                htmlFor="primaryContact"
+                                                htmlFor="secondaryContact"
                                                 className="text-slate-500"
                                             >
-                                                Primary Phone <span class="text-danger">*</span>{' '}
+                                                Date of Joining / Hire Date <span class="text-danger">*</span>{' '}
                                             </label>
                                             <input
-                                                type="tel"
+                                                type="date"
                                                 className="inputbg w-full outline-none p-2 rounded "
-                                                id="PrimaryContact"
-                                                name="mobile"
-                                                value={Edit_Data.mobile}
+                                                id="State"
+                                                name="hired_date"
+                                                value={Edit_Data.hired_date}
                                                 onChange={handleChangeEdit_data}
                                             />
                                         </div>
-                                        <div className="col-md-6 mb-3">
-                                            <label
-                                                htmlFor="primaryContact"
-                                                className="text-slate-500"
-                                            >
-                                                Secondary Phone <span class="text-danger">*</span>{' '}
-                                            </label>
-                                            <input
-                                                type="tel"
-                                                className="inputbg w-full outline-none p-2 rounded "
-                                                id="PrimaryContact"
-                                                name="secondary_mobile_number"
-                                                value={Edit_Data.secondary_mobile_number}
-                                                onChange={handleChangeEdit_data}
-                                            />
-                                        </div>
-                                        <div className="col-md-6 col-lg-2 mb-3">
+                                        {/* <div className="col-md-6 col-lg-2 mb-3">
                                             <label
                                                 htmlFor="secondaryContact"
                                                 className="text-slate-500"
@@ -193,8 +255,8 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
                                                 value={Edit_Data.weight}
                                                 onChange={handleChangeEdit_data}
                                             />
-                                        </div>
-                                        <div className="col-md-6 col-lg-2 mb-3">
+                                        </div> */}
+                                        {/* <div className="col-md-6 col-lg-2 mb-3">
                                             <label
                                                 htmlFor="secondaryContact"
                                                 className="text-slate-500"
@@ -209,96 +271,99 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
                                                 value={Edit_Data.height}
                                                 onChange={handleChangeEdit_data}
                                             />
-                                        </div>
-                                        <div className="col-md-6 col-lg-12 mb-3">
-                                            <label
-                                                htmlFor="secondaryContact"
-                                                className="text-slate-500"
-                                            >
-                                                Permanent Address <span class="text-danger">*</span>{' '}
-                                            </label>
-                                            <textarea
-                                                type="text"
-                                                className="inputbg w-full outline-none p-2 rounded "
-                                                id=" District"
-                                                name="permanent_address"
-                                                value={Edit_Data.permanent_address}
-                                                onChange={handleChangeEdit_data}
-                                            />
-                                        </div>
-                                        <div className="col-md-6 col-lg-12 mb-3">
-                                            <label
-                                                htmlFor="secondaryContact"
-                                                className="text-slate-500"
-                                            >
-                                                Present Address <span class="text-danger">*</span>{' '}
-                                            </label>
-                                            <textarea
-                                                type="text"
-                                                className="inputbg w-full outline-none p-2 rounded "
-                                                id=" District"
-                                                name="present_address"
-                                                value={Edit_Data.present_address}
-                                                onChange={handleChangeEdit_data}
-                                            />
+                                        </div> */}
+
+                                        {/* Present Address */}
+                                        <div className="col-md-6 mb-3">
+                                            <label htmlFor="secondaryContact" className="text-slate-500">
+                                                Present Address </label>
+                                            <input type="text" className="inputbg w-full outline-none p-2 rounded " id=" District"
+                                                name="present_address" value={Edit_Data.present_address} onChange={handleChangeEdit_data} />
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label
-                                                htmlFor="secondaryContact"
-                                                className="text-slate-500"
-                                            >
-                                                Hired Date <span class="text-danger">*</span>{' '}
-                                            </label>
-                                            <input
-                                                type="date"
-                                                className="inputbg w-full outline-none p-2 rounded "
-                                                id="State"
-                                                name="hired_date"
-                                                value={Edit_Data.hired_date}
-                                                onChange={handleChangeEdit_data}
-                                            />
+                                            <label htmlFor="secondaryContact" className="text-slate-500">
+                                                City </label>
+                                            <input type="text" className="inputbg w-full outline-none p-2 rounded " id=" District"
+                                                name="present_City" value={Edit_Data.present_City} onChange={handleChangeEdit_data} />
                                         </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label htmlFor="secondaryContact" className="text-slate-500">
+                                                State </label>
+                                            <input type="text" className="inputbg w-full outline-none p-2 rounded " id=" District"
+                                                name="present_state" value={Edit_Data.present_state} onChange={handleChangeEdit_data} />
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label htmlFor="secondaryContact" className="text-slate-500">
+                                                Pincode </label>
+                                            <input type="text" className="inputbg w-full outline-none p-2 rounded " id=" District"
+                                                name="present_pincode" value={Edit_Data.present_pincode} onChange={handleChangeEdit_data} />
+                                        </div>
+                                        {/*   present_City: null,
+    present_state: null,
+    present_pincode: null,
+    permanent_City: null,
+    permanent_state: null,
+    permanent_pincode: null, */}
+                                        {/* Permanent Address */}
+                                        <div className="col-md-6 mb-3">
+                                            <article className='flex items-center gap-2 ' >
+                                                <label htmlFor="secondaryContact" className="text-slate-500"
+                                                >Permanent Address
+                                                </label>
+                                                <div className='flex items-center gap-1 text-xs ' >
+                                                    <input type="checkbox" className='' id='addresseditcom' onChange={(e) => {
+                                                        if (e.target.checked) {
+                                                            setAddresschecked(true)
+                                                            set_Edit_Data((prev) => ({
+                                                                ...prev,
+                                                                permanent_address: prev.present_address,
+                                                                permanent_City: prev.present_City,
+                                                                permanent_pincode: prev.present_pincode,
+                                                                permanent_state: prev.present_state
+                                                            }))
+                                                        } else {
+                                                            setAddresschecked(false)
+                                                            set_Edit_Data((prev) => ({
+                                                                ...prev,
+                                                                permanent_address: '',
+                                                                permanent_City: '',
+                                                                permanent_pincode: '',
+                                                                permanent_state: ''
+                                                            }))
+                                                        }
+                                                    }} />
+                                                    <label htmlFor="addresseditcom"> Same as present address </label>
+                                                </div>
+                                            </article>
+                                            <input type="text" className="inputbg w-full outline-none p-2 rounded "
+                                                id=" District" name="permanent_address"
+                                                value={Edit_Data.permanent_address} onChange={handleChangeEdit_data} />
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label htmlFor="secondaryContact" className="text-slate-500">
+                                                City </label>
+                                            <input type="text" className="inputbg w-full outline-none p-2 rounded " id=" District"
+                                                name="permanent_City" value={Edit_Data.permanent_City} onChange={handleChangeEdit_data} />
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label htmlFor="secondaryContact" className="text-slate-500">
+                                                State </label>
+                                            <input type="text" className="inputbg w-full outline-none p-2 rounded " id=" District"
+                                                name="permanent_state" value={Edit_Data.permanent_state} onChange={handleChangeEdit_data} />
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label htmlFor="secondaryContact" className="text-slate-500">
+                                                Pincode </label>
+                                            <input type="text" className="inputbg w-full outline-none p-2 rounded " id=" District"
+                                                name="permanent_pincode" value={Edit_Data.permanent_pincode} onChange={handleChangeEdit_data} />
+                                        </div>
+                                        {/* END */}
                                         <div className="col-md-6 mb-3">
                                             <label
                                                 htmlFor="gender"
-                                                className="flex justify-between text-slate-500">
-                                                
-                                                Religion
-                                                <button
-                                                    className="text-xs "
-                                                    onClick={() => setShowReligion(true)} >
-                                                    create Religion
-                                                </button>
-                                            </label>
-                                            <select
-                                                className="inputbg w-full outline-none p-2 rounded "
-                                                id="gender"
-                                                name="religion"
-                                                value={Edit_Data.religion}
-                                                onChange={e => {
-                                                    handleChangeEdit_data(e);
-                                                }}>
-                                                <option value="">
-                                                    Select <span class="text-danger">*</span>{' '}
-                                                </option>{' '}
-                                                {/* Empty value for the default option */}
-                                                {religion &&
-                                                    religion.map(interviewer => (
-                                                        <option
-                                                            key={interviewer.id}
-                                                            value={interviewer.id}
-                                                        >
-                                                            {`${interviewer.religion_name}`}
-                                                        </option>
-                                                    ))}
-                                            </select>
-                                        </div>
-                                        <div className="col-md-6 mb-3">
-                                            <label
-                                                htmlFor="gender"
                                                 className="text-slate-500"
                                             >
-                                                Position <span class="text-danger">*</span>{' '}
+                                                Role  <span class="text-danger">*</span>{' '}
                                             </label>
                                             <select
                                                 className="inputbg w-full outline-none p-2 rounded "
@@ -318,136 +383,21 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
                                                 <option value="Recruiter">Recruiter</option>
                                             </select>
                                         </div>
-
-                                        <div className="col-md-6 mb-3">
-                                            <label
-                                                htmlFor="gender"
-                                                className="text-slate-500 flex justify-between "
-                                            >
-                                                Department
-                                                <button
-                                                    className="text-xs "
-                                                    onClick={() => setShowDepartment(true)}
-                                                >
-                                                    Create Department{' '}
-                                                </button>{' '}
-                                            </label>
+                                        <div className="col-md-6  mb-3">
+                                            <label htmlFor="gender" className=" text-slate-500 ">
+                                                Religion  <span class='text-danger'>*</span> </label>
                                             <select
-                                                className="inputbg w-full outline-none p-2 rounded "
+                                                className=" inputbg w-full outline-none p-2 rounded "
                                                 id="gender"
-                                                name="Department_id"
-                                                value={Edit_Data.Department_id}
-                                                onChange={e => {
-                                                    Call_Department(e.target.value);
-                                                    handleChangeEdit_data(e);
-                                                }}
-                                            // Set the value of the select input to gender
-                                            // Update gender state when the select input changes
-                                            >
-                                                <option value="">
-                                                    Select <span class="text-danger">*</span>{' '}
-                                                </option>{' '}
-                                                {/* Empty value for the default option */}
-                                                {Department_List.map((interviewer, index) => {
-                                                    console.log('Update_Data', interviewer);
-                                                    return (
-                                                        <option
-                                                            key={interviewer.id}
-                                                            value={interviewer.id}
-                                                        >
-                                                            {`${interviewer.Dep_Name}`}
-                                                        </option>
-                                                    );
-                                                })}
-                                            </select>
-                                        </div>
-                                        {console.log(Edit_Data)}
-                                        <div className="col-md-6 mb-3">
-                                            <label
-                                                htmlFor="gender"
-                                                className="text-slate-500"
-                                            >
-                                                Designation <span class="text-danger">*</span>{' '}
-                                            </label>
-                                            <select
-                                                className="inputbg w-full outline-none p-2 rounded "
-                                                id="gender"
-                                                name="Position_id"
-                                                value={Edit_Data.Position_id}
-                                                onChange={e => {
-                                                    handleChangeEdit_data(e);
-                                                }}
-                                            >
-                                                <option value="">
-                                                    Select <span class="text-danger">*</span>{' '}
-                                                </option>{' '}
-                                                {/* Empty value for the default option */}
-                                                {Desgination_List.map(interviewer => (
-                                                    <option
-                                                        key={interviewer.id}
-                                                        value={interviewer.id}
-                                                    >
-                                                        {`${interviewer.Name}`}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="col-md-6 mb-3">
-                                            <label
-                                                htmlFor="gender"
-                                                className="text-slate-500"
-                                            >
-                                                Shift Timing
-                                            </label>
-                                            <select
-                                                className="inputbg w-full outline-none p-2 rounded "
-                                                id="EmployeeShifts"
-                                                name="EmployeeShifts"
-                                                value={Edit_Data.EmployeeShifts}
-                                                onChange={handleChangeEdit_data} // Set the value of the select input to gender
-                                            // Update gender state when the select input changes
-                                            >
-                                                <option value="">
-                                                    Select <span class="text-danger">*</span>{' '}
-                                                </option>{' '}
-                                                {/* Empty value for the default option */}
-                                                {allShiftTiming && allShiftTiming.map(interviewer => (
-                                                    <option
-                                                        key={interviewer.id}
-                                                        value={interviewer.id}
-                                                    >
-                                                        {`${interviewer.Shift_Name}
-                                                         (${interviewer.start_shift && convertTo12Hour(interviewer.start_shift)}-
-                                                         ${interviewer.end_shift && convertTo12Hour(interviewer.end_shift)}) `}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="col-md-6 mb-3">
-                                            <label
-                                                htmlFor="gender"
-                                                className="text-slate-500"
-                                            >
-                                                Reporting To <span class="text-danger">*</span>{' '}
-                                            </label>
-                                            <select
-                                                className="inputbg w-full outline-none p-2 rounded "
-                                                id="gender"
-                                                name="Reporting_To"
-                                                value={Edit_Data.Reporting_To}
-                                                onChange={handleChangeEdit_data} // Set the value of the select input to gender
-                                            // Update gender state when the select input changes
-                                            >
-                                                <option value="">
-                                                    Select <span class="text-danger">*</span>{' '}
-                                                </option>{' '}
-                                                {/* Empty value for the default option */}
-                                                {interviewers.map(interviewer => (
-                                                    <option
-                                                        key={interviewer.EmployeeId}
-                                                        value={interviewer.EmployeeId}
-                                                    >
-                                                        {`${interviewer.EmployeeId},${interviewer.Name}`}
+                                                name="religion"
+                                                value={Edit_Data.religion}
+                                                onChange={(e) => {
+                                                    handleChangeEdit_data(e)
+                                                }}>
+                                                <option value="">Select  <span class='text-danger'>*</span> </option> {/* Empty value for the default option */}
+                                                {religion && religion.map(interviewer => (
+                                                    <option key={interviewer.id} value={interviewer.id}>
+                                                        {`${interviewer.religion_name}`}
                                                     </option>
                                                 ))}
                                             </select>
@@ -473,6 +423,9 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
                                                 {/* Empty value for the default option */}
                                                 <option value="intern">Intern </option>
                                                 <option value="permanent">Permanent </option>
+                                                <option value="Trainne">Trainne </option>
+                                                <option value="Consulant">Consultant </option>
+
                                             </select>
                                         </div>
                                         {Edit_Data.Employeement_Type == 'intern' && (
@@ -556,42 +509,163 @@ const EditEmployeeModal = ({ resetEditModal, handleChangeEdit_data, editModal, s
                                                 </div>
                                             </section>
                                         )}
-
-                                        <section>
+                                        <div className="col-md-6 mb-3">
                                             <label
-                                                htmlFor="activestatus"
+                                                htmlFor="gender"
+                                                className="text-slate-500 flex justify-between "
+                                            >
+                                                Department
+                                                <button
+                                                    className="text-xs "
+                                                    onClick={() => setShowDepartment(true)}
+                                                >
+                                                    Create Department{' '}
+                                                </button>{' '}
+                                            </label>
+                                            <select
+                                                className="inputbg w-full outline-none p-2 rounded "
+                                                id="gender"
+                                                name="Department_id"
+                                                value={Edit_Data.Department_id}
+                                                onChange={e => {
+                                                    Call_Department(e.target.value);
+                                                    handleChangeEdit_data(e);
+                                                }}
+                                            // Set the value of the select input to gender
+                                            // Update gender state when the select input changes
+                                            >
+                                                <option value="">
+                                                    Select <span class="text-danger">*</span>{' '}
+                                                </option>{' '}
+                                                {/* Empty value for the default option */}
+                                                {Department_List.map((interviewer, index) => {
+                                                    console.log('Update_Data', interviewer);
+                                                    return (
+                                                        <option
+                                                            key={interviewer.id}
+                                                            value={interviewer.id}
+                                                        >
+                                                            {`${interviewer.Dep_Name}`}
+                                                        </option>
+                                                    );
+                                                })}
+                                            </select>
+                                        </div>
+                                        {console.log(Edit_Data)}
+
+                                        <div className="col-md-6 mb-3">
+                                            <label
+                                                htmlFor="gender"
                                                 className="text-slate-500"
                                             >
-                                                {' '}
-                                                Active status
+                                                Designation <span class="text-danger">*</span>{' '}
                                             </label>
-                                            <article
-                                                onClick={() =>
-                                                    set_Edit_Data(prev => ({
-                                                        ...prev,
-                                                        employee_status:
-                                                            Edit_Data.employee_status == 'active'
-                                                                ? 'in_active'
-                                                                : 'active',
-                                                    }))
-                                                }
-                                                className="flex gap-1 items-center "
+                                            <select
+                                                className="inputbg w-full outline-none p-2 rounded "
+                                                id="gender"
+                                                name="Position_id"
+                                                value={Edit_Data.Position_id}
+                                                onChange={e => {
+                                                    handleChangeEdit_data(e);
+                                                }}
                                             >
-                                                InActive
-                                                <div
-                                                    className={`  ${Edit_Data.employee_status == 'active'
-                                                        ? 'bg-green-100'
-                                                        : 'bg-red-100'
-                                                        } relative w-10 h-5 rounded-full duration-500 border-2 `}
+                                                <option value="">
+                                                    Select <span class="text-danger">*</span>{' '}
+                                                </option>{' '}
+                                                {/* Empty value for the default option */}
+                                                {Desgination_List.map(interviewer => (
+                                                    <option
+                                                        key={interviewer.id}
+                                                        value={interviewer.id}
+                                                    >
+                                                        {`${interviewer.Name}`}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <div className='flex items-center justify-between ' >
+                                                <label
+                                                    htmlFor="gender"
+                                                    className="text-slate-500"
                                                 >
-                                                    <button
-                                                        className={`  h-4 w-4 absolute ${Edit_Data.employee_status == 'active' &&
-                                                            'translate-x-5'
-                                                            } duration-500 rounded-full bg-white `}
-                                                    ></button>
-                                                </div>
-                                                Active
-                                            </article>
+                                                    Shift Timing
+                                                </label>
+                                                <CreateEmployeeShift getData={getAllShiftTiming} />
+                                            </div>
+                                            <select
+                                                className="inputbg w-full outline-none p-2 rounded "
+                                                id="EmployeeShifts"
+                                                name="EmployeeShifts"
+                                                value={Edit_Data.EmployeeShifts}
+                                                onChange={handleChangeEdit_data} // Set the value of the select input to gender
+                                            // Update gender state when the select input changes
+                                            >
+                                                <option value="">
+                                                    Select <span class="text-danger">*</span>{' '}
+                                                </option>{' '}
+                                                {/* Empty value for the default option */}
+                                                {allShiftTiming && allShiftTiming.map(interviewer => (
+                                                    <option
+                                                        key={interviewer.id}
+                                                        value={interviewer.id}
+                                                    >
+                                                        {`${interviewer.Shift_Name}
+                                                         (${interviewer.start_shift && convertTo12Hour(interviewer.start_shift)}-
+                                                         ${interviewer.end_shift && convertTo12Hour(interviewer.end_shift)}) `}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label
+                                                htmlFor="gender"
+                                                className="text-slate-500"
+                                            >
+                                                Reporting Manager Name <span class="text-danger">*</span>{' '}
+                                            </label>
+                                            <select
+                                                className="inputbg w-full outline-none p-2 rounded "
+                                                id="gender"
+                                                name="Reporting_To"
+                                                value={Edit_Data.Reporting_To}
+                                                onChange={handleChangeEdit_data} // Set the value of the select input to gender
+                                            // Update gender state when the select input changes
+                                            >
+                                                <option value="">
+                                                    Select <span class="text-danger">*</span>{' '}
+                                                </option>{' '}
+                                                {/* Empty value for the default option */}
+                                                {interviewers.map(interviewer => (
+                                                    <option
+                                                        key={interviewer.EmployeeId}
+                                                        value={interviewer.EmployeeId}
+                                                    >
+                                                        {`${interviewer.EmployeeId},${interviewer.Name}`}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+
+                                        <section className='col-md-6 mb-3 ' >
+                                            <label
+                                                htmlFor="activestatus"
+                                                className="text-slate-500" >
+                                                Employee status
+                                            </label>
+                                            <select
+                                                className="inputbg w-full outline-none p-2 rounded "
+                                                id="employee_status"
+                                                name="employee_status"
+                                                value={Edit_Data.employee_status}
+                                                onChange={handleChangeEdit_data}>
+                                                <option value=""> Select </option>
+                                                <option value="active"> Active </option>
+                                                <option value="in_active"> InActive </option>
+                                                <option value="Resigned"> Resigned </option>
+
+                                            </select>
                                         </section>
                                     </div>
 

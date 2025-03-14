@@ -113,13 +113,13 @@
     background-color: transparent;
     outline: 2px solid transparent;
     outline-offset: 2px;
-
 } */
 .tablebg th,
 td {
     padding: 13px;
     text-align: center;
     vertical-align: top;
+
 }
 
 .tablebg td {
@@ -128,8 +128,10 @@ td {
     box-shadow: 0px;
     height: fit-content;
     color: #878787;
-    max-width: 400px;
-    text-overflow: ellipsis;
+    max-width: 300px;
+    word-wrap: break-word; /* Ensures long words wrap */
+    word-break: break-word; /* Ensures text breaks at word boundaries */
+    white-space: normal; /* Allows wrapping */
 }
 
 

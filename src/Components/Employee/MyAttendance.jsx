@@ -3,10 +3,11 @@ import React, { useContext, useEffect, useState } from 'react'
 import { port } from '../../App';
 import { HrmStore } from '../../Context/HrmContext';
 import { Spinner } from 'react-bootstrap';
+import DataNotFound from '../MiniComponent/DataNotFound';
 
 const MyAttendance = () => {
     const currentDate = new Date();
-    let { formatISODate, formatTime } = useContext(HrmStore)
+    let { formatISODate, formatTime ,convertTo12Hour} = useContext(HrmStore)
     const formattedDate = currentDate.getFullYear() + '-' +
         ('0' + (currentDate.getMonth() + 1)).slice(-2) + '-' +
         ('0' + currentDate.getDate()).slice(-2);
@@ -32,10 +33,10 @@ const MyAttendance = () => {
     return (
         <div className='poppins ' >
 
-            <main className='w-full p-3 rounded-xl h-[40vh] overflow-y-auto bg-white     ' >
+            <main className='w-full p-3 rounded-xl h-[40vh]  overflow-y-auto bg-white     ' >
                 <section className='flex justify-between items-center ' >
 
-                    <h5>Attendance Logs </h5>
+                    <h5 className='text-lg ' >Attendance Logs </h5>
                     <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className='outline-none p-2 rounded bg-slate-50 ' />
                 </section>
                 {
@@ -52,11 +53,11 @@ const MyAttendance = () => {
                                     <table className='w-full  ' >
                                         <tr className='sticky top-0 bgclr1 ' >
                                             <th>SI NO </th>
-                                            <th>Name </th>
-                                            <th>In Time </th>
+                                            <th>Employee Name </th>
+                                            <th>Log-In Time </th>
                                             <th>Late Time </th>
-                                            <th>Out Time </th>
-                                            <th>Early Depature </th>
+                                            <th>Log-Out Time </th>
+                                            <th>Early Log-Out </th>
                                         </tr>
                                         {
                                             data && data.map((obj, index) => (
@@ -97,8 +98,7 @@ const MyAttendance = () => {
                                 </div>}
                             </section>}
                     </> :
-                        <h5 className=' text-center text-slate-500 my-4' > Entry not made for this date
-                        </h5>
+                        <DataNotFound />
                 }
 
             </main>

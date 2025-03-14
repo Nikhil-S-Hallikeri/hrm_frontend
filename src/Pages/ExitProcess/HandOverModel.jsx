@@ -114,11 +114,11 @@ const HandOverModel = ({ show, setshow }) => {
                 <Modal.Header closeButton >
                     Handover process
                 </Modal.Header>
-                <Modal.Body>
-                    <main className='bgclr p-3 rounded max-h-[60vh] overflow-y-scroll ' >
+                <Modal.Body className='p-0 '  >
+                    <main className='inputbg p-3 m-0 rounded max-h-[60vh] overflow-y-scroll ' >
                         {
                             formObj && formObj.map((obj, index) => (
-                                <section className='formbg rounded p-3 row mx-auto my-2 ' >
+                                <section className='bg-white rounded p-3 row mx-auto my-2 ' >
                                     <p>   Project {index + 1} </p>
                                     {console.log(obj, 'handover')
                                     }
@@ -130,7 +130,7 @@ const HandOverModel = ({ show, setshow }) => {
                                         <p>Assigned to :</p>
                                         <select name="handover_to" onChange={(e) => handleChange(e, index)}
                                             value={formObj[index].handover_to} id=""
-                                            className='p-2 block rounded bgclr w-full outline-none shadow-none ' >
+                                            className='p-2 block rounded inputbg w-full outline-none shadow-none ' >
                                             <option value="">Select </option>
                                             {
                                                 allEmployee && allEmployee.map(interviewer => (

@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { HrmStore } from '../../Context/HrmContext'
 
 const HolidayTable = ({ data, css }) => {
-    let { changeDateYear } = useContext(HrmStore)
+    let { changeDateYear,selectValueToNormal } = useContext(HrmStore)
     return (
         <div>
             {data && data.length > 0 ? <main className={` tablebg  ${css ? css : "h-[30vh]"} rounded table-responsive`} >
@@ -12,6 +12,7 @@ const HolidayTable = ({ data, css }) => {
                     <tr className='sticky bg-white top-0 ' >
                         <th>SI No </th>
                         <th>Occasion Name</th>
+                        <th> Leave Type </th>
                         <th> Date </th>
                         <th> Day </th>
                     </tr>
@@ -19,8 +20,11 @@ const HolidayTable = ({ data, css }) => {
                     {
                         data && data.map((obj, index) => (
                             <tr>
+                                {console.log(obj, 'leave check')
+                                }
                                 <td>{index + 1} </td>
                                 <td> {obj.OccasionName} </td>
+                                <td> {obj.leave_type && selectValueToNormal(obj.leave_type) } </td>
                                 <td> {obj.Date && changeDateYear(obj.Date)} </td>
                                 <td> {obj.Day} </td>
                             </tr>

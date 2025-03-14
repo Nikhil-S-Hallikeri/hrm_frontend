@@ -52,7 +52,7 @@ const DepartmentPage = () => {
                             <span className='mx-auto text-center  ' >
                                 <ActionIcon /> </span></th>
                         <th>Deapartment Name</th>
-                        <th>No of Employees </th>
+                        <th>Number of Employees </th>
                     </tr>
                     {
                         AllDepartmentlist && AllDepartmentlist.map((obj) => (

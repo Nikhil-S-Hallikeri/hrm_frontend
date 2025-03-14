@@ -88,10 +88,10 @@ const PreTaxDeduction = () => {
         setActiveSetting('deduction')
     }, [id])
     return (
-        <div className='poppins'>
+        <div className='poppins px-2'>
             <h4>   Pre-Tax Deduction </h4>
 
-            <main className='formbg p-4 rounded row ' >
+            <main className='bg-white p-4 rounded row ' >
                 <InputFieldform name='deducting_plan' handleChange={handleChange}
                     value={formObj.deducting_plan} label='Deduction Plan'
                     options={['National Pension Section', 'Other Non-Taxable Deduction']} />
@@ -99,17 +99,17 @@ const PreTaxDeduction = () => {
                     <InputFieldform name='deduction_associate_with' value={formObj.deduction_associate_with}
                         label='Associate this deduction with' handleChange={handleChange}
                         options={assiociation} />}
-                <InputFieldform required={true} label='Name in Payslip' value={formObj.name_in_payslip} name='name_in_payslip'
+                <InputFieldform required={true} label='Name on Payslip' value={formObj.name_in_payslip} name='name_in_payslip'
                     handleChange={handleChange} type='text' />
 
                 <div className=" col-md-4 col-sm-6 ">
                     <label className='mb-1 my-1'>Calculation Type </label>
                     <select onChange={handleChange} value={formObj.caluculate_type}
-                        className='w-full bgclr p-2 rounded outline-none '
+                        className='w-full inputbg p-2 rounded outline-none '
                         name="caluculate_type" id="">
                         <option value="">Select</option>
-                        <option value="Flat_Amount">Flat amount </option>
-                        <option value="Percentage_oF_CTC">Percentage of component <span className='text-sm ' >(Variable amount paid during any payroll.) </span>  </option>
+                        <option value="Flat_Amount">Flat amount <span className='text-sm '> (Fixed value for this component) </span> </option>
+                        <option value="Percentage_oF_CTC">Percentage of component <span className='text-sm ' >(Percentage based on total salary or specific component.) </span>  </option>
 
                     </select>
                 </div>

@@ -113,7 +113,7 @@ const ShowHolidays = () => {
                                                 </article>
                                             )) :
                                                 <div className='w-full flex text-slate-400 text-sm h-full m-auto'>
-                                                    <small className='m-auto'>No Holidays</small>
+                                                    <small className='m-auto'>No Public Holidays</small>
                                                 </div>
                                         }
                                         {
@@ -146,7 +146,7 @@ const ShowHolidays = () => {
                                                 </article>
                                             )) :
                                                 <div className='w-full flex text-slate-400 text-sm h-full m-auto'>
-                                                    <small className='m-auto'>No WeekOff  </small>
+                                                    <small className='m-auto'>No Weekly Offs  </small>
                                                 </div>
                                         }
                                     </div>

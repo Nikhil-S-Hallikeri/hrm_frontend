@@ -65,9 +65,9 @@ const JFExperience = ({ id, data, page }) => {
         getData()
     }, [data])
     return (
-        <div className='bg-white p-3 rounded ' >
+        <div className='inputbg p-3 rounded ' >
             <h5 className='mt-2 heading' style={{ color: 'rgb(76,53,117)' }}>EXPERIENCE (CHRONOLOGICAL ORDER EXCLUDING LAST POSITION)</h5>
-            <main className='formbg p-3 rounded '>
+            <main className='bg-white p-3 rounded '>
                 <section className='tablebg table-responsive rounded ' >
                     <table className='w-full '>
                         <thead>

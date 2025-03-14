@@ -206,7 +206,7 @@ const EmployeeUpdate = ({ sid, id, setshowtab, showTab }) => {
                         </select>
                     </div>
                     <div className="col-md-6 col-lg-4 mb-3">
-                        <label htmlFor="gender" className="form-label ">Position <span class='text-danger'>*</span> </label>
+                        <label htmlFor="gender" className="form-label ">Role <span class='text-danger'>*</span> </label>
                         <select
                             className="p-2 bgclr rounded outline-none block w-full shadow-none bg-light"
                             id="gender"

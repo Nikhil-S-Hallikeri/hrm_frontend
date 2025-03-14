@@ -89,9 +89,9 @@ const JFLastpositionHeld = ({ id, page, data }) => {
         getData()
     }, [data])
     return (
-        <div className='bg-white p-3 rounded '>
+        <div className='inputbg min-h-[98vh] p-3 rounded '>
             <h5 className='mt-2 uppercase heading' style={{ color: 'rgb(76,53,117)' }}> Last Position held details </h5>
-            <main className='formbg  row rounded p-3'>
+            <main className=' bg-white row rounded p-3'>
                 <InputFieldform disabled={page} label="Organization" value={formObj.organisation} handleChange={handleChange}
                     name='organisation' placeholder='YWQ Pvt LTD' type='text' />
                 <InputFieldform disabled={page} label="Designation" value={formObj.designation} handleChange={handleChange}

@@ -19,7 +19,6 @@ const Sidebar = () => {
         <div className={` ${openNavbar && ' w-[270px]'}  `}>
             {
                 true ? <NewSideBar /> : <>
-
                     <main className='sticky top-0 flex'>
                         <section className={`h-[100vh] z-10 py-4 w-[80px] rounded-tr-[40px] bg-white `}>
                             {/* <img className='absolute z-0 top-0 ' src={require('../assets/Images/navbar.png')} alt="Navbar" /> */}
@@ -33,9 +32,7 @@ const Sidebar = () => {
                                     src={require('../assets/Images/Union.png')} alt="Union" />
                             </button>
                             <section className={` overflowbar mx-auto 
-                     gap-4 flex justify-between flex-col my-4 ${openNavbar && 'w-[270px]'} `}>
-
-
+                                gap-4 flex justify-between flex-col my-4 ${openNavbar && 'w-[270px]'} `}>
                                 <NavbarButton openNavbar={openNavbar} setopen={setNavbar} path={`/dashboard/${logindata.Disgnation}`}
                                     label='Dashboard' active='dashboard'
                                     img='/assets/Images/dashboard.png' />

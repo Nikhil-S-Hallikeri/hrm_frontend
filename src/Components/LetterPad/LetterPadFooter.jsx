@@ -16,13 +16,19 @@ const LetterPadFooter = () => {
             </main>
             <main style={{ backgroundColor: '#2E2F4B' }}
                 className='flex justify-around p-[10px] py-[15px]  ' >
-                <div className='text-slate-50 lowercase flex gap-2 items-center p-0 ' >
+                <div className='text-slate-50 lowercase flex gap-2  p-0 ' style={{ alignItems: 'center' }} >
                     <MessageIcon />
-                    INFO@MERIDATECHMINDS.COM
+                    <p>
+
+                        INFO@MERIDATECHMINDS.COM
+                    </p>
                 </div>
-                <div className='text-slate-50  lowercase flex gap-2 items-center p-0 ' >
+                <div className='text-slate-50  lowercase flex gap-2  p-0 ' style={{ alignItems: 'center' }} >
                     <LocationIcon />
-                    20-2, Keshava Krupa, 1st Fl, 30th Cross, 10th Main, 4th Block, Jayanagar, Bengaluru 560011
+                    <p>
+
+                        20-2, Keshava Krupa, 1st Fl, 30th Cross, 10th Main, 4th Block, Jayanagar, Bengaluru 560011
+                    </p>
                 </div>
             </main>
             <main className='flex justify-end px-4 ' >

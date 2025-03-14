@@ -6,9 +6,11 @@ import axios from 'axios'
 import { port } from '../../App'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import LoadingData from '../../Components/MiniComponent/LoadingData'
 
-const ClientCreation = ({ id, page }) => {
+const ClientCreation = ({ id, page, }) => {
     let [loading, setLoading] = useState()
+    let { setTopNav } = useContext(HrmStore)
     let { setActiveSetting } = useContext(HrmStore)
     let [formObj, setFormObj] = useState({
         client_name: '',
@@ -39,7 +41,13 @@ const ClientCreation = ({ id, page }) => {
     useEffect(() => {
         setActivePage('client')
         setActiveSetting('client')
-    }, [])
+        if (page == 'req')
+            setTopNav('recuirter')
+        else if (id)
+            setTopNav('client')
+        else
+            setTopNav('addclient')
+    }, [page, id])
     let addClient = () => {
         let formData = new FormData()
         Object.keys(formObj).forEach(key => {
@@ -74,6 +82,7 @@ const ClientCreation = ({ id, page }) => {
     }
     let navigate = useNavigate()
     let getParticularClientDetails = () => {
+        setLoading('getting')
         axios.get(`${port}/root/cms/clients?id=${id}`).then((response) => {
             setLoading(false)
             setFormObj(response.data)
@@ -101,54 +110,55 @@ const ClientCreation = ({ id, page }) => {
             getParticularClientDetails()
     }, [id])
     return (
-        <div>
+        <div className='px-2 py-3' >
             {!page && <Topnav />}
-            {!page && <button onClick={() => navigate(`/dash/client`)} className='p-2 text-sm bg-black text-white rounded ' >
+            {!page && <button onClick={() => navigate(`/client`)} className='p-2 text-sm bg-black text-white rounded ' >
                 Back  </button>}
             <h4 className='text-center poppins ' >Client {id ? "Details" : "Creation"} </h4>
-            <main className='my-2 rounded formbg row p-2  ' >
-                <InputFieldform label="Client Name" name='client_name' handleChange={handleformObj}
-                    value={formObj.client_name} />
-                <InputFieldform label="Client Mail" name='client_email' handleChange={handleformObj}
-                    value={formObj.client_email} />
-                <InputFieldform label="Alternative Mail" name='alternative_emails' handleChange={handleformObj}
-                    value={formObj.alternative_emails} />
-                <InputFieldform label="Client Phone" name='client_phone' handleChange={handleformObj}
-                    value={formObj.client_phone} />
-                <InputFieldform label="Alternative Phone" name='alternative_phone' handleChange={handleformObj}
-                    value={formObj.alternative_phone} />
-                <InputFieldform label="Company Name" name='company_name' handleChange={handleformObj}
-                    value={formObj.company_name} />
-                <InputFieldform label="GST Number" name='gst_number' handleChange={handleformObj}
-                    value={formObj.gst_number} />
-                <InputFieldform label="Client Type" optionObj={[{ value: 'paid', label: "Paid" }, { value: 'unpaid', label: "Unpaid" }]} name='client_type' handleChange={handleformObj}
-                    value={formObj.client_type} />
-                {/* File upload */}
-                {!id && <div className=' col-md-6 col-lg-4 ' >
-                    <label htmlFor=""> Agreement Ducumentation</label>
-                    <input type="file" name='document_proof' onChange={handleformObj} className='p-2 rounded bgclr w-full outline-none my-2  ' />
-                </div>}
-                <InputFieldform label='Company Address ' value={formObj.company_address} name='company_address'
-                    handleChange={handleformObj} type='textarea' />
+            {loading == 'getting' ? <LoadingData /> :
+                <main className='my-2 rounded bg-white row p-2  ' >
+                    <InputFieldform label="Client Name" name='client_name' handleChange={handleformObj}
+                        value={formObj.client_name} />
+                    <InputFieldform label="Client Mail" name='client_email' handleChange={handleformObj}
+                        value={formObj.client_email} />
+                    <InputFieldform label="Alternative Mail" name='alternative_emails' handleChange={handleformObj}
+                        value={formObj.alternative_emails} />
+                    <InputFieldform label="Client Phone" name='client_phone' handleChange={handleformObj}
+                        value={formObj.client_phone} />
+                    <InputFieldform label="Alternative Phone" name='alternative_phone' handleChange={handleformObj}
+                        value={formObj.alternative_phone} />
+                    <InputFieldform label="Company Name" name='company_name' handleChange={handleformObj}
+                        value={formObj.company_name} />
+                    <InputFieldform label="GST Number" name='gst_number' handleChange={handleformObj}
+                        value={formObj.gst_number} />
+                    <InputFieldform label="Client Type" optionObj={[{ value: 'paid', label: "Paid" }, { value: 'unpaid', label: "Unpaid" }]} name='client_type' handleChange={handleformObj}
+                        value={formObj.client_type} />
+                    {/* File upload */}
+                    {!id && <div className=' col-md-6 col-lg-4 ' >
+                        <label htmlFor=""> Agreement Ducumentation</label>
+                        <input type="file" name='document_proof' onChange={handleformObj} className='p-2 rounded bgclr w-full outline-none my-2  ' />
+                    </div>}
+                    <InputFieldform label='Company Address ' value={formObj.company_address} name='company_address'
+                        handleChange={handleformObj} type='textarea' />
 
-                <div className='col-12 ' >
-                    <div className='text-sm flex gap-2 items-center ' >
-                        <input type="checkbox" onChange={() => setFormObj((prev) => ({
-                            ...prev,
-                            terms_and_conditions: !formObj.terms_and_conditions
-                        }))} checked={formObj.terms_and_conditions} id='tac' className=' ' />
-                        <label htmlFor="tac"> I hereby agree for the terms & conditions. </label>
+                    <div className='col-12 ' >
+                        <div className='text-sm flex gap-2 items-center ' >
+                            <input type="checkbox" onChange={() => setFormObj((prev) => ({
+                                ...prev,
+                                terms_and_conditions: !formObj.terms_and_conditions
+                            }))} checked={formObj.terms_and_conditions} id='tac' className=' ' />
+                            <label htmlFor="tac"> I hereby agree for the terms & conditions. </label>
+
+                        </div>
+                        {!id && <button onClick={addClient} disabled={loading} className=' flex ms-auto p-2 my-2 bg-blue-500 text-white text-sm rounded ' >
+                            {loading ? "Loading... " : " Add client"}
+                        </button>}
+                        {id && <button onClick={updateClientDetails} disabled={loading} className=' flex ms-auto p-2 my-2 bg-blue-500 text-white text-sm rounded ' >
+                            {loading ? "Loading... " : " Update client"}
+                        </button>}
 
                     </div>
-                    {!id && <button onClick={addClient} disabled={loading} className=' flex ms-auto p-2 my-2 bg-blue-500 text-white text-sm rounded ' >
-                        {loading ? "Loading... " : " Add client"}
-                    </button>}
-                    {id && <button onClick={updateClientDetails} disabled={loading} className=' flex ms-auto p-2 my-2 bg-blue-500 text-white text-sm rounded ' >
-                        {loading ? "Loading... " : " Update client"}
-                    </button>}
-
-                </div>
-            </main>
+                </main>}
 
         </div>
     )

@@ -32,7 +32,7 @@ const PayslipTable = () => {
         })
     }
     let generatePayslip = () => {
-        setLoading(true)
+        setLoading('payslip')
         axios.post(`${port}/root/pms/EmployeesPaySlip/${monthdata.slice(5)}/${monthdata.slice(0, 4)}/`).then((response) => {
             console.log(response.data, "pay");
             setLoading(false)
@@ -42,6 +42,26 @@ const PayslipTable = () => {
 
             console.log(error);
         })
+    }
+    let downloadPayslip = () => {
+        setLoading('download')
+        axios.get(`${port}/root/pms/DownloadEmployeePaySlipExcel/${monthdata.slice(5)}/${monthdata.slice(0, 4)}/`,
+            {
+                responseType: 'blob'
+            }).then((response) => {
+                console.log(response.data, 'Download');
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'Payslip.xlsx');
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+                setLoading(false)
+            }).catch((error) => {
+                console.log(error, 'Download');
+                setLoading(false)
+            })
     }
     useEffect(() => {
         getPayslip()
@@ -61,9 +81,15 @@ const PayslipTable = () => {
                     }}
                         className='p-1 bgclr1 px-2 bg-white outline-none rounded ' />
                 </section>
-                <button disabled={loading} onClick={generatePayslip} className='p-2 px-3 h-fit btngrd rounded text-white ' >
-                    {loading ? 'Loading..' : "Generate Payslip"}
-                </button>
+                <div>
+                    <button disabled={loading == 'payslip'} onClick={generatePayslip} className='p-2 mx-3 px-3 h-fit btngrd rounded text-white ' >
+                        {loading == 'payslip' ? 'Loading..' : "Generate Payslip"}
+                    </button>
+                    <button onClick={downloadPayslip} disabled={loading == 'download'}
+                        className='bg-slate-600 text-slate-50 p-2 rounded px-3 ' >
+                        {loading == 'download' ? 'Loading..' : "Download"}
+                    </button>
+                </div>
             </main>
             <main className='rounded table-responsive h-[80vh] tablebg ' >
                 <table className='w-full ' >
@@ -73,12 +99,12 @@ const PayslipTable = () => {
                         <th>Designation </th>
                         <th>Paid days </th>
                         <th>LOP days </th>
-                        <th>Account number </th>
+                        <th>Bank Account No</th>
                         <th>Gross Salary</th>
-                        <th>Pay of month </th>
+                        <th>Salary for the month </th>
                         {/* <th> Earnings</th> */}
-                        <th>Deduction  </th>
-                        <th>Action </th>
+                        <th>Deductions  </th>
+                        <th>Payslip </th>
                     </tr>
                     {
                         loading != 'data' && payslipData && payslipData.map((obj, index) => (

@@ -54,9 +54,9 @@ const JFMedical = ({ data, id, page }) => {
         getData()
     }, [data])
     return (
-        <div className='bg-white p-3 rounded '>
+        <div className='inputbg p-3 rounded '>
             <h5 className='mt-2 heading' style={{ color: 'rgb(76,53,117)' }}>MEDICAL DETAILS</h5>
-            <main className='formbg my-2 row p-3'>
+            <main className='bg-white my-2 row p-3'>
                 <InputFieldform disabled={page} label='Blood Group' placeholder='AB+' handleChange={handleChange} type='text'
                     name='blood_group' value={formObj.blood_group} />
                 <InputFieldform disabled={page} label='Allergic To' placeholder='Shell Fish' handleChange={handleChange} type='text'

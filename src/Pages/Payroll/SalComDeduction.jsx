@@ -55,8 +55,7 @@ const SalComDeduction = () => {
                     {postTaxDeduction && postTaxDeduction.length > 0 && <tr>
                         <td className='fw-semibold flex gap-1'>
                             Post-Tax Deductions
-                            <InfoButton size={12} content={`A post-tax deduction is money taken out of an employee's pay 
-                                after the income tax is calculated and withheld. This has no effect on the taxable income. `} />
+                            <InfoButton size={12} content={`Post-deduction refers to the remaining salary after mandatory deductions like taxes, EPF, and ESI. These deductions do not affect taxable income. `} />
                         </td>
                         <td></td>
                         <td></td>

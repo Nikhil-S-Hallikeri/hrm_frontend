@@ -7,13 +7,14 @@ import AttendenceShowingadminTable from '../../Components/Tables/AttendenceShowi
 
 const AttendenceInfo = () => {
     let { setTopNav, getProperDate } = useContext(HrmStore)
-    let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
+    let empid = JSON.parse(sessionStorage.getItem('user'))?.EmployeeId
     let [attendanceList, setAttendanceList] = useState([])
     let [show, setshow] = useState('')
     let [filterObj, setFilterObj] = useState({
         fromtime: '',
         totime: ''
     })
+    
     let handleChange = (e) => {
         let { name, value } = e.target
         setFilterObj((prev) => ({
@@ -73,7 +74,7 @@ const AttendenceInfo = () => {
             <main className='bgclr my-3 rounded p-2'>
                 <h6>Attendence report </h6>
                 {attendanceList &&
-                    <AttendenceShowingadminTable type='personal' data={attendanceList} />}
+                    <AttendenceShowingadminTable type='personal' getAttendanceList={currentMonthDates} data={attendanceList} />}
 
 
             </main>

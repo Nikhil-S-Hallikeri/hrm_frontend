@@ -107,15 +107,23 @@ import EmployeeRouter from './Components/Routers/EmployeeRouter'
 import LeaveRouter from './Components/Routers/LeaveRouter'
 import DashboardRouter from './Components/Routers/DashboardRouter'
 import QrCodeGenerator from './Pages/QRscanner/QrCodeGenerator'
+import ReportRouter from './Pages/ReportRouter/ReportRouter'
+import ActivityRouter from './Pages/Activity/ActivityRouter'
+import FaceRecognitionAttendance from './Pages/Attendence/FaceRecognitionAttendance'
+import ClientRouter from './Pages/Client/ClientRouter'
+import GetGeoLocation from './Components/MiniComponent/GetGeoLocation'
+import LoginProtect from './Components/AuthPermissions/LoginProtect'
 // export const port = "http://192.168.172.249:9000/"
 // export const port = "http://192.168.18.26:9000/"
-export const port = "http://192.168.151.249:9000/"
-// export const port = "https://hrmbackendapi.meridahr.com/"
-// export const domain = 'https://hrm.meridahr.com'
-export const domain = 'http://192.168.151.237:3000'
+// export const port = "http://192.168.18.13:8000/"
+// export const port ='https://7mb3bgxf-9000.inc1.devtunnels.ms/'
+export const port = "https://hrmbackendapi.meridahr.com/"
+export const domain = 'https://hrm.meridahr.com'
+// export const domain = 'http://192.168.151.237:3000'
 export const das = 'https://das.meridahr.com'
 // export const das = 'http://192.168.18.24:3001'
 export const meridahrport = 'https://backendapi.meridahr.com'
+export const meridahrsite='https://meridahr.com/'
 // export const meridahrport = 'http://192.168.218.249:7000'
 
 
@@ -127,18 +135,18 @@ const App = () => {
 
       <BrowserRouter>
         <ToastContainer autoClose={1000} position='top-center' />
+        {/* <GetGeoLocation /> */}
         <Routes>
-          <Route element={<Login__></Login__>} path='/'></Route>
+          <Route element={<LoginProtect Child={DashboardRouter} />} path='/*'></Route>
           <Route path='/qr' element={<QrCodeGenerator />} />
-
+          <Route path='/reports/*' element={<ReportRouter />} />
           <Route path='/scanner' element={<Scanner />} />
           <Route path='/das' element={<Das />} />
           <Route element={<Signup></Signup>} path='/Signup'></Route>
           <Route path='/dash/*' element={<DasRouter />} />
-          <Route path='/dashboard/*' element={<DashboardRouter />} />
+          <Route path='/dashboard/*' element={<LoginProtect Child={DashboardRouter} />} />
           <Route element={<JFPreview />} path='/preview/:id' />
           <Route element={<JFPreview />} path='/employeeVerification/:id' />
-
           <Route path='/attendence-list' element={<AttendenceAdmin />} />
           <Route path='/candidateOfferLetter/:id' element={<OfferTemplate />} />
           <Route element={<Applylist></Applylist>} path='/Applaylist'></Route>
@@ -174,6 +182,8 @@ const App = () => {
           <Route element={<PayrollROuter />} path='/payroll/*' />
           <Route element={<LeaveRouter />} path='/leave/*' />
 
+          <Route element={<ClientRouter />} path='/client/*' />
+
 
           <Route element={<Empdepartment></Empdepartment>} path='/EmployeeDepartment'></Route>
 
@@ -208,7 +218,8 @@ const App = () => {
           <Route element={<Acti_ />} path='/Sample_acti'></Route>
 
           <Route element={<Actisam></Actisam>} path='/Actisam'></Route>
-
+          <Route element={<ActivityRouter />} path='/activity/*' />
+          <Route element={<FaceRecognitionAttendance />} path='/facereg' />
           <Route element={<Reporting_team></Reporting_team>} path='/Reporting_team'></Route>
           <Route element={<Repoting_team_report></Repoting_team_report>} path='/Report_Manager_Reporting_team'></Route>
           <Route element={<Reporting_team_recuter></Reporting_team_recuter>} path='/Reporting_team_recuter'></Route>

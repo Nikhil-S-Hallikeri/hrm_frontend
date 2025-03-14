@@ -17,6 +17,7 @@ const NewSideBarButton = ({ data, index }) => {
                     // setActivePage(data.active)
                 }
                 } className={` mx-auto w-full  flex my-4 ${index == 0 && 'mt-0'} text-slate-50 text-center text-xs flex-col `} >
+                    
                     <span className={` ${activePage == data.active ? 'bg-slate-50 text-blue-600 ' : 'bg-blue-900'} 
                      p-[11px] rounded mx-auto mb-1 `} >
 

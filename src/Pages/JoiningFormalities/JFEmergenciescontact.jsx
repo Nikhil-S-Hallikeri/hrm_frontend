@@ -58,9 +58,9 @@ const JFEmergenciescontact = ({ id, page, data }) => {
         getData()
     }, [data])
     return (
-        <div className='bg-white p-3 rounded '>
+        <div className='inputbg p-3 rounded '>
             <h5 className='mt-2 uppercase heading' style={{ color: 'rgb(76,53,117)' }}>Contact person in case of emergency</h5>
-            <main className='row formbg rounded p-3 '>
+            <main className='row bg-white rounded p-3 '>
                 <InputFieldform disabled={page} label="Name" placeholder='Parthiban' name='person_name' value={formObj.person_name}
                     type='text' handleChange={handleChange} />
                 <InputFieldform disabled={page} label="Mobile No" placeholder='897867****' name='phone' value={formObj.phone}

@@ -6,8 +6,7 @@ import { useParams } from 'react-router-dom'
 import { HrmStore } from '../../Context/HrmContext'
 import { toast } from 'react-toastify'
 
-const InterviewReviewModal = (props) => {
-  const { show, setshow } = props
+const InterviewReviewModal = ({ show, setshow, getData, client, inid }) => {
   let { id } = useParams()
   let [status, setStatus] = useState()
   const [final_status_value, setfinal_status_value] = useState("")
@@ -97,9 +96,9 @@ const InterviewReviewModal = (props) => {
     clarityThought, englishSkills,
     technicalAwareness, interpersonalSkills])
   useEffect(() => {
-    if (id) {
-      axios.get(`${port}/root/InterviewScheduledCandidate/${id}/`).then((response) => {
-        console.log(response.data);
+    if (id || inid) {
+      axios.get(`${port}/root/InterviewScheduledCandidate/${inid ? inid : id}/`).then((response) => {
+        console.log(response.data, 'getinterview');
         setPersondata(response.data.candidate_data)
         setInterviewRoundType(response.data.InterviewRoundName)
         setStatus(response.data.status)
@@ -107,12 +106,12 @@ const InterviewReviewModal = (props) => {
         console.log(error);
       })
     }
-  }, [id])
+  }, [id, inid])
   let handleproceedingform = (e) => {
     e.preventDefault();
     let formData1 = new FormData()
     // formData1.append('login_user', Empid);
-    formData1.append('id', id);
+    formData1.append('id', inid ? inid : id);
     formData1.append('CandidateId', persondata.id);
     formData1.append('Can_Id', persondata.CandidateId);
     formData1.append('Name', persondata.FirstName);
@@ -173,6 +172,10 @@ const InterviewReviewModal = (props) => {
           toast.success("Proceding Form Data Successfull")
           console.log("Proceding Form Data Successfull", r.data)
           setloading(false)
+          if (setshow)
+            setshow(false)
+          if (getData)
+            getData()
           setTimeout(() => {
             window.close()
           }, 4000);
@@ -201,7 +204,7 @@ const InterviewReviewModal = (props) => {
         </div>
       </div>
       {
-        status == 'Completed' && <main>
+        status == 'Completed' && !inid && <main>
           <div className='col-lg-6 p-4 my-4 bg-slate-50 border-2 border-white mx-auto rounded-xl  '>
             <h5 className='text-center  '>
               Review has been already submitted for this Interview.
@@ -209,7 +212,7 @@ const InterviewReviewModal = (props) => {
           </div>
         </main>
       }
-      {status != 'Completed' && <main class="container">
+      {(status != 'Completed' || inid) && <main class="container">
         <form>
           {/* Top inputs  start */}
 
@@ -268,8 +271,8 @@ const InterviewReviewModal = (props) => {
               {persondata && persondata && !persondata.Fresher && <div className="col-md-6 col-lg-4 p-3 mb-3">
                 <label htmlFor="experience" className="form-label" >Related Experience:</label>
                 <input type="number" placeholder='In years '
-                className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="experience"
-                value={persondata && persondata.TotalExperience} />
+                  className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="experience"
+                  value={persondata && persondata.TotalExperience} />
               </div>}
               {interviewRoundType == 'technical_round' && <div className="col-md-6 col-lg-4 p-3 mb-3">
                 <label htmlFor="" className="form-label">Coding questions score (1-5) :</label>
@@ -547,7 +550,7 @@ const InterviewReviewModal = (props) => {
                   }} />
               </div>}
               <div className="col-md-6 col-lg-4 p-3 mb-3 ">
-                <label htmlFor="overallRanking" className="form-label">Overall Candidate Ranking (1 to 10):</label>
+                <label htmlFor="overallRanking" className="form-label">Overall Candidate Ranking (1 to 5):</label>
                 <input type="number" disabled={true} className="p-2 border-1 rounded border-slate-400 w-full block outline-none" id="overallRanking"
                   value={overallRanking}
                   onChange={(e) => setOverallRanking(e.target.value)} />
@@ -739,10 +742,17 @@ const InterviewReviewModal = (props) => {
                   <label htmlFor="ageGroup" className="form-label">Interview Status : <span className='text-red-500 '>*</span></label>
                   <select className="form-select" id="ageGroup" value={Interviewstatus} onChange={(e) => setInterviewStatus(e.target.value)}>
                     <option value="">Select</option>
-                    <option value="consider_to_client">Consider to Client for Merida</option>
-                    <option value="Internal_Hiring">Shortlisted to Next Round </option>
-                    <option value="Reject">Reject</option>
-                    <option value="On_Hold">On Hold</option>
+                    {!client && <option value="consider_to_client">Consider to Client for Merida</option>}
+                    {!client && <option value="Internal_Hiring">Shortlisted to Next Round </option>}
+                    {!client && <option value="Reject">Reject</option>}
+                    {!client && <option value="On_Hold">On Hold</option>}
+
+                    {client && <option value="client_offer_rejected">Offer Rejected By Candidate </option>}
+                    {client && <option value="client_kept_on_hold">Client Kept on Hold </option>}
+                    {client && <option value="client_rejected">Client Rejected</option>}
+                    {client && <option value="client_offered"> Client Offered </option>}
+                    {client && <option value="candidate_joined">Candidate Joined</option>}
+
                     {/* <option value="Offer_did_not_accept">Offerd Did't Accept</option> */}
                   </select>
                 </div>

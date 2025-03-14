@@ -89,7 +89,7 @@ const JFAttachments = ({ id, page, data }) => {
     }, [data])
 
     return (
-        <div className='p-3 rounded bg-white '>
+        <div className='p-3 rounded inputbg '>
             <h5 className='mt-2 uppercase heading' style={{ color: 'rgb(76,53,117)' }}>attachments </h5>
             <main className='bgclr p-3 rounded '>
                 <p className='fw-semibold '>Please attach : </p>
@@ -101,7 +101,7 @@ const JFAttachments = ({ id, page, data }) => {
                     {/* <li>Photocopy of ID proof</li> */}
                     <li>Passport size photograph</li>
                 </ol>
-                <section className='formbg p-3 rounded row '>
+                <section className='bg-white p-3 rounded row '>
                     <p className='fw-semibold col-12 '>Select your Files </p>
                     <InputFieldform disabled={page} label='Degree mark sheets etc' link={formObj.Degree_mark_sheets} name='Degree_mark_sheets'
                         handleChange={handleChange} type='file' />

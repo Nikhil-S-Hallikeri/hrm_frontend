@@ -25,7 +25,7 @@ import HighLevelEncoder from '@zxing/library/esm/core/datamatrix/encoder/HighLev
 
 const Allemp = ({ subpage }) => {
   let [empActiveStatus, setActiveEmpStatus] = useState('active')
-  let { religion, setTopNav } = useContext(HrmStore);
+  let { religion, setTopNav, changeDateYear, calculateAge } = useContext(HrmStore);
   let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId;
   let empStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation;
   let [addEmpModal, setAddEmpModal] = useState(false);
@@ -35,7 +35,7 @@ const Allemp = ({ subpage }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   let [showreligion, setShowReligion] = useState(false);
   let [showDepartment, setShowDepartment] = useState(false);
-
+  let [addresschecked, setAddresschecked] = useState(false)
   const [AllEmployeelist, setAllEmployeelist] = useState([]);
   const [EMPLOYEE_INFORMATION, setEMPLOYEE_INFORMATION] = useState([]);
   const [EDUCATION_DETAILS, setEDUCATION_DETAILS] = useState([]);
@@ -53,12 +53,24 @@ const Allemp = ({ subpage }) => {
   const [ATTACHMENTS, setATTACHMENTS] = useState([]);
   const [DOCUMENTS_SUBMITED, setDOCUMENTS_SUBMITED] = useState([]);
   const [DECLARATION, setDECLARATION] = useState([]);
-
+  const fieldMappings = {
+    permanent_address: "present_address",
+    present_address: "permanent_address",
+    permanent_City: "present_City",
+    present_City: "permanent_City",
+    present_pincode: "permanent_pincode",
+    permanent_pincode: "present_pincode",
+    present_state: "permanent_state",
+    permanent_state: "present_state",
+  };
   // "EmployeesSort/${emp_user}"
   const [Edit_Data, set_Edit_Data] = useState({
+    salutation: null,
     full_name: '',
+    last_name: '',
     employee_attendance_id: '',
     date_of_birth: '',
+    age: null,
     gender: '',
     email: '',
     mobile: '',
@@ -80,6 +92,13 @@ const Allemp = ({ subpage }) => {
     probation_status: '',
     probation_Duration_From: '',
     probation_Duration_To: '',
+
+    present_City: null,
+    present_state: null,
+    present_pincode: null,
+    permanent_City: null,
+    permanent_state: null,
+    permanent_pincode: null,
 
     EmployeeShifts: '',
     interview_shedule_access: '',
@@ -110,6 +129,7 @@ const Allemp = ({ subpage }) => {
     fetchdata();
   }, []);
   let [obj, setobj] = useState({
+    age: null,
     Employeement_Type: '',
     internship_Duration_From: '',
     internship_Duration_To: '',
@@ -183,13 +203,11 @@ const Allemp = ({ subpage }) => {
   };
   const fetchdata = (val) => {
     setloading('allemp')
-    axios
-      .get(`${port}/root/ems/AllEmployeesList/${Empid}/?emp_status=${val ? val : "active"}`)
-      .then(res => {
-        console.log('AllEmployee_res', res.data, `${port}/root/ems/AllEmployeesList/${Empid}/?emp_status=${val ? val : "active"}`);
-        setAllEmployeelist(res.data);
-        setloading(false)
-      })
+    axios.get(`${port}/root/ems/AllEmployeesList/${Empid}/?emp_status=${val ? val : "active"}`).then(res => {
+      console.log('AllEmployee_res', res.data, `${port}/root/ems/AllEmployeesList/${Empid}/?emp_status=${val ? val : "active"}`);
+      setAllEmployeelist(res.data);
+      setloading(false)
+    })
       .catch(err => {
         console.log('AllEmployee_err', err);
         setloading(false)
@@ -454,8 +472,23 @@ const Allemp = ({ subpage }) => {
   // console.log("datas",Edit_Data);
   let handleChangeEdit_data = e => {
     let { name, value } = e.target;
+    // alert(value)
+    if (addresschecked && fieldMappings[name]) {
+      set_Edit_Data((prev) => ({
+        ...prev,
+        [name]: value,
+        [fieldMappings[name]]: value,
+      }));
+      return;
+    }
+    if (name == 'date_of_birth') {
+      set_Edit_Data((prev) => ({
+        ...prev,
+        age: calculateAge(value)
+      }))
+    }
     if (name == 'Employeement_Type' && value == 'intern') {
-      setobj(prev => ({
+      set_Edit_Data(prev => ({
         ...prev,
         probation_status: '',
         probation_Duration_From: '',
@@ -463,7 +496,7 @@ const Allemp = ({ subpage }) => {
       }));
     }
     if (name == 'Employeement_Type' && value == 'permanent') {
-      setobj(prev => ({
+      set_Edit_Data(prev => ({
         ...prev,
         internship_Duration_From: '',
         internship_Duration_To: '',
@@ -474,7 +507,7 @@ const Allemp = ({ subpage }) => {
       value > Edit_Data.internship_Duration_To &&
       Edit_Data.internship_Duration_To != ''
     ) {
-      setobj(prev => ({
+      set_Edit_Data(prev => ({
         ...prev,
         internship_Duration_From: Edit_Data.internship_Duration_To,
       }));
@@ -484,7 +517,7 @@ const Allemp = ({ subpage }) => {
       name == 'internship_Duration_To' &&
       value < Edit_Data.internship_Duration_From
     ) {
-      setobj(prev => ({
+      set_Edit_Data(prev => ({
         ...prev,
         internship_Duration_To: Edit_Data.internship_Duration_From,
       }));
@@ -495,7 +528,7 @@ const Allemp = ({ subpage }) => {
       value > Edit_Data.probation_Duration_To &&
       Edit_Data.probation_Duration_To != ''
     ) {
-      setobj(prev => ({
+      set_Edit_Data(prev => ({
         ...prev,
         probation_Duration_From: Edit_Data.probation_Duration_To,
       }));
@@ -505,7 +538,7 @@ const Allemp = ({ subpage }) => {
       name == 'probation_Duration_To' &&
       value < Edit_Data.probation_Duration_From
     ) {
-      setobj(prev => ({
+      set_Edit_Data(prev => ({
         ...prev,
         probation_Duration_To: Edit_Data.probation_Duration_From,
       }));
@@ -526,6 +559,8 @@ const Allemp = ({ subpage }) => {
     set_Edit_Data({
       full_name: '',
       date_of_birth: '',
+      last_name: '',
+      age: null,
       gender: '',
       email: '',
       mobile: '',
@@ -619,7 +654,7 @@ const Allemp = ({ subpage }) => {
 
   const employeeColumn_Obj = [
     {
-      name: 'Name',
+      name: 'Full Name',
       tag_id: 'full_name',
       type: 'text'
     },
@@ -629,7 +664,7 @@ const Allemp = ({ subpage }) => {
       type: 'text'
     },
     {
-      name: 'Email',
+      name: 'Email ID',
       tag_id: 'email',
       type: 'text'
     },
@@ -649,12 +684,12 @@ const Allemp = ({ subpage }) => {
       type: 'text'
     },
     {
-      name: 'Phone',
+      name: 'Contact Number',
       tag_id: 'mobile',
       type: 'text'
     },
     {
-      name: 'Join Date',
+      name: 'Date of Joining',
       tag_id: 'hired_date',
       type: 'date'
     },
@@ -664,7 +699,7 @@ const Allemp = ({ subpage }) => {
       type: 'text'
     },
     {
-      name: 'Role',
+      name: 'Designation',
       tag_id: 'Designation',
       type: 'text'
     },
@@ -679,7 +714,7 @@ const Allemp = ({ subpage }) => {
       type: 'text'
     },
     {
-      name: 'Emergency Contact',
+      name: 'Emergency Contact Number',
       tag_id: 'phone',
       type: 'text'
     },
@@ -689,12 +724,12 @@ const Allemp = ({ subpage }) => {
       type: 'text'
     },
     {
-      name: 'AadharCard Number',
+      name: 'Aadhar Number',
       tag_id: 'aadhar_no',
       type: 'text'
     },
     {
-      name: 'PanCard Number',
+      name: 'Pan Number',
       tag_id: 'pan_no',
       type: 'text'
     },
@@ -780,14 +815,14 @@ const Allemp = ({ subpage }) => {
                 />
               </div> */}
               <EmployeeFilter filterOptions={employeeColumn_Obj} setloading={setloading}
-               empActiveStatus={empActiveStatus} setemp={setAllEmployeelist} />
+                empActiveStatus={empActiveStatus} setemp={setAllEmployeelist} />
               <EmployeeCreation
                 show={addEmpModal}
                 id={Edit_id}
                 setid={set_Edit_id}
                 setshow={setAddEmpModal}
                 getEmp={fetchdata}
-                setShowReligion={setShowReligion} 
+                setShowReligion={setShowReligion}
                 religion={religion}
               />
 
@@ -1268,7 +1303,7 @@ const Allemp = ({ subpage }) => {
                                             onChange={handleCheckboxChange} /></td> */}
                       <td className=" ">
                         <button
-                          className=" "
+                          className=" text-blue-600"
                           onClick={() => {
                             sentparticularData(e.id, e.employeeProfile);
                             navigate(`/employees/profile/${e.employee_Id}`);
@@ -1278,13 +1313,13 @@ const Allemp = ({ subpage }) => {
                         </button>
                       </td>
                       <td> {e.employee_Id}</td>
-                      <td> {e.email}</td>
+                      <td className=' text-wrap ' > {e.email}</td>
                       <td>{e.Reporting_To_Name} </td>
                       <td>{e.Employeement_Type} </td>
                       <td> {e.Dashboard}</td>
 
                       <td> {e.mobile}</td>
-                      <td> {e.hired_date}</td>
+                      <td> {e.hired_date && changeDateYear(e.hired_date)}</td>
                       <td>{e.Department} </td>
                       <td> {e.Designation}</td>
                       <td>
@@ -1377,7 +1412,7 @@ const Allemp = ({ subpage }) => {
 
 
           {/* Editing Model */}
-          <EditEmployeeModal editModal={editModal} handleChangeEdit_data={handleChangeEdit_data} Desgination_List={Desgination_List}
+          <EditEmployeeModal editModal={editModal} setAddresschecked={setAddresschecked} handleChangeEdit_data={handleChangeEdit_data} Desgination_List={Desgination_List}
             editModalPage={editModalPage} Call_Department={Call_Department} Department_List={Department_List}
             setShowDepartment={setShowDepartment} set_Edit_Data={set_Edit_Data} Update_Employee={Update_Employee}
             setShowReligion={setShowReligion} religion={religion} interviewers={interviewers} setEditModalPage={setEditModalPage}

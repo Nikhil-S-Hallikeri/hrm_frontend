@@ -33,7 +33,7 @@ const JFPreview = () => {
             setEmployeeInformation(response.data)
             console.log("testing", response.data);
         }).catch((error) => {
-            console.log(error);
+            console.log(error,'testing');
         })
     }
     useEffect(() => {
@@ -50,16 +50,10 @@ const JFPreview = () => {
             console.log(error);
         })
     }
-    let acceptEmployee = () => {
-        axios.post(`${port}/root/ems/`).then((response) => {
-            console.log();
-        }).catch((error) => {
-            console.log(error);
-        })
-    }
     return (
         <div className='bg-white p-3 m-0'>
-            {EmployeeInformation && !EmployeeInformation.form_submitted_status || (user && EmployeeInformation
+            {EmployeeInformation && !EmployeeInformation.form_submitted_status || 
+            (user && EmployeeInformation
                 && (user.Disgnation == 'Admin' || user.Disgnation == 'HR'))
                 ? <main className='container mx-auto '>
                     <JoingingFormalities getData={getEmployeeINformation} id={id} page='preview' formObj={EmployeeInformation} />
@@ -96,7 +90,7 @@ const JFPreview = () => {
                         </div>
                     }
                 </main> :
-                <main className='p-5 h-[100vh] flex rounded'>
+                <main className='  p-5 h-[100vh] flex rounded'>
                     <div className='bgclr text-center p-5 rounded h-fit m-auto  '>
                         <h5>Form has been submitted  </h5>
                         <h6>All the Best !!! </h6>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import Sidebar from './Sidebar';
 import Topnav from './Topnav';
@@ -20,10 +20,11 @@ import JFAdditionalINfo from '../Pages/JoiningFormalities/JFAdditionalINfo';
 import JFAttachments from '../Pages/JoiningFormalities/JFAttachments';
 import JFDocumentSubmitted from '../Pages/JoiningFormalities/JFDocumentSubmitted';
 import JFDeclaration from '../Pages/JoiningFormalities/JFDeclaration';
+import { HrmStore } from '../Context/HrmContext';
 
 
 const Employeeallform = () => {
-
+    let { calculateAge } = useContext(HrmStore)
     const { id } = useParams();
     let location = useLocation();
     let queryParams = new URLSearchParams(location.search)
@@ -31,12 +32,14 @@ const Employeeallform = () => {
 
     let Empid = JSON.parse(sessionStorage.getItem('Employee_Info'))
     let [EmployeeInformation, setEmployeeInformation] = useState({
+        salutation: null,
         full_name: null,
+        last_name: null,
         date_of_birth: null,
         gender: null,
         weight: null,
         height: null,
-
+        age: null,
 
         present_address: null,
         present_City: null,
@@ -54,6 +57,12 @@ const Employeeallform = () => {
     })
     const handleFormObj = (e) => {
         let { name, value } = e.target
+        if (name == 'date_of_birth') {
+            setEmployeeInformation((prev) => ({
+                ...prev,
+                age: calculateAge(value)
+            }))
+        }
         setEmployeeInformation((prev) => ({
             ...prev,
             [name]: value
@@ -99,9 +108,10 @@ const Employeeallform = () => {
                 (EmployeeInformation && !EmployeeInformation.form_submitted_status) || typeof id != 'number' ?
 
                     <Routes>
-                        <Route path='/*' element={<JoingingFormalities id={id} formObj={EmployeeInformation}
-                            getData={getData} handleFormObj={handleFormObj}
-                            setFormOb={setEmployeeInformation} />} />
+                        <Route path='/*'
+                            element={<JoingingFormalities id={id} formObj={EmployeeInformation}
+                                getData={getData} handleFormObj={handleFormObj}
+                                setFormOb={setEmployeeInformation} />} />
                         <Route path='/ed-form' element={<JFEducationForm id={id} data={EmployeeInformation} />} />
                         <Route path='/fm-form' element={<JFFamilyDetails id={id} data={EmployeeInformation} />} />
                         <Route path='/med' element={<JFMedical id={id} data={EmployeeInformation} />} />

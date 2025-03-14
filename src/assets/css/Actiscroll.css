@@ -44,7 +44,7 @@
 
 .sticky-left2 {
   position: sticky;
-  left: 300px;
+  left: 290px;
   background-color: #fff;
   z-index: 11;
 }
@@ -142,7 +142,7 @@ display: none;
 }
 
 .navscrollbar1::-webkit-scrollbar-thumb {
-  background-color: rgb(30,58,138); /* White scroll thumb */
+  background-color: #fafafa; /* White scroll thumb */
   border-radius: 10px; /* Rounded corners */
 }
 

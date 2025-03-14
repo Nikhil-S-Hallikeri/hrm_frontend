@@ -4,10 +4,11 @@ import { Modal } from 'react-bootstrap'
 import { port } from '../../App'
 import { toast } from 'react-toastify'
 import { HrmStore } from '../../Context/HrmContext'
+import ReactQuill from 'react-quill'
 
 const FinalStatus = (props) => {
     let { mailContent } = useContext(HrmStore)
-    let { show, setshow, name, getfunction } = props
+    let { show, setshow, name, getfunction, rid } = props
     let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let [loading, setLoading] = useState(false)
     let [obj, setObj] = useState({
@@ -31,7 +32,8 @@ const FinalStatus = (props) => {
                 Final_Result: obj.Final_Result,
                 Comments: obj.Comments,
                 subject: obj.subject,
-                Email_Message: obj.Email_Message.replace(/\\n/g, '\n')
+                Email_Message: obj.Email_Message,
+                req_id: rid,
             }).then((response) => {
                 console.log(response.data);
                 setLoading(false)
@@ -107,12 +109,17 @@ const FinalStatus = (props) => {
                             <select value={obj.Final_Result} name='Final_Result'
                                 onChange={handleChange} className="p-2 w-full outline-none border-2 rounded " id="ageGroup" >
                                 <option value="">Select</option>
-                                <option value="consider_to_client">Consider to Client for Merida </option>
-                                <option value="Internal_Hiring"> Selected </option>
-                                <option value="Reject">Reject</option>
-                                <option value="On_Hold">On Hold</option>
-                                <option value="Rejected_by_Candidate">Rejected by Candidate</option>
+                                {!rid && <option value="consider_to_client">Consider to Client for Merida </option>}
+                                {!rid && <option value="Internal_Hiring"> Selected </option>}
+                                {!rid && <option value="Reject">Reject</option>}
+                                {!rid && <option value="On_Hold">On Hold</option>}
+                                {!rid && <option value="Rejected_by_Candidate">Rejected by Candidate</option>}
 
+                                {rid && <option value="client_offer_rejected">Offer Rejected By Candidate </option>}
+                                {rid && <option value="client_kept_on_hold">Client Kept on Hold </option>}
+                                {rid && <option value="client_rejected">Client Rejected</option>}
+                                {rid && <option value="client_offered"> Client Offered </option>}
+                                {rid && <option value="candidate_joined">Candidate Joined</option>}
                                 {/* <option value="Offer_did_not_accept">Offerd Did't Accept</option> */}
                             </select>
                         </div>
@@ -151,11 +158,13 @@ const FinalStatus = (props) => {
                             <input value={obj.subject} name='subject' onChange={handleChange} type="text"
                                 className='w-full outline-none border-2 rounded p-2 my-2 z-10 ' />
                         </div>}
-                        {obj.mail_status == 'Yes' && <div className=' items-start justify-between '>
-                            <label htmlFor="" className='' > Email Content : <span className='text-blue-600 text-xs '>( Use \n to insert the Line in the mail )</span> </label>
-                            <textarea name="Email_Message" rows={5} className='w-full p-1 outline-none border-2 rounded '
-                                value={obj.Email_Message} onChange={handleChange} id=""></textarea>
-                        </div>}
+                        {obj.mail_status == 'Yes' && 
+                        <div className=' items-start justify-between '>
+                            <label htmlFor="" className='' > Email Content :  </label>
+                            <ReactQuill value={obj.Email_Message} className='rounded my-2 ' onChange={(value) => setObj((prev) => ({ ...prev, Email_Message: value }))} />
+                        </div>
+                        }
+
                     </main>
                 </Modal.Body>
                 <Modal.Footer>

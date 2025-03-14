@@ -1,8 +1,11 @@
 import React, { useContext } from 'react'
 import { HrmStore } from '../../Context/HrmContext'
+import { useNavigate } from 'react-router-dom'
+import DataNotFound from '../MiniComponent/DataNotFound'
 
-const EmployeeTable = ({ data, css }) => {
+const EmployeeTable = ({ nav, data, css }) => {
     let { changeDateYear } = useContext(HrmStore)
+    let navigate = useNavigate()
     return (
         <div>
             {data && data.length > 0 ? <main className={` tablebg  ${css ? css : "h-[30vh]"} rounded table-responsive`} >
@@ -25,7 +28,13 @@ const EmployeeTable = ({ data, css }) => {
                         data && data.map((obj, index) => (
                             <tr>
                                 <td>{index + 1} </td>
-                                <td> {obj.employee_Id || obj.employee} </td>
+                                <td onClick={() => {
+                                    if (nav)
+                                        navigate(`${nav}/${obj.employee_Id || obj.employee}`)
+                                }} >
+                                    <p className={` ${nav && 'text-blue-600 cursor-pointer  '} mb-0 `} >
+                                        {obj.employee_Id || obj.employee} </p>
+                                </td>
                                 <td> {obj.full_name || obj.employee_name} </td>
                                 {data[0].from_date && <td> {obj.from_date && changeDateYear(obj.from_date)} </td>}
                                 {data[0].date_of_birth && <td> {obj.date_of_birth && changeDateYear(obj.date_of_birth)} </td>}
@@ -38,13 +47,7 @@ const EmployeeTable = ({ data, css }) => {
                     }
                 </table>
             </main> :
-                <main className={` ${css ? css : "h-[30vh]"} flex items-center justify-between `} >
-                    <div className='w-fit mx-auto ' >
-
-                        <img src={require('../../assets/Images/nodatafound.png')} alt="NotFoundData" className=' w-[10rem] my-2' />
-                        <p className='mb-0 w-fit mx-auto text-center ' >No data Found </p>
-                    </div>
-                </main>
+                <DataNotFound />
             }
         </div>
     )

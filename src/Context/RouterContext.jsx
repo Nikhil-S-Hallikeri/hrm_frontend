@@ -2,13 +2,72 @@ import React, { createContext, useEffect, useState } from 'react'
 export const RouterStore = createContext()
 const RouterContext = (props) => {
     let [loginstatus, setLoginStatus] = useState(false)
+    let manager = JSON.parse(sessionStorage.getItem('user'))?.is_reporting_manager
     const [payrollRoutersLinks, setpayrollRoutersLinks] = useState()
     const [settingRouterLinks, setSettingRouterLink] = useState()
     const [employeeRouterLink, setemployeeRouterLink] = useState()
     const [leaveRouterLinks, setLeaveRouterLinks] = useState()
+    const [reportRouterLinks, setReportRouterLinks] = useState()
+    const [activityRouterLinks, setActivityRouterLinks] = useState()
+    const [clientRouterLinks, setClientRouterLinks] = useState()
     useEffect(() => {
         let status = JSON.parse(sessionStorage.getItem('user'))?.Disgnation
         let empid = JSON.parse(sessionStorage.getItem('dasid'))
+        setClientRouterLinks([
+
+            {
+                label: 'Client List',
+                path: '/client/',
+                show: true,
+                active: 'client'
+            },
+            {
+                label: 'Client Creation',
+                path: '/client/addClient',
+                show: true,
+                active: 'addclient'
+            },
+            {
+                label: 'Requirements',
+                path: '/client/recuirment',
+                show: true,
+                active: 'recuirter'
+            },
+        ])
+        setActivityRouterLinks([
+            {
+                label: 'Personal Activity',
+                path: '/activity/',
+                show: true,
+                active: 'perosnal'
+            },
+            {
+                label: 'My Team',
+                path: '/activity/myteam',
+                show: status == 'HR' || status == 'Admin',
+                active: 'myteam'
+            },
+            {
+                label: 'Interview Activity',
+                path: '/activity/interview',
+                show: true,
+                active: 'interview'
+            }
+        ])
+        setReportRouterLinks([
+            {
+                label: 'My Report',
+                path: '/reports/',
+                show: true,
+                active: 'myreport'
+            },
+            {
+                label: 'Analytics',
+                path: '/reports/analytics',
+                show: true,
+                active: 'analytic'
+            }
+        ])
         setSettingRouterLink([
             {
                 label: 'Holidays',
@@ -24,7 +83,7 @@ const RouterContext = (props) => {
             },
 
             {
-                label: 'Attendence',
+                label: 'Attendence Report',
                 path: '/settings/attendence',
                 show: true,
                 active: 'attendence'
@@ -78,7 +137,7 @@ const RouterContext = (props) => {
                 show: status == 'HR' || status == 'Admin',
             },
             {
-                label: 'Exit Process',
+                label: 'Offboarding',
                 path: '/employees/Employee_request_form',
                 active: 'exit',
                 show: true
@@ -116,14 +175,14 @@ const RouterContext = (props) => {
         ])
         setLeaveRouterLinks([
             {
-                label: 'Leave Summary',
+                label: 'Leave Overview',
                 path: `/leave/`,
                 keyword: ['leave', 'request'],
                 active: 'summary',
                 show: true,
             },
             {
-                label: 'Apply Leave ',
+                label: 'Request Leave ',
                 path: '/leave/apply',
                 keywrod: ['leave', 'apply'],
                 active: 'leave',
@@ -134,24 +193,24 @@ const RouterContext = (props) => {
                 path: `/leave/approvals`,
                 keyword: ['leave', 'request'],
                 active: 'approval',
-                show: status == 'HR' || status == 'Admin',
+                show: status == 'HR' || status == 'Admin' || manager,
             },
             {
-                label: 'Attendance list',
+                label: 'Attendance Records',
                 path: `/leave/attendence-list`,
                 active: 'list',
                 keywrod: ['list', 'leave', 'attendance', 'report', 'employee'],
-                show: status == 'HR' || status == 'Admin',
+                show: status == 'HR' || status == 'Admin' || manager,
             },
             {
-                label: 'Leave Request History',
+                label: 'Leave History',
                 path: `/leave/history`,
                 active: 'history',
                 keyword: ['history', 'people'],
                 show: status == 'HR' || status == 'Admin',
             },
             {
-                label: 'Leave Creation',
+                label: 'Leave Details',
                 path: `/leave/leaveCreation`,
                 keyword: ['leave', 'leave type', 'create'],
                 active: 'creation',
@@ -160,7 +219,8 @@ const RouterContext = (props) => {
         ])
     }, [loginstatus])
     let value = {
-        settingRouterLinks, payrollRoutersLinks, leaveRouterLinks, employeeRouterLink, setLoginStatus
+        settingRouterLinks, payrollRoutersLinks, leaveRouterLinks, employeeRouterLink, setLoginStatus, reportRouterLinks,
+        activityRouterLinks, clientRouterLinks
     }
     return (
         <RouterStore.Provider value={value} >

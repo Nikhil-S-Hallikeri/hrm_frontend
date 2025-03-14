@@ -64,9 +64,9 @@ const JFPersonalForm = ({ id, page, data }) => {
         getReligion()
     }, [data])
     return (
-        <div className='bg-white p-3 rounded '>
+        <div className='inputbg p-3 rounded '>
             <h5 className='mt-2 heading' style={{ color: 'rgb(76,53,117)' }}>EMPLOYEE PERSONAL INFORMATION </h5>
-            <main className='formbg row p-3'>
+            <main className='bg-white row p-3'>
                  {/* <InputFieldform disabled={page} placeholder='AB+' label="Blood Group" value={formObj.blood_group} handleChange={handleChange}
                     name='blood_group' type='text' /> */}
                     {/* <InputFieldform disabled={page} placeholder='David ' label="Father Name" value={formObj.fathers_name} handleChange={handleChange}

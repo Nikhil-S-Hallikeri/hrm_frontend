@@ -3,7 +3,7 @@ import { Spinner } from 'react-bootstrap'
 
 const LoadingData = ({ css }) => {
     return (
-        <div className={` ${css ? css : "min-h-[60vh]"} flex `} >
+        <div className={` ${css ? css : "min-h-[60vh]"} rounded bg-white flex `} >
             <Spinner className='m-auto ' />
         </div>
     )

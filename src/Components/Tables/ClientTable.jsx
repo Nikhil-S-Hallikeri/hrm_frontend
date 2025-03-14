@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 const ClientTable = ({ data }) => {
   let navigate = useNavigate()
   return (
-    <div>
+    <div className='px-2' >
       <main className={` tablebg table-responsive my-3 rounded  `}>
         <table className='w-full ' >
           <tr>
@@ -12,15 +12,15 @@ const ClientTable = ({ data }) => {
             <th>Client ID</th>
             <th>Client Name </th>
             <th>Client Phone No </th>
-            <th>Email </th>
+            <th>Email ID </th>
             <th> Company Name </th>
-            <th> GST No  </th>
+            <th> GST Number  </th>
             <th>  </th>
             <th>  </th>
           </tr>
           {
             data && data.map((obj, index) => (
-              <tr onClick={() => navigate(`/dash/client/${obj.id}`)} className=' hover:bg-slate-100 cursor-pointer ' >
+              <tr onClick={() => navigate(`/client/${obj.id}`)} className=' hover:bg-slate-100 cursor-pointer ' >
                 <td>{index + 1} </td>
                 <td>{obj.client_id} </td>
                 <td> {obj.client_name} </td>

@@ -50,10 +50,10 @@ const HandOverTables = ({ setActiveSection }) => {
                 <table className='w-full ' >
                     <tr>
                         <th>SI No </th>
-                        <th>Title </th>
+                        <th>Task Title </th>
                         <th>Description </th>
                         <th>Assigned Date </th>
-                        <th> Handling Employee</th>
+                        <th> Responsible Employee</th>
                         <th>Status </th>
                         <th>Action </th>
                     </tr>

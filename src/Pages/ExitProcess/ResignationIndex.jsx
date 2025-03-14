@@ -113,15 +113,15 @@ const ResignationIndex = ({ setActiveSection }) => {
                 <table className='w-full ' >
                     <tr>
                         <th> SI No </th>
-                        <th> Name </th>
+                        <th>Employee Name </th>
                         <th>Employee Id </th>
-                        <th> Position </th>
-                        <th> Reason for Leaving </th>
-                        <th> Full reason </th>
+                        <th> Designation </th>
+                        <th> Reason for Resignation </th>
+                        <th> Detailed reason </th>
                         <th>Resignation Letter </th>
-                        <th>Rm Verification </th>
-                        <th>Hr Verification  </th>
-                        <th>Status </th>
+                        <th>Manager Approval </th>
+                        <th>Hr Approval  </th>
+                        <th>Request status </th>
                         <th>Action  </th>
                     </tr>
                     {

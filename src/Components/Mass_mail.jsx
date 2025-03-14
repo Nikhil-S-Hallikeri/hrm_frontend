@@ -280,7 +280,14 @@ const Mass_mail = ({ subpage }) => {
                                             <thead className='sticky top-0 bgclr  ' >
                                                 <tr >
                                                     {/* <th scope="col"></th> */}
-                                                    <th scope="col"><span className='fw-medium'></span> Select  </th>
+                                                    <th onClick={() => {
+                                                            if (Employeelist.length != selectedCandidates.length)
+                                                                setSelectedCandidates(Employeelist.map((obj) => obj.email))
+                                                            else
+                                                                setSelectedCandidates([])
+                                                        }} scope="col" className='cursor-pointer ' >
+                                                        <span 
+                                                            className='fw-medium cursor-pointer'></span> Select All  </th>
                                                     <th>Employee ID </th>
                                                     <th>Name </th>
                                                     <th scope="col" className='fw-medium'>Email</th>

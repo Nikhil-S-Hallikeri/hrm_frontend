@@ -13,6 +13,7 @@ import { domain, port } from '../App'
 import Recsidebar from './Recsidebar';
 import { toast } from 'react-toastify';
 import { HrmStore } from '../Context/HrmContext';
+import InfoButton from './SettingComponent/InfoButton';
 
 
 const Rec_applyed_list = () => {
@@ -30,7 +31,18 @@ const Rec_applyed_list = () => {
   let [applylist, setApplylist] = useState([])
   let [showModal, setshowModal] = useState(false)
   let [filteredApplyList, setFilteredApplyList] = useState()
-
+ let [filterApplicationObj, setFilterApplicationObj] = useState({
+    from: '',
+    to: '',
+    word: ''
+  })
+  let handleFilterApplicationChange = (e) => {
+    let { name, value } = e.target
+    setFilterApplicationObj((prev) => ({
+      ...prev,
+      [name]: value
+    }))
+  }
   let [screeninglist, setScreeninglist] = useState([])
 
   let [interviewlist, setInterviewlist] = useState([])
@@ -230,7 +242,7 @@ const Rec_applyed_list = () => {
   };
 
   console.log(selectedCandidates);
-
+let [loading,setloading]=useState()
   let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
 
   let Disgnation = JSON.parse(sessionStorage.getItem('user')).Disgnation
@@ -439,18 +451,24 @@ const Rec_applyed_list = () => {
 
   const handlesearchvalue = (value) => {
 
-    console.log('search_value', value);
-    setSearchValue(value)
+    if (filterApplicationObj.word || filterApplicationObj.from || filterApplicationObj.to) {
+      setloading('applied')
+      // alert('here')
+      axios.post(`${port}/root/appliedcandidateslist`,
+        {
+          search_value: filterApplicationObj.word,
+          from_date: filterApplicationObj.from,
+          to_date: filterApplicationObj.to
+        }).then((res) => {
+          console.log("search_res", res.data);
+          setApplylist(res.data)
+          setloading(false)
+          setFilteredApplyList(res.data)
+        }).catch((err) => {
+          setloading(false)
 
-    if (value.length > 0) {
-      axios.post(`${port}/root/appliedcandidateslist`, { search_value: value }).then((res) => {
-        console.log("search_res", res.data);
-        setApplylist(res.data)
-        setFilteredApplyList(res.data)
-      }).catch((err) => {
-        console.log("search_res", err.data);
-      })
-
+          console.log("search_res", err);
+        })
     }
     else {
       fetchdata()
@@ -674,10 +692,7 @@ const Rec_applyed_list = () => {
         console.log('interviewinterviewsdata', response.data.interview_data);
         setint_candi_data(response.data.candidate_data)
         setint_inter_data(response.data.interview_data)
-
-
-      })
-      .catch(error => {
+      }).catch(error => {
         // Handle errors if any
         console.error('Error sending data:', error);
       });
@@ -1193,14 +1208,52 @@ const Rec_applyed_list = () => {
 
           <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item text-primary d-flex " role="presentation">
-              <h6 class='mt-2 heading nav-link active' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Applyed Canditates List</h6>
+              {/* <h6 class='mt-2 heading nav-link active' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }}
+                id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" role="tab"
+                aria-controls="pills-home" aria-selected="true"> Applyed Candidates List </h6>
               <small className='text-danger ms-2   rounded-circle' > {
-                filteredApplyList != undefined && filteredApplyList.length} </small>
+                filteredApplyList != undefined && filteredApplyList.length} </small> */}
+              {/*  */}
+              <section class='mt-2 d-flex align-items-center gap-2 heading nav-link active'
+                style={{
+                  color: 'rgb(76,53,117)', backgroundColor: 'transparent',
+                  border: 'none'
+                }}
+                id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" role="tab"
+                aria-controls="pills-home" aria-selected="true">
+
+                <img className='w-14 ' src={require('../assets/Images/circle4.png')} alt="circle" />
+                <div className='text-sm'> Applyed Candidates List
+                  <div className='flex my-2 text-xs justify-between gap-2 flex-wrap'>
+
+                    <small className='bg-red-400 text-white px-3  block rounded'>{
+                      filteredApplyList != undefined && filteredApplyList.length}  </small>
+                  </div>
+                </div>
+              </section>
             </li>
             <li class="nav-item text-primary d-flex" role="presentation">
-              <h6 class='mt-2 heading nav-link' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }} id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" role="tab" aria-controls="pills-contact"
-                aria-selected="false">Called Candidate List </h6>
-              <small className='text-danger ms-2   rounded-circle'> {Call_Candidates_Lists != undefined && Call_Candidates_Lists.length} </small>
+              {/* <h6 class='mt-2 heading nav-link' style={{ color: 'rgb(76,53,117)', backgroundColor: 'transparent', border: 'none' }}
+                id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" role="tab" aria-controls="pills-contact"
+                aria-selected="false" >Called Candidate List </h6>
+              <small className='text-danger ms-2   rounded-circle'> {Call_Candidates_Lists != undefined && Call_Candidates_Lists.length} </small> */}
+              {/* Second button */}
+              <section class='mt-2 d-flex align-items-center gap-2 heading nav-link '
+                style={{
+                  color: 'rgb(76,53,117)', backgroundColor: 'transparent',
+                  border: 'none'
+                }}
+                id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" role="tab" aria-controls="pills-contact"
+                aria-selected="false">
+
+                <img className='w-14 ' src={require('../assets/Images/circle1.png')} alt="circle" />
+                <div className='text-sm'> Called Candidate List
+                  <div className='flex my-2 text-xs justify-between gap-2 flex-wrap'>
+
+                    <small className='bg-green-400 text-white px-3  block rounded'>{Call_Candidates_Lists != undefined && Call_Candidates_Lists.length}  </small>
+                  </div>
+                </div>
+              </section>
             </li>
 
 
@@ -1238,8 +1291,8 @@ const Rec_applyed_list = () => {
                         })}
                       </ul>
                       {assignAlert && (
-                        <Alert style={{ position: 'absolute', top: '50px', right: '100px', width: '300px', zIndex: '1000' }} 
-                        severity="success" onClose={() => { setSuccessAlert(false); window.location.reload(); }}>
+                        <Alert style={{ position: 'absolute', top: '50px', right: '100px', width: '300px', zIndex: '1000' }}
+                          severity="success" onClose={() => { setSuccessAlert(false); window.location.reload(); }}>
                           {/* <AlertTitle>Success</AlertTitle> */}
                           Candidate assigned successfully..
                         </Alert>
@@ -1249,14 +1302,26 @@ const Rec_applyed_list = () => {
 
 
                   <div className='flex justify-between items-center   mb-4 '>
-                    <div className=' '>
-                      <div class="input-group  "  >
-                        <span class="input-group-text" id="basic-addon1"> <i class="fa-solid fa-magnifying-glass" ></i>  </span>
-                        <input type="text" value={searchValue} style={{ width: '200px', height: '30px', fontSize: '9px', outline: 'none' }}
-                          onChange={(e) => {
-                            handlesearchvalue(e.target.value)
-                          }} class="form-control shadow-none" aria-label="Username" aria-describedby="basic-addon1" />
+                  <div className='flex gap-2 items-center  '>
+                      <div className=" p-2  relative">
+                        <button className='absolute -top-2 right-2 '>
+                          <InfoButton size={12} content="Search by Candidate name,Candidate id,Email, Applied designation , Source " />
+                        </button>
+                        <input type="text" value={filterApplicationObj.word} name='word' style={{ width: '200px', height: '30px', fontSize: '9px', outline: 'none' }}
+                          onChange={handleFilterApplicationChange} placeholder='Search..' className=" bgclr p-2 rounded  " aria-label="Username" aria-describedby="basic-addon1" />
                       </div>
+                      {/* From video */}
+                      <div className='flex items-center gap-3 bg-white p-1 px-2 rounded  ' >
+                        From : <input type="date" value={filterApplicationObj.from} name='from' onChange={handleFilterApplicationChange}
+                          className=' outline-none p-1 bg-transparent ' />
+                      </div>
+                      <div className='flex items-center gap-3 bg-white p-1 px-2 rounded  ' >
+                        To : <input type="date" value={filterApplicationObj.to} name='to' onChange={handleFilterApplicationChange}
+                          className=' outline-none p-1 bg-transparent ' />
+                      </div>
+                      <button className=' bg-green-600 text-slate-50 p-2 px-3 rounded ' onClick={handlesearchvalue} >
+                        Search
+                      </button>
                     </div>
                     <div className='flex gap-3 flex-wrap '>
                       {/* <div className='flex items-center gap-2 text-xs'>
@@ -1292,7 +1357,7 @@ const Rec_applyed_list = () => {
                     </div>
                   </div>
 
-                  <div className='rounded table-responsive h-[50vh] overflow-scroll  mt-4 m-1'>
+                  <div className='rounded table-responsive tablebg h-[50vh] overflow-scroll  mt-4 m-1'>
                     <table class="table caption-top  relative   table-hover">
                       <thead >
                         <tr className='sticky top-0' >
@@ -1306,11 +1371,6 @@ const Rec_applyed_list = () => {
 
                           <th scope="col"><span className='fw-medium'>Applied Designation</span></th>
                           {/* <th scope="col"><span className='fw-medium'>View</span></th> */}
-
-
-
-
-
                         </tr>
                       </thead>
 
@@ -1340,9 +1400,8 @@ const Rec_applyed_list = () => {
                               <td onClick={() => sentparticularData(e.CandidateId)} data-bs-toggle="modal" data-bs-target="#exampleModal23" style={{ cursor: 'pointer', color: 'blue' }}>{e.FirstName}</td>
                               <td > {e.CandidateId}</td>
                               <td >{e.Email}</td>
-                              <td >{e.PrimaryContact}</td>
+                              <td className=' text-nowrap ' >{e.PrimaryContact}</td>
                               <td >{e.AppliedDate}</td>
-
                               <td >{e.AppliedDesignation}</td>
                               {/* <td className='text-center'><button type="button" style={{ backgroundColor: 'rgb(160,217,180)' }} class="btn  btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal17" >
                                 Proceed

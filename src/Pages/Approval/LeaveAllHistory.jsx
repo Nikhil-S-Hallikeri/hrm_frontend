@@ -123,7 +123,7 @@ const LeaveAllHistory = ({ subpage }) => {
             {/* Table for all the employee */}
 
 
-            <main className='tablebg rounded h-[70vh] p-3 pt-0 overflow-y-scroll table-responsive '>
+            <main className='tablebg rounded h-[70vh]  pt-0 overflow-y-scroll table-responsive '>
                 {filteredAllHistory && filteredAllHistory.length > 0 ?
                     <table className='w-full pt-0 ' >
                         <tr className='sticky top-0 bgclr1'>
@@ -131,7 +131,7 @@ const LeaveAllHistory = ({ subpage }) => {
                             <th>Employee Name </th>
                             <th>Leave Type</th>
                             <th className=''>Reason </th>
-                            <th>No of days </th>
+                            <th>Duration </th>
                             <th>Applied Date </th>
                             {/* <th>Decision Date</th> */}
                             <th>From Date </th>

@@ -5,9 +5,10 @@ import { port } from '../../App'
 import { HrmStore } from '../../Context/HrmContext'
 import FinalStatus from './FinalStatus'
 import SchedulINterviewModalForm from '../ApplyList/SchedulINterviewModalForm'
+import ClientINterviewDetails from '../ClientComponents/ClientINterviewDetails'
 
 const InterviewCompletedModal = (props) => {
-    let { show, setshow, id, getfunction, setinterviewReviewModal, rountstatus } = props
+    let { show, setshow, id, rid, inid, getfunction, setinterviewReviewModal, page, rountstatus } = props
     let empStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
     let userPermission = JSON.parse(sessionStorage.getItem('user')).user_permissions
     let [finalStatus, setFinalStatus] = useState(false)
@@ -323,8 +324,9 @@ const InterviewCompletedModal = (props) => {
                         </div>
                     }
                     {/* INterview */}
+                    {inid && <ClientINterviewDetails inid={inid} />}
                     {
-                        data && data.interview_data && <main>
+                        data && data.interview_data && !inid && <main>
                             {data.interview_data.map((obj, index) => {
                                 return (
                                     <main key={index}  >
@@ -528,7 +530,9 @@ const InterviewCompletedModal = (props) => {
 
                 </Modal.Body>
                 <Modal.Footer>
-                    {(empStatus == 'Admin' || empStatus == 'HR' || userPermission.final_status_access) && rountstatus != 'Assigned' &&
+                    {(empStatus == 'Admin' || empStatus == 'HR' ||
+                        userPermission.final_status_access) && rountstatus != 'Assigned' ||
+                        page == 'candidate' &&
                         <button
                             onClick={() => { setFinalStatus(show); setshow(false) }}
                             className='bg-blue-600 text-white rounded p-2'>
@@ -551,7 +555,7 @@ const InterviewCompletedModal = (props) => {
                 </Modal.Footer>
             </Modal>}
             {/* <SchedulINterviewModalForm /> */}
-            {data && <FinalStatus show={finalStatus} getfunction={getfunction}
+            {data && <FinalStatus show={finalStatus} getfunction={getfunction} rid={rid}
                 name={data.candidate_data.FirstName + " " + (data.candidate_data.LastName && data.candidate_data.LastName)}
                 setshow={setFinalStatus} />}
 

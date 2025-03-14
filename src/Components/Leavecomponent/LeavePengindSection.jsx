@@ -65,7 +65,7 @@ const LeavePengindSection = ({ setActiveSection }) => {
                 </section> :
                 <section className='min-h-[40vh] bgclr 
                  container-fluid mx-auto rounded-xl flex w-full'>
-                    <h4 className='poppins m-auto'>  No leave request is pending</h4>
+                    <h4 className='poppins m-auto'>  No pending leave requests at the moment.</h4>
                 </section>
             }
 

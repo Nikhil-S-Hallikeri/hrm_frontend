@@ -14,7 +14,7 @@ const BlockedEmpToggle = ({ setActiveEmployeeStatus, activeEmployeeStatus, setem
                 setActiveEmployeeStatus('in_active')
                 getEmployeee('in_active')
             }} className={` ${activeEmployeeStatus == 'in_active' ? 'bg-red-300 ' : ''} p-1 px-3 rounded-full duration-500  `} >
-                In Active
+                Inactive
             </button>
 
         </div>

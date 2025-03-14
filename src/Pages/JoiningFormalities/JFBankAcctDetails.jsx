@@ -111,9 +111,9 @@ const JFBankAcctDetails = ({ id, page, data }) => {
         getData()
     }, [data])
     return (
-        <div className='p-3 bg-white rounded '>
+        <div className='p-3 inputbg rounded '>
             <h5 className='mt-2 uppercase heading' style={{ color: 'rgb(76,53,117)' }}>Bank Account Details</h5>
-            <main className='row formbg p-3 rounded '>
+            <main className='row bg-white p-3 rounded '>
                 <InputFieldform disabled={page} placeholder='BOI234420BS ' label='IFSC' value={formObj.ifsc} name='ifsc'
                     handleChange={handleChange} type='text' />
                 <InputFieldform disabled={page} placeholder='7220134250234 ' label='Account Number' value={formObj.account_no} name='account_no'

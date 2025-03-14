@@ -76,9 +76,9 @@ const JFDocumentSubmitted = ({ id, page, data }) => {
         getData()
     }, [data])
     return (
-        <div className='bg-white p-3 rounded ' >
+        <div className='inputbg p-3 rounded ' >
             <h5 className='mt-2 uppercase heading' style={{ color: 'rgb(76,53,117)' }}>Documents Submited  </h5>
-            <main className='p-3 formbg rounded'>
+            <main className='p-3 bg-white rounded'>
                 <section className='tablebg rounded table-responsive '>
                     <table className='w-full ' >
                         <thead>

@@ -58,8 +58,8 @@ const ScreeningAssigned = (props) => {
     const [Candidateid, setCandidate] = useState("")
     let [screeningCompletedCandidateDetailModal, setscreeningCompletedCandidateDetailModal] = useState(false)
     let [filteredCandiates, setfilteredCandidates] = useState(screeninglist)
-    console.log(filteredCandiates);
-    console.log(screeninglist);
+    // console.log(filteredCandiates);
+    // console.log(screeninglist);
     useEffect(() => {
         if (screeninglist) {
             setfilteredCandidates(screeninglist)
@@ -201,12 +201,16 @@ const ScreeningAssigned = (props) => {
     return (
         <div>
             {<SceeringCompletedCandiateModal show={screeningCompletedCandidateDetailModal}
-                persondata={persondata}
-                setshow={setscreeningCompletedCandidateDetailModal} setPersondata={setPersondata}
+                persondata={persondata} setPersondata={setPersondata}
+                setshow={setscreeningCompletedCandidateDetailModal}
                 data={screeningCompletedApplicant} />}
+
+
             {persondata && <SchedulINterviewModalForm fetchdata1={fetchdata1} candidateId={candidateIdInterview} setcandidateId={setCandidateIdInterview}
                 fetchdata={fetchdata} fetchdata2={fetchdata2} show={interviewSchedulForm} persondata={persondata}
                 setshow={setInterviewScheduleForm} setPersondata={setPersondata} />}
+
+
             <div className='d-flex justify-content-between mb-2 '>
                 <div>
                     <div class="input-group mb-3 ">
@@ -235,8 +239,8 @@ const ScreeningAssigned = (props) => {
             </div>
             <select name="" value={assignOrCompleted} onChange={(e) => setAssignedorCompleted(e.target.value)}
                 className='btngrd border-2 flex ms-auto bg-opacity-70 outline-none rounded border-violet-100 text-white text-xs p-2 ' id="">
-                <option value="Assigned" className='text-black'>Assigned</option>
-                <option value="Completed" className='text-black'>Completed</option>
+                <option value="Assigned" className='text-black bg-slate-50 '>Assigned</option>
+                <option value="Completed" className='text-black bg-slate-50 '>Completed</option>
             </select>
             {/* <main className='border-1 bg-slate-400 rounded w-fit'>
                 <button onClick={() => setAssignedorCompleted('Assigned')} className={`rounded transition duration-500 text-white p-2 ${assignOrCompleted == 'Assigned' ? "bg-blue-500" : 'bg-slate-400'}`}>
@@ -248,25 +252,25 @@ const ScreeningAssigned = (props) => {
             {/* Second */}
             <div className='rounded h-[40vh] pt-0 overflow-y-scroll scrollbar1 tablebg table-responsive mt-4'>
                 <table className="w-full ">
-                    <thead >
-                        <tr className='sticky top-0 bgclr1 '>
-                            <th className=' ' scope="col"><span className='fw-medium'>All</span></th>
-                            <th scope="col"><span className='fw-medium'>Name</span></th>
-                            <th scope="col"><span className='fw-medium'>Canditate Id</span></th>
-                            <th scope="col"><span className='fw-medium'>Assigned To</span></th>
-                            <th scope="col"><span className='fw-medium'>AssignedBy</span></th>
-                            <th scope="col"><span className='fw-medium'>Date Of Assigned</span></th>
-                            <th scope="col"><span className='fw-medium'>Assigned_Status</span></th>
-                            {assignOrCompleted != 'Assigned' &&
-                                <th scope="col">
-                                    <span className='fw-medium'>Screened Status</span></th>}
-                            {(assignOrCompleted != 'Assigned') &&
-                                <th scope="col"><span className='fw-medium'>Assign Interview</span>
-                                </th>}
-                            {/* <th scope="col"><span className='fw-medium'>View</span></th> */}
 
-                        </tr>
-                    </thead>
+                    <tr className='sticky top-0 bgclr1 '>
+                        <th className=' ' scope="col"><span className='fw-medium'>All</span></th>
+                        <th scope="col"><span className='fw-medium'>Full Name</span></th>
+                        <th scope="col"><span className='fw-medium'>Canditate Id</span></th>
+                        <th scope="col"><span className='fw-medium'>Assigned To</span></th>
+                        <th scope="col"><span className='fw-medium'>Assigned By</span></th>
+                        <th scope="col"><span className='fw-medium'>Date Assigned</span></th>
+                        {assignOrCompleted == 'Assigned' &&
+                            <th scope="col"><span className='fw-medium'>Assigned Status</span></th>}
+                        {assignOrCompleted != 'Assigned' &&
+                            <th scope="col">
+                                <span className='fw-medium'>Screened Status</span></th>}
+                        {(assignOrCompleted != 'Assigned') &&
+                            <th scope="col"><span className='fw-medium'>Assign Interview</span>
+                            </th>}
+                        {/* <th scope="col"><span className='fw-medium'>View</span></th> */}
+
+                    </tr>
 
                     {/* STATIC VALUE START */}
 
@@ -284,46 +288,43 @@ const ScreeningAssigned = (props) => {
                         </button>
                         </td>
                       </tr> */}
-                    <tbody>
-
-                        {filteredCandiates != undefined && filteredCandiates != undefined &&
-                            [...filteredCandiates].map((e) => {
-                                console.log(e);
-                                return (<tr key={e.id}>
-                                    <td scope="row">
-                                        <input type="checkbox" value={e.Candidate} onChange={handleCheckboxChange1} /></td>
-                                    {/* <td onClick={() => sentparticularData(e.Candidate)} data-bs-toggle="modal" data-bs-target="#exampleModal5" style={{ cursor: 'pointer', color: 'blue' }}>{e.Name}</td> */}
-                                    {assignOrCompleted == 'Assigned' &&
-                                        <td onClick={() => sentparticularData2(e.Candidate, e.id)}
-                                            data-bs-toggle="modal" data-bs-target="#exampleModal5"
-                                            style={{ color: 'blue', cursor: 'pointer' }}> {e.Candidate_name} </td>}
-                                    {assignOrCompleted != 'Assigned' &&
-                                        <td onClick={() => handleCompletedApplicant(e.Candidate)}
-                                            style={{ color: 'green', cursor: 'pointer' }}>{e.Candidate_name}</td>}
-                                    <td>{e.Candidate}</td>
-                                    <td>{e.recruiter_name}</td>
-                                    {/* <td>{e.Date_of_assigned} </td> */}
-                                    <td>{e.assigner_name}</td>
-                                    <td>{convertToReadableDateTime(e.Date_of_assigned)}</td>
-                                    <td>{e.Assigned_Status}</td>
-                                    {assignOrCompleted != 'Assigned' && <td>{e.Review != null ? e.Review.Screening_Status : null}</td>}
-                                    {assignOrCompleted == 'Completed' && <td>
-                                        <button disabled={e.Review && e.Review.Screening_Status != 'scheduled'} onClick={() => {
-                                            setCandidateIdInterview(e.Candidate)
-                                            setInterviewScheduleForm(true);
-                                            sentparticularData2(e.Candidate, e.id);
-                                        }} className='p-1 text-xs rounded bg-blue-600 text-white'>Assign Interview </button>
-                                    </td>
-                                    }
-                                    {/* <td>{e.Review != null ? e.Review.ReviewedOn : null}</td> */}
-                                    {/* <td onClick={() => sentparticularData(e.Candidate)} className='text-center'>
+                    {filteredCandiates != undefined && filteredCandiates != undefined &&
+                        [...filteredCandiates].map((e) => {
+                            // console.log(e);
+                            return (<tr key={e.id}>
+                                <td scope="row">
+                                    <input type="checkbox" value={e.Candidate} onChange={handleCheckboxChange1} /></td>
+                                {/* <td onClick={() => sentparticularData(e.Candidate)} data-bs-toggle="modal" data-bs-target="#exampleModal5" style={{ cursor: 'pointer', color: 'blue' }}>{e.Name}</td> */}
+                                {assignOrCompleted == 'Assigned' &&
+                                    <td onClick={() => sentparticularData2(e.Candidate, e.id)}
+                                        data-bs-toggle="modal" data-bs-target="#exampleModal5"
+                                        style={{ color: 'blue', cursor: 'pointer' }}> {e.Candidate_name} </td>}
+                                {assignOrCompleted != 'Assigned' &&
+                                    <td onClick={() => handleCompletedApplicant(e.Candidate)}
+                                        style={{ color: 'green', cursor: 'pointer' }}>{e.Candidate_name}</td>}
+                                <td>{e.Candidate}</td>
+                                <td>{e.recruiter_name}</td>
+                                {/* <td>{e.Date_of_assigned} </td> */}
+                                <td>{e.assigner_name}</td>
+                                <td>{convertToReadableDateTime(e.Date_of_assigned)}</td>
+                                {assignOrCompleted == 'Assigned' && <td>{e.Assigned_Status}</td>}
+                                {assignOrCompleted != 'Assigned' && <td>{e.Review != null ? e.Review.Screening_Status : null}</td>}
+                                {assignOrCompleted == 'Completed' && <td>
+                                    <button disabled={e.Review && e.Review.Screening_Status != 'scheduled'} onClick={() => {
+                                        setCandidateIdInterview(e.Candidate)
+                                        setInterviewScheduleForm(true);
+                                        sentparticularData2(e.Candidate, e.id);
+                                    }} className='p-1 text-xs rounded bg-blue-600 text-white'>Assign Interview </button>
+                                </td>
+                                }
+                                {/* <td>{e.Review != null ? e.Review.ReviewedOn : null}</td> */}
+                                {/* <td onClick={() => sentparticularData(e.Candidate)} className='text-center'>
                               <button type="button" style={{ backgroundColor: 'rgb(160,217,180)' }} className="btn btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal5">
                                 Open
                               </button>
                             </td> */}
-                                </tr>)
-                            })}
-                    </tbody>
+                            </tr>)
+                        })}
                     {/* open Particular Data Start */}
                     <CandidateInformationModal show={show} setshow={setshow}
                         Screening_screening_data={Screening_screening_data}

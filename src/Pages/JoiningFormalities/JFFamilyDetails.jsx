@@ -66,9 +66,9 @@ const JFFamilyDetails = ({ id, data, page }) => {
         getData()
     }, [data])
     return (
-        <div className='bg-white p-3 rounded ' >
+        <div className='inputbg p-3 rounded ' >
             <h5 className='mt-2 heading' style={{ color: 'rgb(76,53,117)' }}>FAMILY DETAILS</h5>
-            <main className='p-3 formbg rounded '>
+            <main className='p-3 rounded '>
 
                 <section className='table-responsive tablebg rounded '>
                     <table className='w-full '>

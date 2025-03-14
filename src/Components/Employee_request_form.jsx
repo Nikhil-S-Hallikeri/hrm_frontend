@@ -214,7 +214,7 @@ const Employee_request_form = ({ setActiveSection }) => {
                 </Modal.Header>
                 <Modal.Body>
                     <div>
-                        <label htmlFor="">Choose the employee : </label>
+                        <label htmlFor="">Select employee : </label>
                         <select name="" id="" onChange={(e) => {
                             let findEmp = allEmployee.find((obj, index) => obj.employee_Id == e.target.value)
                             console.log({
@@ -232,7 +232,7 @@ const Employee_request_form = ({ setActiveSection }) => {
                                 reporting_manager_name: findEmp.Reporting_To
                             }))
                             setShowModal(false)
-                        }} className='p-2 outline-none bgclr rounded mx-2 px-3 ' >
+                        }} className='p-2 outline-none inputbg rounded mx-2 px-3 ' >
                             <option value="">Select </option>
                             {
                                 allEmployee && allEmployee.map((obj, index) => (
@@ -249,7 +249,7 @@ const Employee_request_form = ({ setActiveSection }) => {
             {/* EMPLOYEE RESIGNATION FORM START */}
             <div className=' my-3 ' >
                 {/* Form start */}
-                <div className="row justify-content-center bgclr p-3 rounded m-0 ">
+                <div className="row justify-content-center inputbg p-3 rounded m-0 ">
                     <section className='flex items-center justify-between ' >
                         <h5 className='mt-2 heading' style={{ color: 'rgb(76,53,117)' }}>EMPLOYEE RESIGNATION FORM </h5>
                         {(status == 'Admin' || status == 'HR') && <button onClick={() => setShowModal(true)}
@@ -257,11 +257,11 @@ const Employee_request_form = ({ setActiveSection }) => {
                             Apply for others
                         </button>}
                     </section>
-                    <div className="col-lg-12 p-4 mt-4 formbg rounded-lg ">
+                    <div className="col-lg-12 p-4 mt-4 bg-white rounded-lg ">
                         <div className="row m-0 pb-2">
                             <InputFieldform label="Employee Id" value={formObj.employee_id} disabled type='text' />
                             <InputFieldform label="Employee Name" value={formObj.name} disabled type='text' />
-                            <InputFieldform label="Position" value={formObj.position} disabled />
+                            <InputFieldform label="Designation" value={formObj.position} disabled />
                             {/* <InputFieldform label="Reporting manager"
                                 value={
                                     allEmployee && formObj && console.log(formObj.reporting_manager_name, 'allemp') &&
@@ -271,9 +271,9 @@ const Employee_request_form = ({ setActiveSection }) => {
 
                             {/*  */}
                             <div class="col-md-6 col-lg-4 mb-3">
-                                <label for="interviewer">HR manager <span className='text-red-500 ' >* </span> </label>
+                                <label for="interviewer">HR Manager <span className='text-red-500 ' >* </span> </label>
                                 <select id="interviewer" name="HR_manager_name" value={formObj.HR_manager_name} onChange={handleFormObj}
-                                    className='p-2 block my-2 rounded bgclr w-full outline-none shadow-none'  >
+                                    className='p-2 block my-2 rounded inputbg w-full outline-none shadow-none'  >
                                     <option value="" selected>Select Name</option>
                                     {interviewers2 && interviewers2.map(interviewer => (
                                         <option key={interviewer.EmployeeId}
@@ -285,34 +285,34 @@ const Employee_request_form = ({ setActiveSection }) => {
                             </div>
                             <InputFieldform label="Separation Type" required value={formObj.separation_type} name='separation_type' handleChange={handleFormObj}
                                 optionObj={separation_type} />
-                            <InputFieldform label="Reason For Leaving" value={formObj.reason_for_leaving}
+                            <InputFieldform label="Reason For Resignation" value={formObj.reason_for_leaving}
                                 name='reason_for_leaving' handleChange={handleFormObj}
                                 optionObj={reason_for_leaving} />
                             <div className="col-md-6 col-lg-4 mb-3">
-                                <label htmlFor="secondaryContact" className="form-label flex justify-between items-center "> Resigned letter file*
+                                <label htmlFor="secondaryContact" className="form-label flex justify-between items-center "> Resignation letter
                                     {id && formObj.resigned_letter_file && <a target='_blank' href={formObj.resigned_letter_file} className='    text-sm '>
                                         Click here </a>}
                                 </label>
                                 <input type="file" className="form-control shadow-none" onChange={(e) => setresigned_letter_file(e.target.files[0])} id="SecondaryContact" name="SecondaryContact" />
                             </div>
-                            <InputFieldform label="Reason" value={formObj.reason} name='reason' handleChange={handleFormObj} type='textarea' />
+                            <InputFieldform label="Detailed Reason" value={formObj.reason} name='reason' handleChange={handleFormObj} type='textarea' />
                             {/*  */}
                             {
                                 id && <div className='row m-0 p-0 ' >
                                     {/* To show the data */}
-                                    <InputFieldform label="Applied Date" value={formObj.Applied_On} disabled />
+                                    <InputFieldform label="Date of Application " value={formObj.Applied_On} disabled />
                                     <InputFieldform label="HR Manager Verification" disabled value={formObj.is_hr_verified ? "Verified" : 'Not Verified Yet'} />
                                     <InputFieldform label="Reporting Manager Verification" disabled value={formObj.is_rm_verified ? "Verified" : 'Not Verified Yet'} />
                                     <InputFieldform label="HR Manager Report" type="textarea" disabled value={formObj.hr_remarks ? formObj.hr_remarks : 'Not Verified Yet'} />
 
                                     <InputFieldform label="Reporting Manager Report" type="textarea" disabled value={formObj.rm_remarks ? formObj.rm_remarks : 'Not Verified Yet'} />
                                     <InputFieldform label="Remarks" type="textarea" disabled value={formObj.remarks ? formObj.remarks : 'Not Verified Yet'} />
-                                    <InputFieldform label="Interview Assigned date" value={formObj.Date_Of_Interview} disabled />
+                                    <InputFieldform label="Exit Interview date" value={formObj.Date_Of_Interview} disabled />
                                     <div className='col-md-6 col-lg-4 ' >
                                         <label htmlFor="">Interviewer  </label>
-                                        <select name="Interviewer" onChange={handleFormObj}
+                                        <select name="Assigned Interviewer" onChange={handleFormObj}
                                             value={formObj.Interviewer} id=""
-                                            className='bgclr rounded block w-full p-2 my-2 outline-none ' >
+                                            className='inputbg rounded block w-full p-2 my-2 outline-none ' >
                                             <option value="">Select </option>
                                             {interviewers && interviewers.map(interviewer => (
                                                 <option key={interviewer.EmployeeId} value={interviewer.id}>

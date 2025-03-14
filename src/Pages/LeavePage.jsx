@@ -10,6 +10,7 @@ import DustbinIcon from '../SVG/DustbinIcon'
 import { HrmStore } from '../Context/HrmContext'
 import ActionIcon from '../Components/Icons/ActionIcon'
 import ThreeDot from '../SVG/ThreeDot'
+import LoadingData from '../Components/MiniComponent/LoadingData'
 
 const LeavePage = ({ subpage }) => {
     let { setActivePage, leaveData, setLeaveData, getLeaveData, setTopNav } = useContext(HrmStore)
@@ -34,7 +35,7 @@ const LeavePage = ({ subpage }) => {
             <main className='tablebg rounded shadow p-3 my-3  '>
                 <h4>Leave setting </h4>
                 <div className='table-responsive'>
-                    <table className='w-full '>
+                    {leaveData ? <table className='w-full '>
                         <tr>
                             <th>
                                 <ActionIcon />
@@ -46,8 +47,8 @@ const LeavePage = ({ subpage }) => {
                             {/* <th>Action </th> */}
                         </tr>
                         {leaveData && leaveData.map((obj, index) => (
-                            <tr className={` ${showEditOptions==obj.id&&'bg-blue-50'} `} >
-                                {console.log(obj,'leaveobj')}
+                            <tr className={` ${showEditOptions == obj.id && 'bg-blue-50'} `} >
+                                {console.log(obj, 'leaveobj')}
                                 <td className='relative ' >
                                     <button onClick={() => {
                                         if (showEditOptions == obj.id)
@@ -57,10 +58,10 @@ const LeavePage = ({ subpage }) => {
                                     }} className=' rotate-90 ' >
                                         <ThreeDot size={4} />
                                     </button>
-                                    {showEditOptions == obj.id && <div 
-                                    className='absolute text-start bg-white z-10 left-9 top-1/3 p-2 rounded shadow   ' >
-                                        <button className=' ' onClick={()=>{
-                                            navigate(`/dash/leaveSetting/${obj.id}`)
+                                    {showEditOptions == obj.id && <div
+                                        className='absolute text-start bg-white z-10 left-9 top-1/3 p-2 rounded shadow   ' >
+                                        <button className=' ' onClick={() => {
+                                            navigate(`/leave/leaveSetting/${obj.id}`)
                                         }} >
                                             Edit
                                         </button>
@@ -73,10 +74,10 @@ const LeavePage = ({ subpage }) => {
                                 </td>
                                 <td>{index + 1} </td>
                                 <td className='text-start'>{obj.leave_name} </td>
-                                <td className='text-start'>{obj.description} </td>
+                                <td className='text-start break-words text-wrap '>{obj.description} </td>
                                 <td className='w-28 '>  </td>
                                 {/* <td className='w-20 flex justify-between '>
-                                    <button onClick={() => navigate(`/dash/leaveSetting/${obj.id}`)}>
+                                    <button onClick={() => navigate(`/leave/leaveSetting/${obj.id}`)}>
                                         <EditPen />
                                     </button>
                                     <button className='text-red-600'>
@@ -88,7 +89,7 @@ const LeavePage = ({ subpage }) => {
 
                         }
 
-                    </table>
+                    </table> : <LoadingData />}
 
                 </div>
 

@@ -134,13 +134,13 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
                         </select>
                     </div>
                     <div className='my-1 p-2 col-12 flex gap-2 items-start'>
-                        <label htmlFor="" className='w-32 text-slate-500 fw-semibold  ' > No of days Leave : </label>
+                        <label htmlFor="" className='w-32 text-slate-500 fw-semibold  ' > Duration : </label>
                         <input type="number" value={obj.days}
                             onChange={(e) => { if (e.target.value >= 0 && e.target.value < 367) handleChange(e) }}
                             name='days' className='p-2 w-full inputbg rounded outline-none   ' />
                     </div>
                     <div className='my-1 p-2 col-12 flex gap-2 items-start'>
-                        <label htmlFor="" className='w-28 text-slate-500  fw-semibold  ' >Date : </label>
+                        <label htmlFor="" className='w-28 text-slate-500  fw-semibold  ' >Leave Dates : </label>
                         <div className='flex-1 flex gap-2 ' >
                             <input type="date" value={obj.from_date}
                                 onChange={handleChange} name='from_date'
@@ -154,7 +154,7 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
 
 
                     <div className='my-1 p-2 col-12 flex gap-2 items-start'>
-                        <label htmlFor="" className='w-32 text-slate-500 fw-semibold  '>Document : </label>
+                        <label htmlFor="" className='w-32 text-slate-500 fw-semibold  '>Supporting Document : </label>
                         <input type="file"
                             onChange={(e) => setobj((prev) => ({
                                 ...prev,
@@ -163,7 +163,7 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
                             className='p-2 w-full inputbg rounded outline-none' />
                     </div>
                     <div className='my-1 p-2 col-12 flex gap-2 items-start'>
-                        <label htmlFor="" className='w-32 text-slate-500 fw-semibold '>  Reason:</label>
+                        <label htmlFor="" className='w-32 text-slate-500 fw-semibold '>  Reason for leave:</label>
                         <textarea name="reason" onChange={handleChange} rows={5}
                             className='p-2 w-full inputbg rounded outline-none' value={obj.reason} id=""></textarea>
                     </div>

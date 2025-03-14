@@ -97,12 +97,12 @@ const STEmployeeAssigning = ({ subpage }) => {
                                     else
                                         toast.warning('Employees not loaded')
                                 }} />
-                            <label htmlFor="selectall"> Select All</label>
+                            <label htmlFor="selectall"> Select</label>
                         </th>
                         <th className='border-0 ' >Employee Name </th>
                         <th className='border-0 ' >Employee ID </th>
                         <th className='border-0 ' >Designation </th>
-                        <th className='border-0 ' >Email  </th>
+                        <th className='border-0 ' >Email ID</th>
                         <th className=''>Salary </th>
                         <th className='border-0 ' >Template </th>
                     </tr>

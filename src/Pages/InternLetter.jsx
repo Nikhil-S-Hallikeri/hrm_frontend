@@ -34,7 +34,7 @@ const InternLetter = ({ data, pdfRef }) => {
                     {city} - {pincode}. */}
                         </p>
 
-                        <h2 className='text-center text-decoration-underline ' >Letter of Offer</h2>
+                        <h2 className='text-center  w-fit mx-auto ' >Letter of Offer</h2>
 
                         <p className='my-2 fw-semibold text-black ' >Dear {data.Name},</p>
 
@@ -88,7 +88,6 @@ const InternLetter = ({ data, pdfRef }) => {
                             Socializing in terms of dating and/or a relationship with another Merida Tech Minds employee who is currently working or an ex-employee of Merida Tech Minds against the Company policy and if any found will lead to termination of services for both the employees. You will follow the company's dress code during all working days and will be presentable at all times.
                         </p>
 
-
                     </div>
                     <LetterPadFooter />
                 </section>
@@ -99,7 +98,7 @@ const InternLetter = ({ data, pdfRef }) => {
                         <h3 className='text-xl ' >Notice Period</h3>
                         <p>
                             Should you desire to leave the services of Merida Tech Minds, either during your training or immediately after your training or during your Probationary Period or after confirmation of your services, you are required to furnish/serve at
-                            least <span className='fw-semibold text-black text-decoration-underline' >
+                            least <span className='fw-semibold text-black ' >
                                 30 days’ notice period, failing to which 2 months gross compensation to be paid against notice period buyout </span>
                             in lieu thereof, before you can be relieved from the services of Merida Tech Minds. Based on the business necessity and the designation the company holds the right to revisit the notice period.
                         </p>

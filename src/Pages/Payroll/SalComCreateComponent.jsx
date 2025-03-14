@@ -94,7 +94,7 @@ const SalComCreateComponent = () => {
                     <section className='col-md-6 '>
                         <InputFieldform size={'col-md-8'} label='Earning Name' placeholder='Basic' value={formObj.earning_name}
                             name='earning_name' handleChange={handlePayTypeChange} type='text' />
-                        <InputFieldform size={'col-md-8'} label='Name in payslip ' value={formObj.name_in_payslip} name='name_in_payslip'
+                        <InputFieldform size={'col-md-8'} label='Name on payslip ' value={formObj.name_in_payslip} name='name_in_payslip'
                             handleChange={handlePayTypeChange} type='text' placeholder='Basic Pay' />
 
                         <div className="col-md-8 col-sm-6 ">
@@ -103,8 +103,8 @@ const SalComCreateComponent = () => {
                                 className='w-full bgclr p-2 rounded outline-none '
                                 name="pay_type" id="">
                                 <option value="">Select</option>
-                                <option value="Fixed_Pay">Fixed Pay <span className='text-sm ' >(Fixed amount paid at the end of every month.) </span>  </option>
-                                <option value="Variable_Pay">Variable Pay <span className='text-sm ' >(Variable amount paid during any payroll.) </span>  </option>
+                                <option value="Fixed_Pay">Fixed Pay <span className='text-sm ' >(A set amount paid monthly.) </span>  </option>
+                                <option value="Variable_Pay">Variable Pay <span className='text-sm ' >(Amount varies depending on payroll cycle.) </span>  </option>
 
                             </select>
                         </div>
@@ -114,8 +114,8 @@ const SalComCreateComponent = () => {
                                 className='w-full bgclr p-2 rounded outline-none '
                                 name="caluculate_type" id="">
                                 <option value="">Select</option>
-                                <option value="Flat_Amount">Flat amount </option>
-                                <option value="Percentage_oF_CTC">Percentage of component <span className='text-sm ' >(Variable amount paid during any payroll.) </span>  </option>
+                                <option value="Flat_Amount">Flat amount <span className='text-sm ' >(Fixed value for this component.) </span>  </option>
+                                <option value="Percentage_oF_CTC">Percentage of component <span className='text-sm ' >(Percentage based on total salary or specific component.) </span>  </option>
 
                             </select>
                         </div>

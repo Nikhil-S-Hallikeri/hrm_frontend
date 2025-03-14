@@ -75,7 +75,7 @@ const DesignationPage = () => {
                             <span className='mx-auto text-center  ' >
                                 <ActionIcon /> </span></th>
                         <th>Designation Name</th>
-                        <th>No of Employees </th>
+                        <th>Number of Employees </th>
                     </tr>
                     {
                         AllDesignationlist && AllDesignationlist.map((obj) => (

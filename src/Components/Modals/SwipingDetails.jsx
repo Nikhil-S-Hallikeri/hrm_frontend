@@ -1,10 +1,11 @@
 import React, { useContext } from 'react'
 import { CloseButton, Modal } from 'react-bootstrap'
 import HrmContext, { HrmStore } from '../../Context/HrmContext';
+import AttendanceReviewAdding from '../MiniComponent/AttendanceReviewAdding';
 
-const SwipingDetails = ({ show, setshow }) => {
-    console.log(show);
-    let { changeDateYear } = useContext(HrmStore)
+const SwipingDetails = ({ show, setshow ,getAttendanceList}) => {
+    console.log(show, 'Attendance Details');
+    let { changeDateYear, formatISODate } = useContext(HrmStore)
     let data = [
         {
             swipetime: '3:20'
@@ -40,23 +41,26 @@ const SwipingDetails = ({ show, setshow }) => {
                         <table className='w-full text-sm'>
                             <tr className='sticky top-0 bgclr1 '>
                                 <th>Swipe Time </th>
+                                <th>In/Out </th>
                                 <th>Location </th>
                             </tr>
                             {show && show.attendance_records &&
                                 show.attendance_records.map((obj, index) => (
                                     <tr className='' key={index} >
-                                        <td>{obj.ScanTimings} </td>
+                                        <td>{obj.ScanTimings ? formatISODate(obj.ScanTimings) : ''} </td>
+                                        <td> {obj.duration_type} </td>
                                         <td className=''>Enterance-1 </td>
                                     </tr>
                                 ))}
-
-
                         </table>
-
                     </section>
-                    <button onClick={() => setshow('')} className='mx-auto my-2 flex border-2 rounded px-2 text-sm p-1 hover:text-blue-600 hover:border-blue-300'>
-                        Close
-                    </button>
+                    <section className='flex justify-center  gap-4 ' >
+                        <button onClick={() => setshow('')}
+                            className=' border-2 rounded px-2 text-sm p-1 hover:text-blue-600 hover:border-blue-300'>
+                            Close
+                        </button>
+                        <AttendanceReviewAdding getAttendanceList={getAttendanceList} id={show?.id} />
+                    </section>
                 </Modal.Body>
             </Modal>}
         </div>

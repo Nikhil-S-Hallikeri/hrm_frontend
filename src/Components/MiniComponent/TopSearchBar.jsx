@@ -8,7 +8,7 @@ const TopSearchBar = ({ navbar }) => {
     let [searchWord, setSearchWord] = useState()
     let [showResult, setShowResult] = useState()
     let navigate = useNavigate()
-    let status = JSON.parse(sessionStorage.getItem('user')).Disgnation
+    let status = JSON.parse(sessionStorage.getItem('user'))?.Disgnation
     let empid = JSON.parse(sessionStorage.getItem('dasid'))
     let { settingRouterLinks, payrollRoutersLinks, leaveRouterLinks, employeeRouterLink } = useContext(RouterStore)
     let [searchNavigations, setsearchNavigation] = useState()
@@ -56,6 +56,12 @@ const TopSearchBar = ({ navbar }) => {
                 keyword: ['interviews',],
                 show: status == 'Employee'
             },
+            {
+                label: 'Activity',
+                path: '/dash/employeeactivity',
+                keyword: ['activity', 'calls', 'das', 'client adding'],
+                show: true
+            }
         ].concat(employeeRouterLink).concat(payrollRoutersLinks).concat(leaveRouterLinks))
     }, [employeeRouterLink, payrollRoutersLinks, leaveRouterLinks])
     let searchFilter = (val) => {

@@ -18,7 +18,7 @@ import { RouterStore } from '../../Context/RouterContext'
 const SettingRouter = () => {
     let { setActivePage, activeSetting, setActiveSetting, } = useContext(HrmStore)
     let { settingRouterLinks } = useContext(RouterStore)
-    let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
+    let employeeStatus = JSON.parse(sessionStorage.getItem('user'))?.Disgnation
     useEffect(() => {
         setActivePage('setting')
     }, [])

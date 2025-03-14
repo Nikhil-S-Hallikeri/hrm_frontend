@@ -28,7 +28,7 @@ const ExitProcessRouter = ({ subpage }) => {
             {!subpage && <article className='sticky z-10 top-0'>
                 <NewSideBar />
             </article>}
-            <article className='flex-1 container-fluid px-0  overflow-hidden mx-auto'>
+            <article className='flex-1 container-fluid  overflow-hidden mx-auto'>
                 {!subpage && <Topnav />}
                 {/* Navigation */}
                 <section className='my-3 ' >
@@ -46,7 +46,7 @@ const ExitProcessRouter = ({ subpage }) => {
                     <button onClick={() => navigate('/employees/Employee_request_form/handover')}
                         className={` duration-500 ${activeSection == 'handover' ? " text-blue-600 fw-semibold " : 'text-slate-800'} poppins
                      px-3  p-2 rounded `} >
-                        Handovers
+                        Exit Formalities 
                     </button>
                 </section>
 

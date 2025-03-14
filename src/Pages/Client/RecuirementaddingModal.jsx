@@ -1,65 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap'
 import InputFieldform from '../../Components/SettingComponent/InputFieldform'
+import axios from 'axios'
+import { port } from '../../App'
+import { toast } from 'react-toastify'
+import RecuirementCrud from '../../Components/ClientComponents/RecuirementCrud'
 
-const RecuirementaddingModal = ({ cid, show, setshow }) => {
-    let [jobDetails, setJobDetails] = useState({
-        job_location: '',
-        qualification: '',
-        required_skills: '',
-        experience_max: "",
-        experience_min: '',
-        package_max: '',
-        package_min: '',
-        hiring_end_date: '',
-        hiring_start_date: '',
-        open_positions: '',
-        job_description: '',
-        job_title: '',
-        client: cid
-    })
-    let handleJobDetails = (e) => {
-        let { name, value } = e.target
-        setJobDetails((prev) => ({
-            ...prev,
-            [name]: value
-        }))
-    }
-    useEffect(() => {
-        if (cid) {
-            setJobDetails((prev) => ({
-                ...prev,
-                client: cid
-            }))
-        }
-    }, [cid])
+const RecuirementaddingModal = ({ cid, getData, show, setshow }) => {
 
     return (
         <div>
             <Modal className=' ' centered size='xl'
-                show={show} onHide={() => setshow(false)}>
+                show={show} onHide={() => { setshow(false) }}>
                 <Modal.Header closeButton >
                     Recuirement adding
                 </Modal.Header>
-                <Modal.Body>
-                    <main className='formbg row rounded py-3 ' >
-                        <InputFieldform label='Job Title' name='job_title' value={jobDetails.job_title}
-                            handleChange={handleJobDetails} placeholder="Java Developer" />
-                        <InputFieldform label='Job Location' name='job_location' value={jobDetails.job_location}
-                            handleChange={handleJobDetails} placeholder="Banglore" />
-                        <InputFieldform label='Job Description' name='job_description' value={jobDetails.job_description}
-                            handleChange={handleJobDetails} type='textarea' />
-                        <InputFieldform label='Qualification' name='qualification' value={jobDetails.qualification}
-                            handleChange={handleJobDetails} placeholder='B.E' />
-                        <InputFieldform label='Open positions' name='open_positions' value={jobDetails.open_positions}
-                            handleChange={handleJobDetails} />
-
-
-                    </main>
-
+                <Modal.Body className='inputbg' >
+                    <RecuirementCrud setshow={setshow} cid={cid} getData={getData} />
                 </Modal.Body>
-
-
             </Modal>
 
         </div>

@@ -33,7 +33,7 @@ const SalaryComponent = () => {
                         className='min-h-[100px] z-10 text-sm shadow p-2 min-w-[100px] w-full top-10 bg-white rounded absolute '>
                         <button onClick={() => navigate('/payroll/salaryComponent/earning')}
                             className=' block hover:shadow hover:border-l-4 my-1 w-full p-2 text-start border-violet-800 '>
-                            Earnings
+                            Earning type
                         </button>
                         <button onClick={() => navigate(`/payroll/salaryComponent/pre-tax-deduction`)} className='block hover:shadow hover:border-l-4 my-1 w-full p-2 text-start border-violet-800 '  >
                             Pre-Tax Deduction

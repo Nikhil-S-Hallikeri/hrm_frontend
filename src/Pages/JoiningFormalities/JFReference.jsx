@@ -70,11 +70,11 @@ const JFReference = ({ id, data, page }) => {
         getData()
     }, [data])
     return (
-        <div className='bg-white p-3 rounded '>
+        <div className='inputbg p-3 rounded '>
             <h5 className='mt-2 heading' style={{ color: 'rgb(76,53,117)' }}>REFERENCE : NAME & ADDRESS OF AT LEAST TWO REFERENCES NOT RELATED TO YOU</h5>
             {
                 references && references.map((obj, index) => (
-                    <main className='p-3 my-2 row formbg rounded '>
+                    <main className='p-3 my-2 row bg-white rounded '>
                         <InputFieldform disabled={page} label="Name" placeholder={'Name'} type='text' value={obj.person_name}
                             handleChange={handleChange} index={index} name='person_name' />
                         <InputFieldform disabled={page} label="Mobile" placeholder={'Mobile'} type='text' value={obj.phone}

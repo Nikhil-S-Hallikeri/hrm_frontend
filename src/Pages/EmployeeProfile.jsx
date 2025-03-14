@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { port } from '../App'
 import Topnav from '../Components/Topnav'
@@ -17,6 +17,8 @@ import QrCodeGenerator from './QRscanner/QrCodeGenerator'
 const EmployeeProfile = ({ subpage }) => {
     let { id } = useParams()
     let [loading, setloading] = useState(true)
+    let [showInfoButton, setInfoButton] = useState(false)
+    let infoRef = useRef()
     let { setActivePage, changeDateYear } = useContext(HrmStore)
     let { formatDate } = useContext(HrmStore)
     let [employeeDetails, setEmployeeDetails] = useState()
@@ -36,6 +38,18 @@ const EmployeeProfile = ({ subpage }) => {
         setActivePage('Employee')
         window.scrollTo(0, 0)
     }, [id])
+    useEffect(() => {
+        let clickOutSide = (event) => {
+
+            if (infoRef.current && !infoRef.current.contains(event.target)) {
+                setInfoButton(false)
+            }
+        }
+        window.addEventListener('mousedown', clickOutSide)
+        return () => {
+            window.addEventListener('mousedown', clickOutSide)
+        }
+    }, [])
     let navigate = useNavigate()
     return (
         <div style={{ backgroundColor: 'rgb(241,242,246)' }} className='p-0 poppins ' >
@@ -68,10 +82,21 @@ const EmployeeProfile = ({ subpage }) => {
 
                                     </div>
                                     <div className='flex gap-3 ' >
-                                        <button onClick={() => navigate(`/Employeeallform/${employeeDetails.EmployeeInformation.employee_Id}`)}
-                                            className='rotate-90 mx-3' >
-                                            <ThreeDot size={5} />
-                                        </button>
+                                        <section className='w-fit relative  ' >
+                                            <button onClick={() => setInfoButton(!showInfoButton)}
+                                                className='rotate-90 p-2 mx-3' >
+                                                <ThreeDot size={5} />
+                                            </button>
+                                            {showInfoButton &&
+                                                <div id='infoProfile' ref={infoRef} className=' absolute p-2 bg-slate-100 shadow right-0 rounded w-40 bottom-0 text-sm translate-y-[100%] text-end ' >
+                                                    <button onClick={() =>
+                                                        navigate(`/Employeeallform/${employeeDetails.EmployeeInformation.employee_Id}`)}
+                                                        className='my-2 ' > Info </button>
+                                                    <button className=' my-2  ' onClick={() => navigate('/settings/password')} >
+                                                        Change password
+                                                    </button>
+                                                </div>}
+                                        </section>
                                         <button onClick={() => navigate('/employees')}
                                             className=' bg-slate-300 bg-opacity-80 text-slate-700 rounded p-2 ' >
                                             <CloseIcon2 />

@@ -29,12 +29,12 @@ const ExitInterviewTable = ({ setActiveSection }) => {
                 <table className='w-full ' >
                     <tr>
                         <th> SI No </th>
-                        <th> Name </th>
+                        <th>Employee Name </th>
                         <th>Employee Id </th>
-                        <th> Position </th>
-                        <th> Reason for Leaving </th>
-                        <th> Request verification </th>
-                        <th>Action  </th>
+                        <th> Designation </th>
+                        <th> Reason for Resignation </th>
+                        <th> Status  </th>
+                        <th>Resignation Form  </th>
                     </tr>
                     {
                         data && data.map((obj, index) => (

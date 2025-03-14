@@ -10,11 +10,45 @@ import { port } from '../App'
 import { toast } from 'react-toastify'
 import SwipingDetails from '../Components/Modals/SwipingDetails'
 import DownloadContent from '../Components/AuthPermissions/DownloadContent'
+import LoadingData from '../Components/MiniComponent/LoadingData'
 
 const AttendenceAdmin = ({ subpage }) => {
-  let { activePage, setActivePage ,setTopNav} = useContext(HrmStore)
+  let { activePage, setActivePage, setTopNav } = useContext(HrmStore)
+  let { changeDateYear, formatISODate, getProperDate } = useContext(HrmStore)
   let [Department_List, set_Department_List] = useState()
   let [trigger, settrigger] = useState(false)
+  let [filterObj, setFilterObj] = useState({
+    fromtime: '',
+    totime: ''
+  })
+
+  let handleChange = (e) => {
+    let { name, value } = e.target
+    setFilterObj((prev) => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+  function currentMonthDates() {
+    const currentDate = new Date()
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const startDate = getProperDate(new Date(year, month, 1));
+    const endDate = getProperDate(new Date(year, month + 1, 0));
+    setFilterObj({
+      fromtime: startDate,
+      totime: endDate
+    })
+    getAttendanceList(startDate, endDate)
+    console.log(startDate, endDate);
+  }
+  function formatTime(inputTime) {
+    // Split the input time to extract hours and minutes
+    const [hours, minutes] = inputTime.split(":");
+    let hrs = hours && hours > 0 ? `${hours} h` : ''
+    let min = minutes && minutes > 0 ? `${minutes} m` : ''
+    return `${hrs} ${min}`;
+  }
   let dateNow = new Date()
   let year = []
   let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
@@ -47,17 +81,19 @@ const AttendenceAdmin = ({ subpage }) => {
   }
   let [attendanceList, setattendanceList] = useState()
   let [filteredAttendanceList, setFilteredAttendanceList] = useState()
-  let getAttendanceList = () => {
-    axios.get(`${port}/root/lms/attendance/year/${filterDetails.year}/month/${filterDetails.month}/`).then((response) => {
-      console.log(response.data);
+  let getAttendanceList = (startDate, endDate) => {
+
+    setLoading('list')
+    axios.get(`${port}/root/lms/attendance/${startDate ? startDate : filterObj.fromtime}/${endDate ? endDate : filterObj.totime}/`).then((response) => {
+      console.log(response.data, 'Attendance filter');
       setattendanceList(response.data)
+      setLoading(false)
     }).catch((error) => {
-      console.log(error);
+      console.log(error, 'Attendance filter');
+      setLoading(false)
     })
+
   }
-  useEffect(() => {
-    getAttendanceList()
-  }, [filterDetails.month, filterDetails.year])
   useEffect(() => {
     if (attendanceList)
       setFilteredAttendanceList(attendanceList)
@@ -70,7 +106,7 @@ const AttendenceAdmin = ({ subpage }) => {
     console.log(e.target.files[0]);
     axios.post(`${port}/root/lms/Bulk_Attendance_Data/`, formdata).then((response) => {
       toast.success('Excel file value uploaded successfully')
-      getAttendanceList()
+      getAttendanceList(filterObj.fromtime, filterObj.totime)
       console.log(response.data);
       setLoading(false)
     }).catch((error) => {
@@ -88,12 +124,30 @@ const AttendenceAdmin = ({ subpage }) => {
     getDepartment()
     setActivePage('leave')
     setTopNav('list')
+    currentMonthDates()
   }, [])
   return (
     <div className=''>
       {!subpage && <Topnav name='Attendence List' />}
       {trigger && <DownloadContent trigger={trigger} settrigger={settrigger}
-        data={filteredAttendanceList} name={`Attendence${filterDetails.name && `_${filterDetails.name}`}_${filterDetails.year}_${months[filterDetails.month - 1]}`} />}
+        data={filteredAttendanceList?.map((obj) => ({
+          Date: obj.date ? changeDateYear(obj.date) : '--',
+          EmpId: obj.Emp_Id?.EmployeeId,
+          Name: obj.Emp_Id?.Name,
+          Designation: obj.Emp_Id?.Designation,
+          Department: obj.Department_name,
+          Postiton: obj.position_name,
+          InTime: obj.InTime ? formatISODate(obj.InTime) : '-',
+          OutTime: obj.OutTime ? formatISODate(obj.OutTime) : '-',
+          'Break Time': obj.break_timings ? formatTime(obj.break_timings) : '-',
+          'Total hours worked': obj.Hours_Worked ? formatTime(obj.Hours_Worked) : '-',
+          'Late araival': obj.Late_Arrivals ? formatTime(obj.Late_Arrivals) : '-',
+          'Early departure': obj.Early_Depature ? formatTime(obj.Early_Depature) : '-',
+          'Status': obj.Status ? obj.Status : '--',
+          'Remarks': obj.remarks ? obj.remarks : '--',
+          'Punch INs': ` ${obj.attendance_records.map((obj) => obj.ScanTimings ? formatISODate(obj.ScanTimings) : '')} `
+        }))}
+        name={`Attendence${filterDetails.name && `_${filterDetails.name}`}_${filterDetails.year}_${months[filterDetails.month - 1]}`} />}
       <section className='flex gap-3 flex-wrap'>
         <div className='shadow  flex gap-1 items-center text-slate-500 text-sm bgclr w-48 p-1 rounded '>
           <div>
@@ -101,7 +155,6 @@ const AttendenceAdmin = ({ subpage }) => {
           </div>
           <input type="text" value={filterDetails.name}
             onKeyDown={(e) => {
-              if (e.key = 'Enter')
                 filterlist()
             }}
             name='name' onChange={handleChangeFilterDetails}
@@ -119,7 +172,19 @@ const AttendenceAdmin = ({ subpage }) => {
           </select>
         </div> */}
         {/* Year */}
-        <div className='shadow bgclr w-48 p-1 py-0 rounded '>
+
+        <div className='bgclr w-fit rounded ps-3'>
+          From :
+          <input onChange={handleChange} name='fromtime' value={filterObj.fromtime}
+            type="date" className='p-2 bg-transparent rounded outline-none' />
+        </div>
+        <div className='bgclr w-fit rounded ps-3'>
+          To :
+          <input onChange={handleChange} name='totime' value={filterObj.totime}
+            type="date" className='p-2 bg-transparent rounded outline-none' />
+        </div>
+
+        {/* <div className='shadow bgclr w-48 p-1 py-0 rounded '>
           <label htmlFor="" className='text-xs fw-medium'> Year </label>
           <select value={filterDetails.year} onChange={handleChangeFilterDetails}
             className='block text-sm outline-none w-full bg-transparent fw-semibold' name="year" id="">
@@ -128,9 +193,9 @@ const AttendenceAdmin = ({ subpage }) => {
               <option value={yr}>{yr} </option>
             ))}
           </select>
-        </div>
+        </div> */}
         {/* Month */}
-        <div className='shadow bgclr w-48 p-1 py-0 rounded '>
+        {/* <div className='shadow bgclr w-48 p-1 py-0 rounded '>
           <label htmlFor="" className='text-xs fw-medium'> Month </label>
           <select value={filterDetails.month} onChange={handleChangeFilterDetails}
             className='block text-sm outline-none w-full bg-transparent fw-semibold' name="month" id="">
@@ -139,8 +204,8 @@ const AttendenceAdmin = ({ subpage }) => {
               <option value={index + 1}>{month} </option>
             ))}
           </select>
-        </div>
-        <button onClick={filterlist} className='savebtn shadow text-white w-48 rounded'>
+        </div> */}
+        <button onClick={() => getAttendanceList(filterObj.fromtime, filterObj.totime)} className='savebtn shadow text-white w-48 rounded'>
           Search
         </button>
 
@@ -173,7 +238,10 @@ const AttendenceAdmin = ({ subpage }) => {
           <ExportIcon size={20} />
         </button>
       </section>
-      {filteredAttendanceList && <AttendenceShowingadminTable data={filteredAttendanceList} />}
+      {loading ? <div className=' my-4 rounded ' >
+        <LoadingData />
+      </div> : filteredAttendanceList &&
+      <AttendenceShowingadminTable getAttendanceList={getAttendanceList} data={filteredAttendanceList} />}
 
 
 

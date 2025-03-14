@@ -17,6 +17,7 @@ import SchedulINterviewModalForm from './ApplyList/SchedulINterviewModalForm';
 import { HrmStore } from '../Context/HrmContext';
 import InterviewCompletedModal from './Modals/InterviewCompletedModal';
 import InfoButton from './SettingComponent/InfoButton';
+import NewSideBar from './MiniComponent/NewSideBar';
 
 
 const Applicants = () => {
@@ -1108,11 +1109,10 @@ const Applicants = () => {
 
 
 
-      <div className='sticky z-10 top-0'>
-        {/* <Sidebar value={"dashboard"} ></Sidebar> */}
-        <Recsidebar></Recsidebar>
-      </div>
-      <div className=' m-0 m-sm-4  flex-1 container mx-auto ' style={{ borderRadius: '10px', }}>
+      <article className='sticky z-10 top-0'>
+        <NewSideBar />
+      </article>
+      <div className='flex-1 container-fluid mx-auto ' style={{ borderRadius: '10px', }}>
         <Topnav ></Topnav>
 
         <div className='d-flex justify-content-between mt-4'>

@@ -24,11 +24,13 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import QrIcon from '../Icons/QrIcon'
 import QrCodeGenerator from '../../Pages/QRscanner/QrCodeGenerator'
+import ReportIcon from '../Icons/ReportIcon'
+import ReportIconFill from '../Icons/ReportIconFill'
 
 const NewSideBar = () => {
     let { activePage, setActivePage, } = useContext(HrmStore)
     let logindata = JSON.parse(sessionStorage.getItem('user'))
-    let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
+    let employeeStatus = JSON.parse(sessionStorage.getItem('user'))?.Disgnation
     let Empid = JSON.parse(sessionStorage.getItem('dasid'))
     let [showOff, setShowOff] = useState()
     let navbarButtons = [
@@ -38,21 +40,23 @@ const NewSideBar = () => {
             FillIcon: DashBoardIconFill,
             size: '20',
             active: 'dashboard',
-            path: `/dashboard/${logindata.Disgnation}`,
+            path: `/dashboard/${logindata?.Disgnation}`,
             show: true
         },
         {
             label: 'Client',
             Icon: ClientIcon,
             active: 'client',
-            path: `/dash/client`,
-            show: employeeStatus == 'Admin' || employeeStatus == 'HR'
+            path: `/client`,
+            show: employeeStatus == 'Admin' || employeeStatus == 'HR' || employeeStatus == 'Recruiter'
         },
         {
             label: 'Activity',
             Icon: ActivityIcon,
             active: 'activity',
-            path: `/Recruiter_Activity`,
+            // path: `/Recruiter_Activity`,
+            path: `/activity`,
+
             show: employeeStatus == 'Employee' || employeeStatus == 'Recruiter'
         },
         {
@@ -95,7 +99,7 @@ const NewSideBar = () => {
             label: 'DAS',
             Icon: DasIcon,
             active: 'das',
-            href: `${das}/hrms?user=${JSON.parse(sessionStorage.getItem('dasid'))}&password=${JSON.parse(sessionStorage.getItem('user')).Password}`,
+            href: `${das}/hrms?user=${JSON.parse(sessionStorage.getItem('dasid'))}&password=${JSON.parse(sessionStorage.getItem('user'))?.Password}`,
             show: true
         },
         {
@@ -123,7 +127,9 @@ const NewSideBar = () => {
             label: 'Activities',
             Icon: AppliedListIcon,
             active: 'activity',
-            path: `/Sample_acti`,
+            // path: `/dash/employeeactivity`,
+            // path:'/Sample_acti',
+            path: '/activity',
             show: employeeStatus == 'Admin' || employeeStatus == 'HR'
         },
         {
@@ -137,7 +143,7 @@ const NewSideBar = () => {
             label: 'PaySlip',
             Icon: PayrollIcon,
             active: 'payroll',
-            path: `/dash/payslip/${logindata.EmployeeId}`,
+            path: `/dash/payslip/${logindata?.EmployeeId}`,
             show: employeeStatus == 'Employee' || employeeStatus == 'Recruiter'
         },
         {
@@ -153,6 +159,14 @@ const NewSideBar = () => {
             Icon: PerformanceIcon,
             active: 'perform',
             path: `/dash/appraisalform`,
+            show: employeeStatus == 'Admin' || employeeStatus == 'HR'
+        },
+        {
+            label: 'Report',
+            Icon: ReportIcon,
+            FillIcon: ReportIconFill,
+            active: 'report',
+            path: `/reports/`,
             show: employeeStatus == 'Admin' || employeeStatus == 'HR'
         },
         {
@@ -209,7 +223,13 @@ const NewSideBar = () => {
                             navbarButtons.map((obj, index) => (
                                 obj.show &&
                                 <div className='poppins my-3 cursor-pointer '
-                                    onClick={() => { setShowOff(false); navigate(obj.path) }} >
+                                    onClick={() => {
+                                        setShowOff(false);
+                                        if (obj.href)
+                                            window.open(obj.href, '_blank')
+                                        else
+                                            navigate(obj.path)
+                                    }} >
                                     {obj.label}
                                 </div>
                             ))

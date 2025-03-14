@@ -78,10 +78,10 @@ const JFAdditionalINfo = ({ id, page, data }) => {
         getData()
     }, [data])
     return (
-        <div className='p-3 bg-white rounded '>
+        <div className='p-3 inputbg rounded '>
             <h5 className='mt-2 uppercase heading' style={{ color: 'rgb(76,53,117)' }}>Additional Information </h5>
 
-            <main className='p-3 formbg rounded row ' >
+            <main className='p-3 bg-white rounded row ' >
                 <p className='col-12'> Have you : </p>
                 <InputFieldform disabled={page} label='(1) Marital Ineptness' value={formObj.marital_ineptness} name='marital_ineptness'
                     handleChange={handleChange} options={['yes', 'no']} />

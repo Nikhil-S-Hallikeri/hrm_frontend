@@ -61,6 +61,7 @@ const Login__ = () => {
                 sessionStorage.setItem('status', JSON.stringify(r.data.Dash_Status))
                 navigate(`/dashboard/${r.data.Disgnation}`)
                 setLoginStatus(true)
+                window.location.reload()
             })
             .catch((err) => {
                 alert(err.response.data)

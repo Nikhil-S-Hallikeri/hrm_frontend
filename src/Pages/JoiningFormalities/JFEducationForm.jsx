@@ -67,9 +67,9 @@ const JFEducationForm = ({ data, page, id }) => {
         getDetails()
     }, [data])
     return (
-        <div className='bg-white p-3 rounded '>
+        <div className='inputbg p-3 rounded '>
             <h5 className='mt-2 heading' style={{ color: 'rgb(76,53,117)' }}>EDUCATION DETAILS</h5>
-            <main className='formbg p-3'>
+            <main className='bg-white p-3'>
 
                 <section className='table-responsive rounded tablebg'>
                     <table class="w-full ">

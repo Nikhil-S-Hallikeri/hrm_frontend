@@ -159,8 +159,8 @@ const ApprovalPage = ({ page, subpage }) => {
                         ))}
                     </select>
 
-                    <button onClick={HandleFilterRequest} 
-                    className='p-2 h-fit px-4 w-40 text-white savebtn rounded '>
+                    <button onClick={HandleFilterRequest}
+                        className='p-2 h-fit px-4 w-40 text-white savebtn rounded '>
                         Search
                     </button>
                 </section>
@@ -175,21 +175,26 @@ const ApprovalPage = ({ page, subpage }) => {
                             <thead>
                                 <tr>
                                     <th className='w-20'>SI No</th>
-                                    <th>Employee </th>
+                                    <th>Employee Name</th>
                                     <th>Leave Type </th>
-                                    <th className='w-[300px] '>Leave Reason </th>
-                                    <th>No of Days leave </th>
-                                    <th>Document </th>
-                                    <th>Applied on </th>
-                                    <th>Leave Dates </th>
-                                    <th> Status</th>
-                                    <th>Action </th>
+                                    <th className='w-[300px] '>Reason</th>
+                                    <th>Duration </th>
+                                    <th>Supporting Document </th>
+                                    <th>Application Date </th>
+                                    <th>Leave Period </th>
+                                    <th>Approval Status</th>
+                                    <th>Actions </th>
                                 </tr>
                             </thead>
                             {filteredRequest && filteredRequest.map((obj, index) => (
                                 <tr key={index} className={` `} >
                                     <td className=' '>{index + 1}</td>
-                                    <td>{obj.employee_name} </td>
+                                    <td onClick={()=>{
+                                        navigate(`/leave?empid=${obj.employee}`)
+                                    }} className='cursor-pointer ' >
+                                        <p className='mb-0 cursor pointer text-blue-600 ' >
+                                            {obj.employee_name} </p>
+                                    </td>
                                     <td> {obj.LeaveType} </td>
                                     <td className='w-[200px] xl:w-[400px] text-wrap '>{obj.reason} </td>
                                     <td>{obj.days} </td>
@@ -246,7 +251,7 @@ const ApprovalPage = ({ page, subpage }) => {
                             ))}
                         </table>
                     </section> :
-                    <section className='bgclr min-h-[40vh] rounded-xl flex container  mx-auto  '>
+                    <section className='bgclr min-h-[40vh] rounded-xl flex container-fluid  mx-auto  '>
                         <h4 className='m-auto '>No Leave Requests are there!!!</h4>
                     </section>
             }

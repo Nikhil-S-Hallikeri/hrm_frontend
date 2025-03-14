@@ -25,6 +25,8 @@ import ClientTablePage from './Client/ClientTablePage'
 import ClientCreation from './Client/ClientCreation'
 import ParticularClientPage from './Client/ParticularClientPage'
 import NewSideBar from '../Components/MiniComponent/NewSideBar'
+import EmployeeActivitySheet from './Activity/EmployeeActivitySheet'
+import CandidatePageFinalStatus from './RecuirementClient/CandidatePageFinalStatus'
 
 const DasRouter = () => {
     let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
@@ -49,6 +51,7 @@ const DasRouter = () => {
                         <Route path='/offerApproval' element={<OfferApprovalPage />} />
                         <Route path='/appraisalform' element={<HRrequestPage />} />
                         <Route path='/employee/:id?' element={<EmployeeProfile />} />
+                        <Route path='/employeeactivity/:id?' element={<EmployeeActivitySheet />} />
 
                         <Route path='/salaryComponent/*' element={<SalaryComponent />} />
                         <Route path='/salary-templates/*' element={<SalaryTemplate />} />
@@ -63,7 +66,7 @@ const DasRouter = () => {
                         <Route path='/client/:id/*' element={<ParticularClientPage />} />
                         <Route path='/addClient' element={<ClientCreation />} />
                         <Route path='/shift-timing' element={<ShiftTiming />} />
-
+                       
 
                     </Routes>
 

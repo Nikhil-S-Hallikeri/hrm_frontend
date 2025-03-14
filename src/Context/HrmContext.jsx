@@ -20,9 +20,15 @@ const HrmContext = (props) => {
     let [postTaxDeduction, setPostDeduction] = useState()
     let [templates, setTemplates] = useState()
     let [allShiftTiming, setAllShiftTiming] = useState()
-
-
+    let [activeEmployee, setActiveEmployees] = useState()
     let [topnav, setTopNav] = useState()
+    let getActiveEmployee = () => {
+        axios.get(`${port}/root/ems/AllEmployeesList/${JSON.parse(sessionStorage.getItem('dasid'))}/?emp_status=active`).then(res => {
+            setActiveEmployees(res.data);
+        }).catch(err => {
+            console.log('AllEmployee_err', err);
+        });
+    }
     let getAllShiftTiming = () => {
         axios.get(`${port}/root/lms/shifts/`).then((response) => {
             setAllShiftTiming(response.data)
@@ -100,6 +106,7 @@ const HrmContext = (props) => {
         getApprovalRequest()
         getPreTaxDeduction()
         getPostTaxDeduction()
+        getActiveEmployee()
     }, [])
     function convertToReadableDateTime(isoDateTime) {
         const date = new Date(isoDateTime);
@@ -257,6 +264,26 @@ const HrmContext = (props) => {
             console.log(error);
         })
     }
+    function calculateAge(dob) {
+        const dobDate = new Date(dob);
+
+        // Get today's date
+        const today = new Date();
+
+        // Calculate the difference in years
+        let age = today.getFullYear() - dobDate.getFullYear();
+
+        // Adjust for the month and day
+        const monthDiff = today.getMonth() - dobDate.getMonth();
+        const dayDiff = today.getDate() - dobDate.getDate();
+
+        // If the current month is before the birth month
+        // or it's the birth month but the day hasn't passed yet, reduce the age by 1
+        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+            age--;
+        }
+        return age;
+    }
     let [activePage, setActivePage] = useState('dashboard')
     let mailContent = {
         reject: `
@@ -374,13 +401,16 @@ Merida Tech Minds (OPC) Pvt. Ltd.`
 
         return `${hours}:${minutes} ${period}`;
     }
+    function selectValueToNormal(value) {
+        return value.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
+    }
     let valueShare = {
-        formatTime, timeLastMonthValidate, convertTo12Hour, allShiftTiming, getAllShiftTiming, setAllShiftTiming,
-        deleteSalaryComponent, getEarningData, data, getMonthYear, getTemplate, templates, numberToWords,
+        formatTime, timeLastMonthValidate, convertTo12Hour, allShiftTiming, getAllShiftTiming, setAllShiftTiming, getActiveEmployee,
+        deleteSalaryComponent, getEarningData, data, getMonthYear, getTemplate, templates, numberToWords, activeEmployee,calculateAge,
         religion, getReligion, count, formatDate, preTaxDeduction, postTaxDeduction, getPreTaxDeduction, getPostTaxDeduction,
         getPendingLeave, pendingLeave, setPendingLeave, leaveRequestsReporting, setLeaveRequestReporting, getLeaveRequestsReporting,
         changeDateYear, activeSetting, setActiveSetting, mailContent, openNavbar, setNavbar, convertToNormalTime, activePage, setActivePage,
-        leaveData, setLeaveData, getLeaveData, getDesignations, designation, setDesignation,topnav, setTopNav,
+        leaveData, setLeaveData, getLeaveData, getDesignations, designation, setDesignation, topnav, setTopNav, selectValueToNormal,
         timeValidate, getProperDate, getCurrentDate, convertToReadableDateTime, testing, convertTimeTo12HourFormat, formatISODate
     }
     return (

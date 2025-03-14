@@ -323,9 +323,9 @@ const OfferTemplate = () => {
                             }
                             {
                                 formobj && 
-                                // formobj.Accept_status == "Accept" &&
+                                formobj.Accept_status == "Accept" &&
                                 <div>
-                                    <DownloadButton toPDF={toPDF} divref={targetRef} />
+                                    <DownloadButton toPDF={toPDF} name={'OfferLetter'} divref={targetRef} />
 
                                     {/* <GeneratePDF divRef={targetRef} /> */}
                                 </div>

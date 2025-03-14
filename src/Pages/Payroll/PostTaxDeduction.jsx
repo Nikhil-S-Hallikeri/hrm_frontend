@@ -74,19 +74,19 @@ const PostTaxDeduction = () => {
         setActiveSetting('deduction')
     }, [id])
     return (
-        <div className='poppins'>
+        <div className='poppins px-2'>
             <h4>Post-Tax Deduction </h4>
-            <main className='formbg row p-4 ' >
+            <main className='bg-white row p-4 ' >
                 <InputFieldform required={true} value={formObj.name_in_payslip} handleChange={handleChange}
                     type='text' name='name_in_payslip' label='Name in Payslip' />
                 <div className=" col-md-4 col-sm-6 ">
                     <label className='mb-1 my-1'>Calculation Type </label>
                     <select onChange={handleChange} value={formObj.caluculate_type}
-                        className='w-full bgclr p-2 rounded outline-none '
+                        className='w-full inputbg p-2 rounded outline-none '
                         name="caluculate_type" id="">
                         <option value="">Select</option>
-                        <option value="Flat_Amount">Flat amount </option>
-                        <option value="Percentage_oF_CTC">Percentage of component <span className='text-sm ' >(Variable amount paid during any payroll.) </span>  </option>
+                        <option value="Flat_Amount">Flat amount <span className='text-sm ' >(Fixed value for this component.) </span>  </option>
+                        <option value="Percentage_oF_CTC">Percentage of component <span className='text-sm ' >(Percentage based on total salary or specific component.) </span>  </option>
 
                     </select>
                 </div>

@@ -27,7 +27,12 @@ const ChangePassword = () => {
             toast.warning('Enter the fields')
             return
         }
+
         if (obj.confirmPassword == obj.NewPassword) {
+            if (obj.OldPassword == obj.NewPassword) {
+                toast.warning('Old password and New password should not be same.')
+                return
+            }
             setloading(true)
             axios.post(`${port}/root/changepassword`, obj).then((res) => {
                 console.log("changepassword_res", res.data);
