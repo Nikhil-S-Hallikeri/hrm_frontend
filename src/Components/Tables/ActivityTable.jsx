@@ -48,7 +48,7 @@ const ActivityTable = ({ data, css, setSelectedAid, type }) => {
                     data &&
                     Object.entries(
                         data.reduce((acc, obj) => {
-                            const { PositionAppliedFor, candidate_designation, AppliedDesignation, mail_sent } = obj;
+                            const { PositionAppliedFor, candidate_designation, AppliedDesignation, mail_sent, interview_status } = obj;
                             if (mail_sent)
                                 acc[mail_sent] = (acc[mail_sent] || 0) + 1;
                             if (PositionAppliedFor)
@@ -57,24 +57,26 @@ const ActivityTable = ({ data, css, setSelectedAid, type }) => {
                                 acc[AppliedDesignation] = (acc[AppliedDesignation] || 0) + 1;
                             if (candidate_designation)
                                 acc[candidate_designation] = (acc[candidate_designation] || 0) + 1;
+                            if (interview_status)
+                                acc[interview_status] = (acc[interview_status] || 0) + 1
                             return acc;
                         }, {})
                     )?.sort((a, b) => b[1] - a[1]).map(([position, count]) => (
-                        <div className=" sm:w-[50%] flex items-start justify-between md:w-[30%] my-2 cursor-pointer" onClick={() => {
-                            let filteredData = data.filter((obj) => obj.PositionAppliedFor == position || obj.mail_sent == position ||
-                                obj.candidate_designation == position || obj.AppliedDesignation == position)
-                            setTableData(filteredData)
-                            const element = document.getElementById('activitytable');
-                            if (element) {
-                                element.scrollIntoView({ behavior: 'smooth' });
-                            }
-                        }} key={position}>
-                            {position} <span className='fw-semibold text-blue-600 ' > : {count} </span>
+                        <div className=" sm:w-[50%] flex items-start justify-between capitalize md:w-[30%] my-2 cursor-pointer"
+                            onClick={() => {
+                                let filteredData = data.filter((obj) => obj.interview_status == position || obj.PositionAppliedFor == position || obj.mail_sent == position ||
+                                    obj.candidate_designation == position || obj.AppliedDesignation == position)
+                                setTableData(filteredData)
+                                const element = document.getElementById('activitytable');
+                                if (element) {
+                                    element.scrollIntoView({ behavior: 'smooth' });
+                                }
+                            }} key={position}>
+                            {position?.replace(/_/g, ' ')} <span className='fw-semibold text-blue-600 ' > : {count} </span>
                         </div>
                     ))
 
                 }
-
             </main>}
 
             {tableData && <div className='flex gap-3 justify-between items-start my-2 ' >
@@ -190,10 +192,12 @@ const ActivityTable = ({ data, css, setSelectedAid, type }) => {
                                     {tableData[0]?.url && <td> {obj?.url} </td>}
                                     {tableData[0]?.interview_status && <td>{obj?.interview_status && selectValueToNormal(obj?.interview_status)} </td>}
                                     {/* Screening */}
-                                    {(type == 'screening' || obj.FirstName) && <td className='cursor-pointer text-blue-600'
+                                    {(type == 'screening' || obj.FirstName) && 
+                                    <td className='cursor-pointer text-blue-600'
                                         onClick={() => { handleCompletedApplicant(obj?.CandidateId) }}>
                                         <span className='text-blue-600  ' >
-                                            {obj?.Name} {obj?.FirstName} </span> </td>}
+                                            {obj?.Name} {obj?.FirstName || '--'}
+                                         </span> </td>}
                                     {(type == 'screening' || tableData[0].CandidateId) && <td>{obj?.CandidateId} </td>}
                                     {tableData[0].Email && <td>{obj.Email} </td>}
                                     {(type == 'screening') && <td>{obj?.InterviewerName} </td>}

@@ -53,7 +53,7 @@ const OfferApprovalPage = ({ subpage }) => {
 
                     <td>{obj.CTC} </td>
                     <td>{obj.letter_verified_by_name} </td>
-                    <td>{obj.verification_status} </td>
+                    <td className='px-1'>{obj.verification_status} </td>
                     <td> <button onClick={() => navigate(`/candidateOfferLetter/${obj.CandidateId}`)} className='p-2 text-white   bg-blue-600 rounded '> View </button> </td>
                   </tr>
                 ))

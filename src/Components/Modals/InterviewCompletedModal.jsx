@@ -14,6 +14,7 @@ const InterviewCompletedModal = (props) => {
     let [finalStatus, setFinalStatus] = useState(false)
     let { convertToReadableDateTime, convertToNormalTime } = useContext(HrmStore)
     let [data, setdata] = useState()
+    console.log(rountstatus, 'interview status');
 
     useEffect(() => {
         if (show) {
@@ -531,8 +532,11 @@ const InterviewCompletedModal = (props) => {
                 </Modal.Body>
                 <Modal.Footer>
                     {(empStatus == 'Admin' || empStatus == 'HR' ||
-                        userPermission.final_status_access) && rountstatus != 'Assigned' ||
-                        page == 'candidate' &&
+
+                        userPermission.final_status_access)
+                        && (rountstatus != 'Assigned' ||
+                            page == 'candidate')
+                        &&
                         <button
                             onClick={() => { setFinalStatus(show); setshow(false) }}
                             className='bg-blue-600 text-white rounded p-2'>
@@ -555,9 +559,10 @@ const InterviewCompletedModal = (props) => {
                 </Modal.Footer>
             </Modal>}
             {/* <SchedulINterviewModalForm /> */}
-            {data && <FinalStatus show={finalStatus} getfunction={getfunction} rid={rid}
-                name={data.candidate_data.FirstName + " " + (data.candidate_data.LastName && data.candidate_data.LastName)}
-                setshow={setFinalStatus} />}
+            {data &&
+                <FinalStatus show={finalStatus} getfunction={getfunction} rid={rid}
+                    name={data.candidate_data.FirstName + " " + (data.candidate_data.LastName && data.candidate_data.LastName)}
+                    setshow={setFinalStatus} />}
 
         </div>
     )

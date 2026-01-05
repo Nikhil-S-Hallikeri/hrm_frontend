@@ -16,7 +16,16 @@ import LeaveBalanceCard from '../../Components/Leavecomponent/LeaveBalanceCard'
 const   LeaveApplying = ({ subpage }) => {
     let { activeSetting, setTopNav, getProperDate, getCurrentDate, timeValidate } = useContext(HrmStore)
     let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
-    let reportingTo = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).RepotringTo_Name
+    let reportingTo = ''
+    try {
+        const _lp = sessionStorage.getItem('Login_Profile_Information')
+        if (_lp) {
+            const parsed = JSON.parse(_lp)
+            reportingTo = parsed && parsed.RepotringTo_Name ? parsed.RepotringTo_Name : ''
+        }
+    } catch (e) {
+        reportingTo = ''
+    }
     let [allocatedLeave, setAllocatedLeave] = useState()
     let [activeSection, setActiveSection] = useState('')
 

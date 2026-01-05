@@ -114,7 +114,7 @@ const PaySlip = () => {
                         </div>
                         <div>
                             <span className='text-sm my-2 block '>
-                                Merida, <br /> 4th Block of Jayanagar, <br /> Bengaluru , <br /> Karnataka-627006. <br />
+                                Merida Tech Minds, <br /> 4th Block of Jayanagar, <br /> Bengaluru , <br /> Karnataka - 560011. <br />
                             </span>
                             {/* <p className=' mb-1 text-sm '>Payslip For the Month </p>
                             <span className='fw-semibold '> {getMonthYear(monthdata)} </span> */}

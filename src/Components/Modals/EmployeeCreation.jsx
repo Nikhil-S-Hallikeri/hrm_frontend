@@ -105,7 +105,7 @@ const EmployeeCreation = (props) => {
             name: 'Employment Type', css: '', type: '',
             options: [{ value: "intern", name: "Intern" },
             { value: "permanent", name: "Permanent" },
-            { value: "Trainne", name: "Trainne" },
+            { value: "Trainee", name: "Student Intern" },
             { value: "Consultant", name: "Consultant" },
 
             ], show: true, inputcss: '',
@@ -143,8 +143,26 @@ const EmployeeCreation = (props) => {
         present_state: "permanent_state",
         permanent_state: "present_state",
     };
+    let generateAge = (date) => {
+        let today = new Date()
+        let dob = new Date(date)
+        let age = today.getFullYear() - dob.getFullYear();
+        let monthDiff = today.getMonth() - dob.getMonth();
+        // Adjust if birthday hasn't occurred yet this year
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+            age--;
+        }
+        return age;
+    }
     let handleChange = (e) => {
         let { name, value } = e.target
+        if (name == 'date_of_birth') {
+            let age = generateAge(value)
+            setobj((prev) => ({
+                ...prev,
+                age: age
+            }))
+        }
         if (addressChecked && fieldMappings[name]) {
             setobj((prev) => ({
                 ...prev,

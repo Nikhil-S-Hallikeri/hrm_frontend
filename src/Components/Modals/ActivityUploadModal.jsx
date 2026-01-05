@@ -11,7 +11,7 @@ import CloseIcon from '../Icons/CloseIcon'
 const ActivityUploadModal = ({ show, setAid, getData, setshow, empid, aid }) => {
     let [activity, setActivity] = useState()
     let [loading, setLoading] = useState(false)
-    let { getDesignations, designation, } = useContext(HrmStore)
+    let { getDesignations, designation, setTrigger } = useContext(HrmStore)
     let interviewStatusOptions = [
         { value: 'call_notpicked', label: 'Call Not Picked' },
         { value: 'dis_connect', label: 'Disconnect' },
@@ -23,6 +23,7 @@ const ActivityUploadModal = ({ show, setAid, getData, setshow, empid, aid }) => 
         { value: 'to_client', label: 'Consider to Client' },
         { value: 'offer', label: 'Offer' },
     ]
+
     let clientStatusOptions = [
         { value: 'converted_to_client', label: 'Converted to client' },
         { value: 'closed', label: 'Closed' },
@@ -85,7 +86,10 @@ const ActivityUploadModal = ({ show, setAid, getData, setshow, empid, aid }) => 
     let [dynamicCredentials, setDynamicCredentials] = useState({})
     let handleChange = (e) => {
         let { name, value } = e.target
-        if (name == 'Activity_instance') {
+        if (name == 'candidate_phone' && value?.length > 10) {
+            return
+        }
+        else if (name == 'Activity_instance') {
             setFormData((prev) => ({
                 ...prev,
                 activity_list_id: activity.find((obj) => obj.activity_name == value)?.id,
@@ -105,7 +109,10 @@ const ActivityUploadModal = ({ show, setAid, getData, setshow, empid, aid }) => 
                 count += 1
             }
         })
-        return count == 0 ? true : false
+        if (formData.Activity_instance == 'interview_calls' && formData.interview_status == '') {
+            count += 1
+        } else
+            return count == 0 ? true : false
     }
     useEffect(() => {
         setDynamicCredentials({
@@ -144,7 +151,7 @@ const ActivityUploadModal = ({ show, setAid, getData, setshow, empid, aid }) => 
             candidate_current_status: { required: false, show: formData.Activity_instance === 'interview_calls', label: 'Fresher/Experience', css: null, inputcss: null, type: null, options: [{ value: 'fresher', label: 'Fresher' }, { value: 'experience', label: 'Experience' }] },
             candidate_experience: { required: false, show: formData.Activity_instance === 'interview_calls' && formData.candidate_current_status == 'experience', label: 'Experience', css: null, inputcss: null, type: null },
             message_to_candidates: { required: false, show: formData.Activity_instance === 'interview_calls', label: 'Message Sent to Candidate', css: null, inputcss: null, type: null },
-            interview_status: { required: false, show: formData.Activity_instance === 'interview_calls', label: 'Candidate Status', css: 'order-2 col-md-6 col-lg-4 ', inputcss: null, type: null, options: interviewStatusOptions },
+            interview_status: { required: true, show: formData.Activity_instance === 'interview_calls', label: 'Candidate Status', css: 'order-2 col-md-6 col-lg-4 ', inputcss: null, type: null, options: interviewStatusOptions },
             interview_scheduled_date: { required: false, show: formData.Activity_instance === 'interview_calls' && formData.interview_status == 'interview_scheduled', label: 'Interview Scheduled Date', css: null, inputcss: null, type: 'date' },
 
             interview_call_remarks: { required: false, show: formData.Activity_instance === 'interview_calls', label: 'Interview Call Remark', css: 'col-12 order-2', inputcss: null, type: 'textarea' },
@@ -260,6 +267,7 @@ const ActivityUploadModal = ({ show, setAid, getData, setshow, empid, aid }) => 
         else
             toast.warning('Fill the required fields')
         setLoading(false)
+        setTrigger((prev) => !prev)
     }
     let getParticulatActivity = () => {
         // Backend developer using the patch method for the get uhhh
@@ -345,7 +353,6 @@ const ActivityUploadModal = ({ show, setAid, getData, setshow, empid, aid }) => 
                                         }} className='outline-none w-full bg-transparent ' />
                                         {/* COntents */}
                                         <section className='flex gap-2 items-center flex-wrap' >
-
                                             {
                                                 formData.service_name &&
                                                 formData.service_name.map((val) => (

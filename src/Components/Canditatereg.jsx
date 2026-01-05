@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import App, { port } from '../App'
 import '../assets/css/fonts.css'
-import SweetAlert from 'react-bootstrap-sweetalert';
 import '../assets/css/Sweet_.css'
 import { toast } from 'react-toastify';
 import { HrmStore } from '../Context/HrmContext';
@@ -12,7 +11,7 @@ import { Modal } from 'react-bootstrap';
 
 
 const Canditatereg = () => {
-    let { getDesignations, designation, setDesignation } = useContext(HrmStore)
+    let { getDesignations, designation, } = useContext(HrmStore)
     let location = useLocation();
     let queryParams = new URLSearchParams(location.search)
     let source = queryParams.get('source')

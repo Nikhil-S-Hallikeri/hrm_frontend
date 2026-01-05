@@ -3,6 +3,7 @@ export const RouterStore = createContext()
 const RouterContext = (props) => {
     let [loginstatus, setLoginStatus] = useState(false)
     let manager = JSON.parse(sessionStorage.getItem('user'))?.is_reporting_manager
+    let permissions = JSON.parse(sessionStorage.getItem('user'))?.user_permissions
     const [payrollRoutersLinks, setpayrollRoutersLinks] = useState()
     const [settingRouterLinks, setSettingRouterLink] = useState()
     const [employeeRouterLink, setemployeeRouterLink] = useState()
@@ -200,7 +201,7 @@ const RouterContext = (props) => {
                 path: `/leave/attendence-list`,
                 active: 'list',
                 keywrod: ['list', 'leave', 'attendance', 'report', 'employee'],
-                show: status == 'HR' || status == 'Admin' || manager,
+                show: status == 'HR' || status == 'Admin' || manager || permissions?.attendance_upload,
             },
             {
                 label: 'Leave History',

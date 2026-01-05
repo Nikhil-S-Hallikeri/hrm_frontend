@@ -10,8 +10,8 @@ const GetGeoLocation = () => {
     const [error, setError] = useState(null);
     const [distance, setDistance] = useState(null);
     const [isInsideOffice, setIsInsideOffice] = useState(false);
-
-    const officeLocation = { latitude: 12.928787, longitude: 77.5853766 }; // Replace with your office location
+    // 12.937286537079776, 77.58230830829295
+    const officeLocation = { latitude: 12.937286537079776, longitude: 77.58230830829295 }; // Replace with your office location
     const radius = 50; // 50 meters radius
 
     const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -36,7 +36,7 @@ const GetGeoLocation = () => {
         console.log(currentDate, 'Tracking time');
 
         axios.get(`${port}/root/lms/UpdateEmployeeAttendanceManually/?emp_id=${JSON.parse(sessionStorage.getItem('dasid'))}&date=${currentDate}`).then((response) => {
-            console.log(response.data, 'Tracking time');
+            console.log(response.data?.current_punch, 'Tracking time');
 
             setMove(response.data.current_punch)
         }).catch((error) => {
@@ -53,7 +53,6 @@ const GetGeoLocation = () => {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     console.log('Accuracy:', position.coords.accuracy, 'meters');
-
                     if (position.coords.accuracy > 100) {
                         setError("Location accuracy is too low. Please try again.");
                         return;
@@ -65,14 +64,12 @@ const GetGeoLocation = () => {
                         latitude: userLatitude,
                         longitude: userLongitude,
                     });
-
                     const calculatedDistance = calculateDistance(
                         userLatitude,
                         userLongitude,
                         officeLocation.latitude,
                         officeLocation.longitude
                     );
-
                     setDistance(calculatedDistance);
                     setIsInsideOffice(calculatedDistance <= radius);
                     setError(null);
@@ -91,16 +88,27 @@ const GetGeoLocation = () => {
     useEffect(() => {
         getLocation();
     }, []);
-    let trackTiming = () => {
-        if (isInsideOffice) {
-            axios.post(`${port}/root/lms/AttendanceRecordCreate?emp_id=${empId}`).then((response) => {
-                toast.success('Timing has been recorded')
-                getTracking()
-            }).catch((error) => {
-                console.log(error);
-            })
+    let markTime = async () => {
+        axios.post(`${port}/root/lms/AttendanceRecordCreate?emp_id=${empId}`).then((response) => {
+            toast.success('Timing has been recorded')
+            getTracking()
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+    let trackTiming = (reject) => {
+        if (isInsideOffice || reject) {
+            let time = new Date()
+            let hour = time.getHours()
+            // if (reject && move && hour >= 13 && hour < 15) {
+            //     setTimeout(() => {
+            //         markTime()
+            //     }, 1000 * 60 * 46);
+            // }
+            markTime()
         } else {
-            toast.warning(`Your away from office location like ${distance && distance.toFixed(2)} meters, try it once reached the office`)
+            toast.warning(`Your away from office location like ${distance && distance.toFixed(2)} 
+            meters, try it once reached the office`)
         }
     }
     return (
@@ -111,16 +119,23 @@ const GetGeoLocation = () => {
                 In/Out
             </button> */}
             <span className={` text-xs text-center ${isInsideOffice ? 'text-green-700' : 'text-red-600'} poppins fw-semibold`} >
-                {isInsideOffice ? "Enabled" : 'Disabled'} </span>
+                {(isInsideOffice) ? "Enabled" : 'Disabled'} </span>
             <main className=" flex items-center gap-2 " >
                 <span className={` ${!move ? 'fw-semibold ' : ''}  text-red-600 `} > Out </span>
-                <button onClick={() => trackTiming()} disabled={!isInsideOffice}
-                    className={`w-[3rem] flex items-center h-[1.4rem] bg-slate-500 rounded-xl shadow-sm `} >
-                    <div className={` h-[1.2rem] w-[1.2rem] rounded-full shadow-sm duration-500
+                {empId == 'MTM24EMPE9' ?
+                    <button onClick={() => trackTiming('reject')}
+                        className={`w-[3rem] flex items-center h-[1.4rem] bg-slate-500 rounded-xl shadow-sm `} >
+                        <div className={` h-[1.2rem] w-[1.2rem] rounded-full shadow-sm duration-500
+                         bg-slate-100 ${move ? 'translate-x-[1.6rem] ' : "translate-x-1 "} `} >
+                        </div>
+                    </button> :
+                    <button onClick={() => trackTiming()} disabled={!isInsideOffice}
+                        className={`w-[3rem] flex items-center h-[1.4rem] bg-slate-500 rounded-xl shadow-sm `} >
+                        <div className={` h-[1.2rem] w-[1.2rem] rounded-full shadow-sm duration-500
                          bg-slate-50 ${move ? 'translate-x-[1.6rem] ' : "translate-x-1 "} `} >
 
-                    </div>
-                </button>
+                        </div>
+                    </button>}
                 <span className={` ${move ? 'fw-semibold  ' : ''} text-teal-700 `} > IN </span>
             </main>
             {/* {!error && location.latitude && location.longitude && (

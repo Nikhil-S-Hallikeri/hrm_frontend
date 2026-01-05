@@ -27,8 +27,8 @@ const OfferTemplate = () => {
     // let pdfRef = useRef()
     const { toPDF, targetRef } = usePDF({ Offer_Letter: 'page.pdf' });
     // const targetRef = useRef()
-    console.log(targetRef,'refer');
-    
+    console.log(targetRef, 'refer');
+
     let [show, setshow] = useState(false)
     let user = JSON.parse(sessionStorage.getItem('user'))
     let [formobj, setformobj] = useState({
@@ -280,7 +280,7 @@ const OfferTemplate = () => {
                         <div className='d-flex container mx-auto justify-content-end p-3' id='buttons'>
                             {/* <button className='btn btn-success btn-sm me-3' onClick={() => toPDF()}>Download PDF</button> */}
                             {
-                            (formobj.verification_status == 'Pending' || formobj.verification_status == 'Denied')
+                                (formobj.verification_status == 'Pending' || formobj.verification_status == 'Denied')
                                 && !formobj.letter_verified_by && user && user.Disgnation != 'Admin' &&
                                 <section>
                                     <button onClick={() => navigate(`/offerletter/${id}`)} className=' p-2 px-4 mx-2 rounded bg-slate-600 text-white border-2
@@ -292,7 +292,16 @@ const OfferTemplate = () => {
                                         Send Approval Request </button>
                                 </section>
                             }
-                            {user && (user.EmployeeId == formobj.letter_verified_by && (formobj.verification_status == 'Pending' || formobj.verification_status == 'Denied')) && <div>
+                            {/* {user && (user.EmployeeId == formobj.letter_verified_by && (formobj.verification_status == 'Pending' || formobj.verification_status == 'Denied')) && <div>
+                                 <button onClick={() => setCommentObj((prev) => ({ ...prev, status: 'Approved', show: true }))} className='savebtn p-2 border-2 border-green-100 rounded text-white '>
+                                     Approve </button>
+                                 <button onClick={() => setCommentObj((prev) => ({ ...prev, status: 'Denied', show: true }))} className='bg-red-600 border-2 border-red-100 p-2 rounded text-white mx-2 ' >
+                                     Decline </button>
+                             </div>
+                             } */}
+
+                            {/* Allow Admins to see buttons even if not assigned (e.g. after edit reset) */}
+                            {user && ((user.EmployeeId == formobj.letter_verified_by || user.Disgnation == 'Admin') && (formobj.verification_status == 'Pending' || formobj.verification_status == 'Denied')) && <div>
                                 <button onClick={() => setCommentObj((prev) => ({ ...prev, status: 'Approved', show: true }))} className='savebtn p-2 border-2 border-green-100 rounded text-white '>
                                     Approve </button>
                                 <button onClick={() => setCommentObj((prev) => ({ ...prev, status: 'Denied', show: true }))} className='bg-red-600 border-2 border-red-100 p-2 rounded text-white mx-2 ' >
@@ -322,7 +331,7 @@ const OfferTemplate = () => {
                                 </div>
                             }
                             {
-                                formobj && 
+                                formobj &&
                                 formobj.Accept_status == "Accept" &&
                                 <div>
                                     <DownloadButton toPDF={toPDF} name={'OfferLetter'} divref={targetRef} />

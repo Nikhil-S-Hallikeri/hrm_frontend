@@ -13,7 +13,7 @@ const ApprovalPage = ({ page, subpage }) => {
         setLeaveRequestReporting, getLeaveRequestsReporting } = useContext(HrmStore)
     let { leaveData, setLeaveData, getLeaveData, setTopNav } = useContext(HrmStore)
     let [leaveResendModal, setLeaveResendModal] = useState()
-    let id = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).id
+    let id = JSON.parse(sessionStorage.getItem('Login_Profile_Information'))?.id
     let [reason, setreason] = useState()
     let userStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
 
@@ -25,7 +25,16 @@ const ApprovalPage = ({ page, subpage }) => {
     })
 
     let [filteredRequest, setFilteredRequest] = useState()
-    let loginId = JSON.parse(sessionStorage.getItem('Login_Profile_Information'))
+    // Safely parse profile info and compute approver id
+    let loginId = {}
+    try {
+        const _l = sessionStorage.getItem('Login_Profile_Information')
+        if (_l) loginId = JSON.parse(_l)
+    } catch (e) {
+        loginId = {}
+    }
+    // prefer explicit profile id, fall back to parsed loginId.id, then to session user EmployeeId
+    let approverId = id || loginId.id || JSON.parse(sessionStorage.getItem('user'))?.EmployeeId || null
     let [loading, setloading] = useState('')
     let [filterOption, setFilterOption] = useState({
         name: "",
@@ -70,7 +79,7 @@ const ApprovalPage = ({ page, subpage }) => {
         if (obj.is_hr_permission_required) {
             let formobj = {
                 id: obj.id,
-                approved_by: id,
+                approved_by: approverId,
                 approved_status: 'pending'
             }
             if (userStatus == 'HR') {
@@ -87,6 +96,17 @@ const ApprovalPage = ({ page, subpage }) => {
             console.log(userStatus);
             console.log(formobj);
             // alert('hellow')
+            if (!approverId) {
+                toast.error('Approver identity missing. Please login again.')
+                setloading('')
+                setreasonModal({
+                    obj: null,
+                    status: '',
+                    index: '',
+                })
+                return
+            }
+
             axios.patch(`${port}/root/lms/Approve_Employee_Leave_Request/`, formobj).then((response) => {
                 console.log(response.data);
                 setloading('')
@@ -109,10 +129,21 @@ const ApprovalPage = ({ page, subpage }) => {
             })
         }
         else
+            if (!approverId) {
+                toast.error('Approver identity missing. Please login again.')
+                setloading('')
+                setreasonModal({
+                    obj: null,
+                    status: '',
+                    index: '',
+                })
+                return
+            }
+
             axios.patch(`${port}/root/lms/Approve_Employee_Leave_Request/`, {
                 id: obj.id,
                 approved_status: status,
-                approved_by: loginId.id,
+                approved_by: approverId,
                 rm_reason: reason
             }).then((response) => {
                 console.log(response.log);

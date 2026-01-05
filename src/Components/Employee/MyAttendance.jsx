@@ -4,10 +4,11 @@ import { port } from '../../App';
 import { HrmStore } from '../../Context/HrmContext';
 import { Spinner } from 'react-bootstrap';
 import DataNotFound from '../MiniComponent/DataNotFound';
+import { useNavigate } from 'react-router-dom';
 
 const MyAttendance = () => {
     const currentDate = new Date();
-    let { formatISODate, formatTime ,convertTo12Hour} = useContext(HrmStore)
+    let { formatISODate, formatTime, convertTo12Hour } = useContext(HrmStore)
     const formattedDate = currentDate.getFullYear() + '-' +
         ('0' + (currentDate.getMonth() + 1)).slice(-2) + '-' +
         ('0' + currentDate.getDate()).slice(-2);
@@ -29,7 +30,7 @@ const MyAttendance = () => {
         if (date)
             getAttendence()
     }, [date])
-
+    let navigate = useNavigate()
     return (
         <div className='poppins ' >
 
@@ -37,16 +38,22 @@ const MyAttendance = () => {
                 <section className='flex justify-between items-center ' >
 
                     <h5 className='text-lg ' >Attendance Logs </h5>
-                    <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className='outline-none p-2 rounded bg-slate-50 ' />
+                    <div className='flex items-center gap-2 ' >
+                        <button onClick={()=>navigate('/leave/attendence-list')} className=' bg-blue-600 text-white text-xs p-2 px-3 rounded ' >
+                            Check page
+                        </button>
+                        <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+                            className='outline-none p-2 rounded bg-slate-50 ' />
+                    </div>
                 </section>
                 {
                     loading ? <div className='min-h-[10vh] flex  ' >
                         <Spinner className='m-auto ' />
                     </div> : data ? <>
                         {
-                            (JSON.parse(sessionStorage.getItem('status')) == 'admin' ||
+                            (JSON.parse(sessionStorage.getItem('user'))?.Disgnation == 'Admin' ||
                                 JSON.parse(sessionStorage.getItem('user')).Disgnation == 'HR' ||
-                                JSON.parse(sessionStorage.getItem('status')).toLowerCase() == 'manager')
+                                JSON.parse(sessionStorage.getItem('user'))?.Disgnation.toLowerCase() == 'manager')
                             &&
                             <section className='outline-none bgclr1 my-3 ' >
                                 <div className='table-responsive max-h-[30vh] tablebg ' >
@@ -78,8 +85,8 @@ const MyAttendance = () => {
 
                             </section>
                         }
-                        {JSON.parse(sessionStorage.getItem('status')) != 'admin' &&
-                            JSON.parse(sessionStorage.getItem('status')).toLowerCase() != 'hr' &&
+                        {JSON.parse(sessionStorage.getItem('user'))?.Disgnation != 'admin' &&
+                            JSON.parse(sessionStorage.getItem('user'))?.Disgnation.toLowerCase() != 'hr' &&
                             <section className='flex flex-wrap gap-3 justify-between ' >
                                 {data.Day && <div className='my-1 flex gap-2 ' >
                                     <p className='w-32 mb-0 text-blue-600 fw-semibold ' >Day : </p> <span> {data.Day} </span>

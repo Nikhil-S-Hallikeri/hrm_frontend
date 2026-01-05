@@ -7,7 +7,7 @@ import LoadingData from '../MiniComponent/LoadingData';
 import DataNotFound from '../MiniComponent/DataNotFound';
 
 const ActivityDataTable = ({ empid, dates, month, year, getTrigger, }) => {
-    let { changeDateYear, selectValueToNormal } = useContext(HrmStore)
+    let { changeDateYear, selectValueToNormal, trigger } = useContext(HrmStore)
 
     let [loading, setloading] = useState(false)
     let [activityData, setActivityData] = useState()
@@ -35,13 +35,13 @@ const ActivityDataTable = ({ empid, dates, month, year, getTrigger, }) => {
     useEffect(() => {
         getActivityData()
         getInterviewData()
-    }, [empid, month, year, getTrigger])
+    }, [empid, month, year, getTrigger, trigger])
     let navigate = useNavigate()
     return (
         <div>
 
             <main className='table-responsive tablebg h-[40vh] my-3' >
-                {loading ? <LoadingData /> :
+                {loading ? <LoadingData css={' h-[40vh] '} /> :
                     activityData && activityData.length > 0 ?
                         <table className='w-full ' >
                             <thead>
@@ -52,7 +52,7 @@ const ActivityDataTable = ({ empid, dates, month, year, getTrigger, }) => {
                                     ))}
                                 </tr>
                                 <tr className='sticky left-0 '>
-                                    <th scope="col" className='ms-3 break-words text-break sticky-left ' style={{ width: '150px' }}>Activity Name</th>
+                                    <th scope="col" className='ms-3 break-words text-break sticky-left ' style={{ width: '150px' }}>Activity Nam</th>
                                     <th scope="col" className='text-center break-words text-break sticky-left1 ' style={{ width: '150px' }}>Target  </th>
                                     <th scope="col" className='text-center break-words text-break sticky-left2' style={{ width: '150px' }}>Achieved <span className='text-xs'>(Overall) </span></th>
                                 </tr>
@@ -81,7 +81,7 @@ const ActivityDataTable = ({ empid, dates, month, year, getTrigger, }) => {
                                                         navigate(`/activity/particularActivity/${empid ? empid : JSON.parse(sessionStorage.getItem('dasid'))}?aid=${obj.Activity}&date=${date}`)
 
                                                     }} className={` ${value && value.achieved > 0 && "cursor-pointer hover:bg-slate-50"}  `} >
-                                                        <span className={`${value&& value.achieved > 0 ? 'text-blue-500 ' : ''}`} >
+                                                        <span className={`${value && value.achieved > 0 ? 'text-blue-500 ' : ''}`} >
 
                                                             {value ? value.achieved : '--'}
                                                         </span>

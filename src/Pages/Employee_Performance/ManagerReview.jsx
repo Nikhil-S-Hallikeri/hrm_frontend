@@ -55,7 +55,8 @@ const ManagerReview = () => {
     let getEmployee = async () => {
         try {
             if (id) {
-                let manager = await axios.get(`${port}/root/lms/GetReportingManagerAppraisal?rm_app_id=${id}`)
+                // let manager = await axios.get(`${port}/root/lms/GetReportingManagerAppraisal?rm_app_id=${id}`) // Old Code without slash
+                let manager = await axios.get(`${port}/root/lms/GetReportingManagerAppraisal/?rm_app_id=${id}`)
                 setUser(manager.data.AppraisalInvitation)
                 setmanagerReview(manager.data.RMSelfApprailsal)
                 setFormFilled(manager.data.AppraisalInvitation.is_rm_filled)
@@ -67,7 +68,8 @@ const ManagerReview = () => {
         }
     }
     let sendData = () => {
-        axios.patch(`${port}/root/lms/GetReportingManagerAppraisal`, managerReview).then((response) => {
+        // axios.patch(`${port}/root/lms/GetReportingManagerAppraisal`, managerReview).then((response) => { // Old Code
+        axios.patch(`${port}/root/lms/GetReportingManagerAppraisal/`, managerReview).then((response) => {
             console.log(response.data);
             toast.success('Form Submitted Successfully')
             getEmployee()

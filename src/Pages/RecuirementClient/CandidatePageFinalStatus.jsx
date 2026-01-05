@@ -4,27 +4,64 @@ import axios from 'axios'
 import { port } from '../../App'
 import InputFieldform from '../../Components/SettingComponent/InputFieldform'
 import CandidateTable from '../../Components/Tables/CandidateTable'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 
 const CandidatePageFinalStatus = () => {
     let { rid } = useParams()
+    const [searchParams, setSearchParams] = useSearchParams()
     let [allCandidate, setAllCandidate] = useState()
     let [finalStatus, setFinalStatus] = useState('consider_to_client')
     let [loading, setLoading] = useState(false)
-    let getAllCandidate = async () => {
+    const [pagination, setPagination] = useState({
+        count: 0,
+        next: null,
+        previous: null,
+        currentPage: 1
+    });
+
+    const pageSize = 10;
+
+    let getAllCandidate = async (page = 1) => {
         setLoading(true)
-        // alert('ullen ayya')
-        axios.get(`${port}/root/FinalCandidatesList/${finalStatus}/?req_id=${rid}`).then((response) => {
+        axios.get(`${port}/root/FinalCandidatesList/${finalStatus}/?req_id=${rid}&page=${page}`).then((response) => {
             console.log(response.data, 'finaldata');
-            setAllCandidate(response.data)
+            setAllCandidate(response.data.results || response.data)
+            if (response.data.results) {
+                setPagination({
+                    count: response.data.count,
+                    next: response.data.next,
+                    previous: response.data.previous,
+                    currentPage: page
+                });
+            }
             setLoading(false)
         }).catch((error) => {
             setLoading(false)
             console.log(error);
         })
     }
+
+    /*
+    let getAllCandidate = async () => {
+        setLoading(true)
+        // alert('ullen ayya')
+        axios.get(`${port}/root/FinalCandidatesList/${finalStatus}/?req_id=${rid}`).then((response) => {
+            console.log(response.data, 'finaldata');
+            setAllCandidate(response.data.results || response.data)
+            setLoading(false)
+        }).catch((error) => {
+            setLoading(false)
+            console.log(error);
+        })
+    }
+    */
     useEffect(() => {
-        getAllCandidate()
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev)
+            next.set('page', 1)
+            return next
+        })
+        getAllCandidate(1)
     }, [finalStatus])
     return (
         <div>
@@ -39,7 +76,14 @@ const CandidatePageFinalStatus = () => {
                 </select>
             </div>
             {/* Table */}
-            {<CandidateTable getData={getAllCandidate} data={allCandidate} loading={loading} rid={rid} />}
+            {<CandidateTable
+                getData={getAllCandidate}
+                data={allCandidate}
+                loading={loading}
+                rid={rid}
+                pagination={pagination}
+                onPageChange={(page) => getAllCandidate(page)}
+            />}
 
         </div>
     )

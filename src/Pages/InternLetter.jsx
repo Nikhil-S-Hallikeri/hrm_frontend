@@ -23,7 +23,8 @@ const InternLetter = ({ data, pdfRef }) => {
                     <HeaderLetterPad />
 
                     <div className='mb-auto p-5 py-3 ' >
-                        <p>Date : {getCurrentDate()}</p>
+                        {/* <p>Date : {getCurrentDate()}</p> */}
+                        <p>Date : {new Date().toLocaleDateString("en-GB")}</p>
 
                         <p>
                             <strong>To,</strong> <br />

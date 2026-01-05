@@ -75,7 +75,7 @@ const HROverviewReport = () => {
                     </article>
                 </section>
 
-                {/* Upcoming holiday */}
+                {/* Our own portals */}
                 <section className='my-2 col-lg-3 ' >
                     <article className='p-3 rounded bg-white h-full ' >
                         <h5 className=' fw-semibold flex relative w-fit ' >Portal Shortcuts
@@ -87,7 +87,8 @@ const HROverviewReport = () => {
                         <div className=' poppins flex flex-col ' >
                             <a href="https://crm.skilllearningacademy.com/" target='_blank'
                                 className=' text-slate-700 my-1 text-decoration-none ' > CRM </a>
-                            <a href={`${das}/hrms?user=${JSON.parse(sessionStorage.getItem('dasid'))}&password=${JSON.parse(sessionStorage.getItem('user')).Password}`} target='_blank'
+                            <a href={`${das}/hrms?user=${JSON.parse(sessionStorage.getItem('dasid'))}&password=${JSON.parse(sessionStorage.getItem('user')).Password}`}
+                                target='_blank'
                                 className=' text-slate-700 my-1 text-decoration-none ' > DAS </a>
                         </div>
                     </article>

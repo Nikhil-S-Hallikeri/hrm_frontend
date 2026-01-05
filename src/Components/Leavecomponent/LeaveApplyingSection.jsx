@@ -9,7 +9,16 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
     let empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let [loading, setloading] = useState(false)
     let { activeSetting, setActiveSetting, getProperDate, getPendingLeave, timeValidate, timeLastMonthValidate } = useContext(HrmStore)
-    let reportingTo = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).RepotringTo_Name
+    let reportingTo = ''
+    try {
+        const _lp = sessionStorage.getItem('Login_Profile_Information')
+        if (_lp) {
+            const parsed = JSON.parse(_lp)
+            reportingTo = parsed && parsed.RepotringTo_Name ? parsed.RepotringTo_Name : ''
+        }
+    } catch (e) {
+        reportingTo = ''
+    }
     let [obj, setobj] = useState({
         from_date: null,
         employee: empid,
@@ -36,8 +45,19 @@ const LeaveApplyingSection = ({ allocatedLeave, setActiveSection }) => {
                 toast.warning(`The applicable days for this leave criterion is ${eligibledays}`)
             value = obj.days > eligibledays ? '' : value
         }
-        if (name == 'from_date' && value < timeLastMonthValidate()) {
-            value = timeLastMonthValidate()
+        if (name === 'from_date') {
+            const selectedDate = new Date(value);
+            const today = new Date();
+
+            // Clear the time part for accurate date-only comparison
+            selectedDate.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+
+            if (selectedDate < today) {
+                toast.warning("Please select a current or future date.");
+                value = today
+                // return; // or set an error / prevent form submit
+            }
         }
         if ((name == 'from_date' && obj.days != null)) {
             addFinalDaate(obj.days - 1, value)

@@ -1,12 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
-import '../assets/css/main.css'
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import { Bar, Doughnut, Line } from 'react-chartjs-2'
-import { port } from '../App'
 import { Offcanvas } from 'react-bootstrap';
+import { port } from '../App';
+import '../assets/css/main.css'
 import DropDownIcon from './Icons/DropDownIcon';
-import SearchIcon from '../SVG/SearchIcon';
 import { HrmStore } from '../Context/HrmContext';
 import TopNavScrollBar from './MiniComponent/TopNavScrollBar';
 import TopSearchBar from './MiniComponent/TopSearchBar';
@@ -14,21 +12,107 @@ import GetGeoLocation from './MiniComponent/GetGeoLocation';
 
 
 const Topnav = ({ name, navbar }) => {
-    const user = JSON.parse(sessionStorage.getItem('user'))
-    let [showNotification, setShowNotification] = useState()
-    let logindata = JSON.parse(sessionStorage.getItem('user'))
-    let Empid = JSON.parse(sessionStorage.getItem('user'))?.EmployeeId
-    let { topnav, setTopNav } = useContext(HrmStore)
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    const Empid = user?.EmployeeId;
+    const navigate = useNavigate();
+
+    const [notifications, setNotifications] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [showNotification, setShowNotification] = useState(false);
+
+    const [isLoading, setIsLoading] = useState(false);
+
     let [profileDropdown, setProfileDropdown] = useState()
 
-    const toggleDropdown = () => {
-        setIsDropdownOpen(!isDropdownOpen);
+
+    const fetchNotifications = () => {
+        if (!Empid) return;
+        setIsLoading(true);
+        axios.get(`${port}/root/notifications?login_emp_id=${Empid}`)
+            .then((res) => {
+                setNotifications(res.data.notifications);
+                setUnreadCount(res.data.unread_count);
+            })
+            .catch((err) => console.error("Error fetching notifications:", err))
+            .finally(() => {
+                setIsLoading(false);
+            });
     };
 
+    const handleMarkAsRead = () => {
+        setIsLoading(true);
+        axios.post(`${port}/root/notifications/mark-as-read?login_emp_id=${Empid}`)
+            .then(() => fetchNotifications())
+            .catch((err) => {
+                console.error("Error marking as read:", err);
+                setIsLoading(false);
+            });
+    };
 
-    // Logout
-    const navigate = useNavigate()
+    const handleNotificationPanelClick = () => {
+        setShowNotification(true);
+        if (unreadCount > 0) {
+            handleMarkAsRead();
+        }
+    };
+
+    const removeNotification = (e, notificationId) => {
+        e.stopPropagation();
+        setIsLoading(true);
+        axios.delete(`${port}/root/notifications/delete/${notificationId}?login_emp_id=${Empid}`)
+            .then(() => fetchNotifications())
+            .catch((err) => {
+                console.error("Error deleting notification:", err);
+                setIsLoading(false);
+            });
+    };
+
+    const handleClearAll = () => {
+        setIsLoading(true);
+        axios.post(`${port}/root/notifications/clear-all?login_emp_id=${Empid}`)
+            .then(() => {
+                fetchNotifications();
+            })
+            .catch((err) => {
+                console.error("Error clearing all notifications:", err);
+                setIsLoading(false);
+            });
+    };
+
+    useEffect(() => {
+        if (Empid) {
+            fetchNotifications();
+            const intervalId = setInterval(fetchNotifications, 30000);
+            return () => clearInterval(intervalId);
+        }
+    }, [Empid]);
+
+
+    const handleNotificationItemClick = (notification) => {
+        setShowNotification(false);
+        const type = notification.notification_type;
+        const id = notification.reference_id;
+        if (!id) return;
+
+        switch (type) {
+            case 'task_assign': navigate('/activity'); break;
+            case 'Leave_Apply': navigate(`/leave/approvals`); break;
+            case 'Leave_Status': navigate('/leave'); break;
+            case 'scr_assign': case 'int_assign': navigate(`/screening/candidate/${id}`); break;
+            default: console.log("No navigation defined.");
+        }
+    }
+
+    let [profile_info, setprofile_info] = useState({})
+    useEffect(() => {
+        if (Empid) {
+            axios.get(`${port}/root/loginuser/${Empid}/`).then((res) => {
+                setprofile_info(res.data)
+            }).catch((err) => {
+                console.log("login_err", err.data);
+            })
+        }
+    }, [Empid])
 
     const logout = () => {
         sessionStorage.removeItem('user')
@@ -44,141 +128,11 @@ const Topnav = ({ name, navbar }) => {
             })
     }
 
-    const [noti, setnoti] = useState([])
-
-    useEffect(() => {
-        axios.get(`${port}/root/Candidatenotifications/${Empid}/`)
-            .then((res) => {
-                console.log("Noti", res.data);
-                setnoti(res.data.reverse())
-            }).catch((err) => {
-                console.log(err.data);
-            })
-    }, [])
-
-
-
-
-    const removenoti = (x) => {
-
-        axios.get(`${port}/root/AppliedNotifications/Delete/${x}/`)
-            .then((res) => {
-                console.log(res.data)
-                alert("removed")
-                window.location.reload()
-            }).catch((err) => {
-                console.log(err.data);
-            })
-    }
-
-
-    const data1 = {
-
-        datasets: [
-            {
-                data: [25, 35, 40, 20],
-                fill: false,
-                backgroundColor: ['rgb(51,153,255)', 'rgb(139,207,255)', 'rgb(245,85,141)', 'rgb(241,152,40)'],
-                tension: 0.1,
-                barThickness: 2,
-
-            }
-
-        ],
-    }
-
-    const [selectedFile, setSelectedFile] = useState(null);
-
-
-
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-
-        const formData = new FormData();
-        formData.append('profile_img', file);
-        console.log("file", file);
-        axios.patch(`${port}/root/UserProfileUpload/${Empid}/`, formData).then((res) => {
-            console.log("profile_img_res", res);
-            window.location.reload()
-
-
-        }).catch((err) => {
-            console.log("profile_img_err", err);
-
-        })
-    };
-
-    // Profile Details 
-
-    let [profile_info, setprofile_info] = useState({})
-
-    useEffect(() => {
-
-        axios.get(`${port}/root/loginuser/${Empid}/`).then((res) => {
-            console.log("login_res", res.data);
-            setprofile_info(res.data)
-        }).catch((err) => {
-            console.log("login_err", err.data);
-        })
-    }, [])
-
-
-    // Change Password
-
-    let [oldPassword, setoldPassword] = useState(" ")
-    let [newPassword, setnewPassword] = useState(" ")
-
-    const navigate1 = useNavigate()
-
-
-    const changepassword = (e) => {
-
-        e.preventDefault();
-
-        const formData = new FormData();
-        formData.append('OldPassword', oldPassword);
-        formData.append('NewPassword', newPassword);
-        formData.append('EmployeeId', Empid);
-
-
-        axios.post(`${port}/root/changepassword`, formData).then((res) => {
-            console.log("changepassword_res", res.data);
-            alert(res.data)
-            window.location.reload();
-
-
-
-
-        }).catch((err) => {
-            console.log("changepassword_res", err);
-            alert(err.data)
-
-
-        })
-    };
-
-    // Profile Information start
-
-    useEffect(() => {
-
-        axios.get(`${port}/root/ems/LoginEmployeeProfile/${Empid}/`).then((res) => {
-            console.log("EmployeeProfile_ress", res.data.EmployeeInformation);
-            sessionStorage.setItem('Login_Profile_Information', JSON.stringify(res.data.EmployeeInformation))
-        }).catch((err) => {
-            console.log("EmployeeProfile_err", err.data);
-
-        })
-
-    }, [])
-    // Profile Information end
-
 
     return (
         <div className=' ' >
-            {/* Desktop nav start */}
             <div className={`  ${navbar && "bg-white shadow-sm "}  py-2  mx-0 px-2`}>
                 <nav className='d-flex  row flex-wrap justify-between w-full items-center ' >
-                    {/* Content */}
                     <section className='flex  col-md-5 my-2 my-lg-0 order-2 order-sm-1 
                     felx-wrap gap-3 ' >
                         {
@@ -197,81 +151,73 @@ const Topnav = ({ name, navbar }) => {
                                 </div>
                         }
                     </section>
-
                     <main className='flex col-md-7  my-2 my-lg-0 order-1 justify-end flex-wrap flex-lg-nowrap mb-3 my-sm-0 order-sm-2 gap-4 items-center ' >
-                        {/* search */}
                         <TopSearchBar navbar={navbar} />
-
-
-                        {/* search end */}
-                        {/* Attendance tracking */}
                         <div>
-                            <GetGeoLocation/>
+                            <GetGeoLocation />
                         </div>
-                        <div className="  d-flex justify-content-evenly align-items-center" style={{ width: '18%' }}>
-                            {/* notification */}
-                            <div onClick={() => setShowNotification(true)} className='p-1 relative rounded bg-slate-200 w-7 h-7 '>
+                        <div className="d-flex justify-content-evenly align-items-center" style={{ width: '18%' }}>
+                            <div onClick={handleNotificationPanelClick} className='p-1 relative rounded bg-slate-200 w-7 h-7 cursor-pointer '>
                                 <img className='w-5'
                                     src={require('../assets/Images/Notification.png')} alt="Notification" />
-                                {noti != undefined && noti.length > 0 &&
-                                    <p className=' m-0 rounded-full w-2 h-2 absolute -top-1 right-0 '>
+                                {unreadCount > 0 &&
+                                    <p className='pulse-badge'>
+                                        {unreadCount}
                                     </p>}
                             </div>
 
                             <Offcanvas show={showNotification} placement='end' onHide={() => setShowNotification(false)} >
                                 <Offcanvas.Header closeButton>
-                                    Notification
+                                    <div className="flex items-center w-full">
+                                        <Offcanvas.Title>Notification</Offcanvas.Title>
+
+                                        {notifications.length > 0 && !isLoading && (
+                                            <button
+                                                onClick={handleClearAll}
+                                                className="ml-auto border border-red-400 text-red-500 px-2 py-1 rounded text-sm hover:bg-red-500 hover:text-white transition duration-200">
+                                                Clear All
+                                            </button>
+                                        )}
+                                    </div>
                                 </Offcanvas.Header>
+
                                 <Offcanvas.Body>
-
-                                    {noti.map((e) => {
-                                        return (
-                                            <div>
-                                                <div className='d-flex border-bottom ' style={{ width: '100%' }}>
-                                                    <div className='' style={{ width: '17%' }}>
-                                                        <img width={45} className='mt-3' src={require('../assets/Icon/3135715.png')} alt="" />
+                                    {isLoading ? (
+                                        <div className="d-flex justify-content-center align-items-center h-100">
+                                            <div className="spinner-border" role="status">
+                                                <span className="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        notifications.length > 0 ? notifications.map((e) => (
+                                            <div
+                                                key={e.id}
+                                                className='d-flex border-bottom p-2 align-items-center'
+                                                style={{ cursor: 'pointer', width: '100%' }}
+                                                onClick={() => handleNotificationItemClick(e)}
+                                            >
+                                                <div className='d-flex align-items-center' style={{ width: '90%' }}>
+                                                    <div style={{ width: '15%' }}>
+                                                        <img width={40} className='mt-2' src={require('../assets/Icon/3135715.png')} alt="avatar" />
                                                     </div>
-                                                    <div className='ms-3 ' style={{ width: '60%' }}>
-                                                        <small>Name</small>
-                                                        <p className=''>
-                                                            <small style={{ fontSize: '12px', width: '100%', cursor: 'pointer' }}  >{e.message}</small></p>
-
-                                                    </div>
-                                                    <div className='ms-2 ' style={{ width: '28%' }}>
-                                                        <small style={{ fontSize: '12px' }}>{e.timestamp}</small> <br />
-                                                        <small style={{ position: 'relative', top: '15px', left: '30px' }}><i class="fa-regular fa-circle-xmark" onClick={() => removenoti(e.id)}></i></small>
+                                                    <div className='ms-3' style={{ width: '85%' }}>
+                                                        <small className='font-bold'>{e.sender_name}</small>
+                                                        <p className='m-0'><small style={{ fontSize: '12px' }}>{e.message}</small></p>
+                                                        <small className='text-muted' style={{ fontSize: '11px' }}>{e.timesince}</small>
                                                     </div>
                                                 </div>
+                                                <div className='d-flex align-items-center justify-content-center' style={{ width: '10%' }}>
+                                                    <i
+                                                        className={`fa-regular fa-circle-xmark fa-lg text-muted ${isLoading ? 'disabled' : 'cursor-pointer'}`}
+                                                        onClick={(event) => !isLoading && removeNotification(event, e.id)}
+                                                    ></i>
+                                                </div>
                                             </div>
-                                        )
-                                    })}
+                                        )) : <p>No new notifications.</p>
+                                    )}
                                 </Offcanvas.Body>
                             </Offcanvas>
-
-
-
-                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            ...
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary">Save changes</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
                         </div>
-                        {/* Profile */}
                         <section onClick={() => setProfileDropdown(!profileDropdown)}
                             className='d-none d-lg-flex gap-3 relative items-center poppins ' >
                             {profile_info && (
@@ -296,31 +242,22 @@ const Topnav = ({ name, navbar }) => {
                                 </p>
                                 <DropDownIcon />
                             </button>
-                            {profileDropdown && 
-                            <article onMouseLeave={() => setProfileDropdown(false)} className='absolute z-10 shadow p-2 bg-white rounded top-16 w-full ' >
-                                <button onClick={() => { navigate(`/dash/employee/${Empid}`); setProfileDropdown(false) }}
-                                    className=' my-2  ' >
-                                    My Profile
-                                </button>
-                                <button className=' block my-2 ' onClick={logout} >
-                                    Log Out
-                                </button>
-                            </article>}
+                            {profileDropdown &&
+                                <article onMouseLeave={() => setProfileDropdown(false)} className='absolute z-10 shadow p-2 bg-white rounded top-16 w-full ' >
+                                    <button onClick={() => { navigate(`/dash/employee/${Empid}`); setProfileDropdown(false) }}
+                                        className=' my-2  ' >
+                                        My Profile
+                                    </button>
+                                    <button className=' block my-2 ' onClick={logout} >
+                                        Log Out
+                                    </button>
+                                </article>}
                         </section>
-                        {/* Profile ends */}
-
                     </main>
                 </nav>
             </div >
-
-
-            {/* Desktop nav end */}
-
-
-
-
         </div >
     )
 }
 
-export default Topnav
+export default Topnav;

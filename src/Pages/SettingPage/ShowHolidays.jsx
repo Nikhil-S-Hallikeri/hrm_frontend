@@ -10,7 +10,7 @@ const ShowHolidays = () => {
     let [showHoliday, setShowHoliday] = useState(false)
     let year = new Date().getFullYear()
     let [selectedYear, setSelectedYear] = useState(year)
-    let status = JSON.parse(sessionStorage.getItem('status'))
+    let status = JSON.parse(sessionStorage.getItem('user'))?.Disgnation
     let permission = JSON.parse(sessionStorage.getItem('user'))?.user_permissions?.holiday_calender_creation
     let empid = JSON.parse(sessionStorage.getItem('dasid'))
     let [data, setData] = useState([])

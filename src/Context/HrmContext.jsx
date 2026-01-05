@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 
 export const HrmStore = createContext()
 const HrmContext = (props) => {
+    let [trigger, setTrigger] = useState()
     let [openNavbar, setNavbar] = useState(false)
     let empid = JSON.parse(sessionStorage.getItem('user'))
     let [leaveRequestsReporting, setLeaveRequestReporting] = useState()
@@ -21,7 +22,18 @@ const HrmContext = (props) => {
     let [templates, setTemplates] = useState()
     let [allShiftTiming, setAllShiftTiming] = useState()
     let [activeEmployee, setActiveEmployees] = useState()
+    let [employeeData, setEmployeeData] = useState()
+
     let [topnav, setTopNav] = useState()
+    let getEmployeeData = () => {
+        let id = JSON.parse(sessionStorage.getItem('dasid'))
+        axios.get(`${port}/root/ems/EmployeeProfile/${id}/`).then((response) => {
+            console.log(response.data?.EmployeeInformation, 'emp personal');
+            setEmployeeData(response.data?.EmployeeInformation);
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
     let getActiveEmployee = () => {
         axios.get(`${port}/root/ems/AllEmployeesList/${JSON.parse(sessionStorage.getItem('dasid'))}/?emp_status=active`).then(res => {
             setActiveEmployees(res.data);
@@ -234,7 +246,9 @@ const HrmContext = (props) => {
         return `${year}-${month - 1}-${day}`;
     }
     function getProperDate(date) {
+        if (!date) return "";
         const now = new Date(date);
+        if (isNaN(now.getTime())) return "";
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
@@ -405,8 +419,9 @@ Merida Tech Minds (OPC) Pvt. Ltd.`
         return value.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
     }
     let valueShare = {
+        getEmployeeData, employeeData, trigger, setTrigger,
         formatTime, timeLastMonthValidate, convertTo12Hour, allShiftTiming, getAllShiftTiming, setAllShiftTiming, getActiveEmployee,
-        deleteSalaryComponent, getEarningData, data, getMonthYear, getTemplate, templates, numberToWords, activeEmployee,calculateAge,
+        deleteSalaryComponent, getEarningData, data, getMonthYear, getTemplate, templates, numberToWords, activeEmployee, calculateAge,
         religion, getReligion, count, formatDate, preTaxDeduction, postTaxDeduction, getPreTaxDeduction, getPostTaxDeduction,
         getPendingLeave, pendingLeave, setPendingLeave, leaveRequestsReporting, setLeaveRequestReporting, getLeaveRequestsReporting,
         changeDateYear, activeSetting, setActiveSetting, mailContent, openNavbar, setNavbar, convertToNormalTime, activePage, setActivePage,

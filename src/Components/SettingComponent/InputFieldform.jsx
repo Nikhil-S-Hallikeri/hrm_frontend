@@ -1,5 +1,6 @@
 import React from 'react'
 import InfoButton from './InfoButton';
+import ReactQuill from 'react-quill-new';
 
 const InputFieldform = ({ size, name, accept, errormsg, optionObj, required, link, disabled, placeholder,
     label, options, value, index, info, handleChange, type, limit }) => {
@@ -16,7 +17,7 @@ const InputFieldform = ({ size, name, accept, errormsg, optionObj, required, lin
 
 
 
-            {type != 'textarea' && !options && !optionObj &&
+            {type == 'quill' ? <ReactQuill value={value} onChange={(value) => handleChange({ target: { name, value } })} /> : type != 'textarea' && !options && !optionObj &&
                 <input placeholder={placeholder} accept={accept} type={type ? type : 'text'} disabled={disabled ? disabled : false}
                     className="p-2 block rounded inputbg w-full outline-none shadow-none" value={value}
                     onChange={(e) => {

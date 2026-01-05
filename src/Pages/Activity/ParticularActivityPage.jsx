@@ -85,8 +85,8 @@ const ParticularActivityPage = () => {
             <BackButton />
             {empid && <EmpNameCom empid={empid} />}
             
-            <main className=' my-3 flex justify-between outline-none ' >
-                <select name="" className='p-2 rounded ' value={aid} onChange={(e) => { setAid(e.target.value); setActivityStatus(null) }} id="">
+            <main className=' my-3 flex flex-wrap gap-3 justify-between outline-none ' >
+                <select name="" className='p-2 rounded my-2 ' value={aid} onChange={(e) => { setAid(e.target.value); setActivityStatus(null) }} id="">
                     <option value="">Select</option>
                     {
                         activity && activity.map((obj) => (
@@ -94,7 +94,7 @@ const ParticularActivityPage = () => {
                         ))
                     }
                 </select>
-                <div className='flex gap-2 items-center ' >
+                <div className='flex flex-wrap gap-2 items-center my-2' >
                     <div className='p-2 bg-white flex items-center gap-2 w-fit rounded  text-sm' >
                         From :
                         <input type="date" value={date} onChange={(e) => {

@@ -12,7 +12,7 @@ import LoadingData from '../../Components/MiniComponent/LoadingData'
 
 const ParticularRequirementPage = () => {
     let { rid } = useParams()
-    let empstatus = JSON.parse(sessionStorage.getItem('status'))
+    let empstatus = JSON.parse(sessionStorage.getItem('user'))?.Disgnation
     let [requirementDetails, setRequirementDetails] = useState()
     let [loading, setLoading] = useState()
     let getRequirementDetails = () => {
@@ -39,6 +39,7 @@ const ParticularRequirementPage = () => {
             {/* RequireAssigning */}
             {(empstatus == 'admin' || empstatus == 'HR') &&
                 <RecuirterAssigningToRecuirment cid={requirementDetails?.client_details?.id} rid={rid} />}
+                
             {/* Candidate assigned to rquirement */}
             <CandidateAssignedRequirment rid={rid} />
             {/* Requirement details */}

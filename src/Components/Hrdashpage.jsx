@@ -331,83 +331,108 @@ const Hrdashpage = ({ subpage }) => {
     }, [])
 
     const [canditatedetails, setCandidateDetails] = useState([])
-
     const [status, setstatus] = useState(" ")
+    const [pagination, setPagination] = useState({
+        count: 0,
+        next: null,
+        previous: null,
+        currentPage: 1
+    });
 
+    const pageSize = 10; 
 
+    
+    // const setHiredCanditates = (e) => {
+    //     console.log("setHiredCanditates", e);
+    //     setstatus(e)
+    //     axios.get(`${port}/root/FinalCandidatesList/${e}/`)
+    //         .then((res) => {
+    //             console.log("setHiredCanditates_res", res.data);
+    //             setCandidateDetails(res.data.results || res.data)
+    //         }).catch((err) => {
+    //             console.log("setHiredCanditates_err", err.data);
+    //         })
+    // }
 
-    const setHiredCanditates = (e) => {
+    // let setConsiderToClient = (e) => {
+    //     console.log("setConsiderToClient", e);
+    //     setstatus(e)
+    //     axios.get(`${port}/root/FinalCandidatesList/${e}/`)
+    //         .then((res) => {
+    //             console.log("setConsiderToClient_res", res.data);
+    //             setCandidateDetails(res.data.results || res.data)
+    //         }).catch((err) => {
+    //             console.log("setConsiderToClient_err", err.data);
+    //         })
+    // }
 
-        console.log("setHiredCanditates", e);
-        setstatus(e)
-        axios.get(`${port}/root/FinalCandidatesList/${e}/`)
+    // let setShartlistCanditates = (e) => {
+    //     setstatus(e)
+    //     console.log("setShortlistCanditates", e);
+    //     axios.get(`${port}/root/FinalCandidatesList/${e}/`).then((res) => {
+    //         setCandidateDetails(res.data.results || res.data)
+    //         console.log("setShortlistCanditates_res", res.data);
+    //     }).catch((err) => {
+    //         console.log("setShortlistCanditates_err", err.data);
+    //     })
+    // }
+
+    // let setRejectedCandidates = (e) => {
+    //     console.log("setRejectedCandidates", e);
+    //     setstatus(e)
+    //     axios.get(`${port}/root/FinalCandidatesList/${e}/`).then((res) => {
+    //         setCandidateDetails(res.data.results || res.data)
+    //         console.log("setRejectedCandidates_res", res.data);
+    //     }).catch((err) => {
+    //         console.log(err.data);
+    //     })
+    // }
+
+    // let setOfferdCandidates = (e) => {
+    //     console.log("setOfferdCandidates", e);
+    //     setstatus(e)
+    //     axios.get(`${port}/root/FinalCandidatesList/${e}/`).then((res) => {
+    //         setCandidateDetails(res.data.results || res.data)
+    //         console.log("CanditatesList", res.data);
+    //     }).catch((err) => {
+    //         console.log(err.data);
+    //     })
+    // }
+    
+
+    const fetchCandidates = (e, page = 1) => {
+        console.log("fetchCandidates", e, page);
+        setstatus(e);
+        axios.get(`${port}/root/FinalCandidatesList/${e}/?page=${page}`)
             .then((res) => {
-                console.log("setHiredCanditates_res", res.data);
-                setCandidateDetails(res.data)
+                console.log("fetchCandidates_res", res.data);
+                // Handle paginated or direct array responses
+                setCandidateDetails(res.data.results || res.data);
+                if (res.data.results) {
+                    setPagination({
+                        count: res.data.count,
+                        next: res.data.next,
+                        previous: res.data.previous,
+                        currentPage: page
+                    });
+                } else {
+                    setPagination({
+                        count: res.data.length || 0,
+                        next: null,
+                        previous: null,
+                        currentPage: 1
+                    });
+                }
             }).catch((err) => {
-                console.log("setHiredCanditates_err", err.data);
-            })
+                console.log("fetchCandidates_err", err);
+            });
     }
 
-    let setConsiderToClient = (e) => {
-
-        console.log("setConsiderToClient", e);
-        setstatus(e)
-        axios.get(`${port}/root/FinalCandidatesList/${e}/`)
-            .then((res) => {
-                console.log("setConsiderToClient_res", res.data);
-                setCandidateDetails(res.data)
-
-            }).catch((err) => {
-                console.log("setConsiderToClient_err", err.data);
-            })
-
-    }
-
-    let setShartlistCanditates = (e) => {
-        setstatus(e)
-        console.log("setShortlistCanditates", e);
-
-
-
-        axios.get(`${port}/root/FinalCandidatesList/${e}/`).then((res) => {
-            setCandidateDetails(res.data)
-            console.log("setShortlistCanditates_res", res.data);
-
-        }).catch((err) => {
-            console.log("setShortlistCanditates_err", err.data);
-        })
-
-    }
-
-
-    let setRejectedCandidates = (e) => {
-
-        console.log("setRejectedCandidates", e);
-        setstatus(e)
-        axios.get(`${port}/root/FinalCandidatesList/${e}/`).then((res) => {
-            setCandidateDetails(res.data)
-            console.log("setRejectedCandidates_res", res.data);
-
-        }).catch((err) => {
-            console.log(err.data);
-        })
-
-    }
-
-    let setOfferdCandidates = (e) => {
-
-        console.log("setOfferdCandidates", e);
-        setstatus(e)
-        axios.get(`${port}/root/FinalCandidatesList/${e}/`).then((res) => {
-            setCandidateDetails(res.data)
-            console.log("CanditatesList", res.data);
-
-        }).catch((err) => {
-            console.log(err.data);
-        })
-
-    }
+    const setHiredCanditates = (e) => fetchCandidates(e, 1);
+    const setConsiderToClient = (e) => fetchCandidates(e, 1);
+    const setShartlistCanditates = (e) => fetchCandidates(e, 1);
+    const setRejectedCandidates = (e) => fetchCandidates(e, 1);
+    const setOfferdCandidates = (e) => fetchCandidates(e, 1);
 
     // const sentid = (e) => {
 
@@ -533,37 +558,39 @@ MERIDA HR`)
                     <h5 className='text-3xl my-3 '>Overview </h5>
 
                     <Slider {...settings1} className='py-3 ' >
-                        <div onClick={() => setHiredCanditates("Internal_Hiring")}
-                            data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full   ' >
+                        {/* <div onClick={() => setHiredCanditates("Internal_Hiring")} */}
+                        {/* data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full   ' ></div> */}
+                        <div onClick={() => navigate("/dash/overview-candidates/Internal_Hiring")}
+                            className='py-3 h-full cursor-pointer' >
                             <ShortcutCard img={'../assets/Images/circle1.png'}
                                 count={Hiredcounts.internal_hiring} label='Internal Hiring' />
                         </div>
 
-                        <div onClick={() => setOfferdCandidates("offered")}
-                            data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full ' >
+                        <div onClick={() => navigate("/dash/overview-candidates/offered")}
+                            className='py-3 h-full cursor-pointer' >
                             <ShortcutCard img={'../assets/Images/circle2.png'}
                                 count={Hiredcounts.offered_candidates} label='Shortlisted Candidates' />
                         </div>
                         <div
-                            onClick={() => setRejectedCandidates("Reject")}
-                            data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full ' >
+                            onClick={() => navigate("/dash/overview-candidates/Reject")}
+                            className='py-3 h-full cursor-pointer' >
                             <ShortcutCard img={'../assets/Images/circle3.png'}
                                 count={Hiredcounts.Reject} label='Rejected candidate' />
                         </div>
                         <div
-                            onClick={() => setShartlistCanditates("All Applicants")}
-                            data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full ' >
+                            onClick={() => navigate("/dash/overview-candidates/All Applicants")}
+                            className='py-3 h-full cursor-pointer' >
                             <ShortcutCard img={'../assets/Images/circle4.png'}
                                 count={Hiredcounts.AppliedCandidates} label='All Applicants' />
 
                         </div>
-                        <div onClick={() => setConsiderToClient("consider_to_client")}
-                            data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full ' >
+                        <div onClick={() => navigate("/dash/overview-candidates/consider_to_client")}
+                            className='py-3 h-full cursor-pointer' >
                             <ShortcutCard img={'../assets/Images/circle5.png'}
                                 count={Hiredcounts.consider_to_client} label='Consider to client' />
                         </div>
-                        <div onClick={() => setConsiderToClient("On_Hold")}
-                            data-bs-toggle="modal" data-bs-target="#exampleModal10" className='py-3 h-full ' >
+                        <div onClick={() => navigate("/dash/overview-candidates/On_Hold")}
+                            className='py-3 h-full cursor-pointer' >
                             <ShortcutCard img={'../assets/Images/circle3.png'}
                                 count={Hiredcounts.On_Hold} label='On Hold Candidates' />
                         </div>
@@ -653,7 +680,8 @@ MERIDA HR`)
 
                                                         {status != 'Reject' && <th scope="col"><span className='fw-medium'>Experience (Fresher/Experience) </span></th>}
 
-                                                        {(status == 'Internal_Hiring' || status == 'consider_to_client') && <th scope="col"><span className='fw-medium'>BGV Document</span></th>}
+                                                        {(status == 'Internal_Hiring' || status == 'consider_to_client') && <th scope="col">
+                                                            <span className='fw-medium'>BGV Document</span></th>}
                                                         {status != 'ShartlistCanditates' && status != 'Reject' && status != 'All Applicants' &&
                                                             <th scope="col"><span className='fw-medium'>Offer Letter</span></th>}
                                                         <th scope="col"><span className='fw-medium'>Report</span></th>
@@ -661,7 +689,8 @@ MERIDA HR`)
                                                     </tr>
                                                 </thead>
 
-                                                {canditatedetails && [...canditatedetails].reverse().map((e) => {
+                                                {canditatedetails && canditatedetails.map((e) => {
+                                                    /* OLD LOGIC: {canditatedetails && [...canditatedetails].reverse().map((e) => { */
                                                     console.log("hellow", e);
                                                     return (
 
@@ -703,7 +732,9 @@ MERIDA HR`)
                                                                                 Upload BGV File
                                                                             </button>)
                                                                             : <p className='mb-0 text-center w-full '> Not Required </p>}
-                                                                    </td>}
+                                                                    </td>
+                                                                }
+
                                                                 {status != 'ShartlistCanditates' && status != 'Reject' && status != 'All Applicants' &&
                                                                     <td className={`text-center `}>
                                                                         {((e.Experience && e.BG_Status == 'Verified') || e.Fresher ||
@@ -730,6 +761,32 @@ MERIDA HR`)
                                                 })}
                                             </table>
                                         </div>
+                                        {/* Pagination Controls */}
+                                        {pagination.count > 0 && (
+                                            <div className='d-flex justify-content-between align-items-center mt-3 px-3 pb-3'>
+                                                <div className='text-sm text-muted text-gray-500'>
+                                                    Showing {canditatedetails ? canditatedetails.length : 0} of {pagination.count} candidates (Page {pagination.currentPage} of {Math.ceil(pagination.count / pageSize)})
+                                                </div>
+                                                <div className="btn-group shadow-sm">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-white btn-sm border"
+                                                        disabled={!pagination.previous}
+                                                        onClick={() => fetchCandidates(status, pagination.currentPage - 1)}
+                                                    >
+                                                        Previous
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-white btn-sm border"
+                                                        disabled={!pagination.next}
+                                                        onClick={() => fetchCandidates(status, pagination.currentPage + 1)}
+                                                    >
+                                                        Next
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>

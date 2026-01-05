@@ -423,7 +423,7 @@ const EditEmployeeModal = ({ resetEditModal, setAddresschecked,
                                                 {/* Empty value for the default option */}
                                                 <option value="intern">Intern </option>
                                                 <option value="permanent">Permanent </option>
-                                                <option value="Trainne">Trainne </option>
+                                                <option value="Trainee">Student Intern </option>
                                                 <option value="Consulant">Consultant </option>
 
                                             </select>

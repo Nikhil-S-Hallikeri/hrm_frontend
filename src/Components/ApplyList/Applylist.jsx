@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import Topnav from '../Topnav'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Link, json, useNavigate } from 'react-router-dom';
+import { Link, json, useNavigate, useSearchParams } from 'react-router-dom';
 import { Alert, AlertTitle } from '@mui/material';
 import Finalstatuscomment from '../Finalstatuscomment';
 import { domain, port } from '../../App'
@@ -22,11 +22,11 @@ import LoadingData from '../MiniComponent/LoadingData';
 
 
 const Applylist = () => {
-  let username = JSON.parse(sessionStorage.getItem('user')).UserName
-  let user = JSON.parse(sessionStorage.getItem('user'))
+  let username = JSON.parse(sessionStorage.getItem('user'))?.UserName ?? ''
+  let user = JSON.parse(sessionStorage.getItem('user')) ?? {}
   let [finalStatus, setFinalStatus] = useState(false)
   let [finalStatusName, setFinalStatusName] = useState()
-  let loginID = JSON.parse(sessionStorage.getItem('Login_Profile_Information')).employee_Id
+  let loginID = JSON.parse(sessionStorage.getItem('Login_Profile_Information'))?.employee_Id ?? null
   let { testing, convertToReadableDateTime, timeValidate, getCurrentDate, getProperDate } = useContext(HrmStore)
   let [interviewCompletedDetailsModal, setInterviewCompleteDetailsModal] = useState()
   let [finalResultObj, setFinalResultObj] = useState()
@@ -36,9 +36,40 @@ const Applylist = () => {
   let [selectedCandidate, setSelectedCandidate] = useState()
   let { convertTimeTo12HourFormat } = useContext(HrmStore)
   let [intervewAsssignedcompleted, setInterviewAssignedcompleted] = useState('Assigned')
-  const [tab, setTab] = useState("newleads")
+  let [appliedDuration, setAppliedDuration] = useState('')
+  let [appliedScreeningStatus, setAppliedScreeningStatus] = useState('')
   let [applylist, setApplylist] = useState([])
-  let [filteredApplyList, setFilteredApplyList] = useState()
+  let [filteredApplyList, setFilteredApplyList] = useState([])
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [pagination, setPagination] = useState({
+    count: 0,
+    total_all: 0,
+    next: null,
+    previous: null,
+    currentPage: parseInt(searchParams.get('page')) || 1
+  });
+  const [pagination3, setPagination3] = useState({
+    count: 0,
+    next: null,
+    previous: null,
+    currentPage: parseInt(searchParams.get('final_page')) || 1
+  });
+  const [pageInput, setPageInput] = useState(pagination.currentPage);
+  const [pageInput3, setPageInput3] = useState(pagination3.currentPage);
+
+  useEffect(() => {
+    setPageInput(pagination.currentPage);
+  }, [pagination.currentPage]);
+
+  useEffect(() => {
+    setPageInput3(pagination3.currentPage);
+  }, [pagination3.currentPage]);
+
+  const [finalSearchTerm, setFinalSearchTerm] = useState('');
+  const [finalFromDate, setFinalFromDate] = useState('');
+  const [finalToDate, setFinalToDate] = useState('');
+
+  const pageSize = 10;
   let [screeninglist, setScreeninglist] = useState([])
   let [screeninglistCompleted, setScreeninglistCompleted] = useState([])
   const [codeans, setCodeAns] = useState()
@@ -127,10 +158,14 @@ const Applylist = () => {
   }
 
   useEffect(() => {
+    const page = parseInt(searchParams.get('final_page')) || 1
+    fetchdata3(page)
+  }, [searchParams.get('final_page')])
 
-    fetchdata3()
-
-  }, [])
+  useEffect(() => {
+    const urlPage = parseInt(searchParams.get('page')) || 1
+    fetchdata(urlPage)
+  }, [searchParams, appliedDuration, appliedScreeningStatus])
 
   let handleFilterApplicationChange = (e) => {
     let { name, value } = e.target
@@ -164,11 +199,30 @@ const Applylist = () => {
 
   };
 
-  let fetchdata3 = () => {
-    axios.get(`${port}/root/FinalList/${Empid}/`).then((res) => {
+  let fetchdata3 = (page = 1, search = finalSearchTerm, from = finalFromDate, to = finalToDate) => {
+    setloading('final')
+    let queryParams = `?page=${page}`
+    if (search) queryParams += `&search=${search}`
+    if (from) queryParams += `&from_date=${from}`
+    if (to) queryParams += `&to_date=${to}`
+
+    axios.get(`${port}/root/FinalList/${Empid}/${queryParams}`).then((res) => {
       console.log("FinalData--- ", res.data);
-      setFinalData(res.data)
-    }).catch((error) => console.log(error))
+      const results = res.data.results || res.data;
+      setFinalData(results)
+      if (res.data.results) {
+        setPagination3({
+          count: res.data.count,
+          next: res.data.next,
+          previous: res.data.previous,
+          currentPage: page
+        });
+      }
+      setloading(false)
+    }).catch((error) => {
+      console.log(error)
+      setloading(false)
+    })
   }
   const [canidd, setcanidd] = useState(" ")
   const [canInfo, setCanInfo] = useState(" ")
@@ -263,12 +317,12 @@ const Applylist = () => {
 
   console.log(selectedCandidates);
 
-  let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
+  let Empid = JSON.parse(sessionStorage.getItem('user'))?.EmployeeId ?? ''
 
-  let Disgnation = JSON.parse(sessionStorage.getItem('user')).Disgnation
-  let Email = JSON.parse(sessionStorage.getItem('user')).Email
-  let PhoneNumber = JSON.parse(sessionStorage.getItem('user')).PhoneNumber
-  let UserName = JSON.parse(sessionStorage.getItem('user')).UserName
+  let Disgnation = JSON.parse(sessionStorage.getItem('user'))?.Disgnation ?? ''
+  let Email = JSON.parse(sessionStorage.getItem('user'))?.Email ?? ''
+  let PhoneNumber = JSON.parse(sessionStorage.getItem('user'))?.PhoneNumber ?? ''
+  let UserName = JSON.parse(sessionStorage.getItem('user'))?.UserName ?? ''
   let [interviewRoundType, setInterviewRoundType] = useState('')
 
   console.log("login", Empid);
@@ -499,59 +553,20 @@ const Applylist = () => {
   console.log("searchValue", searchValue);
 
   const handlesearchvalue = () => {
-
-
-    if (filterApplicationObj.word || filterApplicationObj.from || filterApplicationObj.to) {
-      setloading('applied')
-      // alert('here')
-      axios.post(`${port}/root/appliedcandidateslist`,
-        {
-          search_value: filterApplicationObj.word,
-          from_date: filterApplicationObj.from,
-          to_date: filterApplicationObj.to
-        }).then((res) => {
-          console.log("search_res", res.data);
-          setApplylist(res.data)
-          setloading(false)
-          setFilteredApplyList(res.data)
-        }).catch((err) => {
-          setloading(false)
-
-          console.log("search_res", err);
-        })
+    const urlPage = parseInt(searchParams.get('page')) || 1
+    if (urlPage === 1) {
+      fetchdata(1)
+    } else {
+      handlePageUpdate(1)
     }
-    else {
-      fetchdata()
-    }
-
-
-
-
-
   }
 
   const handle_filter_apply_value = (value) => {
+    setAppliedDuration(value)
 
-    console.log('filter_value', value);
-
-    if (value.length > 0) {
-      axios.post(`${port}/root/appliedcandidateslist`, { duration: value }).then((res) => {
-        console.log("search_res", res.data);
-        setApplylist(res.data)
-        setFilteredApplyList(res.data)
-      }).catch((err) => {
-        console.log("search_res", err.data);
-      })
-
+    if (searchParams.get('page') !== '1') {
+      handlePageUpdate(1)
     }
-    else {
-      fetchdata()
-    }
-
-
-
-
-
   }
 
 
@@ -670,6 +685,12 @@ const Applylist = () => {
       axios.get(`${port}/root/AppliedCandidateSearch/${value}/`).then((res) => {
         console.log("ScreeningScheduleSearch_Res", res.data);
         setFinalData(res.data)
+        setPagination3({
+          count: res.data.length,
+          next: null,
+          previous: null,
+          currentPage: 1
+        })
       }).catch((err) => {
         console.log("ScreeningScheduleSearch_Err", err.data);
       })
@@ -686,16 +707,61 @@ const Applylist = () => {
 
 
 
-  useEffect(() => {
-    fetchdata()
-  }, [])
 
-  const fetchdata = () => {
+  const fetchdata = (page = 1, statusOverride, filters = filterApplicationObj) => {
+    setloading('applied')
+    const currentStatus = statusOverride !== undefined ? statusOverride : appliedScreeningStatus
+    const body = {}
+    if (currentStatus === 'Pending') {
+      body.FinalResults = 'Pending' // Only filter by Pending results if we are in "Yet to assign" mode
+    }
+    if (filters.word) body.search_value = filters.word
+    if (filters.from) body.FromDate = filters.from
+    if (filters.to) body.ToDate = filters.to
+    if (appliedDuration) body.duration = appliedDuration
+    if (currentStatus) body.ScreeningStatus = currentStatus
 
-    axios.post(`${port}/root/appliedcandidateslist`).then((res) => {
+    axios.post(`${port}/root/appliedcandidateslist?page=${page}`, body).then((res) => {
       console.log("Applicand_list", res.data);
-      setApplylist(res.data)
-      setFilteredApplyList([...res.data].filter((obj) => obj.ScreeningStatus == 'Pending' && obj.Final_Results == 'Pending'))
+      const results = res.data.results || res.data;
+      setApplylist(results)
+      // // Maintaining the pending filter for the main view result display if results is an array
+      // if (Array.isArray(results)) {
+      //   setFilteredApplyList(results.filter((obj) => (obj.ScreeningStatus == 'Pending' || obj.ScreeningStatus == null) && (obj.Final_Results == 'Pending' || obj.Final_Results == null)))
+      // } else {
+      //   setFilteredApplyList([])
+      // }
+      setFilteredApplyList(results) // Use pure results from backend since it's already filtered
+
+      if (res.data.results) {
+        setPagination({
+          count: res.data.count,
+          total_all: res.data.total_all,
+          next: res.data.next,
+          previous: res.data.previous,
+          currentPage: page
+        });
+      }
+      setloading(false)
+    }).catch(err => {
+      console.log(err)
+      setloading(false)
+    })
+  }
+
+  const handlePageUpdate = (newPage) => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev)
+      next.set('page', newPage)
+      return next
+    })
+  }
+
+  const handlePageUpdate3 = (newPage) => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev)
+      next.set('final_page', newPage)
+      return next
     })
   }
 
@@ -1437,14 +1503,14 @@ const Applylist = () => {
 
   return (
 
-    <div className='flex flex-col lg:flex-row ' style={{ width: '100%', minHeight: '100%', }}>
-      <div className='sticky z-10 top-0 '>
+    <div className='flex flex-col lg:flex-row h-screen overflow-hidden' style={{ width: '100%' }}>
+      <div className=''>
         <Sidebar value={"dashboard"} ></Sidebar>
       </div>
-      <div className='flex-1 container-fluid overflow-hidden ' style={{ borderRadius: '10px' }}>
+      <div className='flex-1 container-fluid overflow-y-auto ' style={{ borderRadius: '10px' }}>
         <Topnav ></Topnav>
 
-        <div className='d-flex justify-content-between mt-4' >
+        <div className='d-flex justify-content-between mt-1' >
 
           <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item text-primary d-flex " role="presentation">
@@ -1458,7 +1524,7 @@ const Applylist = () => {
                   {/* Applyed Candidates List */}
                   Total Applications
                   <small className='bg-green-400 my-2 text-white px-3 ms-2 w-fit text-xs block rounded' >
-                    {filteredApplyList != undefined && filteredApplyList.length} Candidates </small>
+                    {pagination.total_all} Candidates </small>
                 </div>
               </section>
             </li>
@@ -1500,7 +1566,7 @@ const Applylist = () => {
                 <img className='w-14 ' src={require('../../assets/Images/circle3.png')} alt="" />
                 <div className='text-sm'>  Final Status
 
-                  <small className='bg-green-400 my-2 text-white ms-2 block  rounded text-xs px-3'> {FinalData != undefined && FinalData.length} resulted </small>
+                  <small className='bg-green-400 my-2 text-white ms-2 block  rounded text-xs px-3'> {pagination3.count} resulted </small>
                 </div>
               </section>
 
@@ -1564,9 +1630,18 @@ const Applylist = () => {
                         To : <input type="date" value={filterApplicationObj.to} name='to' onChange={handleFilterApplicationChange}
                           className=' outline-none p-1 bg-transparent ' />
                       </div>
-                      <button className=' bg-green-600 text-slate-50 p-2 px-3 rounded ' onClick={handlesearchvalue} >
-                        Search
-                      </button>
+                      <div className='d-flex gap-2'>
+                        <button className=' bg-green-600 text-slate-50 p-2 px-3 rounded ' onClick={handlesearchvalue} >
+                          Search
+                        </button>
+                        <button className=' bg-gray-600 text-slate-50 p-2 px-3 rounded ' onClick={() => {
+                          const emptyFilters = { word: '', from: '', to: '' };
+                          setFilterApplicationObj(emptyFilters);
+                          fetchdata(1, undefined, emptyFilters);
+                        }} >
+                          Clear
+                        </button>
+                      </div>
                     </div>
                     <div className='flex gap-3 flex-wrap '>
 
@@ -1574,12 +1649,16 @@ const Applylist = () => {
                         Screening process :
 
                         <select onChange={(e) => {
-                          if (e.target.value != '') {
-                            setFilteredApplyList([...applylist].filter((obj) => obj.ScreeningStatus == e.target.value && obj.Final_Results == 'Pending'))
+                          const newVal = e.target.value
+                          setAppliedScreeningStatus(newVal)
+                          const urlPage = parseInt(searchParams.get('page')) || 1
+                          if (urlPage === 1) {
+                            fetchdata(1, newVal)
                           } else {
-                            setFilteredApplyList(applylist)
+                            handlePageUpdate(1)
                           }
                         }}
+                          value={appliedScreeningStatus}
                           className='p-1 text-sm flex ms-auto outline-none border-1 rounded' name="" id="">
                           <option value="Pending">Yet to assign </option>
                           <option value="">All</option>
@@ -1591,8 +1670,11 @@ const Applylist = () => {
                     </div>
                   </div>
 
-                  <article>
-                    <p className='mb-0 ' > Total : {filteredApplyList ? filteredApplyList.length : 0} </p>
+                  <article className='flex items-center gap-3'>
+                    <p className='mb-0 ' > Total Applications : {pagination.total_all} </p>
+                    {pagination.count !== pagination.total_all && (
+                      <p className='mb-0 text-muted' > | Filtered : {pagination.count} </p>
+                    )}
                   </article>
                   {/* Applied List table */}
                   <div className='rounded  h-[45vh] overflow-y-scroll w-full tablebg table-responsive mt-4'>
@@ -1828,16 +1910,81 @@ const Applylist = () => {
                     }
                   </div>
                   <div className='d-flex justify-content-between p-2'>
-                    <button onClick={loadmorefunc} className='btn btn-sm btn-success'>Load More</button>
-                    <div>
+                    {/* Pagination Controls */}
+                    {pagination && pagination.count > 0 && (
+                      <div className="d-flex justify-content-between align-items-center bg-white p-3 rounded shadow-sm border w-100 me-3">
+
+                        {/* Total Count */}
+                        <div className="text-muted small">
+                          Total: <strong>{pagination.count}</strong>
+                        </div>
+
+                        {/* Pagination Controls */}
+                        <div className="d-flex align-items-center gap-4">
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-sm rounded px-2"
+                            disabled={!pagination.previous}
+                            onClick={() => handlePageUpdate(pagination.currentPage - 1)}
+                            aria-label="Previous page"
+                          >
+                            Previous
+                          </button>
+
+                          <span className="small px-3 bg-primary text-white rounded">
+                            {pagination.currentPage} of {Math.ceil(pagination.count / pageSize)}
+                          </span>
+
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-sm rounded px-2"
+                            disabled={!pagination.next}
+                            onClick={() => handlePageUpdate(pagination.currentPage + 1)}
+                            aria-label="Next page"
+                          >
+                            Next
+                          </button>
+                        </div>
+
+                        {/* Page Jump */}
+                        <div className="d-flex align-items-center gap-2">
+                          <span className="text-muted small">Page</span>
+                          <input
+                            type="number"
+                            className="form-control form-control-sm rounded text-center"
+                            style={{ width: "70px" }}
+                            min={1}
+                            max={Math.ceil(pagination.count / pageSize)}
+                            value={pageInput}
+                            onChange={(e) => setPageInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                const page = Number(e.target.value);
+                                const totalPages = Math.ceil(pagination.count / pageSize);
+
+                                if (page >= 1 && page <= totalPages) {
+                                  handlePageUpdate(page);
+                                }
+                              }
+                            }}
+                            aria-label="Go to page"
+                          />
+                        </div>
+
+                      </div>
+
+                    )}
+                    <div className='d-flex gap-2' >
                       <button className='btn btn-sm me-3' style={{ backgroundColor: 'rgb(240,179,74)' }} onClick={handleDownload}>
                         {downloading ? 'Downloading...' : 'Download'}
                       </button>
                       {/* <a href={down} download="data.xlsx">Down </a> */}
 
-                      <button className=' btn btn-sm' data-bs-toggle="modal" data-bs-target="#exampleModal9" style={{ backgroundColor: 'rgb(240,179,74)' }}>Bulk Data</button>
+                      <button className=' btn btn-sm h-fit' data-bs-toggle="modal" data-bs-target="#exampleModal9" style={{ backgroundColor: 'rgb(240,179,74)' }}>Bulk Data</button>
+                    </div>
+                  </div>
 
-                      {/* <div class="modal fade" id="exampleModal9" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  {/* <div class="modal fade" id="exampleModal9" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                           <div class="modal-content">
                             <div class="modal-header">
@@ -1867,53 +2014,49 @@ const Applylist = () => {
                           </div>
                         </div>
                       </div> */}
-                      <div class="modal fade" id="exampleModal9" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h6>Upload Excel File</h6>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                              {/* File input */}
-                              <input
-                                type="file"
-                                className="form-control-file form-control shadow-none"
-                                onChange={handleFileChange}
-                                accept=".csv, .xlsx, .txt" // Specify allowed file types if needed
-                              />
-                            </div>
-                            <div className="modal-footer">
+                  <div class="modal fade" id="exampleModal9" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h6>Upload Excel File</h6>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                          {/* File input */}
+                          <input
+                            type="file"
+                            className="form-control-file form-control shadow-none"
+                            onChange={handleFileChange}
+                            accept=".csv, .xlsx, .txt" // Specify allowed file types if needed
+                          />
+                        </div>
+                        <div className="modal-footer">
 
-                              <a href={Employees_Upload_Formate_Res}  >
+                          <a href={Employees_Upload_Formate_Res}  >
 
-                                <button
-                                  type="button"
-                                  className="btn btn-warning  " data-bs-dismiss="modal">
+                            <button
+                              type="button"
+                              className="btn btn-warning  " data-bs-dismiss="modal">
 
-                                  Download Excel Format
-                                </button>
-                              </a>
-
-
+                              Download Excel Format
+                            </button>
+                          </a>
 
 
-                              <button
-                                type="button"
-                                className="btn btn-primary  "
-                                onClick={uploadFile}
-                                disabled={!selectedFile}
-                                data-bs-dismiss="modal"
-                              >
-                                Upload
-                              </button>
-                            </div>
-                          </div>
+
+
+                          <button
+                            type="button"
+                            className="btn btn-primary  "
+                            onClick={uploadFile}
+                            disabled={!selectedFile}
+                            data-bs-dismiss="modal"
+                          >
+                            Upload
+                          </button>
                         </div>
                       </div>
-
                     </div>
-
                   </div>
 
                 </div>
@@ -2032,24 +2175,7 @@ const Applylist = () => {
 
                         </select>
                       </div>
-                      {/* <div>
-                        <li class="nav-item text-primary d-flex me-4" style={{ fontSize: '18px' }} >
-                          <select className="form-select shadow-none" id="ageGroup" style={{ width: '100px', height: '30px', fontSize: '9px', outline: 'none' }}
-                            value={search_filter_Interview} onChange={(e) => {
-                              handle_Interviewe_filter_value(e.target.value)
-                            }} >
-                            <option value="">Filter</option>
-                            <option value="Today">Day</option>
-                            <option value="Week">Week</option>
-                            <option value="Month">Month</option>
-                            <option value="Year">Year</option>
-                          </select>
-                        </li>
-                      </div> */}
-
-
                     </ul>
-
                   </div>
                   <select name="" value={intervewAsssignedcompleted}
                     onChange={(e) => {
@@ -2770,45 +2896,67 @@ const Applylist = () => {
 
                 {/* Tab 4 start */}
                 <div class="tab-pane fade " id="pills-completed" role="tabpanel" aria-labelledby="pills-completed-tab" tabindex="0" >
-                  <div className='d-flex justify-content-between ' >
-                    <ul class="nav nav-pills mb-1 w-100" style={{ display: 'flex', justifyContent: 'space-between' }} id="pills-tab" role="tablist">
+                  <div className="d-flex gap-2 align-items-center">
+                    <div className='w-100 ' >
+                      <div className="d-flex justify-content-between align-items-center w-100">
 
-                      <div className='bgclr relative rounded p-1'>
-                        <button className='absolute right-0 -top-5 '><InfoButton content={"Search by Name , Candidate ID, Final Result , Applied designation , Mail, Contact"} size={12} /> </button>
-                        <input type="text"
-                          onChange={(e) => {
-                            let value = e.target.value
-                            let newarry = [...FinalData].filter((obj) =>
-                              (obj.FirstName && obj.FirstName.toLowerCase().indexOf(value) != -1) ||
-                              (obj.CandidateId && obj.CandidateId.toLowerCase().indexOf(value) != -1) ||
-                              (obj.FinalResult && obj.FinalResult.toLowerCase().indexOf(value) != -1) ||
-                              (obj.AppliedDesignation && obj.AppliedDesignation.toLowerCase().indexOf(value) != -1) ||
-                              (obj.Email && obj.Email.toLowerCase().indexOf(value) != -1) ||
-                              (obj.PrimaryContact && obj.PrimaryContact.toLowerCase().indexOf(value) != -1)
-                            )
-                            setFilterFinalData(newarry)
-                          }}
-                          className='outline-none text-sm bg-transparent' placeholder='Search...  ' />
+                        <div className="d-flex gap-2 align-items-center">
+                          <div className='bgclr relative rounded p-1 '>
+                            <button className='absolute right-0 -top-4 '><InfoButton content={"Search by Name , Candidate ID, Final Result , Applied designation , Mail, Contact"} size={12} /> </button>
+                            <input type="text"
+                              value={finalSearchTerm}
+                              onChange={(e) => {
+                                setFinalSearchTerm(e.target.value)
+                              }}
+                              className='outline-none text-sm bg-transparent' placeholder='Search...  ' />
+                          </div>
+                          {/* <div className='flex items-center gap-3 bg-white p-1 px-2 rounded  ' >
+                        From : <input type="date" value={finalFromDate} onChange={(e) => setFinalFromDate(e.target.value)}
+                          className=' outline-none p-1 bg-transparent ' />
                       </div>
-                      <div className='flex items-center bgclr  rounded px-2 text-sm '>
-                        Sort By :
-                        <select name=""
-                          onChange={(e) => {
-                            let value = e.target.value
-                            if (value == 'AZ')
-                              setFilterFinalData((prev) => [...prev].sort((a, b) => a.FirstName.localeCompare(b.FirstName)))
-                            if (value == 'ZA')
-                              setFilterFinalData((prev) => [...prev].sort((a, b) => b.FirstName.localeCompare(a.FirstName)))
-                          }}
-                          className='outline-none bg-transparent ' id="">
-                          <option value="">Select</option>
-                          <option value="AZ">A - Z </option>
-                          <option value="ZA">Z - A </option>
+                      <div className='flex items-center gap-3 bg-white p-1 px-2 rounded  ' >
+                        To : <input type="date" value={finalToDate} onChange={(e) => setFinalToDate(e.target.value)}
+                          className=' outline-none p-1 bg-transparent ' />
+                      </div> */}
+                          <div className='d-flex gap-2'>
+                            <button className=' bg-green-600 text-slate-50 p-1 px-3 rounded ' onClick={() => fetchdata3(1, finalSearchTerm, finalFromDate, finalToDate)} >
+                              Search
+                            </button>
+                            <button className=' bg-gray-600 text-slate-50 p-1 px-3 rounded ' onClick={() => {
+                              setFinalSearchTerm('');
+                              setFinalFromDate('');
+                              setFinalToDate('');
+                              fetchdata3(1, '', '', '');
+                            }} >
+                              Clear
+                            </button>
+                          </div>
+                        </div>
 
-                        </select>
+
+                        <div className='d-flex align-items-center bgclr  rounded px-2 text-sm '>
+                          Sort By :
+                          <select name=""
+                            onChange={(e) => {
+                              let value = e.target.value
+                              if (value == 'AZ')
+                                setFilterFinalData((prev) => [...prev].sort((a, b) => a.FirstName.localeCompare(b.FirstName)))
+                              if (value == 'ZA')
+                                setFilterFinalData((prev) => [...prev].sort((a, b) => b.FirstName.localeCompare(a.FirstName)))
+                            }}
+                            className='outline-none bg-transparent ' id="">
+                            <option value="">Select</option>
+                            <option value="AZ">A - Z </option>
+                            <option value="ZA">Z - A </option>
+
+                          </select>
+                        </div>
                       </div>
+                    </div>
 
-                      {/* <div>
+
+
+                    {/* <div>
                         <li class="nav-item text-primary d-flex me-4" style={{ fontSize: '18px' }} >
 
                           <select className="form-select shadow-none" id="ageGroup" style={{ width: '100px', height: '30px', fontSize: '9px', outline: 'none' }}
@@ -2827,8 +2975,8 @@ const Applylist = () => {
                       </div> */}
 
 
-                    </ul>
-
+                    {/* </ul> */}
+                    {/* </div> */}
                   </div>
 
 
@@ -3167,8 +3315,67 @@ const Applylist = () => {
 
 
                     </table>
+                    {/* Loading final table */}
+                    {loading === 'final' && <LoadingData />}
                   </div>
                   <div className='d-flex justify-content-between p-2'>
+                    {/* Pagination Controls */}
+                    {pagination3 && pagination3.count > 0 && (
+                      <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded shadow-sm border w-full me-3">
+                        <div className="text-sm text-muted">
+                          Total : <strong>{pagination3.count}</strong>
+                        </div>
+
+                        <div className="d-flex align-items-center gap-4">
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-sm rounded px-1"
+                            disabled={!pagination3.previous}
+                            onClick={() => handlePageUpdate3(pagination3.currentPage - 1)}
+                            aria-label="Previous page"
+                          >
+                            Previous
+                          </button>
+
+                          <span className="small px-3 bg-primary text-white rounded">
+                            {pagination3.currentPage} of {Math.ceil(pagination3.count / pageSize)}
+                          </span>
+
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-sm rounded px-2"
+                            disabled={!pagination3.next}
+                            onClick={() => handlePageUpdate3(pagination3.currentPage + 1)}
+                            aria-label="Next page"
+                          >
+                            Next
+                          </button>
+                        </div>
+
+
+                        <div className="d-flex align-items-center gap-2">
+                          <span className="text-sm">Page</span>
+                          <input
+                            type="number"
+                            className="form-control form-control-sm border-slate-800 "
+                            style={{ width: "60px" }}
+                            min={1}
+                            max={Math.ceil(pagination3.count / pageSize)}
+                            value={pageInput3}
+                            onChange={(e) => setPageInput3(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                const page = Number(e.target.value)
+                                const totalPages = Math.ceil(pagination3.count / pageSize)
+                                if (page >= 1 && page <= totalPages) {
+                                  handlePageUpdate3(page)
+                                }
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
                     {/* <button onClick={loadmorefunc3} className='btn btn-sm btn-success'>Load More</button> */}
                     <div>
                       <button className='btn btn-sm me-3' style={{ backgroundColor: 'rgb(240,179,74)' }} onClick={handleDownload3}>
@@ -4299,10 +4506,12 @@ const Applylist = () => {
         </Modal>
         {/* INTERVIEW FORM End */}
       </div >
-      {finalStatus &&
+      {
+        finalStatus &&
         <FinalStatus show={finalStatus} getfunction={fetchdata}
           name={finalStatusName}
-          setshow={setFinalStatus} />}
+          setshow={setFinalStatus} />
+      }
       <Final_status_comment setselectstatus={setselectstatus} selectedName={selectedFinalResultName}
         final_status_value={final_status_value} fetchdata3={fetchdata3}
         selectstatus={selectstatus} candidateid={seleceted_candidateid} setfinalvalue={setfinal_status_value}></Final_status_comment>

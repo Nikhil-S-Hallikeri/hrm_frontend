@@ -28,11 +28,14 @@ import ReportIcon from '../Icons/ReportIcon'
 import ReportIconFill from '../Icons/ReportIconFill'
 
 const NewSideBar = () => {
-    let { activePage, setActivePage, } = useContext(HrmStore)
+    let { activePage, setActivePage, employeeData } = useContext(HrmStore)
     let logindata = JSON.parse(sessionStorage.getItem('user'))
     let employeeStatus = JSON.parse(sessionStorage.getItem('user'))?.Disgnation
     let Empid = JSON.parse(sessionStorage.getItem('dasid'))
     let [showOff, setShowOff] = useState()
+    let showTrainee = employeeData?.Employeement_Type != 'Trainee'
+    // Trainee
+    // alert(showTrainee)
     let navbarButtons = [
         {
             label: 'DashBoard',
@@ -48,7 +51,7 @@ const NewSideBar = () => {
             Icon: ClientIcon,
             active: 'client',
             path: `/client`,
-            show: employeeStatus == 'Admin' || employeeStatus == 'HR' || employeeStatus == 'Recruiter'
+            show: (employeeStatus == 'Admin' || employeeStatus == 'HR' || employeeStatus == 'Recruiter') && showTrainee
         },
         {
             label: 'Activity',
@@ -57,28 +60,28 @@ const NewSideBar = () => {
             // path: `/Recruiter_Activity`,
             path: `/activity`,
 
-            show: employeeStatus == 'Employee' || employeeStatus == 'Recruiter'
+            show: (employeeStatus == 'Employee' || employeeStatus == 'Recruiter') && showTrainee
         },
         {
             label: 'Request',
             Icon: ClientIcon,
             active: 'Employee',
             path: `/Employee_request_form`,
-            show: employeeStatus == 'Employee' || employeeStatus == 'Recruiter'
+            show: (employeeStatus == 'Employee' || employeeStatus == 'Recruiter') && showTrainee
         },
         {
             label: 'Applyied List',
             Icon: AppliedListIcon,
             active: 'applylist',
             path: `/Applaylist`,
-            show: employeeStatus == 'Admin' || employeeStatus == 'HR'
+            show: (employeeStatus == 'Admin' || employeeStatus == 'HR') && showTrainee
         },
         {
             label: 'Applicants',
             Icon: AppliedListIcon,
             active: 'Applicants',
             path: `/Employee_interview_applicants`,
-            show: employeeStatus == 'Employee'
+            show: (employeeStatus == 'Employee') && showTrainee
         },
         {
             label: 'Applicants',
@@ -86,14 +89,14 @@ const NewSideBar = () => {
             FillIcon: HrIconFill,
             active: 'Applicants',
             path: `/Applicants`,
-            show: employeeStatus == 'Recruiter'
+            show: (employeeStatus == 'Recruiter') && showTrainee
         },
         {
             label: 'Apply List',
             Icon: AppliedListIcon,
             active: 'applylist',
             path: `/Rec_applyed_list`,
-            show: employeeStatus == 'Recruiter'
+            show: (employeeStatus == 'Recruiter') && showTrainee
         },
         {
             label: 'DAS',
@@ -107,21 +110,21 @@ const NewSideBar = () => {
             Icon: MyTeamIcon,
             active: 'Reporting_team',
             path: `/Reporting_team`,
-            show: employeeStatus == 'Admin' || employeeStatus == 'HR'
+            show: (employeeStatus == 'Admin' || employeeStatus == 'HR')&& showTrainee
         },
         {
             label: 'Reporting team',
             Icon: MyTeamIcon,
             active: 'team',
             path: `/Report_Manager_Reporting_team`,
-            show: employeeStatus == 'Employee'
+            show: (employeeStatus == 'Employee')&& showTrainee
         },
         {
             label: 'Reporting team',
             Icon: MyTeamIcon,
             active: 'team',
             path: `/Reporting_team_recuter`,
-            show: employeeStatus == 'Recruiter'
+            show:( employeeStatus == 'Recruiter')&& showTrainee
         },
         {
             label: 'Activities',
@@ -144,7 +147,7 @@ const NewSideBar = () => {
             Icon: PayrollIcon,
             active: 'payroll',
             path: `/dash/payslip/${logindata?.EmployeeId}`,
-            show: employeeStatus == 'Employee' || employeeStatus == 'Recruiter'
+            show:( employeeStatus == 'Employee' || employeeStatus == 'Recruiter')&& showTrainee
         },
         {
             label: 'Employee',
@@ -200,7 +203,8 @@ const NewSideBar = () => {
             {/* Mobile Nav */}
             <main className='bg-white p-3 flex justify-between d-lg-none ' >
                 <img onClick={() => navigate(navbarButtons[0].path)}
-                    src={require('../../assets/Images/meridatechmindsbluelogo.png')} alt="MeridaLogo"
+                    src={require('../../assets/logo/Merida_Tech_Minds_logo2.png')}
+                     alt="MeridaLogo"
                     className=' w-[7rem] h-fit ' />
                 <div className='flex items-center gap-2 ' >
                     <QrCodeGenerator />
@@ -212,7 +216,7 @@ const NewSideBar = () => {
                 <Offcanvas placement='end' show={showOff} onHide={() => setShowOff(false)} >
                     <Offcanvas.Header closeButton >
                         <img onClick={() => navigate(navbarButtons[0].path)}
-                            src={require('../../assets/Images/meridatechmindsbluelogo.png')} alt="MeridaLogo"
+                            src={require('../../assets/logo/Merida_Tech_Minds_logo2.png')} alt="MeridaLogo"
                             className=' w-[7rem] ' />
                     </Offcanvas.Header>
                     <Offcanvas.Body className='poppins ' >
@@ -253,7 +257,7 @@ const NewSideBar = () => {
             {/* Desktop Nav */}
             <div className=' text-slate-50 sidebarbg w-[100px] duration-300
         justify-between d-none d-lg-flex flex flex-col items-center gap-3 h-[100vh] py-3 ' >
-                <img src={require('../../assets/Images/favicon.ico')} alt="Icon" className='w-[30px] ' />
+                <img src={require('../../assets/logo/favicon.ico')} alt="Icon" className='w-[30px] ' />
                 <main className=' h-[90vh] overflow-y-scroll 
             text-slate-50 w-full navscrollbar1  ' >
                     {

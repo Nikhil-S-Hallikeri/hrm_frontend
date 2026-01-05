@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 import { useNavigate, useParams } from 'react-router-dom'
 import CopyToClipboard from '../../Components/MiniComponent/CopyToClipboard'
 import ShareButtons from '../../Components/MiniComponent/ShareButtons'
+import BackButton from '../../Components/MiniComponent/BackButton'
 
 const JobPosting = () => {
     let { id } = useParams()
@@ -76,7 +77,7 @@ const JobPosting = () => {
             })
     }
     let getParticularJob = () => {
-        axios.get(`${meridahrport}/api/job_description/${id}/`).then((response) => {
+        axios.get(`${port}/api/job_description/${id}/`).then((response) => {
             console.log(response.data, 'partjob');
             setFormObj(response.data)
         }).catch((error) => {
@@ -84,9 +85,10 @@ const JobPosting = () => {
         })
     }
     let updateJobPosting = async () => {
+        if (!validateForm()) return;
         setLoading("update")
         if (id)
-            await axios.patch(`${meridahrport}/api/job_description/${id}/`, formObj).then((response) => {
+            await axios.patch(`${port}/api/job_description/${id}/`, formObj).then((response) => {
                 console.log(response.data);
                 toast.success('Updated Successfully')
             }).catch((error) => {
@@ -98,7 +100,7 @@ const JobPosting = () => {
 
     let deleteJobPosting = () => {
         setLoading("delete")
-        axios.delete(`${meridahrport}/api/job_description/${id}/`).then((response) => {
+        axios.delete(`${port}/api/job_description/${id}/`).then((response) => {
             toast.success('Job Post is removed')
             navigate(`/settings/jobposting`)
             setLoading(false)
@@ -151,10 +153,38 @@ const JobPosting = () => {
             salary_type: "LPA",
         })
     }
-    let postJob = () => {
+    let validateForm = () => {
+        if (!formObj.department_id || formObj.department_id == 0) {
+            toast.error("Please select a Department");
+            return false;
+        }
+        if (!formObj.designation_id || formObj.designation_id == 0) {
+            toast.error("Please select a Designation");
+            return false;
+        }
+        if (!formObj.Title || formObj.Title.trim() === "") {
+            toast.error("Job Title is required");
+            return false;
+        }
+        if (!formObj.Job_Discription || formObj.Job_Discription.trim() === "") {
+            toast.error("Job Description is required");
+            return false;
+        }
+        if (!formObj.job_location || formObj.job_location.trim() === "") {
+            toast.error("Job Location is required");
+            return false;
+        }
+        if (!formObj.Qualification || formObj.Qualification.trim() === "") {
+            toast.error("Qualification is required");
+            return false;
+        }
+        return true;
+    }
 
+    let postJob = () => {
+        if (!validateForm()) return;
         setLoading(true)
-        axios.post(`${meridahrport}/api/job_description/`, formObj).then((response) => {
+        axios.post(`${port}/api/job_description/`, formObj).then((response) => {
             toast.success('Posted Successfully')
             setLoading(false)
             reset()
@@ -167,10 +197,13 @@ const JobPosting = () => {
     }
     return (
         <div className='px-2' >
-            <h5> Job Posting </h5>
+            <div className='flex justify-between' >
+                <h5> Job Posting </h5>
+                <BackButton />
+            </div>
             <main className='bg-white rounded p-3 my-3 row' >
                 {/* Department */}
-                <div className='"col-md-6 col-lg-4 ' >
+                <div className='col-md-6 col-lg-4 ' >
                     <label htmlFor="">Department :  </label>
                     <select name="" id=" " value={formObj.department_id}
                         onChange={(e) => {
@@ -415,9 +448,11 @@ const JobPosting = () => {
 
                     </div>
                 </section>
-                {/* Description */}
-                <InputFieldform label='Job Description' type='textarea' handleChange={handleFormObj}
-                    name='Job_Discription' value={formObj.Job_Discription} />
+                <div className=' col-12  ' >
+                    {/* Description */}
+                    <InputFieldform label='Job Description' type='quill' handleChange={handleFormObj}
+                        name='Job_Discription' size={' '} value={formObj.Job_Discription} />
+                </div>
                 {/* ClipBorad */}
                 {id && formObj.slug && <section className='col-md-6 col-lg-4 ' >
                     Share Link

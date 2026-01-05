@@ -151,13 +151,14 @@ const Basic = () => {
     // const [CanditateDetails, setCanditateDetails] = useEffect([]);
 
     useEffect(() => {
+        // axios.get(`${port}/root/FinalCanditatesList`).then((res) => {
+        //     console.log("CanditatesList", res.data);
 
-        axios.get(`${port}/root/FinalCanditatesList`).then((res) => {
-            console.log("CanditatesList", res.data);
+        // }).catch((err) => {
+        //     console.log(err.data);
+        // })
 
-        }).catch((err) => {
-            console.log(err.data);
-        })
+        fetchCandidates("All Applicants", 1);
 
     }, [])
 
@@ -319,92 +320,116 @@ const Basic = () => {
 
     const [canditatedetails, setCandidateDetails] = useState([])
 
-    const [status, setstatus] = useState(" ")
+    const [status, setstatus] = useState("All Applicants")
+    const [pagination, setPagination] = useState({
+        count: 0,
+        next: null,
+        previous: null,
+        currentPage: 1
+    });
 
+    const pageSize = 10; // As per backend settings
 
+    const fetchCandidates = (e, page = 1) => {
+        console.log("fetchCandidates", e, page);
+        setstatus(e);
+        axios.get(`${port}/root/FinalCandidatesList/${e}/?page=${page}`)
+            .then((res) => {
+                console.log("fetchCandidates_res", res.data);
+                setCandidateDetails(res.data.results || res.data);
+                if (res.data.results) {
+                    setPagination({
+                        count: res.data.count,
+                        next: res.data.next,
+                        previous: res.data.previous,
+                        currentPage: page
+                    });
+                } else {
+                    setPagination({
+                        count: res.data.length || 0,
+                        next: null,
+                        previous: null,
+                        currentPage: 1
+                    });
+                }
+            }).catch((err) => {
+                console.log("fetchCandidates_err", err);
+            });
+    }
 
+    const setHiredCanditates = (e) => fetchCandidates(e, 1);
+    const setConsiderToClient = (e) => fetchCandidates(e, 1);
+    const setShartlistCanditates = (e) => fetchCandidates(e, 1);
+    const setRejectedCandidates = (e) => fetchCandidates(e, 1);
+    const setOfferdCandidates = (e) => fetchCandidates(e, 1);
+
+    /*
     const setHiredCanditates = (e) => {
-
         console.log("setHiredCanditates", e);
         setstatus(e)
         axios.get(`${port}/root/FinalCandidatesList/${e}/`)
             .then((res) => {
                 console.log("setHiredCanditates_res", res.data);
-                setCandidateDetails(res.data)
-
+                setCandidateDetails(res.data.results || res.data)
             }).catch((err) => {
                 console.log("setHiredCanditates_err", err.data);
             })
     }
 
     let setConsiderToClient = (e) => {
-
         console.log("setConsiderToClient", e);
         setstatus(e)
         axios.get(`${port}/root/FinalCandidatesList/${e}/`)
             .then((res) => {
                 console.log("setConsiderToClient_res", res.data);
-                setCandidateDetails(res.data)
-
+                setCandidateDetails(res.data.results || res.data)
             }).catch((err) => {
                 console.log("setConsiderToClient_err", err.data);
             })
-
     }
 
     let setShartlistCanditates = (e) => {
         setstatus(e)
         console.log("setShortlistCanditates", e);
-
-
-
         axios.get(`${port}/root/FinalCandidatesList/${e}/`).then((res) => {
-            setCandidateDetails(res.data)
+            setCandidateDetails(res.data.results || res.data)
             console.log("setShortlistCanditates_res", res.data);
-
         }).catch((err) => {
             console.log("setShortlistCanditates_err", err.data);
         })
-
     }
 
-
     let setRejectedCandidates = (e) => {
-
         console.log("setRejectedCandidates", e);
         setstatus(e)
         axios.get(`${port}/root/FinalCandidatesList/${e}/`).then((res) => {
-            setCandidateDetails(res.data)
-            console.log("CanditatesList", res.data);
-
+            setCandidateDetails(res.data.results || res.data)
+            console.log("CandidatesList", res.data);
         }).catch((err) => {
             console.log(err.data);
         })
-
     }
 
     let setOfferdCandidates = (e) => {
-
         console.log("setOfferdCandidates", e);
         setstatus(e)
-        axios.get(`${port}/root/FinalCanditatesList`, e).then((res) => {
-            setCandidateDetails(res.data)
-            console.log("CanditatesList", res.data);
-
+        axios.get(`${port}/root/FinalCandidatesList/${e}/`).then((res) => {
+            setCandidateDetails(res.data.results || res.data)
+            console.log("CandidatesList", res.data);
         }).catch((err) => {
             console.log(err.data);
         })
-
     }
+    */
 
-    
+
     // }
 
     const [canid, setCanId] = useState(" ")
     const [canemail, setEmail] = useState(" ")
 
 
-   
+
 
     const [offer_letter_name, setoffer_letter_name] = useState('')
     const [offer_letter_ID, setoffer_letter_ID] = useState('')
@@ -466,7 +491,7 @@ const Basic = () => {
     }
 
     return (
-        <div className=' d-flex' style={{ width: '100%',minHeight : '100%', backgroundColor: "rgb(249,251,253)" }}>
+        <div className=' d-flex' style={{ width: '100%', minHeight: '100%', backgroundColor: "rgb(249,251,253)" }}>
 
             <div className='side'>
 
@@ -489,7 +514,8 @@ const Basic = () => {
                                 <div>
                                     {/* <h4 style={{ position: 'relative', top: '5px' }}>{canditatedetails != undefined && canditatedetails.length}</h4> */}
                                     <h4 style={{ position: 'relative', top: '5px' }}>{Hiredcounts.internal_hiring}</h4>
-                                    <p data-bs-toggle="modal" data-bs-target="#exampleModal10" onClick={() => setHiredCanditates("InternalHiring")} >InternalHiring</p>
+                                    {/* <p data-bs-toggle="modal" data-bs-target="#exampleModal10" onClick={() => setHiredCanditates("InternalHiring")} >Internal Hiring</p> */}
+                                    <p className='cursor-pointer' onClick={() => navigate("/dash/overview-candidates/InternalHiring")} >Internal Hiring</p>
                                 </div>
 
                                 <div>
@@ -508,7 +534,7 @@ const Basic = () => {
 
                                 <div>
                                     <h4 style={{ position: 'relative', top: '5px' }}>{Hiredcounts.consider_to_client}</h4>
-                                    <p data-bs-toggle="modal" data-bs-target="#exampleModal10" onClick={() => setConsiderToClient("Consider_to_Client")}>Consider To Client for Merida </p>
+                                    <p className='cursor-pointer' onClick={() => navigate("/dash/overview-candidates/consider_to_client")}>Consider To Client for Merida </p>
                                 </div>
 
                                 <div>
@@ -527,7 +553,7 @@ const Basic = () => {
 
                                 <div>
                                     <h4 style={{ position: 'relative', top: '5px' }}>0</h4>
-                                    <p data-bs-toggle="modal" data-bs-target="#exampleModal10" onClick={() => setShartlistCanditates("ShartlistCanditates")}>Shortlist Canditates</p>
+                                    <p className='cursor-pointer' onClick={() => navigate("/dash/overview-candidates/ShartlistCanditates")}>Shortlist Canditates</p>
                                 </div>
 
                                 <div>
@@ -546,7 +572,7 @@ const Basic = () => {
 
                                 <div>
                                     <h4 style={{ position: 'relative', top: '5px' }}>{Hiredcounts.Reject}</h4>
-                                    <p data-bs-toggle="modal" data-bs-target="#exampleModal10" value="" onClick={() => setRejectedCandidates("Reject")}>Rejected Candidates</p>
+                                    <p className='cursor-pointer' value="" onClick={() => navigate("/dash/overview-candidates/Reject")}>Rejected Candidates</p>
                                 </div>
 
                                 <div>
@@ -565,7 +591,7 @@ const Basic = () => {
 
                                 <div>
                                     <h4 style={{ position: 'relative', top: '5px' }}>0</h4>
-                                    <p data-bs-toggle="modal" data-bs-target="#exampleModal10" value="" onClick={() => setOfferdCandidates("OfferdCandidates")}>Offerd Candidates</p>
+                                    <p className='cursor-pointer' value="" onClick={() => navigate("/dash/overview-candidates/offered")}>Offerd Candidates</p>
                                 </div>
 
                                 <div>

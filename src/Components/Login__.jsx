@@ -182,7 +182,7 @@ const Login__ = () => {
                             <img src={require('../assets/Images/signinSoundWave.gif')} alt="SoundWave"
                                 className=' absolute -bottom-[10%] right-0  ' />
                         </div>
-                        <img src={require('../assets/Images/meridawebsitelogowhite.png')} alt="Merida_White_Logo"
+                        <img src={require('../assets/logo/meridawhitelogo.png')} alt="Merida_White_Logo"
                             className='relative w-[13rem] m-auto h-fit ' />
                     </div>
                     <section className="col-md-6 flex col-lg-4 pe-sm-4 ">

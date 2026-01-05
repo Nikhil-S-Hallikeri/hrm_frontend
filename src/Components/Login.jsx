@@ -129,7 +129,7 @@ const Login = () => {
             <div className="col col-sm-6 p-4">
                 <div>
                     <div className="logo ms-4">
-                        <img src={require('../assets/logo/merida-logo.b828553ab6c128308899.png')} width={100} alt="" />
+                        <img src={require('../assets/logo/meridawhitelogo.png')} width={100} alt="" />
                     </div>
 
 

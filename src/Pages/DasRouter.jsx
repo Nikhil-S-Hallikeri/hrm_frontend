@@ -27,6 +27,7 @@ import ParticularClientPage from './Client/ParticularClientPage'
 import NewSideBar from '../Components/MiniComponent/NewSideBar'
 import EmployeeActivitySheet from './Activity/EmployeeActivitySheet'
 import CandidatePageFinalStatus from './RecuirementClient/CandidatePageFinalStatus'
+import OverviewCandidatesPage from './RecuirementClient/OverviewCandidatesPage'
 
 const DasRouter = () => {
     let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
@@ -66,7 +67,9 @@ const DasRouter = () => {
                         <Route path='/client/:id/*' element={<ParticularClientPage />} />
                         <Route path='/addClient' element={<ClientCreation />} />
                         <Route path='/shift-timing' element={<ShiftTiming />} />
-                       
+                        <Route path='/overview-candidates/:status' element={<OverviewCandidatesPage />} />
+                        <Route path='/candidate-final-status/:rid' element={<CandidatePageFinalStatus />} />
+
 
                     </Routes>
 

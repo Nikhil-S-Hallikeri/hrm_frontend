@@ -1,5 +1,6 @@
 let status = JSON.parse(sessionStorage.getItem('user'))?.Disgnation
 let empid = JSON.parse(sessionStorage.getItem('dasid'))
+let permission = JSON.parse(sessionStorage.getItem('user'))?.user_permissions
 export const payrollRoutersLinks = [
     {
         label: 'Salary Component',
@@ -73,7 +74,7 @@ export const employeeRouterLink = [
         path: `/employees/`,
         active: 'all',
         keyword: ['employee', 'active employee', 'inactive', 'people'],
-        show: status == 'HR' || status == 'Admin',
+        show: status == 'HR' || status == 'Admin' || permission?.all_employees_view,
     },
     {
         label: 'Mass Mail',
@@ -106,7 +107,7 @@ export const leaveRouterLinks = [
     {
         label: 'Leave Approval',
         path: `/leave/`,
-        keyword:['leave','request'],
+        keyword: ['leave', 'request'],
         active: 'approval',
         show: true,
     },
@@ -114,20 +115,20 @@ export const leaveRouterLinks = [
         label: 'Attendance list',
         path: `/leave/attendence-list`,
         active: 'list',
-        keywrod:['list','leave','attendance','report','employee'],
+        keywrod: ['list', 'leave', 'attendance', 'report', 'employee'],
         show: true,
     },
     {
         label: 'Leave Request History',
         path: `/leave/history`,
         active: 'history',
-        keyword:['history','people'],
+        keyword: ['history', 'people'],
         show: true,
     },
     {
         label: 'Leave Creation',
         path: `/leave/leaveCreation`,
-        keyword:['leave','leave type','create'],
+        keyword: ['leave', 'leave type', 'create'],
         active: 'creation',
         show: true,
     },

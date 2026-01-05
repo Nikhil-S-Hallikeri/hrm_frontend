@@ -47,7 +47,6 @@ const ClientRouter = () => {
                             <Route path='/recuirment/*' element={<AllRequirementsPage />} />
                             <Route path='/candidate/:rid?' element={<CandidatePageFinalStatus />} />
                             <Route path='/category/:cat' element={<ClientCategoryList />} />
-
                         </Routes>
                     </div>
                 </article>

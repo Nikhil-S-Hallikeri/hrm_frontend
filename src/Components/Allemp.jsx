@@ -139,7 +139,7 @@ const Allemp = ({ subpage }) => {
   });
   let handleChange = e => {
     let { name, value } = e.target;
-    if (name == 'Employeement_Type' && value == 'intern') {
+    if (name == 'Employeement_Type' && (value == 'intern'|| value=='Trainee') ) {
       setobj(prev => ({
         ...prev,
         probation_status: '',
@@ -487,7 +487,7 @@ const Allemp = ({ subpage }) => {
         age: calculateAge(value)
       }))
     }
-    if (name == 'Employeement_Type' && value == 'intern') {
+    if (name == 'Employeement_Type' && (value == 'intern'|| value=='Trainee') ) {
       set_Edit_Data(prev => ({
         ...prev,
         probation_status: '',

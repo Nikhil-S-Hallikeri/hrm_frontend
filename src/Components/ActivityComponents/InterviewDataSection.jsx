@@ -14,17 +14,51 @@ const InterviewDataSection = ({ empid, css, dates, getTrigger, month, year }) =>
     let [loading, setLoading] = useState(false)
     let { changeDateYear } = useContext(HrmStore)
     let navigate = useNavigate()
+    // let getData = () => {
+    //     setLoading(true)
+    //     axios.get(`${port}/root/DisplayEmployeeActivitys/${empid}?current_month=${month + 1}&current_year=${year}`).then((response) => {
+    //         console.log(response.data, 'dataact',`${port}/root/DisplayEmployeeActivitys/${empid}?current_month=${month + 1}&current_year=${year}`);
+    //         setLoading(false)
+    //         setInterviewData(response.data)
+    //     }).catch((error) => {
+    //         console.log(error, 'dataact');
+    //         setLoading(false)
+    //     })
+    // }
+
+
+
+
     let getData = () => {
-        setLoading(true)
-        axios.get(`${port}/root/DisplayEmployeeActivitys/${empid}?current_month=${month + 1}&current_year=${year}`).then((response) => {
-            console.log(response.data, 'dataact',`${port}/root/DisplayEmployeeActivitys/${empid}?current_month=${month + 1}&current_year=${year}`);
-            setLoading(false)
-            setInterviewData(response.data)
-        }).catch((error) => {
-            console.log(error, 'dataact');
-            setLoading(false)
-        })
+        setLoading(true);
+        axios.get(`${port}/root/employee-interview-dashboard/${empid}?month=${month + 1}&year=${year}`)
+            .then((response) => {
+                console.log('Dashboard Counts:', response.data);
+                setLoading(false);
+                const counts = response.data;
+
+                const transformedData = {
+                    interview_schedules: [{ activity_id: 1, date: '', interview_schedule_data: { length: counts.interview_schedule || 0 } }],
+                    walkins_schedules: [{ activity_id: 1, date: '', walkin_schedule_data: { length: counts.interview_attended || 0 } }],
+                    screening: [{ activity_id: 1, date: '', screening_conducted_data: { length: counts.screening || 0 } }],
+                    Internal_Hiring: [{ activity_id: 1, date: '', internal_hiring_data: { length: counts.Internal_Hiring || 0 } }],
+                    On_Hold: [{ activity_id: 1, date: '', On_Hold_data: { length: counts.On_Hold || 0 } }],
+                    Reject: [{ activity_id: 1, date: '', Rejections_data: { length: counts.Reject || 0 } }],
+                    Rejected_by_Candidate: [{ activity_id: 1, date: '', Rejected_by_Candidate_data: { length: counts.Rejected_by_Candidate || 0 } }],
+                    consider_to_client: [{ activity_id: 1, date: '', consider_to_client_data: { length: counts.consider_to_client || 0 } }],
+                    Offers: [{ activity_id: 1, date: '', offers_data: { length: counts.Offers || 0 } }],
+                    Offer_did_not_accept: [{ activity_id: 1, date: '', offers_tejects_data: { length: counts.Offer_did_not_accept || 0 } }],
+                    walkout: [{ activity_id: 1, date: '', walkouts_data: { length: counts.walkout || 0 } }]
+                };
+
+                setInterviewData(transformedData);
+
+            }).catch((error) => {
+                console.log('Error fetching dashboard counts:', error);
+                setLoading(false);
+            });
     }
+
     useEffect(() => {
         getData()
     }, [empid, getTrigger, month, year])
