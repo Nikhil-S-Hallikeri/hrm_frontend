@@ -12,7 +12,7 @@ const GetGeoLocation = () => {
     const [isInsideOffice, setIsInsideOffice] = useState(false);
     // 12.937286537079776, 77.58230830829295
     const officeLocation = { latitude: 12.937286537079776, longitude: 77.58230830829295 }; // Replace with your office location
-    const radius = 50; // 50 meters radius
+    const radius = 10; // 50 meters radius
 
     const calculateDistance = (lat1, lon1, lat2, lon2) => {
         const R = 6371000; // Earth's radius in meters
@@ -76,6 +76,7 @@ const GetGeoLocation = () => {
                 },
                 (error) => {
                     // Handle errors...
+                    
                 },
                 { enableHighAccuracy: true }
             );
@@ -122,7 +123,8 @@ const GetGeoLocation = () => {
                 {(isInsideOffice) ? "Enabled" : 'Disabled'} </span>
             <main className=" flex items-center gap-2 " >
                 <span className={` ${!move ? 'fw-semibold ' : ''}  text-red-600 `} > Out </span>
-                {empId == 'MTM24EMPE9' ?
+                {empId == 'MTM24EMPE9'
+                    ?
                     <button onClick={() => trackTiming('reject')}
                         className={`w-[3rem] flex items-center h-[1.4rem] bg-slate-500 rounded-xl shadow-sm `} >
                         <div className={` h-[1.2rem] w-[1.2rem] rounded-full shadow-sm duration-500
