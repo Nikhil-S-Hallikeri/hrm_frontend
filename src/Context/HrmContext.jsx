@@ -24,6 +24,7 @@ const HrmContext = (props) => {
     let [activeEmployee, setActiveEmployees] = useState()
     let [employeeData, setEmployeeData] = useState()
 
+    const [isInsideOffice, setIsInsideOffice] = useState(false);
     let [topnav, setTopNav] = useState()
     let getEmployeeData = () => {
         let id = JSON.parse(sessionStorage.getItem('dasid'))
@@ -419,7 +420,7 @@ Merida Tech Minds (OPC) Pvt. Ltd.`
         return value.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
     }
     let valueShare = {
-        getEmployeeData, employeeData, trigger, setTrigger,
+        getEmployeeData, employeeData, trigger, setTrigger, isInsideOffice, setIsInsideOffice,
         formatTime, timeLastMonthValidate, convertTo12Hour, allShiftTiming, getAllShiftTiming, setAllShiftTiming, getActiveEmployee,
         deleteSalaryComponent, getEarningData, data, getMonthYear, getTemplate, templates, numberToWords, activeEmployee, calculateAge,
         religion, getReligion, count, formatDate, preTaxDeduction, postTaxDeduction, getPreTaxDeduction, getPostTaxDeduction,

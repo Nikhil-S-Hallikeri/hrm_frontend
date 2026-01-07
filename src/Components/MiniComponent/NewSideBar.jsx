@@ -28,7 +28,7 @@ import ReportIcon from '../Icons/ReportIcon'
 import ReportIconFill from '../Icons/ReportIconFill'
 
 const NewSideBar = () => {
-    let { activePage, setActivePage, employeeData } = useContext(HrmStore)
+    let { activePage, setActivePage, employeeData, setIsInsideOffice } = useContext(HrmStore)
     let logindata = JSON.parse(sessionStorage.getItem('user'))
     let employeeStatus = JSON.parse(sessionStorage.getItem('user'))?.Disgnation
     let Empid = JSON.parse(sessionStorage.getItem('dasid'))
@@ -110,21 +110,21 @@ const NewSideBar = () => {
             Icon: MyTeamIcon,
             active: 'Reporting_team',
             path: `/Reporting_team`,
-            show: (employeeStatus == 'Admin' || employeeStatus == 'HR')&& showTrainee
+            show: (employeeStatus == 'Admin' || employeeStatus == 'HR') && showTrainee
         },
         {
             label: 'Reporting team',
             Icon: MyTeamIcon,
             active: 'team',
             path: `/Report_Manager_Reporting_team`,
-            show: (employeeStatus == 'Employee')&& showTrainee
+            show: (employeeStatus == 'Employee') && showTrainee
         },
         {
             label: 'Reporting team',
             Icon: MyTeamIcon,
             active: 'team',
             path: `/Reporting_team_recuter`,
-            show:( employeeStatus == 'Recruiter')&& showTrainee
+            show: (employeeStatus == 'Recruiter') && showTrainee
         },
         {
             label: 'Activities',
@@ -147,7 +147,7 @@ const NewSideBar = () => {
             Icon: PayrollIcon,
             active: 'payroll',
             path: `/dash/payslip/${logindata?.EmployeeId}`,
-            show:( employeeStatus == 'Employee' || employeeStatus == 'Recruiter')&& showTrainee
+            show: (employeeStatus == 'Employee' || employeeStatus == 'Recruiter') && showTrainee
         },
         {
             label: 'Employee',
@@ -202,9 +202,13 @@ const NewSideBar = () => {
         <div className='sticky top-0 ' >
             {/* Mobile Nav */}
             <main className='bg-white p-3 flex justify-between d-lg-none ' >
-                <img onClick={() => navigate(navbarButtons[0].path)}
+                <img
+                    onClick={() => {
+                        setIsInsideOffice((prev) => !prev)
+                    }}
+                    // onClick={() => navigate(navbarButtons[0].path)}
                     src={require('../../assets/logo/Merida_Tech_Minds_logo2.png')}
-                     alt="MeridaLogo"
+                    alt="MeridaLogo"
                     className=' w-[7rem] h-fit ' />
                 <div className='flex items-center gap-2 ' >
                     <QrCodeGenerator />
@@ -215,7 +219,10 @@ const NewSideBar = () => {
                 </div>
                 <Offcanvas placement='end' show={showOff} onHide={() => setShowOff(false)} >
                     <Offcanvas.Header closeButton >
-                        <img onClick={() => navigate(navbarButtons[0].path)}
+                        <img
+                            onClick={() => {
+                                setIsInsideOffice((prev) => !prev)
+                            }}
                             src={require('../../assets/logo/Merida_Tech_Minds_logo2.png')} alt="MeridaLogo"
                             className=' w-[7rem] ' />
                     </Offcanvas.Header>
@@ -257,7 +264,11 @@ const NewSideBar = () => {
             {/* Desktop Nav */}
             <div className=' text-slate-50 sidebarbg w-[100px] duration-300
         justify-between d-none d-lg-flex flex flex-col items-center gap-3 h-[100vh] py-3 ' >
-                <img src={require('../../assets/logo/favicon.ico')} alt="Icon" className='w-[30px] ' />
+                <img
+                    onClick={() => {
+                        setIsInsideOffice((prev) => !prev)
+                    }}
+                    src={require('../../assets/logo/favicon.ico')} alt="Icon" className='w-[30px] ' />
                 <main className=' h-[90vh] overflow-y-scroll 
             text-slate-50 w-full navscrollbar1  ' >
                     {

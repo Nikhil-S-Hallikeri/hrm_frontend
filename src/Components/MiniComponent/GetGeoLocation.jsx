@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { port } from "../../App";
+import { useContext } from "react";
+import { HrmStore } from "../../Context/HrmContext";
 
 const GetGeoLocation = () => {
     let [move, setMove] = useState(false)
@@ -9,7 +11,7 @@ const GetGeoLocation = () => {
     const [location, setLocation] = useState({ latitude: null, longitude: null });
     const [error, setError] = useState(null);
     const [distance, setDistance] = useState(null);
-    const [isInsideOffice, setIsInsideOffice] = useState(false);
+    const { isInsideOffice, setIsInsideOffice } = useContext(HrmStore);
     // 12.937286537079776, 77.58230830829295
     const officeLocation = { latitude: 12.937286537079776, longitude: 77.58230830829295 }; // Replace with your office location
     const radius = 50; // 50 meters radius
@@ -122,20 +124,13 @@ const GetGeoLocation = () => {
                 {(isInsideOffice) ? "Enabled" : 'Disabled'} </span>
             <main className=" flex items-center gap-2 " >
                 <span className={` ${!move ? 'fw-semibold ' : ''}  text-red-600 `} > Out </span>
-                {empId == 'MTM24EMPE9' ?
-                    <button onClick={() => trackTiming('reject')}
-                        className={`w-[3rem] flex items-center h-[1.4rem] bg-slate-500 rounded-xl shadow-sm `} >
-                        <div className={` h-[1.2rem] w-[1.2rem] rounded-full shadow-sm duration-500
-                         bg-slate-100 ${move ? 'translate-x-[1.6rem] ' : "translate-x-1 "} `} >
-                        </div>
-                    </button> :
-                    <button onClick={() => trackTiming()} disabled={!isInsideOffice}
-                        className={`w-[3rem] flex items-center h-[1.4rem] bg-slate-500 rounded-xl shadow-sm `} >
-                        <div className={` h-[1.2rem] w-[1.2rem] rounded-full shadow-sm duration-500
+                {<button onClick={() => trackTiming()} disabled={!isInsideOffice}
+                    className={`w-[3rem] flex items-center h-[1.4rem] bg-slate-500 rounded-xl shadow-sm `} >
+                    <div className={` h-[1.2rem] w-[1.2rem] rounded-full shadow-sm duration-500
                          bg-slate-50 ${move ? 'translate-x-[1.6rem] ' : "translate-x-1 "} `} >
-
-                        </div>
-                    </button>}
+                    </div>
+                </button>
+                }
                 <span className={` ${move ? 'fw-semibold  ' : ''} text-teal-700 `} > IN </span>
             </main>
             {/* {!error && location.latitude && location.longitude && (

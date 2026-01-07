@@ -14,7 +14,7 @@ const Sidebar = () => {
     let logindata = JSON.parse(sessionStorage.getItem('user'))
 
     console.log("user", logindata.Disgnation);
-    let { activePage, setActivePage, count, openNavbar, employeeDetails, setNavbar } = useContext(HrmStore)
+    let { activePage, setActivePage, count, setIsInsideOffice, openNavbar, employeeDetails, setNavbar } = useContext(HrmStore)
 
     return (
         <div className={` ${openNavbar && ' w-[270px]'}  `}>
@@ -25,7 +25,9 @@ const Sidebar = () => {
                             {/* <img className='absolute z-0 top-0 ' src={require('../assets/Images/navbar.png')} alt="Navbar" /> */}
                             <button className='flex mx-auto'>
                                 <img className='w-6 ' src={require('../assets/logo/favicon.ico')}
-                                 alt="Merida icon " />
+                                    alt="Merida icon " onClick={() => {
+                                        setIsInsideOffice((prev) => !prev)
+                                    }} />
                             </button>
                             <button onClick={() => setNavbar(!openNavbar)}
                                 className={`hover:scale-[1.05] w-fit flex mt-3 mx-auto rounded  `}>
