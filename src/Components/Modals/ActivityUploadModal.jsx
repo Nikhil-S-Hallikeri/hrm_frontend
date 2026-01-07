@@ -105,9 +105,7 @@ const ActivityUploadModal = ({ show, setAid, getData, setshow, empid, aid }) => 
     let validate = () => {
         let count = 0
         Object.keys(formData).forEach((field) => {
-            if (dynamicCredentials[field] &&
-                dynamicCredentials[field].required && dynamicCredentials[field].show &&
-                (formData[field] == null || formData[field] == '')) {
+            if (dynamicCredentials[field] && dynamicCredentials[field].required && dynamicCredentials[field].show && (formData[field] == null || formData[field] == '')) {
                 count += 1
             }
         })

@@ -11,8 +11,8 @@ const Loader = () => (
 
 const MetricLinkCard = ({ label, count, onClick }) => (
     <div className="col-md-4 col-lg-3 mb-4 hover:scale-105 transition-transform duration-300">
-        <div 
-            className="card shadow-sm border-0 h-100 card-hover" 
+        <div
+            className="card shadow-sm border-0 h-100 card-hover"
             onClick={onClick}
             style={{ cursor: count > 0 ? 'pointer' : 'default' }}
         >
@@ -53,7 +53,7 @@ const InterviewActivityDashboard = ({ empid, month, year }) => {
     }, [empid, month, year]);
 
     const handleCardClick = (type) => {
-        const url = `/activity/particularActivity/${empid}/?aid=1&type=${type}&month=${month + 1}&year=${year}`;
+        const url = `/activity/particularActivity/${empid}/?aid=1&activity_name=interview_calls&type=${type}&month=${month + 1}&year=${year}`;
         navigate(url);
     };
 
@@ -66,7 +66,7 @@ const InterviewActivityDashboard = ({ empid, month, year }) => {
                         metrics.map(metric => {
                             const count = dashboardCounts[metric.type] || 0;
                             return (
-                                <MetricLinkCard 
+                                <MetricLinkCard
                                     key={metric.type}
                                     label={metric.label}
                                     count={count}

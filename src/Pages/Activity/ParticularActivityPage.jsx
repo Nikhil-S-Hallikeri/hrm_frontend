@@ -14,6 +14,7 @@ const ParticularActivityPage = () => {
     let location = useLocation();
     let queryParams = new URLSearchParams(location.search)
     let [aid, setAid] = useState(queryParams.get('aid'))
+    let [activityName, setActivityName] = useState(queryParams.get('activity_name'))
     let [date, setDate] = useState(queryParams.get('date'))
     let [todate, setToDate] = useState()
     let [month, setMonth] = useState(queryParams.get('month'))
@@ -32,13 +33,14 @@ const ParticularActivityPage = () => {
     let [selectedAid, setSelectedAid] = useState()
     let getData = () => {
         let queryString = `?${aid ? `activity_list_id=${aid}`
-            : ''}${date && !todate ? `&date=${date}`
-                : ''}${empid ? `&login_emp_id=${empid}`
-                    : ''}${activityStatus ? `&activity_status=${activityStatus}`
-                        : ''}${month ? `&current_month=${Number(month) + 1}`
-                            : ''}${year ? `&current_year=${year}`
-                                : ''}${todate && date ? `&start_date=${date}&end_date=${todate}`
-                                    : ''}${year && month && !date && activityStatus ? `&requirement=full_month` : ''}`;
+            : ''}${activityName ? `&activity_name=${activityName}`
+                : ''}${date && !todate ? `&date=${date}`
+                    : ''}${empid ? `&login_emp_id=${empid}`
+                        : ''}${activityStatus ? `&activity_status=${activityStatus}`
+                            : ''}${month ? `&current_month=${Number(month) + 1}`
+                                : ''}${year ? `&current_year=${year}`
+                                    : ''}${todate && date ? `&start_date=${date}&end_date=${todate}`
+                                        : ''}${year && month && !date && activityStatus ? `&requirement=full_month` : ''}`;
 
         let api = month && year && !date && activityStatus ?
             `/root/DisplayEmployeeActivitys/${empid}` : activityStatus ?
@@ -67,7 +69,7 @@ const ParticularActivityPage = () => {
         }
         if (empid != JSON.parse(sessionStorage.getItem('dasid')))
             setTopNav('myteam')
-    }, [empid, aid, activityStatus, date, todate])
+    }, [empid, aid, activityStatus, date, todate, activityName])
     let getActivity = () => {
         axios.get(`${port}/root/activity-list/assigned/${empid}`).then((response) => {
             console.log(response.data, 'yyyy');
@@ -84,7 +86,7 @@ const ParticularActivityPage = () => {
 
             <BackButton />
             {empid && <EmpNameCom empid={empid} />}
-            
+
             <main className=' my-3 flex flex-wrap gap-3 justify-between outline-none ' >
                 <select name="" className='p-2 rounded my-2 ' value={aid} onChange={(e) => { setAid(e.target.value); setActivityStatus(null) }} id="">
                     <option value="">Select</option>

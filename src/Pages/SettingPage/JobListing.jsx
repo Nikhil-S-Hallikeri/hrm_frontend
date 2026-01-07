@@ -59,7 +59,8 @@ const JobListing = () => {
                                 </tr>
                                 {
                                     allJobs && allJobs.map((obj, index) => (
-                                        <tr key={obj.id} onClick={() => navigate(`/settings/jobposting/${obj.id}`)} className={`hover:bg-slate-200 cursor-pointer  `} >
+                                        // <tr key={obj.id} onClick={() => navigate(`/settings/jobposting/${obj.id}`)} className={`hover:bg-slate-200 cursor-pointer  `} >
+                                        <tr key={obj.id} onClick={() => navigate(`/settings/jobposting/${obj.slug || obj.id}`)} className={`hover:bg-slate-200 cursor-pointer  `} >
                                             <td>{index + 1} </td>
                                             <td>{obj.Title} </td>
                                             <td>{obj.Qualification} </td>
