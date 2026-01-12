@@ -122,7 +122,7 @@ MERIDA HR`)
                 <table className="w-full table-fixed min-w-[1440px] ">
                     <thead>
                         <tr className="bg-gray-100 font-semibold text-slate-700 whitespace-nowrap">
-                            <th className="px-2 py-3 w-[3%] text-left">SI No</th>
+                            <th className="px-2 py-3 w-[5%] text-left">SI No</th>
                             <th className="px-2 py-3 w-[12%] text-left">Candidate Name</th>
                             <th className="px-2 py-3 w-[9%] text-left">Candidate ID</th>
                             <th className="px-2 py-3 w-[16%] text-left">Email</th>
@@ -169,8 +169,8 @@ MERIDA HR`)
                                 }
                                 {status !== 'ShartlistCanditates' && status !== 'Reject' && status !== 'All Applicants' &&
                                     <td className="text-center px-3 py-2">
-                                        {((obj.Experience && obj.BG_Status === 'Verified') || obj.Fresher ||
-                                            obj.verification_status === "Approved") ?
+                                        {/* {((obj.Experience && obj.BG_Status === 'Verified') || obj.Fresher ||
+                                            obj.verification_status === "Approved") ? */}
                                             <button
                                                 className={`btn btn-info btn-sm ${obj.Final_Results === 'Reject' ? 'd-none' : 'd-block'}`}
                                                 onClick={() => {
@@ -178,7 +178,8 @@ MERIDA HR`)
                                                 }}
                                             >
                                                 Offer Letter
-                                            </button> : <p className="mb-0 text-xs">BGV In Progress</p>}
+                                            {/* </button> : <p className="mb-0 text-xs">BGV In Progress</p>} */}
+                                            </button>
                                     </td>
                                 }
                                 <td className="px-3 py-2">

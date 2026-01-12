@@ -148,10 +148,10 @@ const JFDocumentSubmitted = ({ id, page, data }) => {
                     Previous
                 </button>
                 <button onClick={() => {
-                    if (formobj.length < 5) {
-                        toast.warning('Enter the submission report for all 5 documents')
-                        return
-                    }
+                    // if (formobj.length < 5) {
+                    //     toast.warning('Enter the submission report for all 5 documents')
+                    //     return
+                    // }
                     saveData();
                     navigate(`/Employeeallform/${id}/declaration`)
                 }} className='p-2 bg-slate-400 text-white rounded'>

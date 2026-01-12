@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Sidebar from './Sidebar'
-import Topnav from './Topnav'
+// import Sidebar from './Sidebar'
+// import Topnav from './Topnav'
 import axios from 'axios'
 import { port } from '../App'
 import HrmContext, { HrmStore } from '../Context/HrmContext'
@@ -12,9 +12,10 @@ const New_join_emp = () => {
     let Empid = JSON.parse(sessionStorage.getItem('user')).EmployeeId
     let navigate = useNavigate()
     const [AllEmployeelist, setAllEmployeelist] = useState([])
-    let { setActivePage } = useContext(HrmStore)
+    let { setActivePage, setTopNav } = useContext(HrmStore)
     useEffect(() => {
         setActivePage("Employee")
+        setTopNav("join-employee")
         fetchdata()
     }, [])
 
@@ -55,13 +56,13 @@ const New_join_emp = () => {
     const [ID, setID] = useState('')
     return (
         <div className=' d-flex' style={{ width: '100%', minHeight: '100%', }}>
-
-            <div className=''>
+            {/* <div className=''>
 
                 <Sidebar value={"dashboard"} ></Sidebar>
             </div>
             <div className=' m-0 m-sm-4 flex-1 container mx-auto ' style={{ borderRadius: '10px' }}>
-                <Topnav></Topnav>
+                <Topnav></Topnav> */}
+            <div className=' flex-1 container mx-auto ' style={{ borderRadius: '10px' }}>
 
                 <div className='m-1 p-1' style={{ display: 'flex', justifyContent: 'space-between' }}>
 
@@ -101,8 +102,9 @@ const New_join_emp = () => {
                                         <td key={e.id}> {e.employee_Id}</td>
                                         <td key={e.id}> {e.mobile}</td>
                                         <td key={e.id}>
-                                            <button className='text-blue-600 ' onClick={()=>{navigate(`/employeeVerification/${e.Candidate_id}`)}} >
-                                                View 
+                                            {/* <button className='text-blue-600 ' onClick={()=>{navigate(`/employeeVerification/${e.Candidate_id}`)}} ></button> */}
+                                            <button className='text-blue-600 ' onClick={() => { navigate(`/employeeVerification/${e.Candidate_id}`) }} >
+                                                View
                                             </button>
                                         </td>
 

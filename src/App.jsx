@@ -118,20 +118,20 @@ import CandidateFormPage from './Pages/Activity/CandidateFormPage'
 // export const port = "http://192.168.18.26:9000/"
 // export const port = "http://192.168.18.13:8000/"
 // export const port ='https://7mb3bgxf-9000.inc1.devtunnels.ms/'
-export const port = "https://hrmbackendapi.meridahr.com/"   //<
-export const domain = 'https://hrm.meridahr.com'   //<
+// export const port = "https://hrmbackendapi.meridahr.com/"   //<
+// export const domain = 'https://hrm.meridahr.com'   //<
 // export const domain = 'http://192.168.151.237:3000'
-export const das = 'https://das.meridahr.com'  //<
+// export const das = 'https://das.meridahr.com'  //<
 // export const das = 'http://192.168.18.24:3001'
-export const meridahrport = 'https://backendapi.meridahr.com'  //<
-export const meridahrsite = 'https://meridahr.com/'   //<
+// export const meridahrport = 'https://backendapi.meridahr.com'  //<
+// export const meridahrsite = 'https://meridahr.com/'   //<
 // export const meridahrport = 'http://192.168.218.249:7000'
 
-// export const port = 'http://127.0.0.1:8005/'
-// export const meridahrsite = 'http://127.0.0.1:8005/'
-// export const domain = 'http://localhost:3000'
-// export const das = 'http://127.0.0.1:8005/'
-// export const meridahrport = 'http://127.0.0.1:8005/'
+export const port = 'http://127.0.0.1:8005/'
+export const meridahrsite = 'http://127.0.0.1:8005/'
+export const domain = 'http://localhost:3000'
+export const das = 'http://127.0.0.1:8005/'
+export const meridahrport = 'http://127.0.0.1:8005/'
 
 //changes2
 const App = () => {
@@ -243,7 +243,7 @@ const App = () => {
 
           <Route element={<Employeees></Employeees>} path='/Employee_Overview'></Route>
 
-          <Route element={<New_join_emp></New_join_emp>} path='/New_Join_Employee'></Route>
+          {/* <Route element={<New_join_emp></New_join_emp>} path='/New_Join_Employee'></Route> */}
 
           <Route element={<Sample_acti_rec></Sample_acti_rec>} path='/Activity_Rec'></Route>
 

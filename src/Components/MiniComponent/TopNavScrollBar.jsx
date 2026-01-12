@@ -33,10 +33,10 @@ const TopNavScrollBar = ({ navbar }) => {
                     navbar && navbar.filter((obj) => obj.show == true).map((obj, index) => (
                         <div onClick={() => navigate(obj.path)}
                             className={`relative my-0 py-0 ${obj.active == topnav && 'text-blue-600 fw-semibold '} 
-                        text-sm poppins cursor-pointer text-nowrap px-2 duration-500 `} >
+                        text-sm poppins cursor-pointer text-nowrap px-2 duration-300 `} >
                             {obj.label}
                             <hr className={` w-1/2 ${obj.active == topnav ? 'border-4' : 'border-0'} 
-                            duration-500 opacity-100 mx-auto my-2 rounded border-blue-600 mb-0 `} />
+                            duration-300 opacity-100 mx-auto my-2 rounded border-blue-600 mb-0 `} />
                         </div>
                     ))
                 }

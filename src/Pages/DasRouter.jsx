@@ -29,8 +29,11 @@ import EmployeeActivitySheet from './Activity/EmployeeActivitySheet'
 import CandidatePageFinalStatus from './RecuirementClient/CandidatePageFinalStatus'
 import OverviewCandidatesPage from './RecuirementClient/OverviewCandidatesPage'
 
+
 const DasRouter = () => {
-    let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
+    // let employeeStatus = JSON.parse(sessionStorage.getItem('user')).Disgnation
+    const user = sessionStorage.getItem('user');
+    let employeeStatus = user ? JSON.parse(user).Disgnation : null;
     // let employeeStatus = 'HR'
 
 
@@ -69,6 +72,7 @@ const DasRouter = () => {
                         <Route path='/shift-timing' element={<ShiftTiming />} />
                         <Route path='/overview-candidates/:status' element={<OverviewCandidatesPage />} />
                         <Route path='/candidate-final-status/:rid' element={<CandidatePageFinalStatus />} />
+
 
 
                     </Routes>

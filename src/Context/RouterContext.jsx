@@ -142,6 +142,18 @@ const RouterContext = (props) => {
                 path: '/employees/Employee_request_form',
                 active: 'exit',
                 show: true
+            },
+            {
+                label: 'Pending Joining Forms',
+                path: '/employees/pending-joining-forms',
+                active: 'pending-forms',
+                show: status == 'HR' || status == 'Admin'
+            },
+            {
+                label: 'New Join Employee',
+                path: '/employees/New_Join_Employee',
+                active: 'join-employee',
+                show: status == 'HR' || status == 'Admin'
             }
         ])
         setpayrollRoutersLinks([

@@ -1,30 +1,61 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify';
 import { port } from '../../App'
 
 const JoingingFormalities = ({ id, getData, page, formObj, setFormObj, handleFormObj }) => {
     let navigate = useNavigate()
     let saveData = () => {
+        console.log('saveData called, formObj:', formObj);
         if (formObj.id) {
+            console.log('Updating existing record, ID:', formObj.id);
             update()
             return
         }
+        console.log('Creating new record for candidate ID:', id);
         axios.post(`${port}/root/ems/employee_information/${id}/`, formObj).then((response) => {
+            console.log('POST Success! Response:', response.data);
             setFormObj(response.data)
-            console.log(response.data);
+            toast.success('Employee information saved successfully!');
         }).catch((error) => {
-            console.log(error);
+            console.error('POST Error:', error);
+            console.error('Error response:', error.response);
+
+            // Display detailed validation errors
+            if (error.response?.data) {
+                const errorData = error.response.data;
+                console.error('Validation errors:', errorData);
+
+                // Format error message
+                let errorMessage = 'Failed to save:\n';
+                if (typeof errorData === 'object') {
+                    Object.keys(errorData).forEach(key => {
+                        errorMessage += `${key}: ${errorData[key]}\n`;
+                    });
+                } else {
+                    errorMessage = errorData;
+                }
+
+                toast.error(errorMessage);
+            } else {
+                toast.error(`Failed to save: ${error.message}`);
+            }
         })
     }
     let update = () => {
         delete formObj.Candidate_id
+        console.log('Updating employee info, ID:', formObj.id);
         axios.patch(`${port}/root/ems/updating_employee_information/${formObj.id}/`, formObj).then((response) => {
             console.log(response.data);
+            console.log('PATCH Success:', response.data);
+            toast.success('Employee information updated!');
             // setFormObj(response.data);
             getData()
         }).catch((error) => {
+            console.error('PATCH Error:', error);
             console.log(error);
+            toast.error(`Failed to update: ${error.response?.data?.detail || error.message}`);
         })
     }
     useEffect(() => {

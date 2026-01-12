@@ -105,7 +105,8 @@ const Employeeallform = () => {
                 </div>
             </section> */}
             {
-                (EmployeeInformation && !EmployeeInformation.form_submitted_status) || typeof id != 'number' ?
+                // (EmployeeInformation && !EmployeeInformation.form_submitted_status) || typeof id != 'number' ?
+                (EmployeeInformation && !EmployeeInformation.form_submitted_status) || !isNaN(id) ?
 
                     <Routes>
                         <Route path='/*'

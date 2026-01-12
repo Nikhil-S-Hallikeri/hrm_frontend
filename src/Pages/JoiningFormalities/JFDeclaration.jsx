@@ -30,6 +30,10 @@ const JFDeclaration = ({ id, page, data }) => {
     }
     let saveData = () => {
         // alert('method')
+        if (!data || !data.id) {
+            toast.error('Employee information not loaded yet. Please wait...');
+            return;
+        }
         if (formObj.id) {
             // formObj('hellow')
             UpdateData()
@@ -42,7 +46,7 @@ const JFDeclaration = ({ id, page, data }) => {
             formData.append('name', formObj.name)
             formData.append('place', formObj.place)
 
-            axios.post(`${port}/root/ems/declaration/${data.id}/`, formData).then((response) => {
+            axios.post(`${port}/root/ems/declaration/${data.id || id }/`, formData).then((response) => {
                 console.log(response.data);
                 // toast.success('jerold')
                 getData()
@@ -125,7 +129,8 @@ const JFDeclaration = ({ id, page, data }) => {
                     Previous
                 </button>
                 {
-                    typeof id == 'number' ? <button
+                    // typeof id == 'number' ? <button
+                    !isNaN(id) ? <button
                         onClick={() => {
                             saveData();
                             navigate(`/preview/${id}/`)

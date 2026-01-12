@@ -4,6 +4,8 @@ import { domain, port } from '../../App'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const WebsiteAccessibilityModal = ({ obj, getData, showModal, name, id, setShowModal }) => {
     let empUser = JSON.parse(sessionStorage.getItem('user'))
@@ -188,12 +190,18 @@ Merida HR Team.`
                                         </div>
                                         <div className=''>
                                             Mail Content :
-                                            <textarea className=' block bgclr p-2 w-full
+                                            {/* <textarea className=' block bgclr p-2 w-full
                                      rounded outline-none ' name="mail_content"
                                                 onChange={handleacceptObj} rows={8}
                                                 value={acceptObj.mail_content} id="">
 
-                                            </textarea>
+                                            </textarea> */}
+                                            <ReactQuill
+                                                theme="snow"
+                                                value={acceptObj.mail_content}
+                                                onChange={(content) => setAcceptObj(prev => ({ ...prev, mail_content: content }))}
+                                                className='bg-white'
+                                            />
                                         </div>
                                     </>}
                                 <section className='row my-3'>

@@ -27,19 +27,38 @@ const JFPreview = () => {
     let [EmployeeInformation, setEmployeeInformation] = useState()
     let [showModal, setShowModal] = useState()
     let [acceptObj, setAcceptObj] = useState()
-    let user = JSON.parse(sessionStorage.getItem('user'))
+    // let user = JSON.parse(sessionStorage.getItem('user'))
+    let user = sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')) : null
     let getEmployeeINformation = () => {
-        axios.get(`${port}/root/ems/candidate_employee_information/${id}/`).then((response) => {
-            setEmployeeInformation(response.data)
-            console.log("testing", response.data);
-        }).catch((error) => {
-            console.log(error,'testing');
-        })
+        // Use different endpoints based on ID type (same logic as Employeeallform.jsx)
+        if (!isNaN(id)) {
+            // Numeric ID = Candidate
+            axios.get(`${port}/root/ems/candidate_employee_information/${id}/`).then((response) => {
+                setEmployeeInformation(response.data)
+                console.log("testing", response.data);
+            }).catch((error) => {
+                console.log(error, 'testing - candidate endpoint failed');
+                toast.error('Could not load employee information. Please try again.');
+            })
+        } else {
+            // Alphanumeric ID = Employee
+            axios.get(`${port}/root/ems/Get_Employee_by_Emp/${id}/`).then((response) => {
+                setEmployeeInformation(response.data)
+                console.log("testing", response.data);
+            }).catch((error) => {
+                console.log(error, 'testing - employee endpoint failed');
+                toast.error('Could not load employee information. Please try again.');
+            })
+        }
     }
     useEffect(() => {
         getEmployeeINformation()
     }, [])
     let submitForm = () => {
+        if (!EmployeeInformation || !EmployeeInformation.id) {
+            toast.error('Employee information not loaded. Please refresh the page.');
+            return;
+        }
         axios.patch(`${port}/root/ems/updating_employee_information/${EmployeeInformation.id}/`, {
             form_submitted_status: true
         }).then((response) => {
@@ -48,13 +67,15 @@ const JFPreview = () => {
             getEmployeeINformation()
         }).catch((error) => {
             console.log(error);
+            toast.error('Failed to submit form. Please try again.');
         })
     }
     return (
         <div className='bg-white p-3 m-0'>
-            {EmployeeInformation && !EmployeeInformation.form_submitted_status || 
-            (user && EmployeeInformation
-                && (user.Disgnation == 'Admin' || user.Disgnation == 'HR'))
+            {/* {EmployeeInformation && !EmployeeInformation.form_submitted_status || */}
+            {(EmployeeInformation && !EmployeeInformation.form_submitted_status) ||
+                (user && EmployeeInformation
+                    && (user.Disgnation == 'Admin' || user.Disgnation == 'HR'))
                 ? <main className='container mx-auto '>
                     <JoingingFormalities getData={getEmployeeINformation} id={id} page='preview' formObj={EmployeeInformation} />
                     <JFEducationForm id={id} page='preview' data={EmployeeInformation} />
