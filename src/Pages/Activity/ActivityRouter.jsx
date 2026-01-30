@@ -10,6 +10,7 @@ import Reporting_team from '../../Components/Reporting_team'
 import MyTeamActivity from './MyTeamActivity'
 import ParticularActivityPage from './ParticularActivityPage'
 import InterviewPage from './InterviewPage'
+import ActivityMetricDetailsPage from './ActivityMetricDetailsPage'
 
 const ActivityRouter = () => {
     let { setActivePage } = useContext(HrmStore)
@@ -34,6 +35,7 @@ const ActivityRouter = () => {
                             <Route path='/myteam/*' element={<MyTeamActivity subpage />} />
                             <Route path='/myteam/:empid' element={<EmployeeActivitySheet subpage />} />
                             <Route path='/particularActivity/:empid' element={<ParticularActivityPage />} />
+                            <Route path='/details/:metricType' element={<ActivityMetricDetailsPage />} />
                         </Routes>
 
                     </div>
