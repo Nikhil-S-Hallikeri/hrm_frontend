@@ -5,6 +5,7 @@ import { port } from '../../App';
 import { toast } from 'react-toastify';
 import DashboardFilter from '../../Components/ActivityComponents/DashboardFilter';
 import BackButton from '../../Components/MiniComponent/BackButton';
+import ActivityUploadModal from '../../Components/Modals/ActivityUploadModal';
 
 const Loader = ({ height = '200px' }) => (
     <div className="flex justify-center items-center w-full" style={{ height }}>
@@ -14,6 +15,7 @@ const Loader = ({ height = '200px' }) => (
 
 const ActivityMetricDetailsPage = () => {
     const { metricType } = useParams();
+    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const empid = JSON.parse(sessionStorage.getItem('user'))?.EmployeeId;
 
@@ -39,6 +41,7 @@ const ActivityMetricDetailsPage = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [actionType, setActionType] = useState(''); // 'followup', 'reject', 'close', 'call_again', 'complete'
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [editModalAid, setEditModalAid] = useState(null);
 
     // Action Form Fields
     const [expectedDate, setExpectedDate] = useState('');
@@ -84,13 +87,16 @@ const ActivityMetricDetailsPage = () => {
 
     // Debounce search effect
     useEffect(() => {
+        // Only run if search actually differs (prevents reset on mount)
+        if (search === debouncedSearch) return;
+
         const timer = setTimeout(() => {
             setDebouncedSearch(search);
-            setPagination(prev => ({ ...prev, currentPage: 1 })); // Reset to page 1 on search change
+            setPagination(prev => ({ ...prev, currentPage: 1 }));
         }, 500);
 
         return () => clearTimeout(timer);
-    }, [search]);
+    }, [search, debouncedSearch]);
 
     const fetchData = useCallback(async (page = 1) => {
         if (!empid) return;
@@ -135,8 +141,15 @@ const ActivityMetricDetailsPage = () => {
         }
     }, [empid, metricType, filterType, debouncedSearch, customStartDate, customEndDate, targetEmpId]);
 
+    const isFirstRender = React.useRef(true);
+
     useEffect(() => {
-        fetchData(1);
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            fetchData(pagination.currentPage);
+        } else {
+            fetchData(1);
+        }
     }, [fetchData]);
 
     const handleSearchChange = (e) => {
@@ -281,144 +294,265 @@ const ActivityMetricDetailsPage = () => {
                             </span>
                             <input
                                 type="text"
-                                className="form-control border-start-0 ps-0 focus:ring-0 focus:border-0"
-                                placeholder="Search by name or phone..."
+                                className="form-control form-control-sm text-xs border-start-0 border-end-0 ps-0 focus:ring-0 focus:border-0"
+                                placeholder="Search..."
                                 value={search}
                                 onChange={handleSearchChange}
                             />
+                            <span className="input-group-text bg-white border-start-0" title="Search by name, phone, Role or Company">
+                                <i className="fas fa-info-circle text-gray-400"></i>
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="row tablebg table-responsive h-[60vh] overflow-y-scroll rounded-xl my-3 mt-3 p-0 mx-0 shadow-md bg-white">
+            <div className={`tablebg h-[calc(100vh-280px)] min-h-[400px] flex flex-col rounded-xl my-3 mt-3 p-0 mx-0 shadow-md bg-white border`}>
                 {isLoading ? (
                     <Loader height="400px" />
                 ) : (
                     <>
-                        <div className="w-full p-0">
-                            <table className="table table-hover mb-0 text-center align-middle w-full p-0">
-                                <thead className="table-light sticky top-0 z-10">
-                                    <tr>
-                                        <th>Type</th>
-                                        <th>Name / Position</th>
-                                        <th>Contact</th>
-                                        {metricType.includes('followup') ? (
-                                            <>
-                                                <th>Expected Date</th>
-                                                <th>Time</th>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <th>Status / Purpose</th>
-                                                <th>Details</th>
-                                            </>
-                                        )}
-                                        <th>Notes</th>
-                                        <th>Lead Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {data.length === 0 ? (
-                                        <tr>
-                                            <td colSpan="8" className="p-5 text-gray-500">No records found.</td>
-                                        </tr>
-                                    ) : (
-                                        data.map(item => (
-                                            <tr key={item.id}>
-                                                <td>
-                                                    <span className={`badge ${(item.candidate_name || item.follow_up_type === 'interview') ? 'bg-primary' :
-                                                        (item.client_name || item.follow_up_type === 'client') ? 'bg-success' : 'bg-info'
-                                                        }`}>
-                                                        {item.candidate_name || item.follow_up_type === 'interview' ? 'Interview' :
-                                                            item.client_name || item.follow_up_type === 'client' ? 'Client' : 'Job Post'}
-                                                    </span>
-                                                </td>
-                                                <td>{item.candidate_name || item.client_name || item.candidate_or_client_name || item.position}</td>
-                                                <td>{item.candidate_phone || item.client_phone || item.candidate_or_client_phone || '-'}</td>
-
-                                                {metricType.includes('followup') ? (
-                                                    <>
-                                                        <td>{item.expected_date}</td>
-                                                        <td>{formatTimeTo12Hour(item.expected_time)}</td>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <td>{item.interview_status || item.client_enquire_purpose || '-'}</td>
-                                                        <td>{item.candidate_designation || item.client_status || item.job_post_remarks || '-'}</td>
-                                                    </>
-                                                )}
-
-                                                <td>{item.closure_reason || item.notes || '-'}</td>
-                                                <td>
-                                                    {(() => {
-                                                        const status = item.lead_status || item.activity_lead_status;
-                                                        if (status === 'follow_up') return <span className="badge bg-purple-500 text-white">Follow-Up</span>;
-                                                        if (status === 'rejected') return <span className="badge bg-red-500 text-white">Rejected</span>;
-                                                        if (status === 'closed') return <span className="badge bg-gray-500 text-white">Closed</span>;
-                                                        return <span className="badge bg-green-500 text-white">Active</span>;
-                                                    })()}
-                                                </td>
-                                                <td>
-                                                    {metricType === 'completed-followups' ? (
-                                                        <span className="text-muted text-sm">Completed</span>
-                                                    ) : (item.lead_status || item.activity_lead_status) && (item.lead_status || item.activity_lead_status) !== 'active' ? (
-                                                        <span className="text-muted text-sm capitalize">{item.lead_status || item.activity_lead_status}</span>
+                        <div className="flex-grow overflow-auto w-full">
+                            <div className="inline-block min-w-full align-middle">
+                                <table className="min-w-full whitespace-nowrap table-auto">
+                                    <thead className="sticky top-0 z-10 bg-white shadow-sm">
+                                        <tr className="text-left">
+                                            <th className="p-3 min-w-[100px]">Type</th>
+                                            {metricType === 'client-calls' ? (
+                                                <>
+                                                    <th className="p-3 min-w-[200px]">Company Name</th>
+                                                    <th className="p-3 min-w-[150px]">Name</th>
+                                                    <th className="p-3 min-w-[150px]">Contact Person</th>
+                                                    <th className="p-3 min-w-[200px]">Email</th>
+                                                    <th className="p-3 min-w-[120px]">Phone</th>
+                                                    <th className="p-3 min-w-[150px]">Status</th>
+                                                    <th className="p-3 min-w-[250px]">Purpose</th>
+                                                    <th className="p-3 min-w-[250px]">Notes</th>
+                                                </>
+                                            ) : metricType === 'interview-calls' ? (
+                                                <>
+                                                    <th className="p-3 min-w-[200px]">Candidate Name</th>
+                                                    {/* <th>Applied Role</th> */}
+                                                    <th className="p-3 min-w-[200px]">Designation</th>
+                                                    <th className="p-3 min-w-[150px]">Experience</th>
+                                                    <th className="p-3 min-w-[150px]">Contact</th>
+                                                    <th className="p-3 min-w-[250px]">Notes</th>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <th className="p-3 min-w-[200px]">Name</th>
+                                                    <th className="p-3 min-w-[150px]">Contact</th>
+                                                    {metricType.includes('followup') ? (
+                                                        <>
+                                                            <th className="p-3 min-w-[150px]">Expected Date</th>
+                                                            <th className="p-3 min-w-[120px]">Time</th>
+                                                        </>
                                                     ) : (
-                                                        <select
-                                                            className="form-select form-select-sm"
-                                                            onChange={(e) => {
-                                                                if (e.target.value) {
-                                                                    openActionForm(item, e.target.value);
-                                                                    e.target.value = '';
-                                                                }
-                                                            }}
-                                                        >
-                                                            <option value="">Action</option>
-                                                            {metricType === 'pending-followups' ? (
+                                                        <>
+                                                            <th className="p-3 min-w-[200px]">Role / Purpose</th>
+                                                            <th className="p-3 min-w-[200px]">Outcome / Status</th>
+                                                        </>
+                                                    )}
+                                                    <th className="p-3 min-w-[250px]">Notes</th>
+                                                </>
+                                            )}
+                                            <th className="p-3 min-w-[100px]">Lead Status</th>
+                                            <th className="p-3 min-w-[100px]">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {data.length === 0 ? (
+                                            <tr>
+                                                <td colSpan="10" className="p-5 text-gray-500 text-center">No records found.</td>
+                                            </tr>
+                                        ) : (
+                                            data.map(item => (
+                                                <tr key={item.id} className="border-b hover:bg-gray-50">
+                                                    <td className="p-3">
+                                                        <span className={`badge ${(item.candidate_name || item.follow_up_type === 'interview') ? 'bg-cyan-500' :
+                                                            (item.client_name || item.follow_up_type === 'client') ? 'bg-green-500' : 'bg-cyan-500'
+                                                            }`}>
+                                                            {item.candidate_name || item.follow_up_type === 'interview' ? 'Interview' :
+                                                                item.client_name || item.follow_up_type === 'client' ? 'Client' : 'Job Post'}
+                                                        </span>
+                                                    </td>
+
+                                                    {metricType === 'client-calls' ? (
+                                                        <>
+                                                            <td className="p-3">{item.client_company_name || '-'}</td>
+                                                            <td className="p-3">
+                                                                <span
+                                                                    className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                                                    onClick={() => navigate(`/activity/lead-log/${item.id}`)}
+                                                                >
+                                                                    {item.client_name || '-'}
+                                                                </span>
+                                                            </td>
+                                                            <td className="p-3">{item.client_spok || '-'}</td>
+                                                            <td className="p-3">{item.client_email || '-'}</td>
+                                                            <td className="p-3 text-nowrap">{item.client_phone || '-'}</td>
+                                                            <td className="p-3 text-nowrap">{item.client_status || '-'}</td>
+                                                            <td className="p-3">{item.client_enquire_purpose || '-'}</td>
+                                                            <td className="p-3">{item.client_call_remarks || item.notes || '-'}</td>
+                                                        </>
+                                                    ) : metricType === 'interview-calls' ? (
+                                                        <>
+                                                            <td className="p-3">
+                                                                <span
+                                                                    className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                                                    onClick={() => navigate(`/activity/lead-log/${item.id}`)}
+                                                                >
+                                                                    {item.candidate_name || '-'}
+                                                                </span>
+                                                            </td>
+                                                            <td className="p-3">{item.candidate_designation || '-'}</td>
+                                                            <td className="p-3">{item.candidate_experience ? `${item.candidate_experience} Yrs` : 'Fresher'}</td>
+                                                            <td className="p-3">{item.candidate_phone || '-'}</td>
+                                                            <td className="p-3">{item.interview_call_remarks || item.notes || '-'}</td>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <td className="p-3">
+                                                                <span
+                                                                    className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                                                    onClick={() => {
+                                                                        const targetId = metricType.includes('followup') ? item.activity_record : item.id;
+                                                                        navigate(`/activity/lead-log/${targetId}`);
+                                                                    }}
+                                                                >
+                                                                    {item.candidate_name || item.client_name || item.candidate_or_client_name || item.position}
+                                                                </span>
+                                                            </td>
+                                                            <td className="p-3">{item.candidate_phone || item.client_phone || item.candidate_or_client_phone || '-'}</td>
+
+                                                            {metricType.includes('followup') ? (
                                                                 <>
-                                                                    <option value="complete">Done</option>
-                                                                    <option value="call_again">Call Again</option>
+                                                                    <td className="p-3">{item.expected_date}</td>
+                                                                    <td className="p-3">{formatTimeTo12Hour(item.expected_time)}</td>
                                                                 </>
                                                             ) : (
-                                                                <option value="followup">Follow Up</option>
+                                                                <>
+                                                                    <td className="p-3">{item.candidate_designation || item.client_enquire_purpose || '-'}</td>
+                                                                    <td className="p-3">
+                                                                        {item.interview_status ? (
+                                                                            <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm capitalize">
+                                                                                {item.interview_status.replace(/_/g, ' ')}
+                                                                            </span>
+                                                                        ) : item.client_status ? (
+                                                                            <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm capitalize">
+                                                                                {item.client_status.replace(/_/g, ' ')}
+                                                                            </span>
+                                                                        ) : (
+                                                                            item.job_post_remarks || '-'
+                                                                        )}
+                                                                    </td>
+                                                                </>
                                                             )}
-                                                            <option value="reject">Reject</option>
-                                                            <option value="close">Close</option>
-                                                        </select>
+                                                            <td className="p-3">{item.closure_reason || item.notes || item.job_post_remarks || item.client_call_remarks || item.interview_call_remarks || '-'}</td>
+                                                        </>
                                                     )}
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
+                                                    <td className="p-3">
+                                                        {(() => {
+                                                            const status = item.lead_status || item.activity_lead_status;
+                                                            if (status === 'follow_up') return <span className="badge bg-purple-500 text-white">Follow-Up</span>;
+                                                            if (status === 'rejected') return <span className="badge bg-red-500 text-white">Rejected</span>;
+                                                            if (status === 'closed') return <span className="badge bg-gray-500 text-white">Closed</span>;
+                                                            return <span className="badge bg-green-500 text-white">Active</span>;
+                                                        })()}
+                                                    </td>
+                                                    <td className="p-3">
+                                                        {metricType === 'completed-followups' ? (
+                                                            <span className="text-muted text-sm">Completed</span>
+                                                        ) : (item.lead_status || item.activity_lead_status) &&
+                                                            (item.lead_status || item.activity_lead_status) !== 'active' &&
+                                                            (item.lead_status || item.activity_lead_status) !== 'follow_up' &&
+                                                            metricType !== 'pending-followups' ? (
+                                                            <span className="text-muted text-sm capitalize">{item.lead_status || item.activity_lead_status}</span>
+                                                        ) : (
+                                                            <select
+                                                                className="form-select form-select-sm"
+                                                                onChange={(e) => {
+                                                                    if (e.target.value === 'edit') {
+                                                                        setEditModalAid(item.id);
+                                                                        e.target.value = '';
+                                                                    } else if (e.target.value) {
+                                                                        openActionForm(item, e.target.value);
+                                                                        e.target.value = '';
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <option value="">Action</option>
+                                                                <option value="edit">Edit</option>
+                                                                {metricType === 'pending-followups' ? (
+                                                                    <>
+                                                                        <option value="complete">Done</option>
+                                                                        <option value="call_again">Call Again</option>
+                                                                    </>
+                                                                ) : (
+                                                                    <option value="followup">Follow Up</option>
+                                                                )}
+                                                                <option value="reject">Reject</option>
+                                                                <option value="close">Close</option>
+                                                            </select>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
                         {/* Pagination Controls */}
-                        {pagination.count > 10 && (
-                            <div className="p-3 p-md-4 border-top d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-                                <p className="mb-0 text-muted text-sm text-center">
-                                    Showing {Math.min(pagination.count, (pagination.currentPage - 1) * 10 + 1)} to {Math.min(pagination.count, pagination.currentPage * 10)} of {pagination.count} entries
-                                </p>
-                                <nav>
-                                    <ul className="pagination pagination-sm mb-0">
-                                        <li className={`page-item ${!pagination.previous ? 'disabled' : ''}`}>
-                                            <button className="page-link" onClick={() => handlePageChange(pagination.currentPage - 1)}>
-                                                <i className="fas fa-chevron-left"></i>
-                                            </button>
-                                        </li>
-                                        <li className="page-item active">
-                                            <span className="page-link">{pagination.currentPage}</span>
-                                        </li>
-                                        <li className={`page-item ${!pagination.next ? 'disabled' : ''}`}>
-                                            <button className="page-link" onClick={() => handlePageChange(pagination.currentPage + 1)}>
-                                                <i className="fas fa-chevron-right"></i>
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </nav>
+                        {pagination.count > 0 && (
+                            <div className="flex justify-between items-center p-4 bg-white border-t rounded-b-xl">
+                                {/* Left: Total */}
+                                <div className="text-gray-700 font-medium whitespace-nowrap">
+                                    Total : <span className="font-bold">{pagination.count}</span>
+                                </div>
+
+                                {/* Center: Navigation */}
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        className={`px-3 py-1.5 rounded text-white font-medium text-sm transition-all ${!pagination.previous ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 active:scale-95'}`}
+                                        onClick={() => handlePageChange(pagination.currentPage - 1)}
+                                        disabled={!pagination.previous}
+                                    >
+                                        Previous
+                                    </button>
+
+                                    <span className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm font-medium whitespace-nowrap">
+                                        {pagination.currentPage} of {Math.ceil(pagination.count / 10) || 1}
+                                    </span>
+
+                                    <button
+                                        className={`px-3 py-1.5 rounded text-white font-medium text-sm transition-all ${!pagination.next ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 active:scale-95'}`}
+                                        onClick={() => handlePageChange(pagination.currentPage + 1)}
+                                        disabled={!pagination.next}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+
+                                {/* Right: Go to Page */}
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-600 text-sm whitespace-nowrap">Page</span>
+                                    <input
+                                        type="number"
+                                        className="w-16 border rounded px-2 py-1 text-center text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder={pagination.currentPage}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                const page = parseInt(e.currentTarget.value);
+                                                if (page > 0 && page <= Math.ceil(pagination.count / 10)) {
+                                                    handlePageChange(page);
+                                                    e.currentTarget.value = ''; // Clear after jump or keep? Usually clear or sync.
+                                                }
+                                            }
+                                        }}
+                                    />
+                                </div>
                             </div>
                         )}
                     </>
@@ -436,7 +570,7 @@ const ActivityMetricDetailsPage = () => {
                         </h3>
 
                         <div className="mb-4">
-                            <p className="text-sm mb-1 uppercase text-gray-500 font-bold">Target</p>
+                            <p className="text-sm mb-1 uppercase text-gray-500 font-bold">Name</p>
                             <p className="font-medium">{selectedItem?.candidate_name || selectedItem?.client_name || selectedItem?.candidate_or_client_name}</p>
                         </div>
 
@@ -510,6 +644,14 @@ const ActivityMetricDetailsPage = () => {
                     </div>
                 </div>
             )}
+            <ActivityUploadModal
+                show={!!editModalAid}
+                setshow={() => setEditModalAid(null)}
+                aid={editModalAid}
+                setAid={setEditModalAid}
+                getData={() => fetchData(pagination.currentPage)}
+                empid={empid}
+            />
         </div>
     );
 };

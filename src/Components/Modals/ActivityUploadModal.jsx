@@ -64,6 +64,8 @@ const ActivityUploadModal = ({ show, setAid, getData, setshow, empid, aid }) => 
             service_name: null,
 
 
+            service_name: null,
+            client_email: null,
             client_company_name: null,
             client_name: null,
             client_phone: null,
@@ -158,6 +160,7 @@ const ActivityUploadModal = ({ show, setAid, getData, setshow, empid, aid }) => 
             client_status: { required: false, show: formData.Activity_instance === 'client_calls', label: 'Client Status', css: null, inputcss: null, type: null, options: clientStatusOptions },
             client_name: { required: false, show: formData.Activity_instance === 'client_calls', label: 'Client Name', css: null, inputcss: null, type: null },
             client_company_name: { required: false, show: formData.Activity_instance === 'client_calls', label: 'Client Organization', css: null, inputcss: null, type: null },
+            client_email: { required: false, show: formData.Activity_instance === 'client_calls', label: 'Client Email', css: null, inputcss: null, type: 'email' },
             client_phone: { required: false, show: formData.Activity_instance === 'client_calls', label: 'Client Phone', css: null, inputcss: null, type: null },
             client_enquire_purpose: { required: false, show: formData.Activity_instance === 'client_calls', label: 'Purpose', css: null, inputcss: null, type: null },
             domain_expertise: { required: false, show: formData.Activity_instance === 'client_calls', label: 'Domain Expertise', css: null, inputcss: null, type: null },
@@ -220,6 +223,8 @@ const ActivityUploadModal = ({ show, setAid, getData, setshow, empid, aid }) => 
             service_name: null,
 
 
+            service_name: null,
+            client_email: null,
             client_company_name: null,
             client_name: null,
             client_phone: null,
