@@ -9,6 +9,7 @@ import PaySlip from '../../Pages/Payroll/PaySlip'
 import PayslipTable from '../../Pages/Payroll/PayslipTable'
 import { payrollRouters, payrollRoutersLinks } from './RouterLinks'
 import RouterContext, { RouterStore } from '../../Context/RouterContext'
+import CorrectionApprovalTable from '../../Pages/Payroll/CorrectionApprovalTable'
 
 const PayrollROuter = () => {
     let { payrollRoutersLinks } = useContext(RouterStore)
@@ -22,7 +23,7 @@ const PayrollROuter = () => {
                     <NewSideBar />
                 </article>
                 <article className='flex-1 container-fluid px-0  overflow-hidden mx-auto'>
-                 
+
                     <Topnav navbar={subNav} />
                     <div className='p-2 ' >
 
@@ -33,6 +34,7 @@ const PayrollROuter = () => {
                             <Route path='/salary-assigning' element={<STEmployeeAssigning subpage />} />
                             <Route path='/payslip/:id' element={<PaySlip />} />
                             <Route path='/employeesPayslip' element={<PayslipTable />} />
+                            <Route path='/correction-approvals' element={<CorrectionApprovalTable />} />
                         </Routes>
                     </div>
                 </article>

@@ -118,7 +118,9 @@ const Signup_ = () => {
 
             })
             .catch((err) => {
-                console.log("Signuop Error", err)
+                const message = err.response ? err.response.data : "Network Error: Backend unreachable";
+                alert(message)
+                console.log("Signuop Error", message)
             })
 
 

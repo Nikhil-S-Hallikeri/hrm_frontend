@@ -72,25 +72,36 @@ const Dummydoc = () => {
     useEffect(() => {
         getStatus()
     }, [])
-    const handleSubmit = (e) => {
+    // const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (validate()) {
             setloading(true)
             formData.map((x) => console.log(x))
             try {
-                formData.forEach((obj, index) => {
+                // formData.forEach((obj, index) => {
+                const uploadPromises = formData.map((obj) => {
                     const formObj = new FormData();
                     for (const key in obj) {
                         if (obj[key])
                             formObj.append(key, obj[key]);
                     }
-                    axios.post(`${port}/root/DocumentsUploadData/${id}/${login}`, formObj).catch((error) => {
-                        console.log(error);
-                    })
-                })
+                    //     axios.post(`${port}/root/DocumentsUploadData/${id}/${login}`, formObj).catch((error) => {
+                    //         console.log(error);
+                    //     })
+                    // })
+                    return axios.post(`${port}/root/DocumentsUploadData/${id}/${login}`, formObj);
+                });
+
+                await Promise.all(uploadPromises);
+
                 getStatus()
                 setloading(false)
+                toast.success(`Document Verification Successful`)
+
+                // Allow toast to be seen briefly or just reload - user current flow is immediate reload
                 window.location.reload()
+
                 setFormData([{
                     CandidateID: id,
                     Name: "",
@@ -109,8 +120,9 @@ const Dummydoc = () => {
                     Salary_Drawn_Payslips: null,
                     Document: null,
                 }])
-                toast.success(`Document Verification Successful`)
+                // toast.success(`Document Verification Successful`)
             } catch (error) {
+                console.log(error);
                 toast.error('Error acquired')
                 setloading(false)
             }

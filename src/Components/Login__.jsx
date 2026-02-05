@@ -64,8 +64,9 @@ const Login__ = () => {
                 window.location.reload()
             })
             .catch((err) => {
-                alert(err.response.data)
-                console.log("Login Error", err.response.data)
+                const message = err.response ? err.response.data : "Network Error: Backend unreachable";
+                alert(message)
+                console.log("Login Error", message)
             })
     };
 
@@ -98,7 +99,8 @@ const Login__ = () => {
             alert(res.data)
 
         }).catch((err) => {
-            console.log("sentmail_err", err.data);
+            const message = err.response ? err.response.data : "Network Error: Backend unreachable";
+            console.log("sentmail_err", message);
 
         })
     }

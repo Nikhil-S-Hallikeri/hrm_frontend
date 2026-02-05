@@ -3,17 +3,37 @@ import { HrmStore } from '../../Context/HrmContext'
 import Topnav from '../../Components/Topnav'
 import axios from 'axios'
 import { port } from '../../App'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import LoadingData from '../../Components/MiniComponent/LoadingData'
+import AttendanceCorrectionModal from './AttendanceCorrectionModal'
 
 const PayslipTable = () => {
     let { setActivePage, setTopNav } = useContext(HrmStore)
     let navigate = useNavigate()
-    let [loading, setLoading] = useState()
+    let [searchParams, setSearchParams] = useSearchParams()
+
+    // Initialize monthdata from URL if available, otherwise default to current month
     let mon = new Date().getMonth() < 10 ? `0${new Date().getMonth()}` : new Date().getMonth()
     let year = new Date().getFullYear()
-    let [monthdata, setMonth] = useState(`${year}-${mon}`)
+    const defaultMonth = `${year}-${mon}`
+
+    let [monthdata, setMonth] = useState(searchParams.get('month') || defaultMonth)
+    let [loading, setLoading] = useState()
+
+    // Sync state if URL changes (e.g., browser back/forward or manual URL edit)
+    useEffect(() => {
+        const urlMonth = searchParams.get('month')
+        if (urlMonth && urlMonth !== monthdata) {
+            setMonth(urlMonth)
+        }
+    }, [searchParams])
+
     let [payslipData, setPaySlip] = useState([])
+
+    // Correction Modal State
+    const [isCorrectionModalOpen, setIsCorrectionModalOpen] = useState(false)
+    const [selectedEmpForCorrection, setSelectedEmpForCorrection] = useState(null)
     useEffect(() => {
         setActivePage('payroll')
     }, [])
@@ -35,11 +55,12 @@ const PayslipTable = () => {
         setLoading('payslip')
         axios.post(`${port}/root/pms/EmployeesPaySlip/${monthdata.slice(5)}/${monthdata.slice(0, 4)}/`).then((response) => {
             console.log(response.data, "pay");
+            toast.success("Payslips generated successfully!");
             setLoading(false)
             getPayslip()
         }).catch((error) => {
             setLoading(false)
-
+            toast.error("Failed to generate payslips.");
             console.log(error);
         })
     }
@@ -77,7 +98,7 @@ const PayslipTable = () => {
                     <input type="month" value={monthdata} onChange={(e) => {
                         console.log(e.target.value);
                         setMonth(e.target.value)
-
+                        setSearchParams({ month: e.target.value })
                     }}
                         className='p-1 bgclr1 px-2 bg-white outline-none rounded ' />
                 </section>
@@ -102,9 +123,10 @@ const PayslipTable = () => {
                         <th>Bank Account No</th>
                         <th>Gross Salary</th>
                         <th>Salary for the month </th>
-                        {/* <th> Earnings</th> */}
+                        <th> Earnings</th>
                         <th>Deductions  </th>
                         <th>Payslip </th>
+                        <th>Actions</th>
                     </tr>
                     {
                         loading != 'data' && payslipData && payslipData.map((obj, index) => (
@@ -112,16 +134,30 @@ const PayslipTable = () => {
                                 <td>{index + 1} </td>
                                 <td>{obj.employee_name} </td>
                                 <td>{obj.designation} </td>
-                                <td> {obj.worked_days} </td>
+                                <td>{obj.worked_days} </td>
                                 <td>{obj.lop_days} </td>
                                 <td>{obj.account_number} </td>
                                 <td>{obj.monthly_gross_pay} </td>
                                 <td>{obj.net_salary} </td>
-                                {/* <td>{obj.total_earnings} </td> */}
+                                <td>{obj.total_earnings} </td>
                                 <td>{obj.total_deductions} </td>
                                 <td>
-                                    <button onClick={() => navigate(`/payroll/payslip/${obj.employee_id}`)} className='text-xs bg-blue-600 text-white p-1 rounded px-3 ' >
+                                    <button onClick={() => navigate(`/payroll/payslip/${obj.employee_id}?month=${monthdata}`)} className='text-xs bg-blue-600 text-white p-1 rounded px-3 ' >
                                         view
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        onClick={() => {
+                                            setSelectedEmpForCorrection({
+                                                id: obj.employee_id,
+                                                name: obj.employee_name
+                                            })
+                                            setIsCorrectionModalOpen(true)
+                                        }}
+                                        className='text-xs bg-orange-500 text-white p-1 rounded px-3 hover:bg-orange-600'
+                                    >
+                                        Edit
                                     </button>
                                 </td>
                             </tr>
@@ -132,7 +168,24 @@ const PayslipTable = () => {
                 {loading == 'data' && <LoadingData />}
             </main>
 
-        </div>
+
+            {
+                isCorrectionModalOpen && selectedEmpForCorrection && (
+                    <AttendanceCorrectionModal
+                        employeeId={selectedEmpForCorrection.id}
+                        employeeName={selectedEmpForCorrection.name}
+                        month={monthdata.slice(5)} // Extract month from YYYY-MM
+                        year={monthdata.slice(0, 4)} // Extract year from YYYY-MM
+                        onClose={() => {
+                            setIsCorrectionModalOpen(false)
+                            setSelectedEmpForCorrection(null)
+                            getPayslip() // Refresh data after correction
+                        }}
+                    />
+                )
+            }
+
+        </div >
     )
 }
 

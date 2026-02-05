@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import '../assets/css/login.css'
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import {port} from '../App' 
+import { port } from '../App'
 
 
 
@@ -49,8 +49,9 @@ const Login = () => {
 
             })
             .catch((err) => {
-                alert(err.response.data)
-                console.log("Login Error", err.response.data)
+                const message = err.response ? err.response.data : "Network Error: Backend unreachable";
+                alert(message)
+                console.log("Login Error", message)
             })
     };
 
@@ -64,20 +65,20 @@ const Login = () => {
     const [backendotp, setBackendotp] = useState("")
 
 
-    const HandleForgotsendMail=()=>{
+    const HandleForgotsendMail = () => {
 
         const formData = new FormData();
         formData.append('EmployeeId', EmployeeID);
 
-       
-        axios.post(`${port}/root/forgotpassword`,formData).then((res)=>{
-            console.log("sentmail_res",res.data);
+
+        axios.post(`${port}/root/forgotpassword`, formData).then((res) => {
+            console.log("sentmail_res", res.data);
             setBackendotp(res.data.OTP)
             alert('Check Your Mail')
 
-        }).catch((err)=>{
-            console.log("sentmail_err",err.data);
-
+        }).catch((err) => {
+            const message = err.response ? err.response.data : "Network Error: Backend unreachable";
+            console.log("sentmail_err", message);
         })
     }
 
@@ -183,30 +184,30 @@ const Login = () => {
 
                                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#otpModal" onClick={HandleForgotsendMail}>Send</button>
                                                 </div>
-                                              
+
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h1 class="modal-title fs-5 text-center" id="exampleModalLabel">OTP Verification</h1>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div className='px-3'>
-                                                                    <input type="number" className='form-control shadow-none' value={OTP} onChange={(e) => setotp(e.target.value)} name="" id="" />
-                                                                    <button className='w-100 btn btn-primary text-white fw-medium mt-4' data-bs-dismiss="modal" onClick={sendotp}>VERIFY</button>
-                                                                </div>
-                                                            </div>
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5 text-center" id="exampleModalLabel">OTP Verification</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div className='px-3'>
+                                                    <input type="number" className='form-control shadow-none' value={OTP} onChange={(e) => setotp(e.target.value)} name="" id="" />
+                                                    <button className='w-100 btn btn-primary text-white fw-medium mt-4' data-bs-dismiss="modal" onClick={sendotp}>VERIFY</button>
+                                                </div>
+                                            </div>
 
-                                                        </div>
-                                                    </div>
+                                        </div>
+                                    </div>
                                 </div>
-                              
+
 
                                 <div className='mt-3'>
                                     <button className='btn bg-primary w-100 text-white head' type='submit' onClick={handleSubmit1}>LOGIN</button>

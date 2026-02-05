@@ -58,7 +58,9 @@ const Signup = () => {
         setconPassword('')
       })
       .catch((err) => {
-        console.log("Signuop Error", err)
+        const message = err.response ? err.response.data : "Network Error: Backend unreachable";
+        alert(message)
+        console.log("Signuop Error", message)
       })
   };
   // Register form end
@@ -73,7 +75,7 @@ const Signup = () => {
     const formdata = new FormData()
     formdata.append('OTP', OTP)
     formdata.append('OriginalOTP', backendotp)
-    formdata.append('EmployeeId',employeeId)
+    formdata.append('EmployeeId', employeeId)
 
     for (let pair of formdata.entries()) {
       console.log(pair[0] + ': ' + pair[1]);
@@ -99,7 +101,7 @@ const Signup = () => {
   }
 
   return (
-    <div className='row m-0 p-0  p-sm-4 ' style={{ width: '100%',minHeight: '100vh' }}>
+    <div className='row m-0 p-0  p-sm-4 ' style={{ width: '100%', minHeight: '100vh' }}>
 
       <div className="col col-sm-4 p-4 d-lg-block  d-none sign-back ">
 

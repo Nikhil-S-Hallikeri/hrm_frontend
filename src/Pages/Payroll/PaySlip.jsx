@@ -3,7 +3,7 @@ import Topnav from '../../Components/Topnav'
 import { HrmStore } from '../../Context/HrmContext'
 import axios from 'axios'
 import { port } from '../../App'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { Spinner } from 'react-bootstrap'
 import DownloadButton from '../../Components/Employee/DownloadButton'
 import { usePDF } from 'react-to-pdf'
@@ -20,7 +20,19 @@ const PaySlip = () => {
     let year = new Date().getFullYear()
     const { toPDF, targetRef } = usePDF({ Offer_Letter: 'page.pdf' });
 
-    let [monthdata, setMonth] = useState(`${year}-${mon}`)
+    let [searchParams, setSearchParams] = useSearchParams()
+
+    // Initialize monthdata from URL if available, otherwise default to current month
+    const defaultMonth = `${year}-${mon}`
+    let [monthdata, setMonth] = useState(searchParams.get('month') || defaultMonth)
+
+    // Sync state if URL changes (e.g., browser back/forward or manual URL edit)
+    useEffect(() => {
+        const urlMonth = searchParams.get('month')
+        if (urlMonth && urlMonth !== monthdata) {
+            setMonth(urlMonth)
+        }
+    }, [searchParams])
     let [salaryTemplate, setSalaryTemplate] = useState()
     let getTemplate = (ide) => {
         axios.get(`${port}/root/pms/SalaryTemplates?id=${ide}`).then((response) => {
@@ -34,7 +46,8 @@ const PaySlip = () => {
     }
     let getParticularPayslip = () => {
         setLoading(true)
-        axios.get(`${port}/root/pms/SingleEmployeesPaySlip/${monthdata.slice(5)}/${monthdata.slice(0, 4)}/${id}/`).then((response) => {
+        // axios.get(`${port}/payroll/retrieve-payslip/${id}/${monthdata.split('-')[1]}/${monthdata.split('-')[0]}`)
+        axios.get(`${port}/root/pms/SingleEmployeesPaySlip/${monthdata.split('-')[1]}/${monthdata.split('-')[0]}/${id}/`).then((response) => {
             setPayslip(response.data)
             setLoading(false)
             getTemplate(response.data.salary_breakups.salary_template)
@@ -96,7 +109,7 @@ const PaySlip = () => {
                 <input type="month" value={monthdata} onChange={(e) => {
                     console.log(e.target.value);
                     setMonth(e.target.value)
-
+                    setSearchParams({ month: e.target.value })
                 }}
                     className='p-1 flex ms-auto bg-white px-2 bgclr1 outline-none rounded ' />
             </section>
@@ -105,7 +118,7 @@ const PaySlip = () => {
                     {/* Header */}
                     <section className='poppins flex items-center justify-between '>
                         <div className=''>
-                            <img className='w-24 h-fit' src={require('../../assets/Images/merida-logo.png')}
+                            <img className='w-24 h-fit' src={require('../../assets/logo/Merida_Tech_Minds_logo2.png')}
                                 alt="Logo" />
 
                             {/* <span className='text-sm my-2 block '>
@@ -114,7 +127,8 @@ const PaySlip = () => {
                         </div>
                         <div>
                             <span className='text-sm my-2 block '>
-                                Merida Tech Minds, <br /> 4th Block of Jayanagar, <br /> Bengaluru , <br /> Karnataka - 560011. <br />
+                                {/* Merida Tech Minds, <br /> 4th Block of Jayanagar, <br /> Bengaluru , <br /> Karnataka - 560011. <br /> */}
+                                Merida Tech Minds, <br /> 1st Floor, 334/28, 14th Cross Rd, <br /> 2nd Block, Jayanagar, <br /> Bengaluru, Karnataka 560011
                             </span>
                             {/* <p className=' mb-1 text-sm '>Payslip For the Month </p>
                             <span className='fw-semibold '> {getMonthYear(monthdata)} </span> */}
@@ -237,7 +251,7 @@ const PaySlip = () => {
                                                 <td>
                                                     {earning && earning.name_in_payslip}
                                                 </td>
-                                                <td className='p-1 border-e-2 ' >
+                                                {/* <td className='p-1 border-e-2 ' >
                                                     {!earning ? '' : earning.caluculate_type == "Flat_Amount" ?
                                                         Number(payslip.monthly_gross_pay) != 0 ?
                                                             `₹${earning.fixed_amount}` : '₹0' : ''}
@@ -246,17 +260,33 @@ const PaySlip = () => {
                                                         `₹${(earning.percentage_of_ctc / 100) *
                                                         (Number(payslip.net_salary) + Number(payslip.total_deductions))}`
                                                     }
+                                                </td> */}
+                                                <td className='p-1 border-e-2'>
+                                                    {!earning ? '' : earning.caluculate_type === "Flat_Amount" ? (
+                                                        Number(payslip.monthly_gross_pay) !== 0
+                                                            ? `₹${Number(earning.fixed_amount).toFixed(2)}`
+                                                            : '₹0.00'
+                                                    ) : (
+                                                        `₹${(
+                                                            (earning.percentage_of_ctc / 100) *
+                                                            (Number(payslip.net_salary) + Number(payslip.total_deductions))
+                                                        ).toFixed(2)}`
+                                                    )}
                                                 </td>
+
                                                 <td className='p-1 ' >{deduction && deduction.name_in_payslip} </td>
-                                                <td className='p-1 ' >{!deduction ? '' : deduction.caluculate_type == "Flat_Amount" ?
-                                                    Number(payslip.monthly_gross_pay) != 0 ?
-                                                        `₹${deduction.fixed_amount}` : '₹0' : ''}
-
-                                                    {!deduction ? '' : deduction.caluculate_type != "Flat_Amount" && deduction.percentage_of_ctc &&
-                                                        `₹${(deduction.percentage_of_ctc / 100) *
-                                                        (Number(payslip.net_salary) + Number(payslip.total_deductions))}`
-                                                    }
-
+                                                <td className='p-1 '>
+                                                    {!deduction ? '' : deduction.caluculate_type === "Flat_Amount" ? (
+                                                        Number(payslip.monthly_gross_pay) !== 0
+                                                            ? `₹${Number(deduction.fixed_amount).toFixed(2)}`
+                                                            : '₹0.00'
+                                                    ) : (
+                                                        deduction.percentage_of_ctc &&
+                                                        `₹${(
+                                                            (deduction.percentage_of_ctc / 100) *
+                                                            (Number(payslip.net_salary) + Number(payslip.total_deductions))
+                                                        ).toFixed(2)}`
+                                                    )}
                                                 </td>
                                             </tr>
                                         )
@@ -267,11 +297,12 @@ const PaySlip = () => {
                                     <td className='p-1 border-e-2 ' ></td>
                                     <td className='p-1 ' >LOP </td>
                                     <td className='p-1 ' >
-                                        {Number(payslip.total_deductions) > 0 ? `₹${payslip.lop_days && Math.round(payslip.lop_days)
-                                            * (Number(payslip.monthly_gross_pay) / Number(payslip.total_working_days))}` : `₹0`}
+                                        {/* {Number(payslip.total_deductions) > 0 ? `₹${(payslip.lop_days && Math.round(payslip.lop_days) */}
+                                        {Number(payslip.total_deductions) > 0 ? `₹${(payslip.lop_days
+                                            * (Number(payslip.monthly_gross_pay) / Number(payslip.total_working_days))).toFixed(2)}` : `₹0.00`}
                                     </td>
-                                    {console.log(Number(payslip.total_deductions) > 0 ? `₹${payslip.lop_days
-                                        * (Number(payslip.monthly_gross_pay) / Number(payslip.total_working_days))}` : `₹0`, "amnt", ((payslip.total_working_days)))}
+                                    {console.log(Number(payslip.total_deductions) > 0 ? `₹${(payslip.lop_days
+                                        * (Number(payslip.monthly_gross_pay) / Number(payslip.total_working_days))).toFixed(2)}` : `₹0.00`, "amnt", ((payslip.total_working_days)))}
                                 </tr>
                                 {/* <tr>
                                     <td className='p-1 ' >Other Allowance </td>
@@ -279,9 +310,9 @@ const PaySlip = () => {
                                 </tr> */}
                                 <tr className='border-y-2 ' >
                                     <td className='p-2 rounded-s ' >Total earning </td>
-                                    <td className='p-2 rounded-e border-e-2'>₹{Number(payslip.net_salary) + Number(payslip.total_deductions)} </td>
+                                    <td className='p-2 rounded-e border-e-2'>₹{(Number(payslip.net_salary) + Number(payslip.total_deductions)).toFixed(2)} </td>
                                     <td className=' rounded-s p-2' >Total Deduction </td>
-                                    <td className=' rounded-e p-2'>₹{Number(payslip.total_deductions)} </td>
+                                    <td className=' rounded-e p-2'>₹{Number(payslip.total_deductions).toFixed(2)} </td>
                                 </tr>
                             </table>
                             {/* <table className='w-full h-fit ' >
@@ -325,7 +356,7 @@ const PaySlip = () => {
                         <section className='p-2 sm:w-1/2 ' >
 
                             <div className='flex    ' >
-                                <p className='sm:w-1/3  mb-1 fw-semibold text-slate-900 '>Net Play  </p>
+                                <p className='sm:w-1/3  mb-1 fw-semibold text-slate-900 '>Net Pay  </p>
                                 <p className='mb-2 ' >: {payslip.net_salary && Math.round(payslip.net_salary)} </p>
                             </div>
                             <div className='flex    ' >
@@ -440,7 +471,12 @@ const PaySlip = () => {
                     <Spinner className='m-auto' />
                 </main>}
             {/* {payslip && !loading && <DownloadButton toPDF={toPDF} />} */}
-            {payslip && !loading && <GeneratePDF divRef={slipRef} />}
+            {payslip && !loading && (
+                <GeneratePDF
+                    divRef={slipRef}
+                    filename={`${(payslip.employee_name || 'Employee').replace(/\s+/g, '_')}_${monthdata.split('-')[1]}_${monthdata.split('-')[0]}_payslip.pdf`.toLowerCase()}
+                />
+            )}
 
         </div>
     )

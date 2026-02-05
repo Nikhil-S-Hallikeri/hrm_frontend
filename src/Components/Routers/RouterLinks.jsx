@@ -30,6 +30,13 @@ export const payrollRoutersLinks = [
         keyword: ['payslip', 'employee', 'people'],
         show: status == 'HR' || status == 'Admin'
     },
+    {
+        label: 'Attendance Approvals',
+        path: `/payroll/correction-approvals`,
+        active: 'approvals',
+        keyword: ['approval', 'attendance', 'correction'],
+        show: status == 'HR' || status == 'Admin'
+    },
 ]
 
 export const settingRouterLinks = [

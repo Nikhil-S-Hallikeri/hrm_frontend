@@ -50,8 +50,9 @@ const Login_ = () => {
 
             })
             .catch((err) => {
-                alert(err.response.data)
-                console.log("Login Error", err.response.data)
+                const message = err.response ? err.response.data : "Network Error: Backend unreachable";
+                alert(message)
+                console.log("Login Error", message)
             })
     };
 
@@ -77,7 +78,8 @@ const Login_ = () => {
             alert(res.data)
 
         }).catch((err) => {
-            console.log("sentmail_err", err.data);
+            const message = err.response ? err.response.data : "Network Error: Backend unreachable";
+            console.log("sentmail_err", message);
 
         })
     }
@@ -205,7 +207,7 @@ const Login_ = () => {
                                             ></path>
                                         </svg>
                                     </button>
-                                    <span className='ms-4 ' style={{cursor:'pointer' , fontSize: '13px', position: 'relative', top: '4px', left: '25px'}} data-bs-toggle="modal" data-bs-target="#exampleModal">Forgot Password ?</span>
+                                    <span className='ms-4 ' style={{ cursor: 'pointer', fontSize: '13px', position: 'relative', top: '4px', left: '25px' }} data-bs-toggle="modal" data-bs-target="#exampleModal">Forgot Password ?</span>
                                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
